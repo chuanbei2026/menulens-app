@@ -113,7 +113,16 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             .disabled(viewModel.pickedImage == nil)
             .padding(.horizontal)
-            .padding(.bottom, 24)
+
+            #if DEBUG
+            Button("载入示例菜单（无需 API key）") {
+                viewModel.loadSample()
+            }
+            .font(.footnote)
+            .padding(.top, 4)
+            #endif
+
+            Spacer().frame(height: 24)
         }
     }
 

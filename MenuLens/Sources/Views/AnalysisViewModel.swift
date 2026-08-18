@@ -37,4 +37,14 @@ final class AnalysisViewModel: ObservableObject {
         pickedImage = nil
         document = nil
     }
+
+    #if DEBUG
+    /// Load the synthetic demo menu — verifies gloss rendering, bbox cropping,
+    /// and PDF export in the simulator without an API key.
+    func loadSample() {
+        pickedImage = SampleData.sampleImage()
+        document = SampleData.document
+        phase = .done
+    }
+    #endif
 }
