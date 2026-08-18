@@ -40,6 +40,25 @@ struct ContentView: View {
                 }
                 .ignoresSafeArea()
             }
+            #if DEBUG
+            // Automation hooks for headless simulator verification:
+            //   -loadSample  load the demo menu on launch
+            //   -autoPDF     also render the PDF into Documents/sample.pdf
+            .onAppear {
+                if CommandLine.arguments.contains("-loadSample") || CommandLine.arguments.contains("-autoPDF") {
+                    viewModel.loadSample()
+                }
+                if CommandLine.arguments.contains("-autoPDF") {
+                    let data = MenuPDFRenderer(
+                        document: SampleData.document,
+                        sourceImage: SampleData.sampleImage()
+                    ).renderPDF()
+                    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                        .appendingPathComponent("sample.pdf")
+                    try? data.write(to: url)
+                }
+            }
+            #endif
             .onChange(of: photosItem) {
                 guard let item = photosItem else { return }
                 Task {
