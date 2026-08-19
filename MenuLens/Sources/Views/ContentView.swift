@@ -42,13 +42,17 @@ struct ContentView: View {
             }
             #if DEBUG
             // Automation hooks for headless simulator verification:
-            //   -loadSample  load the demo menu on launch
-            //   -autoPDF     also render the PDF into Documents/sample.pdf
+            //   -loadSample       load the demo menu on launch
+            //   -autoPDF          also render the PDF into Documents/sample.pdf
+            //   -apiKey <key>     store the key in the Keychain
+            //   -analyzeSample    run the REAL OpenAI call on the demo image,
+            //                     then dump result JSON + PDF into Documents
             .onAppear {
-                if CommandLine.arguments.contains("-loadSample") || CommandLine.arguments.contains("-autoPDF") {
+                let args = CommandLine.arguments
+                if args.contains("-loadSample") || args.contains("-autoPDF") {
                     viewModel.loadSample()
                 }
-                if CommandLine.arguments.contains("-autoPDF") {
+                if args.contains("-autoPDF") {
                     let data = MenuPDFRenderer(
                         document: SampleData.document,
                         sourceImage: SampleData.sampleImage()
@@ -56,6 +60,23 @@ struct ContentView: View {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         .appendingPathComponent("sample.pdf")
                     try? data.write(to: url)
+                }
+                if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
+                    KeychainStore.saveAPIKey(args[idx + 1])
+                }
+                if args.contains("-analyzeSample") {
+                    let image = SampleData.sampleImage()
+                    viewModel.pickedImage = image
+                    Task {
+                        await viewModel.analyze()
+                        guard let doc = viewModel.document else { return }
+                        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                        let encoder = JSONEncoder()
+                        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+                        try? (try? encoder.encode(doc))?.write(to: docs.appendingPathComponent("real_result.json"))
+                        let pdf = MenuPDFRenderer(document: doc, sourceImage: image).renderPDF()
+                        try? pdf.write(to: docs.appendingPathComponent("real_result.pdf"))
+                    }
                 }
             }
             #endif
