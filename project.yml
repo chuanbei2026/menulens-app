@@ -11,10 +11,11 @@ targets:
     platform: iOS
     sources:
       - MenuLens/Sources
+      - MenuLens/Resources
     info:
       path: MenuLens/Info.plist
       properties:
-        CFBundleDisplayName: MenuLens
+        CFBundleDisplayName: Menu Translator
         UILaunchScreen: {}
         NSCameraUsageDescription: 拍摄菜单照片，用于识别与翻译菜单内容。
         NSPhotoLibraryUsageDescription: 从相册选择菜单照片，用于识别与翻译菜单内容。

@@ -22,7 +22,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("MenuLens")
+            .navigationTitle("Menu Translator")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -74,12 +74,9 @@ struct ContentView: View {
                 if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
                     KeychainStore.saveAPIKey(args[idx + 1])
                 }
-                if args.contains("-analyzeSample") || args.contains("-analyzeSampleWarped") {
-                    let photo = args.contains("-analyzeSampleWarped")
-                        ? SampleData.warpedSampleImage()
-                        : SampleData.sampleImage()
-                    Task {
-                        await viewModel.appendPhotos([photo])
+                func analyzeAndDump(_ photos: [UIImage]) {
+                    Task { @MainActor in
+                        await viewModel.appendPhotos(photos)
                         await viewModel.analyze()
                         guard let scan = viewModel.scan else { return }
                         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -89,6 +86,21 @@ struct ContentView: View {
                         try? (try? encoder.encode(scan))?.write(to: docs.appendingPathComponent("real_result.json"))
                         try? viewModel.pdfData?.write(to: docs.appendingPathComponent("real_result.pdf"))
                     }
+                }
+                if args.contains("-analyzeSample") || args.contains("-analyzeSampleWarped") {
+                    analyzeAndDump([
+                        args.contains("-analyzeSampleWarped")
+                            ? SampleData.warpedSampleImage()
+                            : SampleData.sampleImage(),
+                    ])
+                }
+                // Simulator only: feed real photo files straight from the Mac,
+                // e.g. -analyzeFiles /Users/me/Desktop/menu1.jpg,/Users/me/Desktop/menu2.jpg
+                if let idx = args.firstIndex(of: "-analyzeFiles"), idx + 1 < args.count {
+                    let photos = args[idx + 1]
+                        .split(separator: ",")
+                        .compactMap { UIImage(contentsOfFile: String($0)) }
+                    if !photos.isEmpty { analyzeAndDump(photos) }
                 }
             }
             #endif
