@@ -25,6 +25,9 @@ targets:
         SWIFT_VERSION: "5.10"
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
+        # Personal Team (向阳 史). Baked in so regenerated projects never ask
+        # for the team again; teammates should override with their own.
+        DEVELOPMENT_TEAM: LNP5ER743F
         GENERATE_INFOPLIST_FILE: false
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 0.1.0
