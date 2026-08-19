@@ -115,6 +115,25 @@ struct ContentView: View {
                         try? viewModel.pdfData?.write(to: docs.appendingPathComponent("final.pdf"))
                     }
                 }
+                // Put the first few dishes in the cart (for UI verification).
+                if args.contains("-demoCart") {
+                    Task { @MainActor in
+                        for _ in 0 ..< 20 where viewModel.scan == nil {
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                        }
+                        guard let scan = viewModel.scan else { return }
+                        var keys: [String] = []
+                        for (p, page) in scan.pages.enumerated() {
+                            for (s, section) in page.sections.enumerated() {
+                                for (i, _) in section.items.enumerated() {
+                                    keys.append(MenuScan.dishKey(page: p, section: s, item: i))
+                                }
+                            }
+                        }
+                        for key in keys.prefix(3) { viewModel.addToCart(key) }
+                        if let first = keys.first { viewModel.addToCart(first) } // ×2
+                    }
+                }
                 // Simulator only, zero API cost: rectify the given photos and
                 // dump rectified_<n>.jpg into Documents for inspection.
                 if let idx = args.firstIndex(of: "-rectifyOnly"), idx + 1 < args.count {

@@ -46,6 +46,8 @@ final class AnalysisViewModel: ObservableObject {
     @Published var pipeline: PipelineProgress?
     /// The rendered PDF for the current scan (re-rendered when thumbnails land).
     @Published var pdfData: Data?
+    /// Order cart for the current scan: dish key -> quantity.
+    @Published var cart: [String: Int] = [:]
 
     /// Model id is a plain preference; the API key lives in the Keychain.
     @AppStorage("openai_model") var model = "gpt-4.1"
@@ -118,6 +120,7 @@ final class AnalysisViewModel: ObservableObject {
             scan = newScan
             scanImages = images
             generatedImages = [:]
+            cart = [:]
 
             // Layout and thumbnails run concurrently from here.
             pipeline?.layoutState = .running
@@ -137,6 +140,7 @@ final class AnalysisViewModel: ObservableObject {
         scan = saved
         scanImages = history.loadImages(for: saved)
         generatedImages = history.loadGeneratedImages(for: saved)
+        cart = [:]
         pipeline = PipelineProgress(
             pagesDone: saved.pages.count,
             pagesTotal: saved.pages.count,
@@ -160,6 +164,62 @@ final class AnalysisViewModel: ObservableObject {
         generatedImages = [:]
         pipeline = nil
         pdfData = nil
+        cart = [:]
+    }
+
+    // MARK: - Cart
+
+    func addToCart(_ dishKey: String) {
+        cart[dishKey, default: 0] += 1
+    }
+
+    func removeFromCart(_ dishKey: String) {
+        guard let quantity = cart[dishKey] else { return }
+        if quantity <= 1 {
+            cart.removeValue(forKey: dishKey)
+        } else {
+            cart[dishKey] = quantity - 1
+        }
+    }
+
+    var cartCount: Int { cart.values.reduce(0, +) }
+
+    /// All carted dishes resolved against the current scan, in menu order.
+    var cartEntries: [(key: String, item: MenuItemEntry, quantity: Int)] {
+        guard let scan else { return [] }
+        var result: [(String, MenuItemEntry, Int)] = []
+        for (p, page) in scan.pages.enumerated() {
+            for (s, section) in page.sections.enumerated() {
+                for (i, item) in section.items.enumerated() {
+                    let key = MenuScan.dishKey(page: p, section: s, item: i)
+                    if let quantity = cart[key], quantity > 0 {
+                        result.append((key, item, quantity))
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    /// Sum of parseable prices weighted by quantity, formatted with the
+    /// first seen currency symbol. nil when nothing parseable is selected.
+    var cartTotalText: String? {
+        var total = 0.0
+        var symbol = ""
+        var parsedAny = false
+        for entry in cartEntries {
+            guard let price = entry.item.price else { continue }
+            if let range = price.range(of: #"[0-9]+([.,][0-9]{1,2})?"#, options: .regularExpression),
+               let value = Double(price[range].replacingOccurrences(of: ",", with: ".")) {
+                total += value * Double(entry.quantity)
+                parsedAny = true
+                if symbol.isEmpty {
+                    symbol = String(price.prefix(while: { !$0.isNumber && !$0.isWhitespace }))
+                }
+            }
+        }
+        guard parsedAny else { return nil }
+        return "\(symbol)\(String(format: "%.2f", total))"
     }
 
     /// Render the PDF off the main thread so scrolling/progress stay smooth.

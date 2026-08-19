@@ -20,6 +20,7 @@ struct ResultView: View {
         ProcessInfo.processInfo.arguments.contains("-listMode") ? .list : .canvas
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
+    @State private var showOrderSummary = false
 
     var body: some View {
         Group {
@@ -34,23 +35,50 @@ struct ResultView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if let progress = viewModel.pipeline,
-               let total = progress.imagesTotal, total > 0, !progress.imagesFinished {
-                VStack(spacing: 6) {
-                    HStack {
-                        Label("正在生成菜品配图", systemImage: "photo.artframe")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text("\(progress.imagesDone)/\(total) 张")
-                            .font(.footnote.monospacedDigit())
-                            .foregroundStyle(.secondary)
+            VStack(spacing: 0) {
+                if let progress = viewModel.pipeline,
+                   let total = progress.imagesTotal, total > 0, !progress.imagesFinished {
+                    VStack(spacing: 6) {
+                        HStack {
+                            Label("正在生成菜品配图", systemImage: "photo.artframe")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text("\(progress.imagesDone)/\(total) 张")
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
+                        ProgressView(value: Double(progress.imagesDone), total: Double(total))
                     }
-                    ProgressView(value: Double(progress.imagesDone), total: Double(total))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(.thinMaterial)
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(.thinMaterial)
+
+                if viewModel.cartCount > 0 {
+                    HStack(spacing: 10) {
+                        Image(systemName: "cart")
+                        Text("已选 \(viewModel.cartCount) 道")
+                            .font(.subheadline.weight(.medium))
+                        if let total = viewModel.cartTotalText {
+                            Text(total)
+                                .font(.subheadline.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button("总结") { showOrderSummary = true }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.small)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(.thinMaterial)
+                }
+            }
+        }
+        .sheet(isPresented: $showOrderSummary) {
+            OrderSummaryView(viewModel: viewModel) {
+                mode = .canvas
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -108,6 +136,7 @@ private struct MenuCanvasView: View {
                             document: document,
                             pageIndex: index,
                             image: viewModel.scanImages[index],
+                            highlights: viewModel.cart,
                             onSelectDish: onSelectDish
                         )
                         .padding(.bottom, 34) // keep the page dots clear
@@ -125,16 +154,22 @@ private struct CanvasPage: View {
     let document: MenuDocument
     let pageIndex: Int
     let image: UIImage
+    let highlights: [String: Int]
     let onSelectDish: (String) -> Void
 
     @State private var rendered: UIImage?
+
+    /// Stable signature so the canvas re-renders when the order changes.
+    private var highlightSignature: String {
+        highlights.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" }.joined(separator: ",")
+    }
 
     var body: some View {
         Group {
             if let rendered {
                 ZoomableImageView(image: rendered) { normalizedPoint in
                     let renderer = MenuLayoutRenderer(
-                        document: document, image: image, pageWidth: 1600
+                        document: document, image: image, pageWidth: 1600, pageIndex: pageIndex
                     )
                     if let hit = renderer.hitTest(normalizedPoint: normalizedPoint) {
                         onSelectDish(MenuScan.dishKey(page: pageIndex, section: hit.section, item: hit.item))
@@ -142,18 +177,118 @@ private struct CanvasPage: View {
                 }
             } else {
                 ProgressView("正在绘制画布…")
-                    .task {
-                        let renderer = MenuLayoutRenderer(
-                            document: document,
-                            image: image.normalizedOrientation(),
-                            pageWidth: 1600
-                        )
-                        rendered = await Task.detached(priority: .userInitiated) {
-                            renderer.renderImage()
-                        }.value
-                    }
             }
         }
+        .task(id: highlightSignature) {
+            let renderer = MenuLayoutRenderer(
+                document: document,
+                image: image.normalizedOrientation(),
+                pageWidth: 1600,
+                pageIndex: pageIndex,
+                highlights: highlights
+            )
+            rendered = await Task.detached(priority: .userInitiated) {
+                renderer.renderImage()
+            }.value
+        }
+    }
+}
+
+// MARK: - Order summary sheet
+
+private struct OrderSummaryView: View {
+    @ObservedObject var viewModel: AnalysisViewModel
+    /// Called when the user confirms — the caller switches to the canvas
+    /// so the annotated menu can be shown to the waiter.
+    let onAnnotate: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(viewModel.cartEntries, id: \.key) { entry in
+                    HStack(alignment: .center, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(entry.item.originalName)
+                                .font(.subheadline.weight(.semibold))
+                            Text(entry.item.chineseName)
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                        }
+                        Spacer()
+                        if let price = entry.item.price {
+                            Text(price)
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
+                        QuantityStepper(quantity: entry.quantity) {
+                            viewModel.addToCart(entry.key)
+                        } onMinus: {
+                            viewModel.removeFromCart(entry.key)
+                        }
+                    }
+                }
+
+                Section {
+                    HStack {
+                        Text("共 \(viewModel.cartCount) 道")
+                        Spacer()
+                        if let total = viewModel.cartTotalText {
+                            Text("合计 \(total)")
+                                .font(.body.monospacedDigit().weight(.semibold))
+                        }
+                    }
+                }
+            }
+            .navigationTitle("已点菜品")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("继续点单") { dismiss() }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    onAnnotate()
+                    dismiss()
+                } label: {
+                    Label("标注到菜单上给服务员看", systemImage: "checkmark.circle.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.cartCount == 0)
+                .padding()
+                .background(.thinMaterial)
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
+
+/// Compact − qty + control used in list rows and the summary sheet.
+struct QuantityStepper: View {
+    let quantity: Int
+    let onPlus: () -> Void
+    let onMinus: () -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            if quantity > 0 {
+                Button(action: onMinus) {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundStyle(.gray)
+                }
+                Text("\(quantity)")
+                    .font(.body.monospacedDigit().weight(.semibold))
+                    .frame(minWidth: 18)
+            }
+            Button(action: onPlus) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(.orange)
+            }
+        }
+        .font(.title3)
+        .buttonStyle(.borderless)
     }
 }
 
@@ -184,7 +319,10 @@ private struct DishListView: View {
                         ForEach(group.rows) { row in
                             DishRow(
                                 item: row.item,
-                                photo: photo(for: row)
+                                photo: photo(for: row),
+                                quantity: viewModel.cart[row.id] ?? 0,
+                                onPlus: { viewModel.addToCart(row.id) },
+                                onMinus: { viewModel.removeFromCart(row.id) }
                             )
                             .id(row.id)
                         }
@@ -268,6 +406,9 @@ private struct DishListView: View {
 private struct DishRow: View {
     let item: MenuItemEntry
     let photo: UIImage?
+    let quantity: Int
+    let onPlus: () -> Void
+    let onMinus: () -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -291,10 +432,13 @@ private struct DishRow: View {
                 }
             }
             Spacer()
-            if let price = item.price {
-                Text(price)
-                    .font(.subheadline.monospacedDigit())
-                    .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 8) {
+                if let price = item.price {
+                    Text(price)
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                QuantityStepper(quantity: quantity, onPlus: onPlus, onMinus: onMinus)
             }
         }
         .padding(.vertical, 3)

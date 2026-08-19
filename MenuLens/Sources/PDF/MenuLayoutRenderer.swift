@@ -41,6 +41,11 @@ struct MenuLayoutRenderer {
     /// The rectified page photo (orientation already normalized).
     let image: UIImage
     let pageWidth: CGFloat
+    /// This page's index within the scan — used to compose dish keys.
+    var pageIndex: Int = 0
+    /// Ordered dishes (dish key -> quantity): outlined with a quantity badge
+    /// so a waiter can match the order against the printed menu.
+    var highlights: [String: Int] = [:]
 
     private static let ciContext = CIContext()
 
@@ -68,8 +73,8 @@ struct MenuLayoutRenderer {
         let canvas = pageSize
         let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
 
-        for section in document.sections {
-            for item in section.items {
+        for (sectionIndex, section) in document.sections.enumerated() {
+            for (itemIndex, item) in section.items.enumerated() {
                 let nameRect = item.bbox.rect(in: canvas)
 
                 if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
@@ -96,8 +101,44 @@ struct MenuLayoutRenderer {
                         maxWidth: canvas.width - nameRect.minX - 8
                     )
                 }
+
+                let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
+                if let quantity = highlights[key], quantity > 0 {
+                    drawOrderHighlight(for: item, quantity: quantity, in: canvas)
+                }
             }
         }
+    }
+
+    /// Accent outline around the dish's printed area plus a x-quantity badge.
+    private func drawOrderHighlight(for item: MenuItemEntry, quantity: Int, in canvas: CGSize) {
+        var zone = item.bbox.rect(in: canvas)
+        zone.size.height += 16 // include the Chinese caption under the name
+        if let descBox = item.descriptionBBox {
+            zone = zone.union(descBox.rect(in: canvas))
+        }
+        zone = zone.insetBy(dx: -8, dy: -6)
+
+        let accent = UIColor(red: 1.0, green: 0.45, blue: 0.0, alpha: 1)
+        accent.setStroke()
+        let outline = UIBezierPath(roundedRect: zone, cornerRadius: 9)
+        outline.lineWidth = 3
+        outline.stroke()
+
+        let label = "×\(quantity)" as NSString
+        let font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        let textSize = label.size(withAttributes: [.font: font])
+        let badgeWidth = max(textSize.width + 12, 28)
+        let badge = CGRect(
+            x: zone.maxX - badgeWidth + 10, y: zone.minY - 13,
+            width: badgeWidth, height: 26
+        )
+        accent.setFill()
+        UIBezierPath(roundedRect: badge, cornerRadius: 13).fill()
+        label.draw(
+            at: CGPoint(x: badge.midX - textSize.width / 2, y: badge.midY - textSize.height / 2),
+            withAttributes: [.font: font, .foregroundColor: UIColor.white]
+        )
     }
 
     /// Chinese name (accent color) + description (dark gray) flowed together
