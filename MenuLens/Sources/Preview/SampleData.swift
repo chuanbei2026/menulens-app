@@ -1,4 +1,5 @@
 #if DEBUG
+import CoreImage
 import SwiftUI
 import UIKit
 
@@ -74,6 +75,28 @@ enum SampleData {
             text("Service compris · Prix nets", 18, .regular,
                  at: CGPoint(x: 370, y: 1330), color: .gray)
         }
+    }
+
+    /// The sample menu warped into a fake hand-held photo: tilted with
+    /// perspective and dropped onto a gray "table" background. Exercises the
+    /// DocumentRectifier path end-to-end.
+    static func warpedSampleImage() -> UIImage {
+        let flat = sampleImage()
+        guard let cg = flat.cgImage else { return flat }
+        let ci = CIImage(cgImage: cg)
+        // Core Image uses a bottom-left origin. An asymmetric quad = real tilt.
+        let warped = ci.applyingFilter("CIPerspectiveTransform", parameters: [
+            "inputTopLeft": CIVector(x: 260, y: 1640),
+            "inputTopRight": CIVector(x: 1090, y: 1710),
+            "inputBottomLeft": CIVector(x: 170, y: 190),
+            "inputBottomRight": CIVector(x: 1230, y: 90),
+        ])
+        let canvas = CIImage(color: CIColor(red: 0.35, green: 0.33, blue: 0.31))
+            .cropped(to: CGRect(x: 0, y: 0, width: 1400, height: 1800))
+        let composited = warped.composited(over: canvas)
+        let context = CIContext()
+        guard let out = context.createCGImage(composited, from: canvas.extent) else { return flat }
+        return UIImage(cgImage: out)
     }
 
     // MARK: - The matching analysis result

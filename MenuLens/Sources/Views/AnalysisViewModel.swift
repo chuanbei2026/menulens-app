@@ -1,11 +1,34 @@
 import SwiftUI
 
+/// Live progress of the three pipeline stages, driven by AnalysisViewModel
+/// and rendered by AnalysisProgressView / the ResultView banner.
+struct PipelineProgress: Equatable {
+    enum LayoutState: Equatable {
+        case waiting
+        case running
+        case done
+    }
+
+    var rectifyDone = 0
+    var rectifyTotal = 0
+    var pagesDone = 0
+    var pagesTotal = 0
+    var layoutState: LayoutState = .waiting
+    var imagesDone = 0
+    /// nil = count not known yet; 0 = no thumbnails needed (or disabled).
+    var imagesTotal: Int?
+
+    var imagesFinished: Bool {
+        if let total = imagesTotal { return imagesDone >= total }
+        return false
+    }
+}
+
 @MainActor
 final class AnalysisViewModel: ObservableObject {
     enum Phase: Equatable {
         case idle
-        /// `completed` of `total` pages have come back from the API.
-        case analyzing(completed: Int, total: Int)
+        case analyzing
         case done
         case failed(String)
     }
@@ -18,8 +41,8 @@ final class AnalysisViewModel: ObservableObject {
     @Published var scanImages: [UIImage] = []
     /// AI-generated dish thumbnails, keyed by MenuScan.dishKey.
     @Published var generatedImages: [String: UIImage] = [:]
-    /// Non-nil while thumbnails are being generated.
-    @Published var imageProgress: (done: Int, total: Int)?
+    /// Stage-by-stage progress; nil when nothing is in flight.
+    @Published var pipeline: PipelineProgress?
     /// The rendered PDF for the current scan (re-rendered when thumbnails land).
     @Published var pdfData: Data?
 
@@ -36,21 +59,36 @@ final class AnalysisViewModel: ObservableObject {
     }
 
     /// Analyze all picked pages concurrently (one API call per page),
-    /// combine into a MenuScan, auto-save to history, render the PDF,
-    /// then start thumbnail generation in the background.
+    /// combine into a MenuScan, auto-save to history, then run layout
+    /// rendering and thumbnail generation IN PARALLEL. The result view
+    /// opens as soon as the layout PDF is ready; thumbnails keep filling
+    /// in behind the banner and the PDF refreshes when they finish.
     func analyze() async {
-        let images = pickedImages
-        guard !images.isEmpty else { return }
+        let originals = pickedImages
+        guard !originals.isEmpty else { return }
+        phase = .analyzing
+        pipeline = PipelineProgress(rectifyTotal: originals.count, pagesTotal: originals.count)
+
+        // Stage 0: perspective-correct each photo so the layout base is a
+        // clean, straight menu sheet (bboxes then line up downstream).
+        var images: [UIImage] = []
+        for original in originals {
+            let rectified = await Task.detached(priority: .userInitiated) {
+                DocumentRectifier.rectify(original)
+            }.value
+            images.append(rectified)
+            pipeline?.rectifyDone += 1
+        }
+
         let jpegs = images.compactMap { $0.jpegDataForUpload() }
         guard jpegs.count == images.count else {
+            pipeline = nil
             phase = .failed("无法编码所选图片。")
             return
         }
-        phase = .analyzing(completed: 0, total: jpegs.count)
         let client = OpenAIClient(apiKey: KeychainStore.loadAPIKey(), model: model)
         do {
             var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
-            var completed = 0
             try await withThrowingTaskGroup(of: (Int, MenuDocument).self) { group in
                 for (index, jpeg) in jpegs.enumerated() {
                     group.addTask {
@@ -59,8 +97,7 @@ final class AnalysisViewModel: ObservableObject {
                 }
                 for try await (index, document) in group {
                     pages[index] = document
-                    completed += 1
-                    phase = .analyzing(completed: completed, total: jpegs.count)
+                    pipeline?.pagesDone += 1
                 }
             }
             let newScan = MenuScan.combining(pages: pages.compactMap { $0 })
@@ -68,10 +105,15 @@ final class AnalysisViewModel: ObservableObject {
             scan = newScan
             scanImages = images
             generatedImages = [:]
-            phase = .done
-            rerenderPDF()
+
+            // Layout and thumbnails run concurrently from here.
+            pipeline?.layoutState = .running
             startImageGenerationIfNeeded()
+            await renderPDFAsync()
+            pipeline?.layoutState = .done
+            phase = .done
         } catch {
+            pipeline = nil
             phase = .failed(error.localizedDescription)
         }
     }
@@ -82,9 +124,19 @@ final class AnalysisViewModel: ObservableObject {
         scan = saved
         scanImages = history.loadImages(for: saved)
         generatedImages = history.loadGeneratedImages(for: saved)
-        imageProgress = nil
+        pipeline = PipelineProgress(
+            rectifyDone: saved.pages.count,
+            rectifyTotal: saved.pages.count,
+            pagesDone: saved.pages.count,
+            pagesTotal: saved.pages.count,
+            layoutState: .done,
+            imagesDone: 0,
+            imagesTotal: nil
+        )
         phase = .done
-        rerenderPDF()
+        Task {
+            await renderPDFAsync()
+        }
         startImageGenerationIfNeeded()
     }
 
@@ -95,17 +147,22 @@ final class AnalysisViewModel: ObservableObject {
         scan = nil
         scanImages = []
         generatedImages = [:]
-        imageProgress = nil
+        pipeline = nil
         pdfData = nil
     }
 
-    func rerenderPDF() {
+    /// Render the PDF off the main thread so scrolling/progress stay smooth.
+    func renderPDFAsync() async {
         guard let scan else { return }
-        pdfData = MenuPDFRenderer(
+        let renderer = MenuPDFRenderer(
             scan: scan,
             images: scanImages,
             generatedImages: generatedImages
-        ).renderPDF()
+        )
+        let data = await Task.detached(priority: .userInitiated) {
+            renderer.renderPDF()
+        }.value
+        pdfData = data
     }
 
     // MARK: - Concurrent dish-thumbnail generation
@@ -115,7 +172,10 @@ final class AnalysisViewModel: ObservableObject {
     /// window; each result is persisted immediately, and the PDF is
     /// re-rendered once at the end.
     private func startImageGenerationIfNeeded() {
-        guard generateDishImages, let scan else { return }
+        guard generateDishImages, let scan else {
+            pipeline?.imagesTotal = 0
+            return
+        }
 
         var jobs: [(key: String, item: MenuItemEntry)] = []
         for (p, page) in scan.pages.enumerated() {
@@ -128,11 +188,12 @@ final class AnalysisViewModel: ObservableObject {
                 }
             }
         }
+        pipeline?.imagesDone = 0
+        pipeline?.imagesTotal = jobs.count
         guard !jobs.isEmpty else { return }
 
         let client = ImageGenClient(apiKey: KeychainStore.loadAPIKey())
         let scanID = scan.id
-        imageProgress = (done: 0, total: jobs.count)
 
         imageGenTask = Task { [weak self] in
             await withTaskGroup(of: (String, UIImage?).self) { group in
@@ -151,21 +212,18 @@ final class AnalysisViewModel: ObservableObject {
                 }
                 for _ in 0 ..< window { addNext(&group) }
 
-                var done = 0
                 for await (key, image) in group {
                     guard let self, !Task.isCancelled else { return }
-                    done += 1
                     if let image {
                         self.generatedImages[key] = image
                         self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
                     }
-                    self.imageProgress = (done: done, total: jobs.count)
+                    self.pipeline?.imagesDone += 1
                     addNext(&group)
                 }
             }
             guard let self, !Task.isCancelled else { return }
-            self.imageProgress = nil
-            self.rerenderPDF()
+            await self.renderPDFAsync()
         }
     }
 
@@ -178,8 +236,9 @@ final class AnalysisViewModel: ObservableObject {
         scan = MenuScan.combining(pages: [SampleData.document])
         scanImages = [image]
         generatedImages = [:]
+        pipeline = nil
         phase = .done
-        rerenderPDF()
+        Task { await renderPDFAsync() }
     }
     #endif
 }

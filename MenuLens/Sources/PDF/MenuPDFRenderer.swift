@@ -36,7 +36,12 @@ struct MenuPDFRenderer {
         return renderer.pdfData { ctx in
             for (index, document) in scan.pages.enumerated() {
                 guard index < images.count else { break }
-                drawLayoutPage(ctx: ctx, document: document, image: images[index].normalizedOrientation())
+                drawLayoutPage(
+                    ctx: ctx,
+                    pageIndex: index,
+                    document: document,
+                    image: images[index].normalizedOrientation()
+                )
             }
             drawAppendixPages(ctx: ctx)
         }
@@ -44,7 +49,7 @@ struct MenuPDFRenderer {
 
     // MARK: - Part 1: same-layout pages (one per photographed page)
 
-    private func drawLayoutPage(ctx: UIGraphicsPDFRendererContext, document: MenuDocument, image: UIImage) {
+    private func drawLayoutPage(ctx: UIGraphicsPDFRendererContext, pageIndex: Int, document: MenuDocument, image: UIImage) {
         let aspect = image.size.height / max(image.size.width, 1)
         let pageRect = CGRect(
             x: 0, y: 0,
@@ -55,12 +60,13 @@ struct MenuPDFRenderer {
         UIColor.white.setFill()
         ctx.fill(pageRect)
 
-        // Faint original photo as the spatial anchor.
-        image.draw(in: pageRect, blendMode: .normal, alpha: 0.12)
+        // The (rectified) original menu as a clearly readable base layer —
+        // translations overlay it in place, like a bilingual edition.
+        image.draw(in: pageRect, blendMode: .normal, alpha: 0.38)
 
         let canvas = pageRect.size
 
-        for section in document.sections {
+        for (sectionIndex, section) in document.sections.enumerated() {
             if let bbox = section.bbox, section.originalTitle != nil || section.chineseTitle != nil {
                 let origin = bbox.rect(in: canvas).origin
                 let title = [section.originalTitle, section.chineseTitle]
@@ -74,7 +80,7 @@ struct MenuPDFRenderer {
                 )
             }
 
-            for item in section.items {
+            for (itemIndex, item) in section.items.enumerated() {
                 if let photoBox = item.photoBBox,
                    let cropped = image.crop(normalized: photoBox) {
                     // Clamp to the page so oversized model boxes can't bleed off.
@@ -85,13 +91,17 @@ struct MenuPDFRenderer {
                         UIBezierPath(rect: target).stroke()
                     }
                 }
-                drawItemCard(item, in: canvas)
+                let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
+                let thumb = item.photoBBox == nil ? generatedImages[key] : nil
+                drawItemCard(item, thumb: thumb, in: canvas)
             }
         }
     }
 
-    /// A translated card pinned at the item's own bbox position.
-    private func drawItemCard(_ item: MenuItemEntry, in canvas: CGSize) {
+    /// A translated card pinned at the item's own bbox position; an optional
+    /// AI-generated thumbnail is placed beside it (right side preferred,
+    /// left as fallback, skipped when neither fits).
+    private func drawItemCard(_ item: MenuItemEntry, thumb: UIImage?, in canvas: CGSize) {
         let box = item.bbox.rect(in: canvas)
         let width = max(box.width, 180)
         let cursor = CGPoint(x: box.minX, y: box.minY)
@@ -101,13 +111,32 @@ struct MenuPDFRenderer {
         let measured = drawItemContent(item, at: cursor, maxWidth: maxWidth, dryRun: true)
         let cardRect = CGRect(x: cursor.x - 8, y: cursor.y - 6, width: maxWidth + 16, height: measured + 12)
 
-        UIColor.white.withAlphaComponent(0.92).setFill()
+        UIColor.white.withAlphaComponent(0.95).setFill()
         let bg = UIBezierPath(roundedRect: cardRect, cornerRadius: 8)
         bg.fill()
         UIColor.black.withAlphaComponent(0.12).setStroke()
         bg.stroke()
 
         _ = drawItemContent(item, at: cursor, maxWidth: maxWidth, dryRun: false)
+
+        if let thumb {
+            let side = min(max(cardRect.height, 110), 170)
+            var frame = CGRect(x: cardRect.maxX + 14, y: cardRect.minY, width: side, height: side)
+            if frame.maxX > canvas.width - 8 {
+                frame.origin.x = cardRect.minX - side - 14
+            }
+            if frame.minX >= 8, frame.maxY <= canvas.height - 8 {
+                let clip = UIBezierPath(roundedRect: frame, cornerRadius: 10)
+                if let cg = UIGraphicsGetCurrentContext() {
+                    cg.saveGState()
+                    clip.addClip()
+                    thumb.draw(in: frame)
+                    cg.restoreGState()
+                }
+                UIColor.black.withAlphaComponent(0.15).setStroke()
+                clip.stroke()
+            }
+        }
     }
 
     /// Draws (or just measures, when `dryRun`) one item's stacked content:

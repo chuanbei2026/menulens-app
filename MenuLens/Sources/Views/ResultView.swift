@@ -20,15 +20,22 @@ struct ResultView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if let progress = viewModel.imageProgress {
-                HStack(spacing: 10) {
-                    ProgressView()
-                    Text("正在生成菜品配图 \(progress.done)/\(progress.total)……完成后自动更新")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+            if let progress = viewModel.pipeline,
+               let total = progress.imagesTotal, total > 0, !progress.imagesFinished {
+                VStack(spacing: 6) {
+                    HStack {
+                        Label("正在生成菜品配图", systemImage: "photo.artframe")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(progress.imagesDone)/\(total) 张")
+                            .font(.footnote.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                    ProgressView(value: Double(progress.imagesDone), total: Double(total))
                 }
-                .padding(10)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
                 .background(.thinMaterial)
             }
         }

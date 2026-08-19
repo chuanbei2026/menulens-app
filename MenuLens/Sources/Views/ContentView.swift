@@ -14,8 +14,8 @@ struct ContentView: View {
                 switch viewModel.phase {
                 case .idle, .failed:
                     startScreen
-                case let .analyzing(completed, total):
-                    analyzingScreen(completed: completed, total: total)
+                case .analyzing:
+                    AnalysisProgressView(viewModel: viewModel)
                 case .done:
                     ResultView(viewModel: viewModel) {
                         viewModel.reset()
@@ -71,8 +71,10 @@ struct ContentView: View {
                 if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
                     KeychainStore.saveAPIKey(args[idx + 1])
                 }
-                if args.contains("-analyzeSample") {
-                    viewModel.pickedImages = [SampleData.sampleImage()]
+                if args.contains("-analyzeSample") || args.contains("-analyzeSampleWarped") {
+                    viewModel.pickedImages = args.contains("-analyzeSampleWarped")
+                        ? [SampleData.warpedSampleImage()]
+                        : [SampleData.sampleImage()]
                     Task {
                         await viewModel.analyze()
                         guard let scan = viewModel.scan else { return }
@@ -209,26 +211,4 @@ struct ContentView: View {
         .frame(height: 210)
     }
 
-    // MARK: - Analyzing screen
-
-    private func analyzingScreen(completed: Int, total: Int) -> some View {
-        VStack(spacing: 16) {
-            if let first = viewModel.pickedImages.first {
-                Image(uiImage: first)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 280)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .opacity(0.6)
-            }
-            ProgressView(value: Double(completed), total: Double(max(total, 1)))
-                .padding(.horizontal, 40)
-            Text(total > 1 ? "正在识别翻译……已完成 \(completed)/\(total) 页" : "正在识别菜单并翻译……")
-                .foregroundStyle(.secondary)
-            Text("多页会并发处理，通常 1–2 分钟内完成")
-                .font(.footnote)
-                .foregroundStyle(.tertiary)
-        }
-        .padding()
-    }
 }
