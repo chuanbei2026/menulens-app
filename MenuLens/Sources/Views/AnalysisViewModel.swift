@@ -91,8 +91,12 @@ final class AnalysisViewModel: ObservableObject {
             var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
             try await withThrowingTaskGroup(of: (Int, MenuDocument).self) { group in
                 for (index, jpeg) in jpegs.enumerated() {
+                    let pageImage = images[index]
                     group.addTask {
-                        (index, try await client.analyzeMenu(jpegData: jpeg))
+                        let document = try await client.analyzeMenu(jpegData: jpeg)
+                        // Snap bboxes onto OCR-detected text lines (no-op when
+                        // OCR finds nothing, e.g. simulator without the model).
+                        return (index, BBoxRefiner.refine(document, in: pageImage))
                     }
                 }
                 for try await (index, document) in group {

@@ -50,7 +50,29 @@ enum DocumentRectifier {
         let context = CIContext()
         guard let output = context.createCGImage(corrected, from: corrected.extent)
         else { return source }
-        return UIImage(cgImage: output)
+        let straightened = UIImage(cgImage: output)
+
+        // CIPerspectiveCorrection's output aspect comes from the quad's pixel
+        // footprint, which understates the dimension that was tilted away.
+        // Restore the sheet's true aspect from the average opposite-edge
+        // lengths of the detected quad.
+        func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+            let dx = (a.x - b.x) * size.width
+            let dy = (a.y - b.y) * size.height
+            return (dx * dx + dy * dy).squareRoot()
+        }
+        let trueWidth = (distance(quad.topLeft, quad.topRight) + distance(quad.bottomLeft, quad.bottomRight)) / 2
+        let trueHeight = (distance(quad.topLeft, quad.bottomLeft) + distance(quad.topRight, quad.bottomRight)) / 2
+        guard trueWidth > 0, trueHeight > 0 else { return straightened }
+
+        let targetWidth = straightened.size.width
+        let targetSize = CGSize(width: targetWidth, height: (targetWidth * trueHeight / trueWidth).rounded())
+        guard abs(targetSize.height - straightened.size.height) > 4 else { return straightened }
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
+            straightened.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
     }
 
     /// ML document segmentation first (best quality, real devices), falling
