@@ -30,7 +30,12 @@ enum DocumentRectifier {
 
         // Ignore detections that cover only a small part of the frame —
         // warping to a receipt-sized sliver would destroy the menu.
-        guard let quad = detectQuad(in: cg), quad.area > 0.35 else { return source }
+        guard let quad = detectQuad(in: cg), quad.area > 0.35 else {
+            // Last resort (e.g. simulator, screenshots with app chrome):
+            // crop to the hull of recognized text lines. No perspective fix,
+            // but it removes status bars, UI buttons, and table background.
+            return textHullCrop(cg) ?? source
+        }
 
         let ciImage = CIImage(cgImage: cg)
         let size = ciImage.extent.size
@@ -105,6 +110,56 @@ enum DocumentRectifier {
                         bottomLeft: best.bottomLeft, bottomRight: best.bottomRight)
         }
         return nil
+    }
+
+    /// Crop to the bounding hull of all recognized text lines (+3% margin).
+    /// Returns nil when there is too little text or the hull is implausible.
+    private static func textHullCrop(_ cg: CGImage) -> UIImage? {
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .fast
+        request.usesLanguageCorrection = false
+        let handler = VNImageRequestHandler(cgImage: cg, options: [:])
+        guard (try? handler.perform([request])) != nil,
+              let observations = request.results, observations.count >= 5
+        else { return nil }
+
+        // Trimmed hull: sparse UI chrome (status clock, photo-app captions)
+        // contributes only a handful of boxes, while the menu body has
+        // dozens — quantile-trim the centers, then keep boxes near the dense
+        // band and take their union.
+        let boxes = observations.map(\.boundingBox)
+        func quantile(_ sorted: [CGFloat], _ q: Double) -> CGFloat {
+            let position = q * Double(sorted.count - 1)
+            return sorted[Int(position.rounded())]
+        }
+        let ys = boxes.map(\.midY).sorted()
+        let xs = boxes.map(\.midX).sorted()
+        let yBand = (quantile(ys, 0.06) - 0.06) ... (quantile(ys, 0.94) + 0.06)
+        let xBand = (quantile(xs, 0.06) - 0.10) ... (quantile(xs, 0.94) + 0.10)
+        let kept = boxes.filter { yBand.contains($0.midY) && xBand.contains($0.midX) }
+        guard kept.count >= 5 else { return nil }
+        var hull: CGRect = .null
+        for box in kept {
+            hull = hull.union(box)
+        }
+        guard !hull.isNull else { return nil }
+        // Vision is bottom-left origin; flip to top-left and add margin.
+        var crop = CGRect(
+            x: hull.minX - 0.03,
+            y: (1 - hull.maxY) - 0.03,
+            width: hull.width + 0.06,
+            height: hull.height + 0.06
+        ).intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+        let area = crop.width * crop.height
+        guard area > 0.08, area < 0.98 else { return nil }
+        crop = CGRect(
+            x: crop.minX * CGFloat(cg.width),
+            y: crop.minY * CGFloat(cg.height),
+            width: crop.width * CGFloat(cg.width),
+            height: crop.height * CGFloat(cg.height)
+        ).integral
+        guard let cropped = cg.cropping(to: crop) else { return nil }
+        return UIImage(cgImage: cropped)
     }
 
     /// Shoelace area of a polygon in normalized (0...1) coordinates.

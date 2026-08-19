@@ -98,6 +98,20 @@ struct ContentView: View {
                             : SampleData.sampleImage(),
                     ])
                 }
+                // Simulator only, zero API cost: rectify the given photos and
+                // dump rectified_<n>.jpg into Documents for inspection.
+                if let idx = args.firstIndex(of: "-rectifyOnly"), idx + 1 < args.count {
+                    let paths = args[idx + 1].split(separator: ",").map(String.init)
+                    Task.detached {
+                        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                        for (n, path) in paths.enumerated() {
+                            guard let photo = UIImage(contentsOfFile: path) else { continue }
+                            let rectified = DocumentRectifier.rectify(photo)
+                            try? rectified.jpegData(compressionQuality: 0.85)?
+                                .write(to: docs.appendingPathComponent("rectified_\(n).jpg"))
+                        }
+                    }
+                }
                 // Simulator only: feed real photo files straight from the Mac,
                 // e.g. -analyzeFiles /Users/me/Desktop/menu1.jpg,/Users/me/Desktop/menu2.jpg
                 if let idx = args.firstIndex(of: "-analyzeFiles"), idx + 1 < args.count {

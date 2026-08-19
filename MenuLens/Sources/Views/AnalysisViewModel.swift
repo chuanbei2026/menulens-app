@@ -231,7 +231,8 @@ final class AnalysisViewModel: ObservableObject {
         imageGenTask = Task { [weak self] in
             await withTaskGroup(of: [(String, UIImage?)].self) { group in
                 var pending = jobs[...]
-                let window = 3
+                // 2-wide: stays under gpt-image-1's images-per-minute cap.
+                let window = 2
                 func addNext(_ group: inout TaskGroup<[(String, UIImage?)]>) {
                     guard let job = pending.popFirst() else { return }
                     group.addTask {

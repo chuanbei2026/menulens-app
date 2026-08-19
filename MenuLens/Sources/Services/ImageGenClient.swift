@@ -92,6 +92,9 @@ struct ImageGenClient {
 
     // MARK: - Shared plumbing
 
+    /// Sends one generation request, retrying rate-limit (429) and server
+    /// errors with linear backoff — bulk thumbnail batches routinely brush
+    /// against gpt-image-1's images-per-minute cap.
     private func requestImage(prompt: String) async -> UIImage? {
         guard !apiKey.isEmpty else { return nil }
         let payload: [String: Any] = [
@@ -114,13 +117,24 @@ struct ImageGenClient {
             let data: [Item]
         }
 
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
-              let http = response as? HTTPURLResponse, (200 ..< 300).contains(http.statusCode),
-              let decoded = try? JSONDecoder().decode(Response.self, from: data),
-              let b64 = decoded.data.first?.b64_json,
-              let imageData = Data(base64Encoded: b64)
-        else { return nil }
-        return UIImage(data: imageData)
+        for attempt in 0 ..< 4 {
+            guard let (data, response) = try? await URLSession.shared.data(for: request),
+                  let http = response as? HTTPURLResponse
+            else { return nil }
+
+            if http.statusCode == 429 || (500 ..< 600).contains(http.statusCode) {
+                let seconds = UInt64(attempt + 1) * 10
+                try? await Task.sleep(nanoseconds: seconds * 1_000_000_000)
+                continue
+            }
+            guard (200 ..< 300).contains(http.statusCode),
+                  let decoded = try? JSONDecoder().decode(Response.self, from: data),
+                  let b64 = decoded.data.first?.b64_json,
+                  let imageData = Data(base64Encoded: b64)
+            else { return nil }
+            return UIImage(data: imageData)
+        }
+        return nil
     }
 
     private func downscale(_ image: UIImage, to side: CGFloat) -> UIImage {
