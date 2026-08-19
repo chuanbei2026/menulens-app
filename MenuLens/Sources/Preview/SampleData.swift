@@ -99,6 +99,34 @@ enum SampleData {
         return UIImage(cgImage: out)
     }
 
+    /// The same four dishes but with bboxes deliberately crammed together so
+    /// naive placement MUST overlap — regression fixture for the smart
+    /// (mutual-exclusion) card layout.
+    static var crowdedDocument: MenuDocument {
+        let squeezed = document.sections.flatMap(\.items).enumerated().map { index, item in
+            MenuItemEntry(
+                originalName: item.originalName,
+                chineseName: item.chineseName,
+                price: item.price,
+                originalDescription: item.originalDescription,
+                chineseDescription: item.chineseDescription,
+                bbox: NormalizedRect(x: 0.08, y: 0.20 + 0.018 * Double(index), width: 0.5, height: 0.03),
+                photoBBox: nil
+            )
+        }
+        return MenuDocument(
+            sourceLanguage: document.sourceLanguage,
+            sourceLanguageChinese: document.sourceLanguageChinese,
+            restaurantName: document.restaurantName,
+            sections: [MenuSection(
+                originalTitle: "Crowded",
+                chineseTitle: "拥挤测试",
+                bbox: NormalizedRect(x: 0.08, y: 0.143, width: 0.3, height: 0.036),
+                items: squeezed
+            )]
+        )
+    }
+
     // MARK: - The matching analysis result
 
     /// Fractions of the 1000 x 1400 canvas above.

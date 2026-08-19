@@ -63,6 +63,9 @@ struct ContentView: View {
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
                     viewModel.loadSample()
                 }
+                if args.contains("-loadSampleCrowded") {
+                    viewModel.loadSample(crowded: true)
+                }
                 if args.contains("-autoPDF"), let data = viewModel.pdfData {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         .appendingPathComponent("sample.pdf")
