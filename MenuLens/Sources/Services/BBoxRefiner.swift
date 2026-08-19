@@ -37,22 +37,56 @@ enum BBoxRefiner {
     }
 
     private static func refineItem(_ item: MenuItemEntry, lines: [Line]) -> MenuItemEntry {
-        guard let line = bestMatch(for: item.originalName, in: lines) else { return item }
-        let snapped = NormalizedRect(
-            x: line.box.minX,
-            y: line.box.minY,
-            width: max(item.bbox.width, line.box.width),
-            height: item.bbox.height
-        )
+        let nameLine = bestMatch(for: item.originalName, in: lines)
+        // The name bbox becomes the pure OCR line box (not the VLM's whole
+        // text block) — the replace-style canvas needs line-accurate frames.
+        let nameBox = nameLine.map { line in
+            NormalizedRect(
+                x: line.box.minX, y: line.box.minY,
+                width: line.box.width, height: line.box.height
+            )
+        } ?? item.bbox
+
+        var descriptionBox: NormalizedRect?
+        if let description = item.originalDescription {
+            descriptionBox = descriptionHull(
+                for: description,
+                in: lines,
+                below: nameLine?.box ?? item.bbox.cgRect
+            )
+        }
+
         return MenuItemEntry(
             originalName: item.originalName,
             chineseName: item.chineseName,
             price: item.price,
             originalDescription: item.originalDescription,
             chineseDescription: item.chineseDescription,
-            bbox: snapped,
-            photoBBox: item.photoBBox
+            bbox: nameBox,
+            photoBBox: item.photoBBox,
+            descriptionBBox: descriptionBox
         )
+    }
+
+    /// Union of OCR lines that are fragments of this item's description and
+    /// sit spatially near (at/below) the item's name line.
+    private static func descriptionHull(for description: String, in lines: [Line], below nameBox: CGRect) -> NormalizedRect? {
+        let target = normalize(description)
+        guard target.count >= 8 else { return nil }
+        var hull: CGRect = .null
+        for line in lines {
+            let candidate = normalize(line.text)
+            guard candidate.count >= 6, target.contains(candidate) else { continue }
+            // Spatial gate: same column region, within ~1.5 block-heights below.
+            let xOverlap = min(line.box.maxX, nameBox.maxX + 0.05) - max(line.box.minX, nameBox.minX - 0.05)
+            guard xOverlap > 0,
+                  line.box.midY > nameBox.minY - 0.01,
+                  line.box.midY < nameBox.maxY + 0.15
+            else { continue }
+            hull = hull.union(line.box)
+        }
+        guard !hull.isNull else { return nil }
+        return NormalizedRect(x: hull.minX, y: hull.minY, width: hull.width, height: hull.height)
     }
 
     // MARK: - OCR

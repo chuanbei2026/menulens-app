@@ -1,3 +1,4 @@
+import CoreImage
 import UIKit
 
 /// Shared wrapped-text drawing used by the layout and appendix renderers.
@@ -24,17 +25,24 @@ enum TextDraw {
     }
 }
 
-/// Draws one menu page's bilingual layout: the rectified photo as a clearly
-/// readable watermark with translation cards overlaid at their own positions.
-/// Deliberately NO photo crops or AI thumbnails here — the menu's own photos
-/// already show through the watermark, and dish images live in the list view
-/// and the PDF appendix. Used by both the in-app zoomable canvas and the
-/// PDF's layout pages, so they always look identical.
+/// Replace-style bilingual layout, like a translation camera:
+///
+/// - the rectified menu photo is drawn at FULL opacity — the page IS the menu;
+/// - each dish name stays in the original language, with a small Chinese
+///   name painted just beneath its own line;
+/// - each description block is painted over with the sampled paper color and
+///   rewritten in Chinese within the exact same region.
+///
+/// Because every piece of text only ever occupies the space its original
+/// occupied, overlaps are impossible by construction. Used by both the
+/// in-app zoomable canvas and the PDF's layout pages.
 struct MenuLayoutRenderer {
     let document: MenuDocument
     /// The rectified page photo (orientation already normalized).
     let image: UIImage
     let pageWidth: CGFloat
+
+    private static let ciContext = CIContext()
 
     var pageSize: CGSize {
         let aspect = image.size.height / max(image.size.width, 1)
@@ -55,179 +63,117 @@ struct MenuLayoutRenderer {
         let pageRect = CGRect(origin: .zero, size: pageSize)
         UIColor.white.setFill()
         UIBezierPath(rect: pageRect).fill()
-        image.draw(in: pageRect, blendMode: .normal, alpha: 0.38)
+        image.draw(in: pageRect)
 
-        // Section titles first (they are fixed obstacles for the cards).
-        for title in sectionTitles() {
-            TextDraw.text(
-                title.text, font: .boldSystemFont(ofSize: 26), color: .black,
-                at: title.rect.origin, maxWidth: title.rect.width
-            )
-        }
+        let canvas = pageSize
+        let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
 
-        for card in resolvedCards() {
-            // A visibly displaced card gets a thin leader line back to its
-            // anchor so the original menu line stays identifiable.
-            if abs(card.rect.minY - card.anchor.y + 6) > 14 {
-                UIColor.black.withAlphaComponent(0.22).setStroke()
-                let leader = UIBezierPath()
-                leader.move(to: card.anchor)
-                leader.addLine(to: CGPoint(x: card.rect.minX + 10, y: card.rect.minY))
-                leader.lineWidth = 1
-                leader.stroke()
+        for section in document.sections {
+            for item in section.items {
+                let nameRect = item.bbox.rect(in: canvas)
+
+                if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
+                    // Replace the original description in place.
+                    let block = descBox.rect(in: canvas).insetBy(dx: -3, dy: -2)
+                    let paper = sampledColor(around: descBox)
+                    paper.setFill()
+                    UIBezierPath(roundedRect: block, cornerRadius: 3).fill()
+
+                    drawFitted(
+                        name: item.chineseName, body: zhDesc,
+                        nameColor: nameColor,
+                        in: block.insetBy(dx: 2, dy: 1)
+                    )
+                } else {
+                    // No description block: paint the small Chinese name just
+                    // beneath the original name line.
+                    let size = max(min(nameRect.height * 0.72, 15), 9)
+                    TextDraw.text(
+                        item.chineseName,
+                        font: .systemFont(ofSize: size, weight: .semibold),
+                        color: nameColor,
+                        at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
+                        maxWidth: canvas.width - nameRect.minX - 8
+                    )
+                }
             }
-
-            UIColor.white.withAlphaComponent(0.95).setFill()
-            let bg = UIBezierPath(roundedRect: card.rect, cornerRadius: 8)
-            bg.fill()
-            UIColor.black.withAlphaComponent(0.12).setStroke()
-            bg.stroke()
-
-            _ = drawItemContent(
-                card.item,
-                at: CGPoint(x: card.rect.minX + 8, y: card.rect.minY + 6),
-                maxWidth: card.rect.width - 16,
-                dryRun: false
-            )
         }
     }
 
-    /// Which dish card sits under a normalized (0...1, top-left origin) point.
+    /// Chinese name (accent color) + description (dark gray) flowed together
+    /// inside the replaced block, font auto-shrunk until it fits.
+    private func drawFitted(name: String, body: String, nameColor: UIColor, in block: CGRect) {
+        let combined = "\(name)  \(body)"
+        var fontSize = max(min(block.height * 0.8, 15), 9)
+        while fontSize > 8 {
+            let height = TextDraw.text(
+                combined, font: .systemFont(ofSize: fontSize),
+                color: .black, at: .zero, maxWidth: block.width, dryRun: true
+            )
+            if height <= block.height + 4 { break }
+            fontSize -= 1
+        }
+        let font = UIFont.systemFont(ofSize: fontSize)
+        let nameFont = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
+        let attributed = NSMutableAttributedString()
+        attributed.append(NSAttributedString(string: name + "  ", attributes: [
+            .font: nameFont, .foregroundColor: nameColor,
+        ]))
+        attributed.append(NSAttributedString(string: body, attributes: [
+            .font: font, .foregroundColor: UIColor(white: 0.22, alpha: 1),
+        ]))
+        attributed.draw(
+            with: CGRect(origin: block.origin, size: CGSize(width: block.width, height: block.height + 6)),
+            options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil
+        )
+    }
+
+    /// Which dish sits under a normalized (0...1, top-left origin) point:
+    /// the name line (plus its Chinese caption) or the description block.
     func hitTest(normalizedPoint point: CGPoint) -> (section: Int, item: Int)? {
         let canvas = pageSize
         let p = CGPoint(x: point.x * canvas.width, y: point.y * canvas.height)
-        return resolvedCards().first { $0.rect.contains(p) }
-            .map { ($0.sectionIndex, $0.itemIndex) }
-    }
-
-    // MARK: - Smart card placement (mutual exclusion)
-
-    struct ResolvedCard {
-        let sectionIndex: Int
-        let itemIndex: Int
-        let item: MenuItemEntry
-        /// The item's original bbox origin on the page.
-        let anchor: CGPoint
-        /// Where the card actually landed after collision resolution.
-        let rect: CGRect
-    }
-
-    private struct SectionTitle {
-        let text: String
-        let rect: CGRect
-    }
-
-    private func sectionTitles() -> [SectionTitle] {
-        let canvas = pageSize
-        return document.sections.compactMap { section in
-            guard let bbox = section.bbox,
-                  section.originalTitle != nil || section.chineseTitle != nil
-            else { return nil }
-            let origin = bbox.rect(in: canvas).origin
-            let text = [section.originalTitle, section.chineseTitle]
-                .compactMap { $0 }.joined(separator: "  ·  ")
-            let maxWidth = canvas.width - origin.x - 20
-            let height = TextDraw.text(
-                text, font: .boldSystemFont(ofSize: 26), color: .black,
-                at: origin, maxWidth: maxWidth, dryRun: true
-            )
-            let width = min(
-                (text as NSString).size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: 26)]).width,
-                maxWidth
-            )
-            return SectionTitle(text: text, rect: CGRect(x: origin.x, y: origin.y, width: width, height: height))
-        }
-    }
-
-    /// Cards compete for space: sorted top-to-bottom, each card is pushed
-    /// below whatever it collides with (section titles and already-placed
-    /// cards) until it overlaps nothing. Pure downward motion, so the sweep
-    /// always terminates. Two cards only "collide" when their horizontal
-    /// overlap is substantial, which keeps two-column menus intact.
-    func resolvedCards() -> [ResolvedCard] {
-        let canvas = pageSize
-        let gap: CGFloat = 6
-
-        struct Pending {
-            let sectionIndex: Int
-            let itemIndex: Int
-            let item: MenuItemEntry
-            let anchor: CGPoint
-            var rect: CGRect
-        }
-
-        var pending: [Pending] = []
-        for (s, section) in document.sections.enumerated() {
-            for (i, item) in section.items.enumerated() {
-                let box = item.bbox.rect(in: canvas)
-                let cursor = CGPoint(x: box.minX, y: box.minY)
-                let maxWidth = min(max(box.width, 180), canvas.width - cursor.x - 12)
-                let measured = drawItemContent(item, at: cursor, maxWidth: maxWidth, dryRun: true)
-                pending.append(Pending(
-                    sectionIndex: s, itemIndex: i, item: item,
-                    anchor: cursor,
-                    rect: CGRect(x: cursor.x - 8, y: cursor.y - 6, width: maxWidth + 16, height: measured + 12)
-                ))
-            }
-        }
-        pending.sort { ($0.rect.minY, $0.rect.minX) < ($1.rect.minY, $1.rect.minX) }
-
-        func conflicts(_ a: CGRect, _ b: CGRect) -> Bool {
-            guard a.insetBy(dx: 0, dy: -gap / 2).intersects(b) else { return false }
-            let xOverlap = min(a.maxX, b.maxX) - max(a.minX, b.minX)
-            return xOverlap > min(a.width, b.width) * 0.25
-        }
-
-        var obstacles: [CGRect] = sectionTitles().map(\.rect)
-        var placed: [ResolvedCard] = []
-        for var card in pending {
-            var iterations = 0
-            var moved = true
-            while moved, iterations < 64 {
-                moved = false
-                for obstacle in obstacles where conflicts(card.rect, obstacle) {
-                    card.rect.origin.y = obstacle.maxY + gap
-                    moved = true
+        for (sectionIndex, section) in document.sections.enumerated() {
+            for (itemIndex, item) in section.items.enumerated() {
+                var zone = item.bbox.rect(in: canvas).insetBy(dx: -6, dy: -6)
+                zone.size.height += 18 // include the Chinese caption below
+                if zone.contains(p) { return (sectionIndex, itemIndex) }
+                if let descBox = item.descriptionBBox,
+                   descBox.rect(in: canvas).insetBy(dx: -4, dy: -4).contains(p) {
+                    return (sectionIndex, itemIndex)
                 }
-                iterations += 1
             }
-            // Keep the card on the page even if the sweep ran out of room.
-            card.rect.origin.y = min(card.rect.origin.y, canvas.height - card.rect.height - 4)
-            obstacles.append(card.rect)
-            placed.append(ResolvedCard(
-                sectionIndex: card.sectionIndex, itemIndex: card.itemIndex,
-                item: card.item, anchor: card.anchor, rect: card.rect
-            ))
         }
-        return placed
+        return nil
     }
 
-    /// Draws (or just measures) one item's stacked content:
-    /// original name — Chinese name + price — Chinese description.
-    @discardableResult
-    private func drawItemContent(_ item: MenuItemEntry, at origin: CGPoint, maxWidth: CGFloat, dryRun: Bool) -> CGFloat {
-        var y = origin.y
+    /// Average paper color of the region (slightly lightened) — used to
+    /// paint over the original text before rewriting it in Chinese.
+    private func sampledColor(around normalizedRect: NormalizedRect) -> UIColor {
+        guard let cg = image.cgImage else { return UIColor(white: 0.97, alpha: 1) }
+        let w = CGFloat(cg.width)
+        let h = CGFloat(cg.height)
+        // Convert top-left normalized rect to Core Image's bottom-left space.
+        let rect = CGRect(
+            x: normalizedRect.x * w,
+            y: h - (normalizedRect.y + normalizedRect.height) * h,
+            width: normalizedRect.width * w,
+            height: normalizedRect.height * h
+        ).integral
+        guard rect.width >= 2, rect.height >= 2 else { return UIColor(white: 0.97, alpha: 1) }
 
-        y += TextDraw.text(
-            item.originalName, font: .boldSystemFont(ofSize: 20), color: .black,
-            at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun
-        ) + 4
-
-        var nameLine = item.chineseName
-        if let price = item.price { nameLine += "   \(price)" }
-        y += TextDraw.text(
-            nameLine, font: .systemFont(ofSize: 17, weight: .medium),
-            color: UIColor(red: 0.72, green: 0.23, blue: 0.11, alpha: 1),
-            at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun
+        let averaged = CIImage(cgImage: cg).applyingFilter("CIAreaAverage", parameters: [
+            kCIInputExtentKey: CIVector(cgRect: rect),
+        ])
+        var pixel = [UInt8](repeating: 0, count: 4)
+        Self.ciContext.render(
+            averaged, toBitmap: &pixel, rowBytes: 4,
+            bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+            format: .RGBA8, colorSpace: CGColorSpaceCreateDeviceRGB()
         )
-
-        if let zhDesc = item.chineseDescription {
-            y += 3
-            y += TextDraw.text(
-                zhDesc, font: .systemFont(ofSize: 13), color: .darkGray,
-                at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun
-            )
-        }
-        return y - origin.y
+        // Lighten slightly: the average includes the (dark) glyphs, while we
+        // want the paper behind them.
+        func lift(_ v: UInt8) -> CGFloat { min(CGFloat(v) / 255 * 1.05 + 0.01, 1) }
+        return UIColor(red: lift(pixel[0]), green: lift(pixel[1]), blue: lift(pixel[2]), alpha: 1)
     }
 }

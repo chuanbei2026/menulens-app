@@ -99,34 +99,6 @@ enum SampleData {
         return UIImage(cgImage: out)
     }
 
-    /// The same four dishes but with bboxes deliberately crammed together so
-    /// naive placement MUST overlap — regression fixture for the smart
-    /// (mutual-exclusion) card layout.
-    static var crowdedDocument: MenuDocument {
-        let squeezed = document.sections.flatMap(\.items).enumerated().map { index, item in
-            MenuItemEntry(
-                originalName: item.originalName,
-                chineseName: item.chineseName,
-                price: item.price,
-                originalDescription: item.originalDescription,
-                chineseDescription: item.chineseDescription,
-                bbox: NormalizedRect(x: 0.08, y: 0.20 + 0.018 * Double(index), width: 0.5, height: 0.03),
-                photoBBox: nil
-            )
-        }
-        return MenuDocument(
-            sourceLanguage: document.sourceLanguage,
-            sourceLanguageChinese: document.sourceLanguageChinese,
-            restaurantName: document.restaurantName,
-            sections: [MenuSection(
-                originalTitle: "Crowded",
-                chineseTitle: "拥挤测试",
-                bbox: NormalizedRect(x: 0.08, y: 0.143, width: 0.3, height: 0.036),
-                items: squeezed
-            )]
-        )
-    }
-
     // MARK: - The matching analysis result
 
     /// Fractions of the 1000 x 1400 canvas above.
@@ -146,8 +118,9 @@ enum SampleData {
                         price: "9,50 €",
                         originalDescription: "Oignons caramélisés, croûtons, fromage fondu",
                         chineseDescription: "焦糖化洋葱、面包丁、融化的奶酪",
-                        bbox: NormalizedRect(x: 0.08, y: 0.193, width: 0.50, height: 0.088),
-                        photoBBox: NormalizedRect(x: 0.64, y: 0.179, width: 0.28, height: 0.129)
+                        bbox: NormalizedRect(x: 0.08, y: 0.193, width: 0.42, height: 0.026),
+                        photoBBox: NormalizedRect(x: 0.64, y: 0.179, width: 0.28, height: 0.129),
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.225, width: 0.45, height: 0.019)
                     ),
                     MenuItemEntry(
                         originalName: "Salade de chèvre chaud",
@@ -155,8 +128,9 @@ enum SampleData {
                         price: "11,00 €",
                         originalDescription: "Fromage de chèvre rôti sur toast, miel, noix",
                         chineseDescription: "烤山羊奶酪配吐司、蜂蜜、核桃",
-                        bbox: NormalizedRect(x: 0.08, y: 0.343, width: 0.50, height: 0.088),
-                        photoBBox: nil
+                        bbox: NormalizedRect(x: 0.08, y: 0.343, width: 0.40, height: 0.026),
+                        photoBBox: nil,
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.375, width: 0.44, height: 0.019)
                     ),
                 ]
             ),
@@ -171,8 +145,9 @@ enum SampleData {
                         price: "19,50 €",
                         originalDescription: "Cuisse de canard confite, pommes sarladaises",
                         chineseDescription: "油封鸭腿配萨尔拉风味土豆",
-                        bbox: NormalizedRect(x: 0.08, y: 0.55, width: 0.50, height: 0.088),
-                        photoBBox: NormalizedRect(x: 0.64, y: 0.536, width: 0.28, height: 0.129)
+                        bbox: NormalizedRect(x: 0.08, y: 0.55, width: 0.30, height: 0.026),
+                        photoBBox: NormalizedRect(x: 0.64, y: 0.536, width: 0.28, height: 0.129),
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.582, width: 0.45, height: 0.019)
                     ),
                     MenuItemEntry(
                         originalName: "Steak frites, sauce au poivre",
@@ -180,8 +155,9 @@ enum SampleData {
                         price: "22,00 €",
                         originalDescription: "Entrecôte grillée, frites maison",
                         chineseDescription: "炭烤肋眼牛排、自制薯条",
-                        bbox: NormalizedRect(x: 0.08, y: 0.707, width: 0.50, height: 0.088),
-                        photoBBox: NormalizedRect(x: 0.64, y: 0.693, width: 0.28, height: 0.129)
+                        bbox: NormalizedRect(x: 0.08, y: 0.707, width: 0.44, height: 0.026),
+                        photoBBox: NormalizedRect(x: 0.64, y: 0.693, width: 0.28, height: 0.129),
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.739, width: 0.42, height: 0.019)
                     ),
                 ]
             ),

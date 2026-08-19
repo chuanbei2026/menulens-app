@@ -28,18 +28,22 @@ struct ContentView: View {
             }
             .navigationTitle("Menu Translator")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        showHistory = true
-                    } label: {
-                        Image(systemName: "clock.arrow.circlepath")
+                // Home-screen chrome only; the result screen brings its own
+                // minimal toolbar (home / view switch / share).
+                if viewModel.phase != .done {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showHistory = true
+                        } label: {
+                            Image(systemName: "clock.arrow.circlepath")
+                        }
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                        }
                     }
                 }
             }
@@ -67,8 +71,8 @@ struct ContentView: View {
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
                     viewModel.loadSample()
                 }
-                if args.contains("-loadSampleCrowded") {
-                    viewModel.loadSample(crowded: true)
+                if args.contains("-noImages") {
+                    viewModel.generateDishImages = false
                 }
                 if args.contains("-autoPDF"), let data = viewModel.pdfData {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]

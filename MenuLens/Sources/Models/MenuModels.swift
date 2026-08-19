@@ -9,6 +9,11 @@ struct NormalizedRect: Codable, Hashable {
     let width: Double
     let height: Double
 
+    /// The same rectangle as a normalized CGRect (unit square).
+    var cgRect: CGRect {
+        CGRect(x: x, y: y, width: width, height: height)
+    }
+
     /// Denormalize into pixel/point coordinates of a concrete canvas.
     func rect(in size: CGSize) -> CGRect {
         CGRect(
@@ -27,11 +32,16 @@ struct MenuItemEntry: Codable, Hashable {
     let price: String?
     let originalDescription: String?
     let chineseDescription: String?
-    /// Where this item's text block sits on the photo.
+    /// Where this item's NAME line sits on the photo (OCR-refined when
+    /// possible; falls back to the VLM's text-block box).
     let bbox: NormalizedRect
     /// Where this item's printed photo sits on the menu photo, if the menu
     /// itself shows a picture of the dish. Used to crop the 配图.
     let photoBBox: NormalizedRect?
+    /// Hull of the OCR text lines belonging to this item's description —
+    /// the region the replace-style canvas paints over and rewrites in
+    /// Chinese. nil when OCR found no matching lines (older scans too).
+    var descriptionBBox: NormalizedRect?
 }
 
 /// A titled group of dishes ("Appetizers", "前菜", ...).

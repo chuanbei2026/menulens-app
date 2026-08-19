@@ -268,12 +268,11 @@ final class AnalysisViewModel: ObservableObject {
 
     #if DEBUG
     /// Load the synthetic demo menu — verifies bbox cropping and PDF export
-    /// in the simulator without an API key. `crowded` swaps in the
-    /// overlapping-bbox fixture that exercises the smart card layout.
-    func loadSample(crowded: Bool = false) {
+    /// in the simulator without an API key.
+    func loadSample() {
         let image = SampleData.sampleImage()
         pickedImages = [image]
-        scan = MenuScan.combining(pages: [crowded ? SampleData.crowdedDocument : SampleData.document])
+        scan = MenuScan.combining(pages: [SampleData.document])
         scanImages = [image]
         generatedImages = [:]
         pipeline = nil
