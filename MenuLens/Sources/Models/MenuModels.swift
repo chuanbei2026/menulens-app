@@ -20,15 +20,6 @@ struct NormalizedRect: Codable, Hashable {
     }
 }
 
-/// One token of the interlinear (word-by-word) gloss:
-/// the foreign word as printed on the menu, an optional romanization
-/// (e.g. kana reading / pinyin-style transcription), and its Chinese meaning.
-struct WordGloss: Codable, Hashable {
-    let text: String
-    let romanization: String?
-    let chinese: String
-}
-
 /// One dish on the menu.
 struct MenuItemEntry: Codable, Hashable {
     let originalName: String
@@ -36,10 +27,6 @@ struct MenuItemEntry: Codable, Hashable {
     let price: String?
     let originalDescription: String?
     let chineseDescription: String?
-    /// Word-by-word gloss of the dish name.
-    let words: [WordGloss]
-    /// Word-by-word gloss of the description, when the menu has one.
-    let descriptionWords: [WordGloss]?
     /// Where this item's text block sits on the photo.
     let bbox: NormalizedRect
     /// Where this item's printed photo sits on the menu photo, if the menu
@@ -55,7 +42,7 @@ struct MenuSection: Codable, Hashable {
     let items: [MenuItemEntry]
 }
 
-/// The whole analyzed menu.
+/// One analyzed menu page (the unit returned by a single OpenAI call).
 struct MenuDocument: Codable, Hashable {
     /// BCP-47-ish language name detected by the model, e.g. "Japanese", "French".
     let sourceLanguage: String
@@ -65,4 +52,37 @@ struct MenuDocument: Codable, Hashable {
     let sections: [MenuSection]
 
     var allItems: [MenuItemEntry] { sections.flatMap(\.items) }
+}
+
+/// One complete scan of a menu: one or more photographed pages analyzed
+/// together, plus the metadata shown in the history list. This is the unit
+/// that gets persisted to Documents/scans/<id>/ and exported as one PDF.
+struct MenuScan: Codable, Hashable, Identifiable {
+    let id: UUID
+    let createdAt: Date
+    let restaurantName: String?
+    let sourceLanguage: String
+    let sourceLanguageChinese: String
+    /// One document per photographed page, in page order.
+    let pages: [MenuDocument]
+
+    var allItems: [MenuItemEntry] { pages.flatMap(\.allItems) }
+
+    /// Combine per-page analysis results into one scan record.
+    static func combining(pages: [MenuDocument]) -> MenuScan {
+        MenuScan(
+            id: UUID(),
+            createdAt: Date(),
+            restaurantName: pages.compactMap(\.restaurantName).first,
+            sourceLanguage: pages.first?.sourceLanguage ?? "unknown",
+            sourceLanguageChinese: pages.first?.sourceLanguageChinese ?? "未知",
+            pages: pages
+        )
+    }
+
+    /// Stable key for one dish across the scan, used to file its generated
+    /// thumbnail on disk and look it up at render time.
+    static func dishKey(page: Int, section: Int, item: Int) -> String {
+        "p\(page)_s\(section)_i\(item)"
+    }
 }

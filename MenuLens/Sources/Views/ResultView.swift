@@ -1,117 +1,88 @@
+import PDFKit
 import SwiftUI
 
-/// Scrollable in-app preview of the analyzed menu + "导出 PDF".
+/// Zoomable result viewer: shows the rendered bilingual PDF (layout pages that
+/// mirror the original menu + the per-dish appendix) in a PDFKit view with
+/// pinch-zoom and pan, plus a share/export button.
 struct ResultView: View {
-    let document: MenuDocument
-    let sourceImage: UIImage
+    @ObservedObject var viewModel: AnalysisViewModel
     let onRestart: () -> Void
 
-    @State private var pdfURL: URL?
-    @State private var isRenderingPDF = false
+    @State private var shareURL: URL?
 
     var body: some View {
-        List {
-            Section {
-                LabeledContent("识别语言", value: "\(document.sourceLanguageChinese) (\(document.sourceLanguage))")
-                if let name = document.restaurantName {
-                    LabeledContent("餐厅", value: name)
-                }
-                LabeledContent("菜品数", value: "\(document.allItems.count)")
-            }
-
-            ForEach(Array(document.sections.enumerated()), id: \.offset) { _, section in
-                Section {
-                    ForEach(Array(section.items.enumerated()), id: \.offset) { _, item in
-                        ItemRow(item: item, sourceImage: sourceImage)
-                    }
-                } header: {
-                    if section.originalTitle != nil || section.chineseTitle != nil {
-                        Text([section.chineseTitle, section.originalTitle]
-                            .compactMap { $0 }.joined(separator: " / "))
-                    }
-                }
+        Group {
+            if let data = viewModel.pdfData {
+                PDFKitView(data: data)
+                    .ignoresSafeArea(edges: .bottom)
+            } else {
+                ProgressView("正在排版……")
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            if let progress = viewModel.imageProgress {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("正在生成菜品配图 \(progress.done)/\(progress.total)……完成后自动更新")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity)
+                .background(.thinMaterial)
+            }
+        }
+        .navigationTitle(viewModel.scan?.restaurantName ?? "翻译结果")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button("重新开始", action: onRestart)
             }
             ToolbarItem(placement: .topBarTrailing) {
-                if isRenderingPDF {
-                    ProgressView()
-                } else if let pdfURL {
-                    ShareLink(item: pdfURL) {
+                if let url = currentShareURL() {
+                    ShareLink(item: url) {
                         Label("导出 PDF", systemImage: "square.and.arrow.up")
-                    }
-                } else {
-                    Button {
-                        renderPDF()
-                    } label: {
-                        Label("生成 PDF", systemImage: "doc.richtext")
                     }
                 }
             }
         }
     }
 
-    private func renderPDF() {
-        isRenderingPDF = true
-        let doc = document
-        let image = sourceImage
-        Task.detached(priority: .userInitiated) {
-            let data = MenuPDFRenderer(document: doc, sourceImage: image).renderPDF()
-            let url = FileManager.default.temporaryDirectory
-                .appendingPathComponent("MenuLens-\(Int(Date().timeIntervalSince1970)).pdf")
+    /// Write the current PDF to a stable temp file for ShareLink.
+    /// Re-written whenever the PDF bytes change (e.g. thumbnails landed).
+    private func currentShareURL() -> URL? {
+        guard let data = viewModel.pdfData, let scan = viewModel.scan else { return nil }
+        let name = (scan.restaurantName ?? "菜单")
+            .replacingOccurrences(of: "/", with: "-")
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(name)-\(scan.id.uuidString.prefix(8)).pdf")
+        if (try? Data(contentsOf: url))?.count != data.count {
             try? data.write(to: url)
-            await MainActor.run {
-                pdfURL = url
-                isRenderingPDF = false
-            }
         }
+        return url
     }
 }
 
-private struct ItemRow: View {
-    let item: MenuItemEntry
-    let sourceImage: UIImage
+/// PDFKit wrapper — gives pinch-zoom, pan, and continuous page scrolling.
+struct PDFKitView: UIViewRepresentable {
+    let data: Data
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 12) {
-                if let photoBox = item.photoBBox,
-                   let cropped = sourceImage.crop(normalized: photoBox) {
-                    Image(uiImage: cropped)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 72, height: 72)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(item.originalName)
-                        .font(.headline)
-                    Text(item.chineseName)
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                }
-                Spacer()
-                if let price = item.price {
-                    Text(price)
-                        .font(.subheadline.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                }
-            }
+    func makeUIView(context: Context) -> PDFView {
+        let view = PDFView()
+        view.autoScales = true
+        view.displayMode = .singlePageContinuous
+        view.displayDirection = .vertical
+        view.backgroundColor = .systemGray6
+        view.document = PDFDocument(data: data)
+        return view
+    }
 
-            WordGlossView(words: item.words)
-
-            if let zhDesc = item.chineseDescription {
-                Text(zhDesc)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            if let descWords = item.descriptionWords, !descWords.isEmpty {
-                WordGlossView(words: descWords, compact: true)
-            }
+    func updateUIView(_ view: PDFView, context: Context) {
+        // Replace the document only when the bytes actually changed,
+        // otherwise every SwiftUI update would reset the zoom/scroll position.
+        if view.document?.dataRepresentation()?.count != data.count {
+            view.document = PDFDocument(data: data)
+            view.autoScales = true
         }
-        .padding(.vertical, 4)
     }
 }

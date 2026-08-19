@@ -35,15 +35,13 @@ struct OpenAIClient {
         Extract EVERY menu item visible in the photo and return strict JSON.
 
         Rules:
-        - Detect the menu's language yourself. Translate everything into Simplified Chinese.
-        - `words` is a word-by-word (interlinear) gloss of the item name, in reading order: \
-        each token is the exact word as printed, an optional romanization (kana reading, \
-        romaja, etc. — null for Latin-script languages), and its Chinese meaning. \
-        Do the same for descriptions in `descriptionWords` when a description exists.
+        - Detect the menu's language yourself. Translate every dish name and every \
+        description into natural Simplified Chinese (whole-phrase translation).
         - Every bounding box is normalized to the photo: x, y, width, height all in [0, 1], \
         origin at the top-left. `bbox` covers the item's text block. `photoBBox` covers the \
         dish's printed photo ONLY if the menu actually shows a picture for that item; \
-        otherwise null. Never invent photo boxes.
+        otherwise null. Never invent photo boxes, and make photoBBox hug the photo tightly — \
+        it must not extend past the photo's edges or past the image border.
         - Keep prices exactly as printed (currency symbol included). Use null when absent.
         - Group items under the menu's own section headings; if the menu has no sections, \
         return a single section with null titles.
@@ -64,16 +62,6 @@ struct OpenAIClient {
             ],
             "required": ["x", "y", "width", "height"],
         ]
-        let wordGloss: [String: Any] = [
-            "type": "object",
-            "additionalProperties": false,
-            "properties": [
-                "text": ["type": "string"],
-                "romanization": ["type": ["string", "null"]],
-                "chinese": ["type": "string"],
-            ],
-            "required": ["text", "romanization", "chinese"],
-        ]
         let item: [String: Any] = [
             "type": "object",
             "additionalProperties": false,
@@ -83,15 +71,13 @@ struct OpenAIClient {
                 "price": ["type": ["string", "null"]],
                 "originalDescription": ["type": ["string", "null"]],
                 "chineseDescription": ["type": ["string", "null"]],
-                "words": ["type": "array", "items": wordGloss],
-                "descriptionWords": ["type": ["array", "null"], "items": wordGloss],
                 "bbox": normalizedRect,
                 "photoBBox": ["anyOf": [normalizedRect, ["type": "null"]]],
             ],
             "required": [
                 "originalName", "chineseName", "price",
                 "originalDescription", "chineseDescription",
-                "words", "descriptionWords", "bbox", "photoBBox",
+                "bbox", "photoBBox",
             ],
         ]
         let section: [String: Any] = [

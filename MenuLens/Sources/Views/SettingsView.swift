@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openai_model") private var model = "gpt-4.1"
+    @AppStorage("generate_dish_images") private var generateDishImages = true
     @State private var apiKey = KeychainStore.loadAPIKey()
 
     private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
@@ -25,7 +26,13 @@ struct SettingsView: View {
                         ForEach(models, id: \.self) { Text($0) }
                     }
                 } footer: {
-                    Text("识别整页菜单建议用 gpt-4.1 或 gpt-4o；mini 版更快更便宜，但版式坐标和小语种逐词对照的质量会下降。")
+                    Text("识别整页菜单建议用 gpt-4.1 或 gpt-4o；mini 版更快更便宜，但版式坐标和小语种翻译的质量会下降。")
+                }
+
+                Section {
+                    Toggle("自动生成菜品配图", isOn: $generateDishImages)
+                } footer: {
+                    Text("菜单上没有照片的菜，用 gpt-image-1 自动生成小图（并发请求，每张约 $0.01–0.02）。菜单本身的照片始终优先使用。")
                 }
             }
             .navigationTitle("设置")

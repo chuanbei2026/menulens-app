@@ -3,9 +3,10 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = AnalysisViewModel()
-    @State private var photosItem: PhotosPickerItem?
+    @State private var photosItems: [PhotosPickerItem] = []
     @State private var showCamera = false
     @State private var showSettings = false
+    @State private var showHistory = false
 
     var body: some View {
         NavigationStack {
@@ -13,18 +14,23 @@ struct ContentView: View {
                 switch viewModel.phase {
                 case .idle, .failed:
                     startScreen
-                case .analyzing:
-                    analyzingScreen
+                case let .analyzing(completed, total):
+                    analyzingScreen(completed: completed, total: total)
                 case .done:
-                    if let document = viewModel.document, let image = viewModel.pickedImage {
-                        ResultView(document: document, sourceImage: image) {
-                            viewModel.reset()
-                        }
+                    ResultView(viewModel: viewModel) {
+                        viewModel.reset()
                     }
                 }
             }
             .navigationTitle("MenuLens")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showHistory = true
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showSettings = true
@@ -34,16 +40,21 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .sheet(isPresented: $showHistory) {
+                HistoryView(history: viewModel.history) { scan in
+                    viewModel.open(scan)
+                }
+            }
             .fullScreenCover(isPresented: $showCamera) {
                 CameraPicker { image in
-                    viewModel.pickedImage = image
+                    viewModel.pickedImages.append(image)
                 }
                 .ignoresSafeArea()
             }
             #if DEBUG
             // Automation hooks for headless simulator verification:
             //   -loadSample       load the demo menu on launch
-            //   -autoPDF          also render the PDF into Documents/sample.pdf
+            //   -autoPDF          also dump the rendered PDF into Documents
             //   -apiKey <key>     store the key in the Keychain
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
@@ -52,11 +63,7 @@ struct ContentView: View {
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
                     viewModel.loadSample()
                 }
-                if args.contains("-autoPDF") {
-                    let data = MenuPDFRenderer(
-                        document: SampleData.document,
-                        sourceImage: SampleData.sampleImage()
-                    ).renderPDF()
+                if args.contains("-autoPDF"), let data = viewModel.pdfData {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         .appendingPathComponent("sample.pdf")
                     try? data.write(to: url)
@@ -65,56 +72,55 @@ struct ContentView: View {
                     KeychainStore.saveAPIKey(args[idx + 1])
                 }
                 if args.contains("-analyzeSample") {
-                    let image = SampleData.sampleImage()
-                    viewModel.pickedImage = image
+                    viewModel.pickedImages = [SampleData.sampleImage()]
                     Task {
                         await viewModel.analyze()
-                        guard let doc = viewModel.document else { return }
+                        guard let scan = viewModel.scan else { return }
                         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         let encoder = JSONEncoder()
                         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-                        try? (try? encoder.encode(doc))?.write(to: docs.appendingPathComponent("real_result.json"))
-                        let pdf = MenuPDFRenderer(document: doc, sourceImage: image).renderPDF()
-                        try? pdf.write(to: docs.appendingPathComponent("real_result.pdf"))
+                        encoder.dateEncodingStrategy = .iso8601
+                        try? (try? encoder.encode(scan))?.write(to: docs.appendingPathComponent("real_result.json"))
+                        try? viewModel.pdfData?.write(to: docs.appendingPathComponent("real_result.pdf"))
                     }
                 }
             }
             #endif
-            .onChange(of: photosItem) {
-                guard let item = photosItem else { return }
+            .onChange(of: photosItems) {
+                let items = photosItems
+                guard !items.isEmpty else { return }
                 Task {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        viewModel.pickedImage = image
+                    for item in items {
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            viewModel.pickedImages.append(image)
+                        }
                     }
-                    photosItem = nil
+                    photosItems = []
                 }
             }
         }
     }
 
+    // MARK: - Start screen
+
     private var startScreen: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Spacer()
 
-            if let image = viewModel.pickedImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 340)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .shadow(radius: 4)
-            } else {
+            if viewModel.pickedImages.isEmpty {
                 VStack(spacing: 10) {
                     Image(systemName: "doc.text.viewfinder")
                         .font(.system(size: 64))
                         .foregroundStyle(.secondary)
-                    Text("拍一张菜单，得到同版式的中文对照 PDF")
+                    Text("拍下菜单，得到同版式的中文对照 PDF")
                         .font(.headline)
-                    Text("逐词翻译 · 菜品配图 · 任意语言")
+                    Text("支持多页 · 自动配图 · 任意语言 · 本地保存")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+            } else {
+                pageThumbnails
             }
 
             if case let .failed(message) = viewModel.phase {
@@ -131,12 +137,12 @@ struct ContentView: View {
                 Button {
                     showCamera = true
                 } label: {
-                    Label("拍照", systemImage: "camera")
+                    Label(viewModel.pickedImages.isEmpty ? "拍照" : "再拍一页", systemImage: "camera")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
 
-                PhotosPicker(selection: $photosItem, matching: .images) {
+                PhotosPicker(selection: $photosItems, maxSelectionCount: 8, matching: .images) {
                     Label("相册", systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
@@ -147,11 +153,16 @@ struct ContentView: View {
             Button {
                 Task { await viewModel.analyze() }
             } label: {
-                Label("识别并翻译", systemImage: "sparkles")
-                    .frame(maxWidth: .infinity)
+                Label(
+                    viewModel.pickedImages.count > 1
+                        ? "识别并翻译（\(viewModel.pickedImages.count) 页）"
+                        : "识别并翻译",
+                    systemImage: "sparkles"
+                )
+                .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(viewModel.pickedImage == nil)
+            .disabled(viewModel.pickedImages.isEmpty)
             .padding(.horizontal)
 
             #if DEBUG
@@ -166,20 +177,55 @@ struct ContentView: View {
         }
     }
 
-    private var analyzingScreen: some View {
+    /// Horizontal strip of queued menu pages, each removable.
+    private var pageThumbnails: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(Array(viewModel.pickedImages.enumerated()), id: \.offset) { index, image in
+                    VStack(spacing: 4) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 130, height: 180)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            Button {
+                                viewModel.pickedImages.remove(at: index)
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(.white, .black.opacity(0.55))
+                            }
+                            .padding(5)
+                        }
+                        Text("第 \(index + 1) 页")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+        .frame(height: 210)
+    }
+
+    // MARK: - Analyzing screen
+
+    private func analyzingScreen(completed: Int, total: Int) -> some View {
         VStack(spacing: 16) {
-            if let image = viewModel.pickedImage {
-                Image(uiImage: image)
+            if let first = viewModel.pickedImages.first {
+                Image(uiImage: first)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: 280)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                     .opacity(0.6)
             }
-            ProgressView()
-            Text("正在识别菜单并逐词翻译……")
+            ProgressView(value: Double(completed), total: Double(max(total, 1)))
+                .padding(.horizontal, 40)
+            Text(total > 1 ? "正在识别翻译……已完成 \(completed)/\(total) 页" : "正在识别菜单并翻译……")
                 .foregroundStyle(.secondary)
-            Text("整页菜单一般需要 30–90 秒")
+            Text("多页会并发处理，通常 1–2 分钟内完成")
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
         }

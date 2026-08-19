@@ -95,19 +95,6 @@ enum SampleData {
                         price: "9,50 €",
                         originalDescription: "Oignons caramélisés, croûtons, fromage fondu",
                         chineseDescription: "焦糖化洋葱、面包丁、融化的奶酪",
-                        words: [
-                            WordGloss(text: "Soupe", romanization: nil, chinese: "汤"),
-                            WordGloss(text: "à l'", romanization: nil, chinese: "用/加"),
-                            WordGloss(text: "oignon", romanization: nil, chinese: "洋葱"),
-                            WordGloss(text: "gratinée", romanization: nil, chinese: "焗烤的"),
-                        ],
-                        descriptionWords: [
-                            WordGloss(text: "Oignons", romanization: nil, chinese: "洋葱"),
-                            WordGloss(text: "caramélisés", romanization: nil, chinese: "焦糖化的"),
-                            WordGloss(text: "croûtons", romanization: nil, chinese: "面包丁"),
-                            WordGloss(text: "fromage", romanization: nil, chinese: "奶酪"),
-                            WordGloss(text: "fondu", romanization: nil, chinese: "融化的"),
-                        ],
                         bbox: NormalizedRect(x: 0.08, y: 0.193, width: 0.50, height: 0.088),
                         photoBBox: NormalizedRect(x: 0.64, y: 0.179, width: 0.28, height: 0.129)
                     ),
@@ -117,13 +104,6 @@ enum SampleData {
                         price: "11,00 €",
                         originalDescription: "Fromage de chèvre rôti sur toast, miel, noix",
                         chineseDescription: "烤山羊奶酪配吐司、蜂蜜、核桃",
-                        words: [
-                            WordGloss(text: "Salade", romanization: nil, chinese: "沙拉"),
-                            WordGloss(text: "de", romanization: nil, chinese: "的"),
-                            WordGloss(text: "chèvre", romanization: nil, chinese: "山羊(奶酪)"),
-                            WordGloss(text: "chaud", romanization: nil, chinese: "热的"),
-                        ],
-                        descriptionWords: nil,
                         bbox: NormalizedRect(x: 0.08, y: 0.343, width: 0.50, height: 0.088),
                         photoBBox: nil
                     ),
@@ -140,12 +120,6 @@ enum SampleData {
                         price: "19,50 €",
                         originalDescription: "Cuisse de canard confite, pommes sarladaises",
                         chineseDescription: "油封鸭腿配萨尔拉风味土豆",
-                        words: [
-                            WordGloss(text: "Confit", romanization: nil, chinese: "油封"),
-                            WordGloss(text: "de", romanization: nil, chinese: "的"),
-                            WordGloss(text: "canard", romanization: nil, chinese: "鸭"),
-                        ],
-                        descriptionWords: nil,
                         bbox: NormalizedRect(x: 0.08, y: 0.55, width: 0.50, height: 0.088),
                         photoBBox: NormalizedRect(x: 0.64, y: 0.536, width: 0.28, height: 0.129)
                     ),
@@ -155,14 +129,6 @@ enum SampleData {
                         price: "22,00 €",
                         originalDescription: "Entrecôte grillée, frites maison",
                         chineseDescription: "炭烤肋眼牛排、自制薯条",
-                        words: [
-                            WordGloss(text: "Steak", romanization: nil, chinese: "牛排"),
-                            WordGloss(text: "frites", romanization: nil, chinese: "薯条"),
-                            WordGloss(text: "sauce", romanization: nil, chinese: "酱汁"),
-                            WordGloss(text: "au", romanization: nil, chinese: "配"),
-                            WordGloss(text: "poivre", romanization: nil, chinese: "胡椒"),
-                        ],
-                        descriptionWords: nil,
                         bbox: NormalizedRect(x: 0.08, y: 0.707, width: 0.50, height: 0.088),
                         photoBBox: NormalizedRect(x: 0.64, y: 0.693, width: 0.28, height: 0.129)
                     ),
@@ -172,14 +138,4 @@ enum SampleData {
     )
 }
 
-#Preview("结果页(示例数据)") {
-    NavigationStack {
-        ResultView(document: SampleData.document, sourceImage: SampleData.sampleImage()) {}
-    }
-}
-
-#Preview("逐词对照") {
-    WordGlossView(words: SampleData.document.allItems[0].words)
-        .padding()
-}
 #endif
