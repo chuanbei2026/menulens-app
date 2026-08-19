@@ -47,7 +47,7 @@ struct ContentView: View {
             }
             .fullScreenCover(isPresented: $showCamera) {
                 CameraPicker { image in
-                    viewModel.pickedImages.append(image)
+                    Task { await viewModel.appendPhotos([image]) }
                 }
                 .ignoresSafeArea()
             }
@@ -72,10 +72,11 @@ struct ContentView: View {
                     KeychainStore.saveAPIKey(args[idx + 1])
                 }
                 if args.contains("-analyzeSample") || args.contains("-analyzeSampleWarped") {
-                    viewModel.pickedImages = args.contains("-analyzeSampleWarped")
-                        ? [SampleData.warpedSampleImage()]
-                        : [SampleData.sampleImage()]
+                    let photo = args.contains("-analyzeSampleWarped")
+                        ? SampleData.warpedSampleImage()
+                        : SampleData.sampleImage()
                     Task {
+                        await viewModel.appendPhotos([photo])
                         await viewModel.analyze()
                         guard let scan = viewModel.scan else { return }
                         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -92,13 +93,15 @@ struct ContentView: View {
                 let items = photosItems
                 guard !items.isEmpty else { return }
                 Task {
+                    var loaded: [UIImage] = []
                     for item in items {
                         if let data = try? await item.loadTransferable(type: Data.self),
                            let image = UIImage(data: data) {
-                            viewModel.pickedImages.append(image)
+                            loaded.append(image)
                         }
                     }
                     photosItems = []
+                    await viewModel.appendPhotos(loaded)
                 }
             }
         }
@@ -123,6 +126,15 @@ struct ContentView: View {
                 }
             } else {
                 pageThumbnails
+            }
+
+            if viewModel.isRectifying {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text("正在矫正照片…")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             if case let .failed(message) = viewModel.phase {

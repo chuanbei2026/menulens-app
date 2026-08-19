@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("generate_dish_images") private var generateDishImages = true
+    @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @State private var apiKey = KeychainStore.loadAPIKey()
 
     private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
@@ -31,8 +32,11 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("自动生成菜品配图", isOn: $generateDishImages)
+                    if generateDishImages {
+                        Toggle("拼图省钱模式", isOn: $thumbnailGridMode)
+                    }
                 } footer: {
-                    Text("菜单上没有照片的菜，用 gpt-image-1 自动生成小图（并发请求，每张约 $0.01–0.02）。菜单本身的照片始终优先使用。")
+                    Text("菜单上没有照片的菜，用 gpt-image-1 自动生成小图。拼图模式一次生成 2×2 四宫格再切开，每道菜约 $0.003（单张模式约 $0.011，画质稍好）。菜单本身的照片始终优先使用。")
                 }
             }
             .navigationTitle("设置")

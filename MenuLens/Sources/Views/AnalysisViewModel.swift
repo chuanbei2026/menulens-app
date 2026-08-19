@@ -9,8 +9,6 @@ struct PipelineProgress: Equatable {
         case done
     }
 
-    var rectifyDone = 0
-    var rectifyTotal = 0
     var pagesDone = 0
     var pagesTotal = 0
     var layoutState: LayoutState = .waiting
@@ -35,7 +33,10 @@ final class AnalysisViewModel: ObservableObject {
 
     @Published var phase: Phase = .idle
     /// Pages queued for the next analysis, in menu-page order.
+    /// Already perspective-rectified — photos are corrected as they're picked.
     @Published var pickedImages: [UIImage] = []
+    /// True while freshly picked photos are being rectified.
+    @Published var isRectifying = false
     /// The scan currently shown in the result view (fresh or from history).
     @Published var scan: MenuScan?
     @Published var scanImages: [UIImage] = []
@@ -51,11 +52,30 @@ final class AnalysisViewModel: ObservableObject {
     /// Generate AI thumbnails for dishes that have no printed photo.
     @AppStorage("generate_dish_images") var generateDishImages = true
 
+    /// Generate thumbnails 4-at-a-time in one 2x2 collage image, then slice —
+    /// ~4x cheaper per dish than one request per dish.
+    @AppStorage("thumbnail_grid_mode") var thumbnailGridMode = true
+
     let history: HistoryStore
     private var imageGenTask: Task<Void, Never>?
 
     init(history: HistoryStore = .shared) {
         self.history = history
+    }
+
+    /// Rectify freshly picked photos (document detection + perspective
+    /// correction, all on-device) and append them to the queue. The
+    /// thumbnails the user sees are already the corrected pages.
+    func appendPhotos(_ photos: [UIImage]) async {
+        guard !photos.isEmpty else { return }
+        isRectifying = true
+        for photo in photos {
+            let rectified = await Task.detached(priority: .userInitiated) {
+                DocumentRectifier.rectify(photo)
+            }.value
+            pickedImages.append(rectified)
+        }
+        isRectifying = false
     }
 
     /// Analyze all picked pages concurrently (one API call per page),
@@ -64,21 +84,10 @@ final class AnalysisViewModel: ObservableObject {
     /// opens as soon as the layout PDF is ready; thumbnails keep filling
     /// in behind the banner and the PDF refreshes when they finish.
     func analyze() async {
-        let originals = pickedImages
-        guard !originals.isEmpty else { return }
+        let images = pickedImages // already rectified at pick time
+        guard !images.isEmpty else { return }
         phase = .analyzing
-        pipeline = PipelineProgress(rectifyTotal: originals.count, pagesTotal: originals.count)
-
-        // Stage 0: perspective-correct each photo so the layout base is a
-        // clean, straight menu sheet (bboxes then line up downstream).
-        var images: [UIImage] = []
-        for original in originals {
-            let rectified = await Task.detached(priority: .userInitiated) {
-                DocumentRectifier.rectify(original)
-            }.value
-            images.append(rectified)
-            pipeline?.rectifyDone += 1
-        }
+        pipeline = PipelineProgress(pagesTotal: images.count)
 
         let jpegs = images.compactMap { $0.jpegDataForUpload() }
         guard jpegs.count == images.count else {
@@ -129,8 +138,6 @@ final class AnalysisViewModel: ObservableObject {
         scanImages = history.loadImages(for: saved)
         generatedImages = history.loadGeneratedImages(for: saved)
         pipeline = PipelineProgress(
-            rectifyDone: saved.pages.count,
-            rectifyTotal: saved.pages.count,
             pagesDone: saved.pages.count,
             pagesTotal: saved.pages.count,
             layoutState: .done,
@@ -181,48 +188,75 @@ final class AnalysisViewModel: ObservableObject {
             return
         }
 
-        var jobs: [(key: String, item: MenuItemEntry)] = []
+        var dishes: [(key: String, spec: ImageGenClient.DishSpec)] = []
         for (p, page) in scan.pages.enumerated() {
             for (s, section) in page.sections.enumerated() {
                 for (i, item) in section.items.enumerated() {
                     let key = MenuScan.dishKey(page: p, section: s, item: i)
                     if item.photoBBox == nil, generatedImages[key] == nil {
-                        jobs.append((key, item))
+                        dishes.append((key, ImageGenClient.DishSpec(
+                            name: item.originalName,
+                            chineseName: item.chineseName,
+                            description: item.originalDescription
+                        )))
                     }
                 }
             }
         }
         pipeline?.imagesDone = 0
-        pipeline?.imagesTotal = jobs.count
-        guard !jobs.isEmpty else { return }
+        pipeline?.imagesTotal = dishes.count
+        guard !dishes.isEmpty else { return }
+
+        // One request per full group of 4 (a 2x2 collage sliced into cells,
+        // ~4x cheaper per dish); leftovers fall back to single requests.
+        enum GenJob {
+            case grid([(key: String, spec: ImageGenClient.DishSpec)])
+            case single(key: String, spec: ImageGenClient.DishSpec)
+        }
+        var jobs: [GenJob] = []
+        if thumbnailGridMode {
+            var rest = dishes[...]
+            while rest.count >= 4 {
+                jobs.append(.grid(Array(rest.prefix(4))))
+                rest = rest.dropFirst(4)
+            }
+            jobs.append(contentsOf: rest.map { .single(key: $0.key, spec: $0.spec) })
+        } else {
+            jobs = dishes.map { .single(key: $0.key, spec: $0.spec) }
+        }
 
         let client = ImageGenClient(apiKey: KeychainStore.loadAPIKey())
         let scanID = scan.id
 
         imageGenTask = Task { [weak self] in
-            await withTaskGroup(of: (String, UIImage?).self) { group in
+            await withTaskGroup(of: [(String, UIImage?)].self) { group in
                 var pending = jobs[...]
                 let window = 3
-                func addNext(_ group: inout TaskGroup<(String, UIImage?)>) {
+                func addNext(_ group: inout TaskGroup<[(String, UIImage?)]>) {
                     guard let job = pending.popFirst() else { return }
                     group.addTask {
-                        let image = await client.generateDishThumbnail(
-                            name: job.item.originalName,
-                            chineseName: job.item.chineseName,
-                            description: job.item.originalDescription
-                        )
-                        return (job.key, image)
+                        switch job {
+                        case let .single(key, spec):
+                            return [(key, await client.generateDishThumbnail(spec))]
+                        case let .grid(cells):
+                            let images = await client.generateDishGrid(cells.map(\.spec))
+                            return cells.enumerated().map { index, cell in
+                                (cell.key, images?[index])
+                            }
+                        }
                     }
                 }
                 for _ in 0 ..< window { addNext(&group) }
 
-                for await (key, image) in group {
+                for await results in group {
                     guard let self, !Task.isCancelled else { return }
-                    if let image {
-                        self.generatedImages[key] = image
-                        self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
+                    for (key, image) in results {
+                        if let image {
+                            self.generatedImages[key] = image
+                            self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
+                        }
+                        self.pipeline?.imagesDone += 1
                     }
-                    self.pipeline?.imagesDone += 1
                     addNext(&group)
                 }
             }
