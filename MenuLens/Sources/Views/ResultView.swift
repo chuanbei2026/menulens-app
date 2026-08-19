@@ -64,7 +64,10 @@ struct ResultView: View {
                 .frame(width: 150)
             }
             ToolbarItem(placement: .topBarLeading) {
-                Button("重新开始", action: onRestart)
+                Button(action: onRestart) {
+                    Image(systemName: "house")
+                }
+                .accessibilityLabel("返回首页")
             }
             ToolbarItem(placement: .topBarTrailing) {
                 if let url = currentShareURL() {
