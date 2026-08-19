@@ -98,6 +98,19 @@ struct ContentView: View {
                             : SampleData.sampleImage(),
                     ])
                 }
+                // Reopen the newest history scan (thumbnails load from disk)
+                // and dump the fully-illustrated PDF to Documents/final.pdf.
+                if args.contains("-openLatest") {
+                    Task { @MainActor in
+                        guard let latest = viewModel.history.scans.first else { return }
+                        viewModel.open(latest)
+                        for _ in 0 ..< 120 where viewModel.pdfData == nil {
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                        }
+                        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                        try? viewModel.pdfData?.write(to: docs.appendingPathComponent("final.pdf"))
+                    }
+                }
                 // Simulator only, zero API cost: rectify the given photos and
                 // dump rectified_<n>.jpg into Documents for inspection.
                 if let idx = args.firstIndex(of: "-rectifyOnly"), idx + 1 < args.count {
