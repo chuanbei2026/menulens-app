@@ -3,6 +3,10 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = AnalysisViewModel()
+    /// Per-scan choice, surfaced next to the analyze button; the last choice
+    /// is remembered as the default for the next scan (same key the view
+    /// model reads at analyze time).
+    @AppStorage("generate_dish_images") private var generateDishImages = true
     @State private var photosItems: [PhotosPickerItem] = []
     @State private var showCamera = false
     @State private var showSettings = false
@@ -176,6 +180,17 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+            }
+            .padding(.horizontal)
+
+            Toggle(isOn: $generateDishImages) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Label("为没有照片的菜生成配图", systemImage: "photo.artframe")
+                        .font(.subheadline)
+                    Text("AI 生成，约 $0.003/道，稍慢；本次识别生效")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
             }
             .padding(.horizontal)
 
