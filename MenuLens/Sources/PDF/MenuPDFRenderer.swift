@@ -41,6 +41,9 @@ struct MenuPDFRenderer {
                 ctx.beginPage(withBounds: CGRect(origin: .zero, size: layout.pageSize), pageInfo: [:])
                 layout.draw()
             }
+            // Clean re-typeset pages (美排) between the layout pages and the
+            // illustrated appendix.
+            MenuPosterRenderer(scan: scan).drawPDFPages(ctx: ctx)
             drawAppendixPages(ctx: ctx)
         }
     }
