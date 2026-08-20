@@ -78,6 +78,31 @@ final class HistoryStore: ObservableObject {
         refresh()
     }
 
+    /// Copy the bundled sample scans (real menus, pre-translated — La Mar,
+    /// Naan n Curry) into the history ONCE, so a fresh install has real
+    /// content to explore before entering any API key. Deleting a sample
+    /// from history is permanent (we don't re-seed).
+    func seedBundledSamplesIfNeeded() {
+        let flag = "bundled_samples_seeded_v1"
+        guard !UserDefaults.standard.bool(forKey: flag) else { return }
+        UserDefaults.standard.set(true, forKey: flag)
+        guard let samplesURL = Bundle.main.resourceURL?.appendingPathComponent("Samples"),
+              let entries = try? FileManager.default.contentsOfDirectory(
+                  at: samplesURL, includingPropertiesForKeys: nil)
+        else { return }
+        for sample in entries where sample.hasDirectoryPath {
+            guard let data = try? Data(contentsOf: sample.appendingPathComponent("scan.json")),
+                  let scan = try? decoder.decode(MenuScan.self, from: data)
+            else { continue }
+            let destination = directory(for: scan.id)
+            guard !FileManager.default.fileExists(atPath: destination.path) else { continue }
+            try? FileManager.default.createDirectory(
+                at: rootURL, withIntermediateDirectories: true)
+            try? FileManager.default.copyItem(at: sample, to: destination)
+        }
+        refresh()
+    }
+
     // MARK: - AI-generated dish thumbnails (gen_<dishKey>.jpg alongside the scan)
 
     func saveGeneratedImage(_ image: UIImage, scanID: UUID, dishKey: String) {

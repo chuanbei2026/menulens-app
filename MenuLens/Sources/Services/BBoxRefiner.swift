@@ -104,7 +104,11 @@ enum BBoxRefiner {
                 // Skip visibly larger text (section headers and the like).
                 guard box.height < nameBox.height * 1.8 + 0.004 else { continue }
                 let xOverlap = min(box.maxX, colMinX + colWidth) - max(box.minX, colMinX)
-                guard xOverlap > 0.5 * box.width else { continue }
+                // A description line may be much WIDER than the (short) name
+                // line that defined the column window — accept a line when it
+                // covers most of the window, even if the window covers little
+                // of the line.
+                guard xOverlap > min(0.5 * box.width, 0.7 * colWidth) else { continue }
                 hull = hull.union(box)
                 kept.append(box)
             }

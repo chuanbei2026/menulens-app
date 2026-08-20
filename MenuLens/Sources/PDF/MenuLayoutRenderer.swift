@@ -97,7 +97,9 @@ struct MenuLayoutRenderer {
                 let nameRect = item.bbox.rect(in: canvas)
 
                 if let lineBoxes = item.descriptionLines, !lineBoxes.isEmpty,
-                   let zhDesc = item.chineseDescription {
+                   let zhDesc = item.chineseDescription,
+                   shouldFlowThroughStrips(lineBoxes.map { $0.rect(in: canvas) },
+                                           text: item.chineseName + "  " + zhDesc) {
                     // Lens-style: veil each original line strip separately
                     // (paper color sampled from the line gap right above it)
                     // and flow the translation through the original slots.
@@ -200,6 +202,18 @@ struct MenuLayoutRenderer {
             at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
             maxWidth: canvas.width - nameRect.minX - 8
         )
+    }
+
+    /// Strip flow suits short descriptions (1–6 lines) whose combined slot
+    /// width can hold the translation at a readable size. Set-menu boxes
+    /// (many centered short lines) and undersized regions read better as one
+    /// replaced block, so they fall back to block mode.
+    private func shouldFlowThroughStrips(_ strips: [CGRect], text: String) -> Bool {
+        guard !strips.isEmpty, strips.count <= 6 else { return false }
+        let totalWidth = strips.reduce(0) { $0 + $1.width }
+        let needed = (text as NSString)
+            .size(withAttributes: [.font: UIFont.systemFont(ofSize: 9)]).width
+        return needed <= totalWidth * 1.05
     }
 
     /// Flow the translated description through the original line slots:

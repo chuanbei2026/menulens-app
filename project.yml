@@ -11,7 +11,13 @@ targets:
     platform: iOS
     sources:
       - MenuLens/Sources
-      - MenuLens/Resources
+      - path: MenuLens/Resources
+        excludes:
+          - "Samples/**"
+      # Bundled sample scans, copied as a folder reference so the
+      # per-sample subdirectories keep their structure in the app bundle.
+      - path: MenuLens/Resources/Samples
+        type: folder
     info:
       path: MenuLens/Info.plist
       properties:

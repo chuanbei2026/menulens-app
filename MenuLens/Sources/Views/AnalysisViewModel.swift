@@ -303,7 +303,7 @@ final class AnalysisViewModel: ObservableObject {
     /// window; each result is persisted immediately, and the PDF is
     /// re-rendered once at the end.
     private func startImageGenerationIfNeeded() {
-        guard generateDishImages, let scan else {
+        guard generateDishImages, let scan, !KeychainStore.loadAPIKey().isEmpty else {
             pipeline?.imagesTotal = 0
             return
         }

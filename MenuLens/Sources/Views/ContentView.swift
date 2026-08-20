@@ -166,6 +166,9 @@ struct ContentView: View {
                 }
             }
             #endif
+            .onAppear {
+                viewModel.history.seedBundledSamplesIfNeeded()
+            }
             .onChange(of: photosItems) {
                 let items = photosItems
                 guard !items.isEmpty else { return }
