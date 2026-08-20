@@ -170,8 +170,8 @@ struct MenuLayoutRenderer {
     /// inside the replaced block, font auto-shrunk until it fits.
     private func drawFitted(name: String, body: String, nameColor: UIColor, in block: CGRect) {
         let combined = "\(name)  \(body)"
-        var fontSize = max(min(block.height * 0.8, 15), 9)
-        while fontSize > 8 {
+        var fontSize = max(min(block.height * 0.8, 15), 11)
+        while fontSize > 10 {
             let height = TextDraw.text(
                 combined, font: .systemFont(ofSize: fontSize),
                 color: .black, at: .zero, maxWidth: block.width, dryRun: true

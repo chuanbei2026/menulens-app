@@ -20,12 +20,83 @@ enum BBoxRefiner {
         let lines = recognizeLines(in: image)
         guard !lines.isEmpty else { return document }
 
-        let sections = document.sections.map { section in
+        // Pass 1 — anchor every item's NAME line via fuzzy text match.
+        struct Ref {
+            let item: MenuItemEntry
+            let nameLine: Line?
+        }
+        let refs: [[Ref]] = document.sections.map { section in
+            section.items.map { Ref(item: $0, nameLine: bestMatch(for: $0.originalName, in: lines)) }
+        }
+        let matchedNameBoxes = refs.flatMap { $0 }.compactMap { $0.nameLine?.box }
+        // Boundaries that end an item's territory: every other item's name
+        // line, every item's VLM block (covers items whose OCR name match
+        // failed), and the VLM's section-title boxes.
+        let anchors = matchedNameBoxes
+            + refs.flatMap { $0 }.map { $0.item.bbox.cgRect }
+            + document.sections.compactMap { $0.bbox?.cgRect }
+
+        // Pass 2 — an item's description region is EVERYTHING between its
+        // name line and the next anchor below in the same column. Geometric,
+        // not text-matched, so multi-line descriptions (with allergen codes,
+        // hyphenated fragments, OCR errors) are replaced whole — no stripes
+        // of leftover original text.
+        func regionHull(for ref: Ref) -> NormalizedRect? {
+            guard ref.item.originalDescription != nil else { return nil }
+            let vlm = ref.item.bbox.cgRect
+            let nameBox = ref.nameLine?.box ?? vlm
+            let colMinX = min(nameBox.minX, vlm.minX) - 0.01
+            let colWidth = max(nameBox.width, vlm.width) + 0.02
+            let top = nameBox.maxY - 0.002
+
+            // Hard cap: a bit past the VLM's own block bottom — even with no
+            // anchor below, the veil can't run away down the column.
+            var boundary = min(nameBox.maxY + 0.22, max(vlm.maxY, nameBox.maxY + 0.03) + 0.015)
+            for other in anchors where other != nameBox && other != vlm {
+                guard other.minY > nameBox.maxY + 0.004, other.minY < boundary else { continue }
+                let xOverlap = min(other.maxX, colMinX + colWidth) - max(other.minX, colMinX)
+                if xOverlap > 0.3 * min(other.width, colWidth) {
+                    boundary = other.minY - 0.004
+                }
+            }
+
+            var hull = CGRect.null
+            for line in lines {
+                let box = line.box
+                guard !matchedNameBoxes.contains(box) else { continue }
+                guard box.midY > top, box.maxY <= boundary + 0.004 else { continue }
+                // Skip visibly larger text (section headers and the like).
+                guard box.height < nameBox.height * 1.8 + 0.004 else { continue }
+                let xOverlap = min(box.maxX, colMinX + colWidth) - max(box.minX, colMinX)
+                guard xOverlap > 0.5 * box.width else { continue }
+                hull = hull.union(box)
+            }
+            guard !hull.isNull else { return nil }
+            return NormalizedRect(x: hull.minX, y: hull.minY, width: hull.width, height: hull.height)
+        }
+
+        let sections = document.sections.enumerated().map { s, section in
             MenuSection(
                 originalTitle: section.originalTitle,
                 chineseTitle: section.chineseTitle,
                 bbox: section.bbox,
-                items: section.items.map { refineItem($0, lines: lines) }
+                items: section.items.enumerated().map { i, item in
+                    let ref = refs[s][i]
+                    let nameBox = ref.nameLine.map {
+                        NormalizedRect(x: $0.box.minX, y: $0.box.minY, width: $0.box.width, height: $0.box.height)
+                    } ?? item.bbox
+                    return MenuItemEntry(
+                        originalName: item.originalName,
+                        chineseName: item.chineseName,
+                        price: item.price,
+                        originalDescription: item.originalDescription,
+                        chineseDescription: item.chineseDescription,
+                        bbox: nameBox,
+                        photoBBox: item.photoBBox,
+                        descriptionBBox: regionHull(for: ref),
+                        tags: item.tags
+                    )
+                }
             )
         }
         return MenuDocument(
@@ -34,60 +105,6 @@ enum BBoxRefiner {
             restaurantName: document.restaurantName,
             sections: sections
         )
-    }
-
-    private static func refineItem(_ item: MenuItemEntry, lines: [Line]) -> MenuItemEntry {
-        let nameLine = bestMatch(for: item.originalName, in: lines)
-        // The name bbox becomes the pure OCR line box (not the VLM's whole
-        // text block) — the replace-style canvas needs line-accurate frames.
-        let nameBox = nameLine.map { line in
-            NormalizedRect(
-                x: line.box.minX, y: line.box.minY,
-                width: line.box.width, height: line.box.height
-            )
-        } ?? item.bbox
-
-        var descriptionBox: NormalizedRect?
-        if let description = item.originalDescription {
-            descriptionBox = descriptionHull(
-                for: description,
-                in: lines,
-                below: nameLine?.box ?? item.bbox.cgRect
-            )
-        }
-
-        return MenuItemEntry(
-            originalName: item.originalName,
-            chineseName: item.chineseName,
-            price: item.price,
-            originalDescription: item.originalDescription,
-            chineseDescription: item.chineseDescription,
-            bbox: nameBox,
-            photoBBox: item.photoBBox,
-            descriptionBBox: descriptionBox,
-            tags: item.tags
-        )
-    }
-
-    /// Union of OCR lines that are fragments of this item's description and
-    /// sit spatially near (at/below) the item's name line.
-    private static func descriptionHull(for description: String, in lines: [Line], below nameBox: CGRect) -> NormalizedRect? {
-        let target = normalize(description)
-        guard target.count >= 8 else { return nil }
-        var hull: CGRect = .null
-        for line in lines {
-            let candidate = normalize(line.text)
-            guard candidate.count >= 6, target.contains(candidate) else { continue }
-            // Spatial gate: same column region, within ~1.5 block-heights below.
-            let xOverlap = min(line.box.maxX, nameBox.maxX + 0.05) - max(line.box.minX, nameBox.minX - 0.05)
-            guard xOverlap > 0,
-                  line.box.midY > nameBox.minY - 0.01,
-                  line.box.midY < nameBox.maxY + 0.15
-            else { continue }
-            hull = hull.union(line.box)
-        }
-        guard !hull.isNull else { return nil }
-        return NormalizedRect(x: hull.minX, y: hull.minY, width: hull.width, height: hull.height)
     }
 
     // MARK: - OCR
