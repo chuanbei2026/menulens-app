@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 
 struct SettingsView: View {
@@ -8,6 +9,9 @@ struct SettingsView: View {
     @ObservedObject private var party = PartyStore.shared
     @State private var apiKey = KeychainStore.loadAPIKey()
     @State private var newMemberName = ""
+    @State private var avatarTargetID: UUID?
+    @State private var avatarPickerItem: PhotosPickerItem?
+    @State private var showAvatarPicker = false
 
     private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
 
@@ -47,20 +51,30 @@ struct SettingsView: View {
                         ForEach(models, id: \.self) { Text($0) }
                     }
                 } footer: {
-                    Text("识别整页菜单建议用 gpt-4.1 或 gpt-4o；mini 版更快更便宜，但版式坐标和小语种翻译的质量会下降。")
+                    Text("每页菜单的估算成本：gpt-4.1 ≈ $0.03 · gpt-4o ≈ $0.025 · gpt-4.1-mini ≈ $0.008 · gpt-4o-mini ≈ $0.004（配图另计，拼图模式约 $0.003/道）。mini 版更快更便宜，但版式坐标和小语种翻译质量会下降。")
                 }
 
                 Section {
                     ForEach($party.members) { $member in
-                        HStack {
-                            Circle()
-                                .fill(party.color(of: member.id))
-                                .frame(width: 10, height: 10)
+                        HStack(spacing: 10) {
+                            Button {
+                                avatarTargetID = member.id
+                                showAvatarPicker = true
+                            } label: {
+                                AvatarView(party: party, memberID: member.id, size: 30)
+                            }
+                            .buttonStyle(.borderless)
                             TextField("名字", text: $member.name)
+                            if party.members.count > 1 {
+                                Button {
+                                    party.remove(id: member.id)
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.gray)
+                                }
+                                .buttonStyle(.borderless)
+                            }
                         }
-                    }
-                    .onDelete { offsets in
-                        party.remove(at: offsets)
                     }
                     HStack {
                         TextField("添加成员…", text: $newMemberName)
@@ -71,7 +85,19 @@ struct SettingsView: View {
                 } header: {
                     Text("同行成员")
                 } footer: {
-                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。左滑删除成员。")
+                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。点头像可从相册上传照片（自动裁成圆形），点 ✕ 删除成员。")
+                }
+                .photosPicker(isPresented: $showAvatarPicker, selection: $avatarPickerItem, matching: .images)
+                .onChange(of: avatarPickerItem) {
+                    guard let item = avatarPickerItem, let target = avatarTargetID else { return }
+                    Task { @MainActor in
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            party.setAvatar(image, for: target)
+                        }
+                        avatarPickerItem = nil
+                        avatarTargetID = nil
+                    }
                 }
 
                 Section {

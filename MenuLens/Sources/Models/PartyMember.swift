@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// One person at the table. Profiles are app-global (managed in Settings)
 /// and referenced by the per-scan cart to record who ordered which dish.
@@ -49,6 +50,13 @@ final class PartyStore: ObservableObject {
         members = trimmed.isEmpty ? [members[0]] : trimmed
     }
 
+    /// Remove one member directly (the ✕ button); the last one stays.
+    func remove(id: UUID) {
+        guard members.count > 1 else { return }
+        members.removeAll { $0.id == id }
+        removeAvatar(for: id)
+    }
+
     func name(of id: UUID) -> String {
         members.first { $0.id == id }?.name ?? "?"
     }
@@ -58,5 +66,75 @@ final class PartyStore: ObservableObject {
         let palette: [Color] = [.orange, .blue, .green, .purple, .pink, .teal, .red, .indigo]
         let index = members.firstIndex { $0.id == id } ?? 0
         return palette[index % palette.count]
+    }
+
+    // MARK: - Avatars (Documents/avatars/<id>.jpg)
+
+    /// Bumped whenever an avatar changes so views refresh.
+    @Published private(set) var avatarVersion = 0
+
+    private var avatarDirectory: URL {
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("avatars", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    private func avatarURL(of id: UUID) -> URL {
+        avatarDirectory.appendingPathComponent("\(id.uuidString).jpg")
+    }
+
+    func avatar(of id: UUID) -> UIImage? {
+        UIImage(contentsOfFile: avatarURL(of: id).path)
+    }
+
+    /// Center-crop to a square, downscale, save.
+    func setAvatar(_ image: UIImage, for id: UUID) {
+        let source = image.normalizedOrientation()
+        let side = min(source.size.width, source.size.height)
+        let crop = CGRect(
+            x: (source.size.width - side) / 2,
+            y: (source.size.height - side) / 2,
+            width: side, height: side
+        )
+        guard let cg = source.cgImage?.cropping(to: crop) else { return }
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let small = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 200), format: format)
+            .image { _ in UIImage(cgImage: cg).draw(in: CGRect(x: 0, y: 0, width: 200, height: 200)) }
+        try? small.jpegData(compressionQuality: 0.85)?.write(to: avatarURL(of: id))
+        avatarVersion += 1
+    }
+
+    func removeAvatar(for id: UUID) {
+        try? FileManager.default.removeItem(at: avatarURL(of: id))
+        avatarVersion += 1
+    }
+}
+
+/// Round avatar: the member's photo if uploaded, else their color + initial.
+struct AvatarView: View {
+    @ObservedObject var party: PartyStore
+    let memberID: UUID
+    var size: CGFloat = 26
+
+    var body: some View {
+        Group {
+            if let image = party.avatar(of: memberID) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                ZStack {
+                    Circle().fill(party.color(of: memberID))
+                    Text(String(party.name(of: memberID).prefix(1)))
+                        .font(.system(size: size * 0.5, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .id(party.avatarVersion) // refresh when avatars change
     }
 }

@@ -75,6 +75,23 @@ struct MenuLayoutRenderer {
         let canvas = pageSize
         let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
 
+        // Section headings get their translation painted right beneath them —
+        // "CEBICHES" means nothing to the diner either.
+        for section in document.sections {
+            guard let bbox = section.bbox, let translated = section.chineseTitle,
+                  !translated.isEmpty, translated != section.originalTitle
+            else { continue }
+            let box = bbox.rect(in: canvas)
+            let size = max(min(box.height * 0.62, 15), 10)
+            TextDraw.text(
+                translated,
+                font: .systemFont(ofSize: size, weight: .semibold),
+                color: nameColor,
+                at: CGPoint(x: box.minX, y: box.maxY + 1),
+                maxWidth: canvas.width - box.minX - 8
+            )
+        }
+
         for (sectionIndex, section) in document.sections.enumerated() {
             for (itemIndex, item) in section.items.enumerated() {
                 let nameRect = item.bbox.rect(in: canvas)

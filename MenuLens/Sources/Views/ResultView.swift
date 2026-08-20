@@ -268,8 +268,11 @@ private struct OrderSummaryView: View {
                                 }
                             }
                         } header: {
-                            Label(member.name, systemImage: "person.fill")
-                                .foregroundStyle(party.color(of: member.id))
+                            HStack(spacing: 6) {
+                                AvatarView(party: party, memberID: member.id, size: 20)
+                                Text(member.name)
+                                    .foregroundStyle(party.color(of: member.id))
+                            }
                         }
                     }
                 }
@@ -430,11 +433,32 @@ private struct DishListView: View {
             .onAppear { jumpIfNeeded(proxy) }
             .onChange(of: scrollTarget) { jumpIfNeeded(proxy) }
         }
-        .searchable(
-            text: $searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "搜索菜名（中文或原文）"
-        )
+        // Custom search field pinned to the TOP — the system .searchable
+        // drawer moves between top and bottom on its own, which looked buggy.
+        .safeAreaInset(edge: .top) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                TextField("搜索菜名（中文或原文）", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .autocorrectionDisabled()
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(.thinMaterial)
+        }
     }
 
     private func jumpIfNeeded(_ proxy: ScrollViewProxy) {
@@ -563,16 +587,19 @@ private struct MemberChips: View {
                     Button {
                         viewModel.activeMemberID = member.id
                     } label: {
-                        Text(member.name)
-                            .font(.footnote.weight(selected ? .semibold : .regular))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(
-                                Capsule().fill(selected ? party.color(of: member.id).opacity(0.22) : Color(.systemGray5))
-                            )
-                            .overlay(
-                                Capsule().stroke(selected ? party.color(of: member.id) : .clear, lineWidth: 1.5)
-                            )
+                        HStack(spacing: 5) {
+                            AvatarView(party: party, memberID: member.id, size: 20)
+                            Text(member.name)
+                                .font(.footnote.weight(selected ? .semibold : .regular))
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().fill(selected ? party.color(of: member.id).opacity(0.22) : Color(.systemGray5))
+                        )
+                        .overlay(
+                            Capsule().stroke(selected ? party.color(of: member.id) : .clear, lineWidth: 1.5)
+                        )
                     }
                     .buttonStyle(.plain)
                 }

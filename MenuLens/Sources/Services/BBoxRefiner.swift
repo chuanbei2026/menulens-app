@@ -26,16 +26,38 @@ enum BBoxRefiner {
             let nameLine: Line?
         }
         let refs: [[Ref]] = document.sections.map { section in
-            section.items.map {
-                Ref(item: $0, nameLine: bestMatch(for: $0.originalName, in: lines, near: $0.bbox.cgRect))
+            section.items.map { item in
+                var nameLine = bestMatch(for: item.originalName, in: lines, near: item.bbox.cgRect)
+                // Name unmatched: locate the item via its (longer, more
+                // unique) description prefix and hang a zero-height anchor
+                // just above that line.
+                if nameLine == nil, let description = item.originalDescription {
+                    if let descLine = bestMatch(for: String(description.prefix(30)), in: lines, near: item.bbox.cgRect) {
+                        nameLine = Line(
+                            text: "",
+                            box: CGRect(x: descLine.box.minX, y: descLine.box.minY - 0.002,
+                                        width: descLine.box.width, height: 0.001)
+                        )
+                    }
+                }
+                return Ref(item: item, nameLine: nameLine)
             }
         }
         let matchedNameBoxes = refs.flatMap { $0 }.compactMap { $0.nameLine?.box }
+
+        // Section titles are OCR-anchored too — a mislocated VLM title box
+        // would paint stray fragments, so unmatched titles simply don't draw.
+        let sectionTitleLines: [CGRect?] = document.sections.map { section in
+            guard let title = section.originalTitle else { return nil }
+            return bestMatch(for: title, in: lines, near: section.bbox?.cgRect ?? CGRect(x: 0.5, y: 0.5, width: 0, height: 0))?.box
+        }
+
         // Boundaries that end an item's territory: every other item's name
         // line, every item's VLM block (covers items whose OCR name match
-        // failed), and the VLM's section-title boxes.
+        // failed), and the section-title lines.
         let anchors = matchedNameBoxes
             + refs.flatMap { $0 }.map { $0.item.bbox.cgRect }
+            + sectionTitleLines.compactMap { $0 }
             + document.sections.compactMap { $0.bbox?.cgRect }
 
         // Pass 2 — an item's description region is EVERYTHING between its
@@ -46,12 +68,18 @@ enum BBoxRefiner {
         func regionHull(for ref: Ref) -> NormalizedRect? {
             guard ref.item.originalDescription != nil else { return nil }
             let vlm = ref.item.bbox.cgRect
-            // No OCR name match: treat the top edge of the VLM block as a
-            // zero-height name line, so the WHOLE block (name included) gets
-            // veiled and rewritten — graceful degradation instead of a
-            // missing translation.
-            let nameBox = ref.nameLine?.box
-                ?? CGRect(x: vlm.minX, y: vlm.minY, width: vlm.width, height: 0.002)
+            let nameBox: CGRect
+            if let line = ref.nameLine {
+                nameBox = line.box
+            } else {
+                // Whole-block fallback, but ONLY when no other item's matched
+                // name line sits inside this VLM block — a mislocated block
+                // would relabel a neighbor's dish, which is worse than
+                // skipping the canvas annotation (the list still has it).
+                let claimed = matchedNameBoxes.contains { vlm.contains(CGPoint(x: $0.midX, y: $0.midY)) }
+                guard !claimed else { return nil }
+                nameBox = CGRect(x: vlm.minX, y: vlm.minY, width: vlm.width, height: 0.002)
+            }
             let colMinX = min(nameBox.minX, vlm.minX) - 0.01
             let colWidth = max(nameBox.width, vlm.width) + 0.02
             let top = nameBox.maxY - 0.002
@@ -86,7 +114,9 @@ enum BBoxRefiner {
             MenuSection(
                 originalTitle: section.originalTitle,
                 chineseTitle: section.chineseTitle,
-                bbox: section.bbox,
+                bbox: sectionTitleLines[s].map {
+                    NormalizedRect(x: $0.minX, y: $0.minY, width: $0.width, height: $0.height)
+                },
                 items: section.items.enumerated().map { i, item in
                     let ref = refs[s][i]
                     let nameBox = ref.nameLine.map {

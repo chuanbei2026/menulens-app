@@ -56,7 +56,11 @@ struct OpenAIClient {
         it must not extend past the photo's edges or past the image border.
         - Keep prices exactly as printed (currency symbol included). Use null when absent.
         - Group items under the menu's own section headings; if the menu has no sections, \
-        return a single section with null titles.
+        return a single section with null titles. Translate section titles too.
+        - Set menus / tasting boxes / prix-fixe boxes (e.g. an "executive lunch" box): \
+        treat the WHOLE box as ONE item — name = the box title, `bbox` covers the ENTIRE \
+        box including all its course/option lines, and the description lists every course \
+        and option printed inside the box.
         """
     }
 
@@ -130,6 +134,7 @@ struct OpenAIClient {
         let dataURL = "data:image/jpeg;base64,\(jpegData.base64EncodedString())"
         let payload: [String: Any] = [
             "model": model,
+            "temperature": 0.2, // steadier bbox geometry across runs
             "messages": [
                 ["role": "system", "content": systemPrompt],
                 [
