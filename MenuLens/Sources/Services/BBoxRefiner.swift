@@ -52,13 +52,15 @@ enum BBoxRefiner {
             return bestMatch(for: title, in: lines, near: section.bbox?.cgRect ?? CGRect(x: 0.5, y: 0.5, width: 0, height: 0))?.box
         }
 
-        // Boundaries that end an item's territory: every other item's name
-        // line, every item's VLM block (covers items whose OCR name match
-        // failed), and the section-title lines.
-        let anchors = matchedNameBoxes
-            + refs.flatMap { $0 }.map { $0.item.bbox.cgRect }
-            + sectionTitleLines.compactMap { $0 }
+        // Boundaries that end an item's territory, in two tiers:
+        // STRONG anchors are OCR-measured (name lines, section-title lines)
+        // and clip hard. WEAK anchors are the VLM's own blocks — they cover
+        // items whose OCR match failed, but VLM geometry drifts, so a weak
+        // anchor may never squeeze a neighbor's region below ~2 lines.
+        let strongAnchors = matchedNameBoxes + sectionTitleLines.compactMap { $0 }
+        let weakAnchors = refs.flatMap { $0 }.map { $0.item.bbox.cgRect }
             + document.sections.compactMap { $0.bbox?.cgRect }
+        let anchors = strongAnchors + weakAnchors
 
         // Pass 2 — an item's description region is EVERYTHING between its
         // name line and the next anchor below in the same column. Geometric,
@@ -85,13 +87,24 @@ enum BBoxRefiner {
             let top = nameBox.maxY - 0.002
 
             // Hard cap: a bit past the VLM's own block bottom — even with no
-            // anchor below, the veil can't run away down the column.
-            var boundary = min(nameBox.maxY + 0.22, max(vlm.maxY, nameBox.maxY + 0.03) + 0.015)
-            for other in anchors where other != nameBox && other != vlm {
+            // anchor below, the veil can't run away down the column. The VLM
+            // box frequently hugs just the name line, so guarantee at least
+            // a few description lines' worth of room; real anchors below
+            // still clip the region first.
+            var boundary = min(nameBox.maxY + 0.22, max(vlm.maxY, nameBox.maxY + 0.08) + 0.02)
+            let weakFloor = top + 0.026 // weak anchors leave ≥ ~2 lines
+            for other in strongAnchors where other != nameBox {
                 guard other.minY > nameBox.maxY + 0.004, other.minY < boundary else { continue }
                 let xOverlap = min(other.maxX, colMinX + colWidth) - max(other.minX, colMinX)
                 if xOverlap > 0.3 * min(other.width, colWidth) {
-                    boundary = other.minY - 0.004
+                    boundary = other.minY - 0.002
+                }
+            }
+            for other in weakAnchors where other != vlm {
+                guard other.minY > nameBox.maxY + 0.004, other.minY < boundary else { continue }
+                let xOverlap = min(other.maxX, colMinX + colWidth) - max(other.minX, colMinX)
+                if xOverlap > 0.3 * min(other.width, colWidth) {
+                    boundary = max(other.minY - 0.004, weakFloor)
                 }
             }
 
@@ -100,7 +113,7 @@ enum BBoxRefiner {
             for line in lines {
                 let box = line.box
                 guard !matchedNameBoxes.contains(box) else { continue }
-                guard box.midY > top, box.maxY <= boundary + 0.004 else { continue }
+                guard box.midY > top, box.maxY <= boundary + 0.008 else { continue }
                 // Skip visibly larger text (section headers and the like).
                 guard box.height < nameBox.height * 1.8 + 0.004 else { continue }
                 let xOverlap = min(box.maxX, colMinX + colWidth) - max(box.minX, colMinX)
@@ -112,7 +125,21 @@ enum BBoxRefiner {
                 hull = hull.union(box)
                 kept.append(box)
             }
-            guard !hull.isNull else { return nil }
+            if hull.isNull {
+                // OCR contributed no lines (low-res photo, merged lines,
+                // recognition miss) — but the item HAS a description and an
+                // anchored name, so replace a synthetic block spanning the
+                // column from the name line down to the boundary. Never
+                // silently leave the original untranslated.
+                guard ref.nameLine != nil, boundary - top > 0.012 else { return nil }
+                let synthetic = NormalizedRect(
+                    x: colMinX + 0.01,
+                    y: top + 0.002,
+                    width: colWidth - 0.02,
+                    height: boundary - top - 0.004
+                )
+                return (synthetic, [])
+            }
             kept.sort { lhs, rhs in
                 abs(lhs.midY - rhs.midY) < 0.004 ? lhs.minX < rhs.minX : lhs.midY < rhs.midY
             }

@@ -340,12 +340,11 @@ struct DietTagBadges: View {
         case "vegetarian":
             Text("🥬").font(.caption)
         case "gluten_free":
+            // Plain letters, no icon/badge — GF is a familiar abbreviation
+            // to the audiences that look for it.
             Text("GF")
-                .font(.system(size: 9, weight: .bold))
+                .font(.caption2.weight(.bold))
                 .foregroundStyle(.green)
-                .padding(.horizontal, 4)
-                .padding(.vertical, 1.5)
-                .overlay(Capsule().stroke(.green, lineWidth: 1))
         case "contains_lamb":
             Text("🐑").font(.caption)
         case "contains_seafood":
@@ -413,7 +412,7 @@ private struct DishListView: View {
                                 photo: photo(for: row),
                                 quantity: viewModel.quantity(of: row.id),
                                 memberBreakdown: viewModel.orderLabels[row.id],
-                                showGlutenFree: TargetLanguage.from(code: viewModel.scan?.targetLanguage) != .simplifiedChinese,
+                                showGlutenFree: TargetLanguage.from(code: viewModel.scan?.targetLanguage).showsGlutenFree,
                                 onPlus: { viewModel.addToCart(row.id) },
                                 onMinus: { viewModel.removeFromCart(row.id) }
                             )

@@ -8,6 +8,7 @@ enum TargetLanguage: String, CaseIterable, Identifiable {
     case japanese = "ja"
     case korean = "ko"
     case french = "fr"
+    case spanish = "es"
 
     var id: String { rawValue }
 
@@ -19,6 +20,16 @@ enum TargetLanguage: String, CaseIterable, Identifiable {
         case .japanese: return "日本語"
         case .korean: return "한국어"
         case .french: return "Français"
+        case .spanish: return "Español"
+        }
+    }
+
+    /// Gluten-free matters to English/Spanish-speaking diners; East-Asian
+    /// audiences don't look for it, so their lists omit the GF mark.
+    var showsGlutenFree: Bool {
+        switch self {
+        case .english, .french, .spanish: return true
+        case .simplifiedChinese, .japanese, .korean: return false
         }
     }
 
@@ -30,6 +41,7 @@ enum TargetLanguage: String, CaseIterable, Identifiable {
         case .japanese: return "Japanese"
         case .korean: return "Korean"
         case .french: return "French"
+        case .spanish: return "Spanish"
         }
     }
 
