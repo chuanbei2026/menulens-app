@@ -89,6 +89,7 @@ included, no setup needed to try.
 - [ ] App Store Connect 创建 App（名称 MenuLens - 口袋菜单，Bundle ID ai.xiangyang.MenuLens）
 - [ ] 把 repo 推到 GitHub 并开 Pages，填隐私政策 URL
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
-- [ ] 上传 6.9 英寸截图（docs/screenshots/，1320×2868，已备好）
+- [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
+- [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
 - [ ] TestFlight 内测一轮再提正式审核
 - [ ] 创建一个低限额（如 $5）的专用测试 Key 填进审核备注，过审后作废

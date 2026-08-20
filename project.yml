@@ -28,10 +28,16 @@ targets:
         NSPhotoLibraryUsageDescription: 从相册选择菜单照片，用于识别与翻译菜单内容。
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        # iPad must support all orientations (multitasking requirement).
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     settings:
       base:
         SWIFT_VERSION: "5.10"
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
         # Personal Team (向阳 史). Baked in so regenerated projects never ask
         # for the team again; teammates should override with their own.
