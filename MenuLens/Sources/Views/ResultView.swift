@@ -34,20 +34,6 @@ struct ResultView: View {
                 DishListView(viewModel: viewModel, scrollTarget: $listTarget)
             }
         }
-        .overlay(alignment: .bottomLeading) {
-            // View switcher floats at the bottom-left, out of the nav bar.
-            Picker("视图", selection: $mode) {
-                Image(systemName: "doc.richtext").tag(Mode.canvas)
-                Image(systemName: "list.bullet").tag(Mode.list)
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 118)
-            .padding(4)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
-            .padding(.leading, 12)
-            .padding(.bottom, 10)
-        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
                 if let progress = viewModel.pipeline,
@@ -95,6 +81,13 @@ struct ResultView: View {
                     .padding(.vertical, 8)
                     .background(.thinMaterial)
                 }
+
+                // Two big view-switch buttons across the very tail of the screen.
+                HStack(spacing: 0) {
+                    viewTab(.canvas, icon: "doc.richtext", selectedIcon: "doc.richtext.fill", title: "画布")
+                    viewTab(.list, icon: "list.bullet", selectedIcon: "list.bullet", title: "列表")
+                }
+                .background(.regularMaterial)
             }
         }
         .sheet(isPresented: $showOrderSummary) {
@@ -120,6 +113,25 @@ struct ResultView: View {
         }
     }
 
+    /// One half of the bottom view-switch bar.
+    private func viewTab(_ tab: Mode, icon: String, selectedIcon: String, title: String) -> some View {
+        let selected = mode == tab
+        return Button {
+            mode = tab
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: selected ? selectedIcon : icon)
+                    .font(.title3)
+                Text(title)
+                    .font(.caption2)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 7)
+            .foregroundStyle(selected ? Color.orange : Color.secondary)
+        }
+        .buttonStyle(.plain)
+    }
+
     /// Write the current PDF to a stable temp file for ShareLink.
     /// Re-written whenever the PDF bytes change (e.g. thumbnails landed).
     private func currentShareURL() -> URL? {
@@ -142,6 +154,7 @@ private struct MenuCanvasView: View {
 
     var body: some View {
         if let scan = viewModel.scan {
+            let multiPage = scan.pages.count > 1
             TabView {
                 ForEach(Array(scan.pages.enumerated()), id: \.offset) { index, document in
                     if index < viewModel.scanImages.count {
@@ -153,11 +166,12 @@ private struct MenuCanvasView: View {
                             orderLabels: viewModel.orderLabels,
                             onSelectDish: onSelectDish
                         )
-                        .padding(.bottom, 34) // keep the page dots clear
+                        // Keep the page dots clear (multi-page only).
+                        .padding(.bottom, multiPage ? 34 : 0)
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+            .tabViewStyle(.page(indexDisplayMode: multiPage ? .always : .never))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
             .background(Color(.systemGray5))
         }
@@ -300,11 +314,15 @@ private struct OrderSummaryView: View {
 /// 🌱 vegan · 🥬 vegetarian · GF gluten-free · 🐑 contains lamb · 🐟 seafood.
 struct DietTagBadges: View {
     let tags: [String]?
+    /// Chinese-target users don't look for gluten-free; hide the GF chip
+    /// there and keep it for other target languages.
+    var showGlutenFree: Bool = true
 
     var body: some View {
-        if let tags, !tags.isEmpty {
+        let visible = (tags ?? []).filter { showGlutenFree || $0 != "gluten_free" }
+        if !visible.isEmpty {
             HStack(spacing: 3) {
-                ForEach(tags, id: \.self) { tag in
+                ForEach(visible, id: \.self) { tag in
                     badge(for: tag)
                 }
             }
@@ -392,6 +410,7 @@ private struct DishListView: View {
                                 photo: photo(for: row),
                                 quantity: viewModel.quantity(of: row.id),
                                 memberBreakdown: viewModel.orderLabels[row.id],
+                                showGlutenFree: TargetLanguage.from(code: viewModel.scan?.targetLanguage) != .simplifiedChinese,
                                 onPlus: { viewModel.addToCart(row.id) },
                                 onMinus: { viewModel.removeFromCart(row.id) }
                             )
@@ -479,6 +498,7 @@ private struct DishRow: View {
     let photo: UIImage?
     let quantity: Int
     let memberBreakdown: String?
+    let showGlutenFree: Bool
     let onPlus: () -> Void
     let onMinus: () -> Void
 
@@ -498,7 +518,7 @@ private struct DishRow: View {
                     Text(item.chineseName)
                         .font(.subheadline)
                         .foregroundStyle(.orange)
-                    DietTagBadges(tags: item.tags)
+                    DietTagBadges(tags: item.tags, showGlutenFree: showGlutenFree)
                 }
                 if let zhDesc = item.chineseDescription {
                     Text(zhDesc)
