@@ -64,7 +64,8 @@ enum BBoxRefiner {
             chineseDescription: item.chineseDescription,
             bbox: nameBox,
             photoBBox: item.photoBBox,
-            descriptionBBox: descriptionBox
+            descriptionBBox: descriptionBox,
+            tags: item.tags
         )
     }
 
