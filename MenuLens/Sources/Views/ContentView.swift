@@ -26,7 +26,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("Menu Translator")
+            .navigationTitle("口袋菜单")
             .toolbar {
                 // Home-screen chrome only; the result screen brings its own
                 // minimal toolbar (home / view switch / share).
@@ -270,13 +270,11 @@ struct ContentView: View {
             .disabled(viewModel.pickedImages.isEmpty)
             .padding(.horizontal)
 
-            #if DEBUG
-            Button("载入示例菜单（无需 API key）") {
-                viewModel.loadSample()
+            Button("看看内置示例菜单（无需 API key）") {
+                showHistory = true
             }
             .font(.footnote)
             .padding(.top, 4)
-            #endif
 
             Spacer().frame(height: 24)
         }
