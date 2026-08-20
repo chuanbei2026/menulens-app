@@ -17,3 +17,6 @@ xcuserdata/
 # Secrets — never commit API keys
 *.secret
 .env
+
+# Review-only secret, never commit
+docs/review-key.local.md

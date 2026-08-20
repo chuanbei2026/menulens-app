@@ -81,7 +81,7 @@ included, no setup needed to try.
 > annotation, and PDF export.
 >
 > Optionally, this demo API key can be used to test live recognition:
-> [在此粘贴一个限额较低的测试 Key，提审期间有效]
+> [提审时从 docs/review-key.local.md（本地文件，不入库）复制真实测试 Key 粘贴到这里]
 
 ## 提审前 checklist
 
@@ -92,4 +92,4 @@ included, no setup needed to try.
 - [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
 - [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
 - [ ] TestFlight 内测一轮再提正式审核
-- [ ] 创建一个低限额（如 $5）的专用测试 Key 填进审核备注，过审后作废
+- [x] 创建低限额测试 Key（已存 docs/review-key.local.md，本地文件），过审后作废
