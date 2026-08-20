@@ -46,8 +46,13 @@ final class AnalysisViewModel: ObservableObject {
     @Published var pipeline: PipelineProgress?
     /// The rendered PDF for the current scan (re-rendered when thumbnails land).
     @Published var pdfData: Data?
-    /// Order cart for the current scan: dish key -> quantity.
-    @Published var cart: [String: Int] = [:]
+    /// Order cart for the current scan: dish key -> (member id -> quantity),
+    /// so every +1 is attributed to the person who ordered it.
+    @Published var cart: [String: [UUID: Int]] = [:]
+    /// The member new +1s are attributed to (defaults to the first profile).
+    @Published var activeMemberID: UUID = PartyStore.shared.members[0].id
+
+    let party = PartyStore.shared
 
     /// Model id is a plain preference; the API key lives in the Keychain.
     @AppStorage("openai_model") var model = "gpt-4.1"
@@ -176,36 +181,84 @@ final class AnalysisViewModel: ObservableObject {
 
     // MARK: - Cart
 
-    func addToCart(_ dishKey: String) {
-        cart[dishKey, default: 0] += 1
+    /// Ensure the active member still exists (profiles can be deleted).
+    private var validActiveMember: UUID {
+        if party.members.contains(where: { $0.id == activeMemberID }) {
+            return activeMemberID
+        }
+        activeMemberID = party.members[0].id
+        return activeMemberID
     }
 
-    func removeFromCart(_ dishKey: String) {
-        guard let quantity = cart[dishKey] else { return }
-        if quantity <= 1 {
+    func addToCart(_ dishKey: String, member: UUID? = nil) {
+        let member = member ?? validActiveMember
+        cart[dishKey, default: [:]][member, default: 0] += 1
+    }
+
+    /// Removes one unit — from the given (or active) member first, otherwise
+    /// from whoever has some.
+    func removeFromCart(_ dishKey: String, member: UUID? = nil) {
+        guard var perMember = cart[dishKey] else { return }
+        let preferred = member ?? validActiveMember
+        let target: UUID? = (perMember[preferred] ?? 0) > 0
+            ? preferred
+            : perMember.first { $0.value > 0 }?.key
+        guard let target else { return }
+        perMember[target]! -= 1
+        if perMember[target]! <= 0 { perMember.removeValue(forKey: target) }
+        if perMember.isEmpty {
             cart.removeValue(forKey: dishKey)
         } else {
-            cart[dishKey] = quantity - 1
+            cart[dishKey] = perMember
         }
     }
 
-    var cartCount: Int { cart.values.reduce(0, +) }
+    func quantity(of dishKey: String) -> Int {
+        cart[dishKey]?.values.reduce(0, +) ?? 0
+    }
+
+    var cartCount: Int { cart.values.reduce(0) { $0 + $1.values.reduce(0, +) } }
+
+    /// Total quantity per dish, for the canvas highlight badges.
+    var highlightTotals: [String: Int] {
+        cart.mapValues { $0.values.reduce(0, +) }
+    }
+
+    /// "我 · 小明×2"-style label per dish, for the canvas annotations.
+    var orderLabels: [String: String] {
+        cart.mapValues { perMember in
+            party.members.compactMap { member in
+                guard let quantity = perMember[member.id], quantity > 0 else { return nil }
+                return quantity > 1 ? "\(member.name)×\(quantity)" : member.name
+            }
+            .joined(separator: " · ")
+        }
+    }
 
     /// All carted dishes resolved against the current scan, in menu order.
-    var cartEntries: [(key: String, item: MenuItemEntry, quantity: Int)] {
+    var cartEntries: [(key: String, item: MenuItemEntry, quantity: Int, perMember: [UUID: Int])] {
         guard let scan else { return [] }
-        var result: [(String, MenuItemEntry, Int)] = []
+        var result: [(String, MenuItemEntry, Int, [UUID: Int])] = []
         for (p, page) in scan.pages.enumerated() {
             for (s, section) in page.sections.enumerated() {
                 for (i, item) in section.items.enumerated() {
                     let key = MenuScan.dishKey(page: p, section: s, item: i)
-                    if let quantity = cart[key], quantity > 0 {
-                        result.append((key, item, quantity))
+                    if let perMember = cart[key] {
+                        let total = perMember.values.reduce(0, +)
+                        if total > 0 { result.append((key, item, total, perMember)) }
                     }
                 }
             }
         }
         return result
+    }
+
+    /// Cart entries of one member only.
+    func cartEntries(for member: UUID) -> [(key: String, item: MenuItemEntry, quantity: Int)] {
+        cartEntries.compactMap { entry in
+            guard let quantity = entry.perMember[member], quantity > 0 else { return nil }
+            return (entry.key, entry.item, quantity)
+        }
     }
 
     /// Sum of parseable prices weighted by quantity, formatted with the

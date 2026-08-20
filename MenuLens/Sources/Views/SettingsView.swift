@@ -5,9 +5,16 @@ struct SettingsView: View {
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("target_language") private var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
+    @ObservedObject private var party = PartyStore.shared
     @State private var apiKey = KeychainStore.loadAPIKey()
+    @State private var newMemberName = ""
 
     private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
+
+    private func addMember() {
+        party.add(name: newMemberName)
+        newMemberName = ""
+    }
 
     var body: some View {
         NavigationStack {
@@ -41,6 +48,30 @@ struct SettingsView: View {
                     }
                 } footer: {
                     Text("识别整页菜单建议用 gpt-4.1 或 gpt-4o；mini 版更快更便宜，但版式坐标和小语种翻译的质量会下降。")
+                }
+
+                Section {
+                    ForEach($party.members) { $member in
+                        HStack {
+                            Circle()
+                                .fill(party.color(of: member.id))
+                                .frame(width: 10, height: 10)
+                            TextField("名字", text: $member.name)
+                        }
+                    }
+                    .onDelete { offsets in
+                        party.remove(at: offsets)
+                    }
+                    HStack {
+                        TextField("添加成员…", text: $newMemberName)
+                            .onSubmit { addMember() }
+                        Button("添加", action: addMember)
+                            .disabled(newMemberName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                } header: {
+                    Text("同行成员")
+                } footer: {
+                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。左滑删除成员。")
                 }
 
                 Section {

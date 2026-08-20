@@ -133,8 +133,13 @@ struct ContentView: View {
                                 }
                             }
                         }
+                        if !PartyStore.shared.members.contains(where: { $0.name == "小明" }) {
+                            PartyStore.shared.add(name: "小明")
+                        }
+                        let friend = PartyStore.shared.members.first { $0.name == "小明" }!.id
                         for key in keys.prefix(3) { viewModel.addToCart(key) }
-                        if let first = keys.first { viewModel.addToCart(first) } // ×2
+                        if let first = keys.first { viewModel.addToCart(first, member: friend) } // ×2 across two people
+                        if keys.count > 3 { viewModel.addToCart(keys[3], member: friend) }
                     }
                 }
                 // Simulator only, zero API cost: rectify the given photos and

@@ -34,6 +34,20 @@ struct ResultView: View {
                 DishListView(viewModel: viewModel, scrollTarget: $listTarget)
             }
         }
+        .overlay(alignment: .bottomLeading) {
+            // View switcher floats at the bottom-left, out of the nav bar.
+            Picker("视图", selection: $mode) {
+                Image(systemName: "doc.richtext").tag(Mode.canvas)
+                Image(systemName: "list.bullet").tag(Mode.list)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 118)
+            .padding(4)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
+            .padding(.leading, 12)
+            .padding(.bottom, 10)
+        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
                 if let progress = viewModel.pipeline,
@@ -53,6 +67,13 @@ struct ResultView: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
                     .background(.thinMaterial)
+                }
+
+                if mode == .list {
+                    MemberChips(viewModel: viewModel)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(.thinMaterial)
                 }
 
                 if viewModel.cartCount > 0 {
@@ -80,20 +101,6 @@ struct ResultView: View {
             OrderSummaryView(viewModel: viewModel) {
                 mode = .canvas
             }
-        }
-        .overlay(alignment: .bottomLeading) {
-            // View switcher floats at the bottom-left, out of the nav bar.
-            Picker("视图", selection: $mode) {
-                Image(systemName: "doc.richtext").tag(Mode.canvas)
-                Image(systemName: "list.bullet").tag(Mode.list)
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 118)
-            .padding(4)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
-            .padding(.leading, 12)
-            .padding(.bottom, 10)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -142,7 +149,8 @@ private struct MenuCanvasView: View {
                             document: document,
                             pageIndex: index,
                             image: viewModel.scanImages[index],
-                            highlights: viewModel.cart,
+                            highlights: viewModel.highlightTotals,
+                            orderLabels: viewModel.orderLabels,
                             onSelectDish: onSelectDish
                         )
                         .padding(.bottom, 34) // keep the page dots clear
@@ -161,13 +169,16 @@ private struct CanvasPage: View {
     let pageIndex: Int
     let image: UIImage
     let highlights: [String: Int]
+    let orderLabels: [String: String]
     let onSelectDish: (String) -> Void
 
     @State private var rendered: UIImage?
 
     /// Stable signature so the canvas re-renders when the order changes.
     private var highlightSignature: String {
-        highlights.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" }.joined(separator: ",")
+        highlights.sorted { $0.key < $1.key }
+            .map { "\($0.key):\($0.value):\(orderLabels[$0.key] ?? "")" }
+            .joined(separator: ",")
     }
 
     var body: some View {
@@ -191,7 +202,8 @@ private struct CanvasPage: View {
                 image: image.normalizedOrientation(),
                 pageWidth: 1600,
                 pageIndex: pageIndex,
-                highlights: highlights
+                highlights: highlights,
+                orderLabels: orderLabels
             )
             rendered = await Task.detached(priority: .userInitiated) {
                 renderer.renderImage()
@@ -209,28 +221,41 @@ private struct OrderSummaryView: View {
     let onAnnotate: () -> Void
     @Environment(\.dismiss) private var dismiss
 
+    @ObservedObject private var party = PartyStore.shared
+
     var body: some View {
         NavigationStack {
             List {
-                ForEach(viewModel.cartEntries, id: \.key) { entry in
-                    HStack(alignment: .center, spacing: 10) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(entry.item.originalName)
-                                .font(.subheadline.weight(.semibold))
-                            Text(entry.item.chineseName)
-                                .font(.footnote)
-                                .foregroundStyle(.orange)
-                        }
-                        Spacer()
-                        if let price = entry.item.price {
-                            Text(price)
-                                .font(.footnote.monospacedDigit())
-                                .foregroundStyle(.secondary)
-                        }
-                        QuantityStepper(quantity: entry.quantity) {
-                            viewModel.addToCart(entry.key)
-                        } onMinus: {
-                            viewModel.removeFromCart(entry.key)
+                // Grouped by person, so it's obvious whose dish is whose.
+                ForEach(party.members) { member in
+                    let entries = viewModel.cartEntries(for: member.id)
+                    if !entries.isEmpty {
+                        Section {
+                            ForEach(entries, id: \.key) { entry in
+                                HStack(alignment: .center, spacing: 10) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(entry.item.originalName)
+                                            .font(.subheadline.weight(.semibold))
+                                        Text(entry.item.chineseName)
+                                            .font(.footnote)
+                                            .foregroundStyle(.orange)
+                                    }
+                                    Spacer()
+                                    if let price = entry.item.price {
+                                        Text(price)
+                                            .font(.footnote.monospacedDigit())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    QuantityStepper(quantity: entry.quantity) {
+                                        viewModel.addToCart(entry.key, member: member.id)
+                                    } onMinus: {
+                                        viewModel.removeFromCart(entry.key, member: member.id)
+                                    }
+                                }
+                            }
+                        } header: {
+                            Label(member.name, systemImage: "person.fill")
+                                .foregroundStyle(party.color(of: member.id))
                         }
                     }
                 }
@@ -365,7 +390,8 @@ private struct DishListView: View {
                             DishRow(
                                 item: row.item,
                                 photo: photo(for: row),
-                                quantity: viewModel.cart[row.id] ?? 0,
+                                quantity: viewModel.quantity(of: row.id),
+                                memberBreakdown: viewModel.orderLabels[row.id],
                                 onPlus: { viewModel.addToCart(row.id) },
                                 onMinus: { viewModel.removeFromCart(row.id) }
                             )
@@ -452,6 +478,7 @@ private struct DishRow: View {
     let item: MenuItemEntry
     let photo: UIImage?
     let quantity: Int
+    let memberBreakdown: String?
     let onPlus: () -> Void
     let onMinus: () -> Void
 
@@ -487,8 +514,66 @@ private struct DishRow: View {
                         .foregroundStyle(.secondary)
                 }
                 QuantityStepper(quantity: quantity, onPlus: onPlus, onMinus: onMinus)
+                if let memberBreakdown, quantity > 0 {
+                    Text(memberBreakdown)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(.vertical, 3)
+    }
+}
+
+/// Horizontal picker of party members — new +1s go to the selected person.
+private struct MemberChips: View {
+    @ObservedObject var viewModel: AnalysisViewModel
+    @ObservedObject private var party = PartyStore.shared
+    @State private var showAddMember = false
+    @State private var newName = ""
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                Text("为谁点:")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                ForEach(party.members) { member in
+                    let selected = viewModel.activeMemberID == member.id
+                    Button {
+                        viewModel.activeMemberID = member.id
+                    } label: {
+                        Text(member.name)
+                            .font(.footnote.weight(selected ? .semibold : .regular))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(
+                                Capsule().fill(selected ? party.color(of: member.id).opacity(0.22) : Color(.systemGray5))
+                            )
+                            .overlay(
+                                Capsule().stroke(selected ? party.color(of: member.id) : .clear, lineWidth: 1.5)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+                Button {
+                    showAddMember = true
+                } label: {
+                    Image(systemName: "plus.circle")
+                        .font(.footnote)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .alert("添加成员", isPresented: $showAddMember) {
+            TextField("名字", text: $newName)
+            Button("添加") {
+                PartyStore.shared.add(name: newName)
+                newName = ""
+            }
+            Button("取消", role: .cancel) { newName = "" }
+        } message: {
+            Text("也可以在设置页管理同行成员。")
+        }
     }
 }

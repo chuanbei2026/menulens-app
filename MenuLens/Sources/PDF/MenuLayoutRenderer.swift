@@ -46,6 +46,8 @@ struct MenuLayoutRenderer {
     /// Ordered dishes (dish key -> quantity): outlined with a quantity badge
     /// so a waiter can match the order against the printed menu.
     var highlights: [String: Int] = [:]
+    /// Per-dish "who ordered it" label (dish key -> "我 · 小明×2").
+    var orderLabels: [String: String] = [:]
 
     private static let ciContext = CIContext()
 
@@ -106,14 +108,18 @@ struct MenuLayoutRenderer {
 
                 let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
                 if let quantity = highlights[key], quantity > 0 {
-                    drawOrderHighlight(for: item, quantity: quantity, in: canvas)
+                    drawOrderHighlight(
+                        for: item, quantity: quantity,
+                        label: orderLabels[key], in: canvas
+                    )
                 }
             }
         }
     }
 
-    /// Accent outline around the dish's printed area plus a x-quantity badge.
-    private func drawOrderHighlight(for item: MenuItemEntry, quantity: Int, in canvas: CGSize) {
+    /// Accent outline around the dish's printed area plus a x-quantity badge
+    /// and a "who ordered it" name tag.
+    private func drawOrderHighlight(for item: MenuItemEntry, quantity: Int, label: String?, in canvas: CGSize) {
         var zone = item.bbox.rect(in: canvas)
         zone.size.height += 16 // include the Chinese caption under the name
         if let descBox = item.descriptionBBox {
@@ -127,9 +133,9 @@ struct MenuLayoutRenderer {
         outline.lineWidth = 3
         outline.stroke()
 
-        let label = "×\(quantity)" as NSString
+        let qtyText = "×\(quantity)" as NSString
         let font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        let textSize = label.size(withAttributes: [.font: font])
+        let textSize = qtyText.size(withAttributes: [.font: font])
         let badgeWidth = max(textSize.width + 12, 28)
         let badge = CGRect(
             x: zone.maxX - badgeWidth + 10, y: zone.minY - 13,
@@ -137,10 +143,27 @@ struct MenuLayoutRenderer {
         )
         accent.setFill()
         UIBezierPath(roundedRect: badge, cornerRadius: 13).fill()
-        label.draw(
+        (("×\(quantity)") as NSString).draw(
             at: CGPoint(x: badge.midX - textSize.width / 2, y: badge.midY - textSize.height / 2),
             withAttributes: [.font: font, .foregroundColor: UIColor.white]
         )
+
+        // Name tag to the LEFT of the quantity badge: who ordered this dish.
+        if let label, !label.isEmpty {
+            let nameFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            let nameText = label as NSString
+            let nameSize = nameText.size(withAttributes: [.font: nameFont])
+            let tag = CGRect(
+                x: badge.minX - nameSize.width - 20, y: zone.minY - 12,
+                width: nameSize.width + 14, height: 24
+            )
+            accent.withAlphaComponent(0.92).setFill()
+            UIBezierPath(roundedRect: tag, cornerRadius: 12).fill()
+            nameText.draw(
+                at: CGPoint(x: tag.midX - nameSize.width / 2, y: tag.midY - nameSize.height / 2),
+                withAttributes: [.font: nameFont, .foregroundColor: UIColor.white]
+            )
+        }
     }
 
     /// Chinese name (accent color) + description (dark gray) flowed together
