@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
+    @AppStorage("target_language") private var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     @State private var apiKey = KeychainStore.loadAPIKey()
 
     private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
@@ -12,13 +13,26 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section {
+                    Picker("目标语言", selection: $targetLanguageCode) {
+                        ForEach(TargetLanguage.allCases) { language in
+                            Text(language.displayName).tag(language.rawValue)
+                        }
+                    }
+                } footer: {
+                    Text("菜单会被翻译成该语言。菜单本身的语言无需设置，自动识别。")
+                }
+
+                Section {
                     SecureField("sk-...", text: $apiKey)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                    Link(destination: URL(string: "https://platform.openai.com/api-keys")!) {
+                        Label("如何获取 OpenAI API Key？", systemImage: "questionmark.circle")
+                    }
                 } header: {
                     Text("OpenAI API Key")
                 } footer: {
-                    Text("Key 仅保存在本机 Keychain 中，不会随代码或备份明文外泄。")
+                    Text("在上方链接的 OpenAI 平台注册并充值后，创建一个 Key 粘贴到这里。Key 只保存在你手机本地的系统钥匙串（Keychain）中，只用于直接调用 OpenAI —— 不会上传到任何云端，本 App 没有自己的服务器。")
                 }
 
                 Section {

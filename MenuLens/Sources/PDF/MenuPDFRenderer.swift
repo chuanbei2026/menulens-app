@@ -57,7 +57,7 @@ struct MenuPDFRenderer {
             ctx.beginPage(withBounds: page, pageInfo: [:])
             UIColor.white.setFill()
             ctx.fill(page)
-            var header = "菜品对照 · \(scan.sourceLanguageChinese) → 中文"
+            var header = "菜品对照 · \(scan.sourceLanguageChinese) → \(TargetLanguage.from(code: scan.targetLanguage).displayName)"
             if let name = scan.restaurantName { header = "\(name) — " + header }
             TextDraw.text(header, font: .boldSystemFont(ofSize: 30), color: .black,
                           at: CGPoint(x: margin, y: 46), maxWidth: contentWidth)

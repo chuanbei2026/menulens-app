@@ -42,6 +42,10 @@ struct MenuItemEntry: Codable, Hashable {
     /// the region the replace-style canvas paints over and rewrites in
     /// Chinese. nil when OCR found no matching lines (older scans too).
     var descriptionBBox: NormalizedRect?
+    /// Dietary attributes inferred by the model (menu markings first, then
+    /// culinary common sense). Allowed values: vegan, vegetarian,
+    /// gluten_free, contains_lamb, contains_seafood.
+    var tags: [String]?
 }
 
 /// A titled group of dishes ("Appetizers", "前菜", ...).
@@ -75,18 +79,22 @@ struct MenuScan: Codable, Hashable, Identifiable {
     let sourceLanguageChinese: String
     /// One document per photographed page, in page order.
     let pages: [MenuDocument]
+    /// TargetLanguage raw value this scan was translated into
+    /// (nil on scans made before multi-language support = Chinese).
+    var targetLanguage: String?
 
     var allItems: [MenuItemEntry] { pages.flatMap(\.allItems) }
 
     /// Combine per-page analysis results into one scan record.
-    static func combining(pages: [MenuDocument]) -> MenuScan {
+    static func combining(pages: [MenuDocument], targetLanguage: TargetLanguage = .simplifiedChinese) -> MenuScan {
         MenuScan(
             id: UUID(),
             createdAt: Date(),
             restaurantName: pages.compactMap(\.restaurantName).first,
             sourceLanguage: pages.first?.sourceLanguage ?? "unknown",
             sourceLanguageChinese: pages.first?.sourceLanguageChinese ?? "未知",
-            pages: pages
+            pages: pages,
+            targetLanguage: targetLanguage.rawValue
         )
     }
 

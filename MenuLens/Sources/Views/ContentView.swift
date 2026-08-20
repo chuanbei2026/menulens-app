@@ -74,6 +74,9 @@ struct ContentView: View {
                 if args.contains("-noImages") {
                     viewModel.generateDishImages = false
                 }
+                if let idx = args.firstIndex(of: "-targetLang"), idx + 1 < args.count {
+                    viewModel.targetLanguageCode = args[idx + 1]
+                }
                 if args.contains("-autoPDF"), let data = viewModel.pdfData {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         .appendingPathComponent("sample.pdf")

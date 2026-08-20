@@ -120,7 +120,8 @@ enum SampleData {
                         chineseDescription: "焦糖化洋葱、面包丁、融化的奶酪",
                         bbox: NormalizedRect(x: 0.08, y: 0.193, width: 0.42, height: 0.026),
                         photoBBox: NormalizedRect(x: 0.64, y: 0.179, width: 0.28, height: 0.129),
-                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.225, width: 0.45, height: 0.019)
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.225, width: 0.45, height: 0.019),
+                        tags: ["vegetarian"]
                     ),
                     MenuItemEntry(
                         originalName: "Salade de chèvre chaud",
@@ -130,7 +131,8 @@ enum SampleData {
                         chineseDescription: "烤山羊奶酪配吐司、蜂蜜、核桃",
                         bbox: NormalizedRect(x: 0.08, y: 0.343, width: 0.40, height: 0.026),
                         photoBBox: nil,
-                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.375, width: 0.44, height: 0.019)
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.375, width: 0.44, height: 0.019),
+                        tags: ["vegetarian", "gluten_free"]
                     ),
                 ]
             ),
@@ -147,7 +149,8 @@ enum SampleData {
                         chineseDescription: "油封鸭腿配萨尔拉风味土豆",
                         bbox: NormalizedRect(x: 0.08, y: 0.55, width: 0.30, height: 0.026),
                         photoBBox: NormalizedRect(x: 0.64, y: 0.536, width: 0.28, height: 0.129),
-                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.582, width: 0.45, height: 0.019)
+                        descriptionBBox: NormalizedRect(x: 0.08, y: 0.582, width: 0.45, height: 0.019),
+                        tags: ["gluten_free"]
                     ),
                     MenuItemEntry(
                         originalName: "Steak frites, sauce au poivre",

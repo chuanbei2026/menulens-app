@@ -81,16 +81,22 @@ struct ResultView: View {
                 mode = .canvas
             }
         }
+        .overlay(alignment: .bottomLeading) {
+            // View switcher floats at the bottom-left, out of the nav bar.
+            Picker("视图", selection: $mode) {
+                Image(systemName: "doc.richtext").tag(Mode.canvas)
+                Image(systemName: "list.bullet").tag(Mode.list)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 118)
+            .padding(4)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
+            .padding(.leading, 12)
+            .padding(.bottom, 10)
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Picker("视图", selection: $mode) {
-                    Image(systemName: "doc.richtext").tag(Mode.canvas)
-                    Image(systemName: "list.bullet").tag(Mode.list)
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 150)
-            }
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: onRestart) {
                     Image(systemName: "house")
@@ -265,6 +271,45 @@ private struct OrderSummaryView: View {
     }
 }
 
+/// Dietary tag icons shown next to the translated dish name:
+/// 🌱 vegan · 🥬 vegetarian · GF gluten-free · 🐑 contains lamb · 🐟 seafood.
+struct DietTagBadges: View {
+    let tags: [String]?
+
+    var body: some View {
+        if let tags, !tags.isEmpty {
+            HStack(spacing: 3) {
+                ForEach(tags, id: \.self) { tag in
+                    badge(for: tag)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func badge(for tag: String) -> some View {
+        switch tag {
+        case "vegan":
+            Text("🌱").font(.caption)
+        case "vegetarian":
+            Text("🥬").font(.caption)
+        case "gluten_free":
+            Text("GF")
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(.green)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1.5)
+                .overlay(Capsule().stroke(.green, lineWidth: 1))
+        case "contains_lamb":
+            Text("🐑").font(.caption)
+        case "contains_seafood":
+            Text("🐟").font(.caption)
+        default:
+            EmptyView()
+        }
+    }
+}
+
 /// Compact − qty + control used in list rows and the summary sheet.
 struct QuantityStepper: View {
     let quantity: Int
@@ -422,9 +467,12 @@ private struct DishRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.originalName)
                     .font(.headline)
-                Text(item.chineseName)
-                    .font(.subheadline)
-                    .foregroundStyle(.orange)
+                HStack(spacing: 5) {
+                    Text(item.chineseName)
+                        .font(.subheadline)
+                        .foregroundStyle(.orange)
+                    DietTagBadges(tags: item.tags)
+                }
                 if let zhDesc = item.chineseDescription {
                     Text(zhDesc)
                         .font(.footnote)

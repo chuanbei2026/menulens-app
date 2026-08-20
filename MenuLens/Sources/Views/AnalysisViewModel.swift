@@ -51,6 +51,8 @@ final class AnalysisViewModel: ObservableObject {
 
     /// Model id is a plain preference; the API key lives in the Keychain.
     @AppStorage("openai_model") var model = "gpt-4.1"
+    /// TargetLanguage raw value the menu gets translated into.
+    @AppStorage("target_language") var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
     @AppStorage("generate_dish_images") var generateDishImages = true
 
@@ -97,7 +99,12 @@ final class AnalysisViewModel: ObservableObject {
             phase = .failed("无法编码所选图片。")
             return
         }
-        let client = OpenAIClient(apiKey: KeychainStore.loadAPIKey(), model: model)
+        let target = TargetLanguage.from(code: targetLanguageCode)
+        let client = OpenAIClient(
+            apiKey: KeychainStore.loadAPIKey(),
+            model: model,
+            targetLanguage: target.promptName
+        )
         do {
             var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
             try await withThrowingTaskGroup(of: (Int, MenuDocument).self) { group in
@@ -115,7 +122,7 @@ final class AnalysisViewModel: ObservableObject {
                     pipeline?.pagesDone += 1
                 }
             }
-            let newScan = MenuScan.combining(pages: pages.compactMap { $0 })
+            let newScan = MenuScan.combining(pages: pages.compactMap { $0 }, targetLanguage: target)
             history.save(scan: newScan, images: images)
             scan = newScan
             scanImages = images

@@ -27,16 +27,28 @@ struct OpenAIClient {
 
     var apiKey: String
     var model: String
+    /// Language the menu gets translated into (prompt name, e.g. "Japanese").
+    /// Historical note: the JSON fields are still named chineseName /
+    /// chineseDescription / sourceLanguageChinese — they hold the TARGET-
+    /// language translation regardless of which target is selected.
+    var targetLanguage: String = "Simplified Chinese"
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
 
-    private static let systemPrompt = """
+    private var systemPrompt: String {
+        """
         You are a menu digitization engine. The user sends one photo of a restaurant menu. \
         Extract EVERY menu item visible in the photo and return strict JSON.
 
         Rules:
         - Detect the menu's language yourself. Translate every dish name and every \
-        description into natural Simplified Chinese (whole-phrase translation).
+        description into natural \(targetLanguage) (whole-phrase translation). The fields \
+        `chineseName` and `chineseDescription` hold these \(targetLanguage) translations, \
+        and `sourceLanguageChinese` holds the detected language's name written in \
+        \(targetLanguage).
+        - `tags`: dietary attributes per dish. Trust the menu's own markings first, then \
+        infer from culinary knowledge; include only values you are confident about. \
+        Allowed: vegan, vegetarian, gluten_free, contains_lamb, contains_seafood.
         - Every bounding box is normalized to the photo: x, y, width, height all in [0, 1], \
         origin at the top-left. `bbox` covers the item's text block. `photoBBox` covers the \
         dish's printed photo ONLY if the menu actually shows a picture for that item; \
@@ -46,6 +58,7 @@ struct OpenAIClient {
         - Group items under the menu's own section headings; if the menu has no sections, \
         return a single section with null titles.
         """
+    }
 
     /// The strict JSON Schema mirroring `MenuDocument`. Strict mode requires every
     /// property listed in `required` and `additionalProperties: false`; optional
@@ -71,13 +84,20 @@ struct OpenAIClient {
                 "price": ["type": ["string", "null"]],
                 "originalDescription": ["type": ["string", "null"]],
                 "chineseDescription": ["type": ["string", "null"]],
+                "tags": [
+                    "type": "array",
+                    "items": [
+                        "type": "string",
+                        "enum": ["vegan", "vegetarian", "gluten_free", "contains_lamb", "contains_seafood"],
+                    ],
+                ],
                 "bbox": normalizedRect,
                 "photoBBox": ["anyOf": [normalizedRect, ["type": "null"]]],
             ],
             "required": [
                 "originalName", "chineseName", "price",
                 "originalDescription", "chineseDescription",
-                "bbox", "photoBBox",
+                "tags", "bbox", "photoBBox",
             ],
         ]
         let section: [String: Any] = [
@@ -111,7 +131,7 @@ struct OpenAIClient {
         let payload: [String: Any] = [
             "model": model,
             "messages": [
-                ["role": "system", "content": Self.systemPrompt],
+                ["role": "system", "content": systemPrompt],
                 [
                     "role": "user",
                     "content": [
