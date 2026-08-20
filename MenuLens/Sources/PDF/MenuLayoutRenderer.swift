@@ -96,7 +96,23 @@ struct MenuLayoutRenderer {
             for (itemIndex, item) in section.items.enumerated() {
                 let nameRect = item.bbox.rect(in: canvas)
 
-                if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
+                if let lineBoxes = item.descriptionLines, !lineBoxes.isEmpty,
+                   let zhDesc = item.chineseDescription {
+                    // Lens-style: veil each original line strip separately
+                    // (paper color sampled from the line gap right above it)
+                    // and flow the translation through the original slots.
+                    let strips = lineBoxes.map { $0.rect(in: canvas) }
+                    for (index, strip) in strips.enumerated() {
+                        let paper = paperColor(nearStrip: lineBoxes[index])
+                        paper.withAlphaComponent(0.94).setFill()
+                        UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
+                    }
+                    // The translated NAME leads the flow (accent-colored) —
+                    // menus are too tight for a separate caption line, and
+                    // the original name line above stays untouched anyway.
+                    let lead = item.chineseName + "  "
+                    flowTranslation(lead + zhDesc, through: strips, accentPrefixLength: lead.count)
+                } else if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
                     // Veil the original description with SEMI-transparent
                     // paper color: the original stays faintly visible, edges
                     // blend into the page, and nothing is ever fully lost.
@@ -111,16 +127,7 @@ struct MenuLayoutRenderer {
                         in: block.insetBy(dx: 2, dy: 1)
                     )
                 } else {
-                    // No description block: paint the small Chinese name just
-                    // beneath the original name line.
-                    let size = max(min(nameRect.height * 0.72, 15), 9)
-                    TextDraw.text(
-                        item.chineseName,
-                        font: .systemFont(ofSize: size, weight: .semibold),
-                        color: nameColor,
-                        at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
-                        maxWidth: canvas.width - nameRect.minX - 8
-                    )
+                    drawNameCaption(item, nameRect: nameRect, canvas: canvas, color: nameColor)
                 }
 
                 let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
@@ -183,6 +190,104 @@ struct MenuLayoutRenderer {
         }
     }
 
+    /// Small translated name painted just beneath the original name line.
+    private func drawNameCaption(_ item: MenuItemEntry, nameRect: CGRect, canvas: CGSize, color: UIColor) {
+        let size = max(min(nameRect.height * 0.72, 15), 9)
+        TextDraw.text(
+            item.chineseName,
+            font: .systemFont(ofSize: size, weight: .semibold),
+            color: color,
+            at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
+            maxWidth: canvas.width - nameRect.minX - 8
+        )
+    }
+
+    /// Flow the translated description through the original line slots:
+    /// one uniform font sized so the whole text fits the combined slot
+    /// width, then greedy prefix-fitting per strip (binary search). Any
+    /// leftover wraps below the last strip.
+    private func flowTranslation(_ text: String, through strips: [CGRect], accentPrefixLength: Int = 0) {
+        guard !strips.isEmpty else { return }
+        let ink = UIColor(white: 0.20, alpha: 1)
+        let accent = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
+        let heights = strips.map(\.height).sorted()
+        var fontSize = min(max(heights[heights.count / 2] * 0.78, 9), 18)
+
+        func width(_ string: String, _ font: UIFont) -> CGFloat {
+            (string as NSString).size(withAttributes: [.font: font]).width
+        }
+        let totalWidth = strips.reduce(0) { $0 + $1.width }
+        while fontSize > 8, width(text, .systemFont(ofSize: fontSize)) > totalWidth * 0.96 {
+            fontSize -= 1
+        }
+        let font = UIFont.systemFont(ofSize: fontSize)
+
+        let boldFont = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
+        var consumed = 0
+        var remainder = Substring(text)
+
+        // Draw one chunk, splitting accent-prefix characters from ink ones.
+        func drawChunk(_ chunk: String, at origin: CGPoint) {
+            let accentCount = max(0, min(chunk.count, accentPrefixLength - consumed))
+            var x = origin.x
+            if accentCount > 0 {
+                let head = String(chunk.prefix(accentCount))
+                (head as NSString).draw(
+                    at: CGPoint(x: x, y: origin.y),
+                    withAttributes: [.font: boldFont, .foregroundColor: accent]
+                )
+                x += width(head, boldFont)
+            }
+            if accentCount < chunk.count {
+                let tail = String(chunk.dropFirst(accentCount))
+                (tail as NSString).draw(
+                    at: CGPoint(x: x, y: origin.y),
+                    withAttributes: [.font: font, .foregroundColor: ink]
+                )
+            }
+            consumed += chunk.count
+        }
+
+        for strip in strips {
+            guard !remainder.isEmpty else { break }
+            var low = 0
+            var high = remainder.count
+            while low < high {
+                let mid = (low + high + 1) / 2
+                if width(String(remainder.prefix(mid)), font) <= strip.width + 2 {
+                    low = mid
+                } else {
+                    high = mid - 1
+                }
+            }
+            let count = max(low, 1)
+            drawChunk(
+                String(remainder.prefix(count)),
+                at: CGPoint(x: strip.minX, y: strip.midY - font.lineHeight / 2)
+            )
+            remainder = remainder.dropFirst(count)
+        }
+        if !remainder.isEmpty, let last = strips.last {
+            TextDraw.text(
+                String(remainder), font: font, color: ink,
+                at: CGPoint(x: last.minX, y: last.maxY + 2),
+                maxWidth: max(last.width, 180)
+            )
+        }
+    }
+
+    /// Paper color for a line strip, sampled from the line GAP right above
+    /// it — pure paper, no glyph ink to distort the average.
+    private func paperColor(nearStrip strip: NormalizedRect) -> UIColor {
+        let gap = NormalizedRect(
+            x: strip.x,
+            y: max(0, strip.y - strip.height * 0.45),
+            width: strip.width,
+            height: strip.height * 0.32
+        )
+        return sampledColor(around: gap, lift: 1.02)
+    }
+
     /// Chinese name (accent color) + description (dark gray) flowed together
     /// inside the replaced block, font auto-shrunk until it fits.
     private func drawFitted(name: String, body: String, nameColor: UIColor, in block: CGRect) {
@@ -232,7 +337,7 @@ struct MenuLayoutRenderer {
 
     /// Average paper color of the region (slightly lightened) — used to
     /// paint over the original text before rewriting it in Chinese.
-    private func sampledColor(around normalizedRect: NormalizedRect) -> UIColor {
+    private func sampledColor(around normalizedRect: NormalizedRect, lift liftFactor: CGFloat = 1.05) -> UIColor {
         guard let cg = image.cgImage else { return UIColor(white: 0.97, alpha: 1) }
         let w = CGFloat(cg.width)
         let h = CGFloat(cg.height)
@@ -256,7 +361,7 @@ struct MenuLayoutRenderer {
         )
         // Lighten slightly: the average includes the (dark) glyphs, while we
         // want the paper behind them.
-        func lift(_ v: UInt8) -> CGFloat { min(CGFloat(v) / 255 * 1.05 + 0.01, 1) }
+        func lift(_ v: UInt8) -> CGFloat { min(CGFloat(v) / 255 * liftFactor + 0.01, 1) }
         return UIColor(red: lift(pixel[0]), green: lift(pixel[1]), blue: lift(pixel[2]), alpha: 1)
     }
 }

@@ -65,7 +65,7 @@ enum BBoxRefiner {
         // not text-matched, so multi-line descriptions (with allergen codes,
         // hyphenated fragments, OCR errors) are replaced whole — no stripes
         // of leftover original text.
-        func regionHull(for ref: Ref) -> NormalizedRect? {
+        func regionHull(for ref: Ref) -> (hull: NormalizedRect, lines: [NormalizedRect])? {
             guard ref.item.originalDescription != nil else { return nil }
             let vlm = ref.item.bbox.cgRect
             let nameBox: CGRect
@@ -96,6 +96,7 @@ enum BBoxRefiner {
             }
 
             var hull = CGRect.null
+            var kept: [CGRect] = []
             for line in lines {
                 let box = line.box
                 guard !matchedNameBoxes.contains(box) else { continue }
@@ -105,9 +106,16 @@ enum BBoxRefiner {
                 let xOverlap = min(box.maxX, colMinX + colWidth) - max(box.minX, colMinX)
                 guard xOverlap > 0.5 * box.width else { continue }
                 hull = hull.union(box)
+                kept.append(box)
             }
             guard !hull.isNull else { return nil }
-            return NormalizedRect(x: hull.minX, y: hull.minY, width: hull.width, height: hull.height)
+            kept.sort { lhs, rhs in
+                abs(lhs.midY - rhs.midY) < 0.004 ? lhs.minX < rhs.minX : lhs.midY < rhs.midY
+            }
+            return (
+                NormalizedRect(x: hull.minX, y: hull.minY, width: hull.width, height: hull.height),
+                kept.map { NormalizedRect(x: $0.minX, y: $0.minY, width: $0.width, height: $0.height) }
+            )
         }
 
         let sections = document.sections.enumerated().map { s, section in
@@ -122,6 +130,7 @@ enum BBoxRefiner {
                     let nameBox = ref.nameLine.map {
                         NormalizedRect(x: $0.box.minX, y: $0.box.minY, width: $0.box.width, height: $0.box.height)
                     } ?? item.bbox
+                    let region = regionHull(for: ref)
                     return MenuItemEntry(
                         originalName: item.originalName,
                         chineseName: item.chineseName,
@@ -130,7 +139,8 @@ enum BBoxRefiner {
                         chineseDescription: item.chineseDescription,
                         bbox: nameBox,
                         photoBBox: item.photoBBox,
-                        descriptionBBox: regionHull(for: ref),
+                        descriptionBBox: region?.hull,
+                        descriptionLines: region?.lines,
                         tags: item.tags
                     )
                 }

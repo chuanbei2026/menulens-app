@@ -13,16 +13,11 @@ struct ResultView: View {
 
     enum Mode: Hashable {
         case canvas
-        case poster
         case list
     }
 
-    @State private var mode: Mode = {
-        let args = ProcessInfo.processInfo.arguments
-        if args.contains("-listMode") { return .list }
-        if args.contains("-posterMode") { return .poster }
-        return .canvas
-    }()
+    @State private var mode: Mode =
+        ProcessInfo.processInfo.arguments.contains("-listMode") ? .list : .canvas
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
     @State private var showOrderSummary = false
@@ -35,8 +30,6 @@ struct ResultView: View {
                     listTarget = dishKey
                     mode = .list
                 }
-            case .poster:
-                MenuPosterView(viewModel: viewModel)
             case .list:
                 DishListView(viewModel: viewModel, scrollTarget: $listTarget)
             }
@@ -92,7 +85,6 @@ struct ResultView: View {
                 // Two big view-switch buttons across the very tail of the screen.
                 HStack(spacing: 0) {
                     viewTab(.canvas, icon: "doc.richtext", selectedIcon: "doc.richtext.fill", title: "画布")
-                    viewTab(.poster, icon: "wand.and.stars", selectedIcon: "wand.and.stars", title: "美排")
                     viewTab(.list, icon: "list.bullet", selectedIcon: "list.bullet", title: "列表")
                 }
                 .background(.regularMaterial)
@@ -229,38 +221,6 @@ private struct CanvasPage: View {
             )
             rendered = await Task.detached(priority: .userInitiated) {
                 renderer.renderImage()
-            }.value
-        }
-    }
-}
-
-// MARK: - Poster view (clean re-typeset pages)
-
-private struct MenuPosterView: View {
-    @ObservedObject var viewModel: AnalysisViewModel
-    @State private var pages: [UIImage] = []
-
-    var body: some View {
-        Group {
-            if pages.isEmpty {
-                ProgressView("正在排版…")
-            } else {
-                TabView {
-                    ForEach(Array(pages.enumerated()), id: \.offset) { _, page in
-                        ZoomableImageView(image: page)
-                            .padding(.bottom, pages.count > 1 ? 34 : 0)
-                    }
-                }
-                .tabViewStyle(.page(indexDisplayMode: pages.count > 1 ? .always : .never))
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
-                .background(Color(.systemGray5))
-            }
-        }
-        .task(id: viewModel.scan?.id) {
-            guard let scan = viewModel.scan else { return }
-            let renderer = MenuPosterRenderer(scan: scan)
-            pages = await Task.detached(priority: .userInitiated) {
-                renderer.renderImages()
             }.value
         }
     }

@@ -42,6 +42,11 @@ struct MenuItemEntry: Codable, Hashable {
     /// the region the replace-style canvas paints over and rewrites in
     /// Chinese. nil when OCR found no matching lines (older scans too).
     var descriptionBBox: NormalizedRect?
+    /// The individual OCR line boxes inside descriptionBBox, reading order.
+    /// When present, the canvas replaces line-by-line (Lens-style): each
+    /// strip is veiled separately and the translation flows through the
+    /// original line slots, preserving the menu's own line arrangement.
+    var descriptionLines: [NormalizedRect]?
     /// Dietary attributes inferred by the model (menu markings first, then
     /// culinary common sense). Allowed values: vegan, vegetarian,
     /// gluten_free, contains_lamb, contains_seafood.
