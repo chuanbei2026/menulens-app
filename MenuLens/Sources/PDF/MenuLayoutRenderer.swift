@@ -78,11 +78,13 @@ struct MenuLayoutRenderer {
                 let nameRect = item.bbox.rect(in: canvas)
 
                 if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
-                    // Replace the original description in place.
-                    let block = descBox.rect(in: canvas).insetBy(dx: -3, dy: -2)
+                    // Veil the original description with SEMI-transparent
+                    // paper color: the original stays faintly visible, edges
+                    // blend into the page, and nothing is ever fully lost.
+                    let block = descBox.rect(in: canvas).insetBy(dx: -2, dy: -1)
                     let paper = sampledColor(around: descBox)
-                    paper.setFill()
-                    UIBezierPath(roundedRect: block, cornerRadius: 3).fill()
+                    paper.withAlphaComponent(0.84).setFill()
+                    UIBezierPath(roundedRect: block, cornerRadius: 4).fill()
 
                     drawFitted(
                         name: item.chineseName, body: zhDesc,

@@ -25,7 +25,9 @@ struct ZoomableImageView: UIViewRepresentable {
 final class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
     let imageView = UIImageView()
     var onTapNormalized: ((CGPoint) -> Void)?
-    private var lastLayoutSize: CGSize = .zero
+    /// Set on init / image-size change only — the user's zoom must survive
+    /// re-layouts (bottom bars appearing, highlight re-renders, rotations).
+    private var needsInitialLayout = true
 
     init(image: UIImage) {
         super.init(frame: .zero)
@@ -50,22 +52,32 @@ final class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     func setImage(_ image: UIImage) {
+        // Same-size swaps (e.g. order highlights re-rendered) keep the
+        // user's zoom and scroll position; only a size change refits.
+        let sameSize = imageView.image?.size == image.size
         imageView.image = image
-        lastLayoutSize = .zero
-        setNeedsLayout()
+        if !sameSize {
+            needsInitialLayout = true
+            setNeedsLayout()
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         guard let image = imageView.image, bounds.width > 0, bounds.height > 0 else { return }
-        if lastLayoutSize != bounds.size {
-            lastLayoutSize = bounds.size
+        let fit = min(bounds.width / image.size.width, bounds.height / image.size.height)
+        if needsInitialLayout {
+            needsInitialLayout = false
             imageView.frame = CGRect(origin: .zero, size: image.size)
             contentSize = image.size
-            let fit = min(bounds.width / image.size.width, bounds.height / image.size.height)
             minimumZoomScale = fit
             maximumZoomScale = max(fit * 6, 2)
             zoomScale = fit
+        } else {
+            // Keep the current zoom; just track the new fit as the floor.
+            minimumZoomScale = fit
+            maximumZoomScale = max(fit * 6, 2)
+            if zoomScale < fit { zoomScale = fit }
         }
         centerContent()
     }

@@ -34,7 +34,7 @@ enum DocumentRectifier {
             // Last resort (e.g. simulator, screenshots with app chrome):
             // crop to the hull of recognized text lines. No perspective fix,
             // but it removes status bars, UI buttons, and table background.
-            return textHullCrop(cg) ?? source
+            return enhance(textHullCrop(cg) ?? source)
         }
 
         let ciImage = CIImage(cgImage: cg)
@@ -72,12 +72,32 @@ enum DocumentRectifier {
 
         let targetWidth = straightened.size.width
         let targetSize = CGSize(width: targetWidth, height: (targetWidth * trueHeight / trueWidth).rounded())
-        guard abs(targetSize.height - straightened.size.height) > 4 else { return straightened }
+        guard abs(targetSize.height - straightened.size.height) > 4 else { return enhance(straightened) }
         let format = UIGraphicsImageRendererFormat.default()
         format.scale = 1
-        return UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
+        let resized = UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
             straightened.draw(in: CGRect(origin: .zero, size: targetSize))
         }
+        return enhance(resized)
+    }
+
+    /// Legibility pass on the rectified page: unsharp-mask sharpening plus a
+    /// touch of contrast — hand-held menu photos are usually slightly soft.
+    private static func enhance(_ image: UIImage) -> UIImage {
+        guard let cg = image.cgImage else { return image }
+        let sharpened = CIImage(cgImage: cg)
+            .applyingFilter("CIUnsharpMask", parameters: [
+                kCIInputRadiusKey: 2.0,
+                kCIInputIntensityKey: 0.7,
+            ])
+            .applyingFilter("CIColorControls", parameters: [
+                kCIInputContrastKey: 1.06,
+                kCIInputSaturationKey: 1.0,
+                kCIInputBrightnessKey: 0.0,
+            ])
+        let context = CIContext()
+        guard let output = context.createCGImage(sharpened, from: sharpened.extent) else { return image }
+        return UIImage(cgImage: output)
     }
 
     /// ML document segmentation first (best quality, real devices), falling
