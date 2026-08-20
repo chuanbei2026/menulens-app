@@ -26,7 +26,9 @@ enum BBoxRefiner {
             let nameLine: Line?
         }
         let refs: [[Ref]] = document.sections.map { section in
-            section.items.map { Ref(item: $0, nameLine: bestMatch(for: $0.originalName, in: lines)) }
+            section.items.map {
+                Ref(item: $0, nameLine: bestMatch(for: $0.originalName, in: lines, near: $0.bbox.cgRect))
+            }
         }
         let matchedNameBoxes = refs.flatMap { $0 }.compactMap { $0.nameLine?.box }
         // Boundaries that end an item's territory: every other item's name
@@ -44,7 +46,12 @@ enum BBoxRefiner {
         func regionHull(for ref: Ref) -> NormalizedRect? {
             guard ref.item.originalDescription != nil else { return nil }
             let vlm = ref.item.bbox.cgRect
-            let nameBox = ref.nameLine?.box ?? vlm
+            // No OCR name match: treat the top edge of the VLM block as a
+            // zero-height name line, so the WHOLE block (name included) gets
+            // veiled and rewritten — graceful degradation instead of a
+            // missing translation.
+            let nameBox = ref.nameLine?.box
+                ?? CGRect(x: vlm.minX, y: vlm.minY, width: vlm.width, height: 0.002)
             let colMinX = min(nameBox.minX, vlm.minX) - 0.01
             let colWidth = max(nameBox.width, vlm.width) + 0.02
             let top = nameBox.maxY - 0.002
@@ -136,7 +143,10 @@ enum BBoxRefiner {
 
     /// Case/diacritic/punctuation-insensitive containment matching, scored by
     /// length overlap; a shared 8-char prefix counts as a weak match.
-    private static func bestMatch(for name: String, in lines: [Line]) -> Line? {
+    /// The same dish name can be printed more than once (set-menu boxes!),
+    /// so the text score is discounted by the distance to the VLM's block —
+    /// among equal texts, the spatially closest line wins.
+    private static func bestMatch(for name: String, in lines: [Line], near vlmRect: CGRect) -> Line? {
         let target = normalize(name)
         guard target.count >= 4 else { return nil }
         var best: (score: Double, line: Line)?
@@ -153,8 +163,11 @@ enum BBoxRefiner {
                     score = 0.55
                 }
             }
-            if score > 0.45, score > (best?.score ?? 0) {
-                best = (score, line)
+            guard score > 0.45 else { continue }
+            let distance = abs(line.box.midX - vlmRect.midX) + abs(line.box.midY - vlmRect.midY)
+            let adjusted = score - 1.2 * Double(distance)
+            if adjusted > (best?.score ?? -1) {
+                best = (adjusted, line)
             }
         }
         return best?.line
