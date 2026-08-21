@@ -9,6 +9,8 @@ struct PipelineProgress: Equatable {
         case done
     }
 
+    var rectifyDone = 0
+    var rectifyTotal = 0
     var pagesDone = 0
     var pagesTotal = 0
     var layoutState: LayoutState = .waiting
@@ -32,11 +34,9 @@ final class AnalysisViewModel: ObservableObject {
     }
 
     @Published var phase: Phase = .idle
-    /// Pages queued for the next analysis, in menu-page order.
-    /// Already perspective-rectified — photos are corrected as they're picked.
+    /// Pages queued for the next analysis, in menu-page order — exactly the
+    /// photos the user picked (correction happens in `analyze()`).
     @Published var pickedImages: [UIImage] = []
-    /// True while freshly picked photos are being rectified.
-    @Published var isRectifying = false
     /// The scan currently shown in the result view (fresh or from history).
     @Published var scan: MenuScan?
     @Published var scanImages: [UIImage] = []
@@ -72,19 +72,12 @@ final class AnalysisViewModel: ObservableObject {
         self.history = history
     }
 
-    /// Rectify freshly picked photos (document detection + perspective
-    /// correction, all on-device) and append them to the queue. The
-    /// thumbnails the user sees are already the corrected pages.
+    /// Queue freshly picked photos. Deliberately instant: what the user
+    /// picked is what they see. Perspective correction is real work, so it
+    /// runs as the first stage of `analyze()` where the progress screen can
+    /// account for it.
     func appendPhotos(_ photos: [UIImage]) async {
-        guard !photos.isEmpty else { return }
-        isRectifying = true
-        for photo in photos {
-            let rectified = await Task.detached(priority: .userInitiated) {
-                DocumentRectifier.rectify(photo)
-            }.value
-            pickedImages.append(rectified)
-        }
-        isRectifying = false
+        pickedImages.append(contentsOf: photos)
     }
 
     /// Analyze all picked pages concurrently (one API call per page),
@@ -93,10 +86,21 @@ final class AnalysisViewModel: ObservableObject {
     /// opens as soon as the layout PDF is ready; thumbnails keep filling
     /// in behind the banner and the PDF refreshes when they finish.
     func analyze() async {
-        let images = pickedImages // already rectified at pick time
-        guard !images.isEmpty else { return }
+        let originals = pickedImages
+        guard !originals.isEmpty else { return }
         phase = .analyzing
-        pipeline = PipelineProgress(pagesTotal: images.count)
+        pipeline = PipelineProgress(rectifyTotal: originals.count, pagesTotal: originals.count)
+
+        // Stage 0 — straighten and sharpen each page so every downstream
+        // step (OCR geometry, canvas, crops, history) works on a clean sheet.
+        var images: [UIImage] = []
+        for original in originals {
+            let rectified = await Task.detached(priority: .userInitiated) {
+                DocumentRectifier.rectify(original)
+            }.value
+            images.append(rectified)
+            pipeline?.rectifyDone += 1
+        }
 
         let jpegs = images.compactMap { $0.jpegDataForUpload() }
         guard jpegs.count == images.count else {
@@ -154,6 +158,8 @@ final class AnalysisViewModel: ObservableObject {
         generatedImages = history.loadGeneratedImages(for: saved)
         cart = [:]
         pipeline = PipelineProgress(
+            rectifyDone: saved.pages.count,
+            rectifyTotal: saved.pages.count,
             pagesDone: saved.pages.count,
             pagesTotal: saved.pages.count,
             layoutState: .done,

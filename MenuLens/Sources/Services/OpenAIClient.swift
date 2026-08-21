@@ -36,7 +36,7 @@ struct OpenAIClient {
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v11"
+    private static let promptVersion = "v12"
 
     private var systemPrompt: String {
         """
@@ -55,7 +55,10 @@ struct OpenAIClient {
            parenthesize the original text inside it.
            Brand/logo text keeps translated = "" (leave logos untouched).
            Fix obvious OCR misreads using the photo before translating.
-        3. Group the dishes: for each dish report its name line index, its description \
+        3. Group the dishes: for each dish report `originalName` — the dish name ALONE, \
+        without its price and without bracketed dietary codes like [GF] or [VG] — and \
+        `translatedName`, the translation ALONE (never append the source name in \
+        parentheses). Also its name line index, its description \
         line indices (reading order; empty array if none), the price EXACTLY as printed \
         (null if absent), its section (original + translated title, and the section \
         title's line index, -1 when the menu has no section headings), dietary `tags` \
@@ -253,6 +256,43 @@ struct OpenAIClient {
         return document
     }
 
+    // MARK: - Sanitizers
+
+    /// The name as printed often carries the price and dietary codes on the
+    /// same OCR line ("TANDOORI PANEER [GF] [VG] $14.99"). The list shows
+    /// price and tags in their own columns, so strip them from the name.
+    private static func cleanName(_ raw: String) -> String {
+        var text = raw
+        for pattern in [
+            #"[\[(（]\s?[A-Za-z]{1,4}\s?[\])）]"#,          // [GF] (VG)
+            #"[$¥€£]\s?\d+(?:[.,]\d{1,2})?"#,             // $14.99
+            #"\d+(?:[.,]\d{1,2})?\s?[€$¥£]"#,             // 12,50 €
+            #"\s+\d{1,3}(?:[.,]\d{1,2})?\s*$"#,          // trailing " 34"
+            #"\s{2,}"#,
+        ] {
+            text = text.replacingOccurrences(
+                of: pattern, with: pattern == #"\s{2,}"# ? " " : "",
+                options: .regularExpression
+            )
+        }
+        return text
+            .trimmingCharacters(in: CharacterSet(charactersIn: " ·-–—:;,.、，"))
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Models sometimes echo the source inside the translation
+    /// ("烤潘尼尔奶酪（Tandoori Paneer）"). The original is right there on the
+    /// page, so drop any parenthetical that is essentially Latin text.
+    private static func cleanTranslation(_ raw: String) -> String {
+        var text = raw
+        for pattern in [#"（[^（）]*[A-Za-z][^（）]*）"#, #"\([^()]*[A-Za-z][^()]*\)"#] {
+            text = text.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
+        }
+        return text
+            .replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
+    }
+
     // MARK: - Assembly (wire → MenuDocument, geometry from OCR only)
 
     private static func assemble(wire: WireResponse, ocrLines: [OCRService.RecognizedLine]) throws -> MenuDocument {
@@ -324,8 +364,8 @@ struct OpenAIClient {
                 hull = NormalizedRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
             }
             currentItems.append(MenuItemEntry(
-                originalName: dish.originalName,
-                chineseName: dish.translatedName,
+                originalName: cleanName(dish.originalName),
+                chineseName: cleanTranslation(dish.translatedName),
                 price: dish.price,
                 originalDescription: originalDescription.isEmpty ? nil : originalDescription,
                 chineseDescription: dish.translatedDescription.isEmpty ? nil : dish.translatedDescription,

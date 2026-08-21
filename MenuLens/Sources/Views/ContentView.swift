@@ -225,15 +225,6 @@ struct ContentView: View {
                 pageThumbnails
             }
 
-            if viewModel.isRectifying {
-                HStack(spacing: 8) {
-                    ProgressView().controlSize(.small)
-                    Text("正在矫正照片…")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
             if case let .failed(message) = viewModel.phase {
                 Text(message)
                     .font(.footnote)

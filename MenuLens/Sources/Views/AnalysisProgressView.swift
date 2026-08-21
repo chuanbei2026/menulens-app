@@ -31,6 +31,7 @@ struct AnalysisProgressView: View {
 
             if let progress = viewModel.pipeline {
                 VStack(spacing: 18) {
+                    rectifyRow(progress)
                     translateRow(progress)
                     layoutRow(progress)
                     imagesRow(progress)
@@ -53,11 +54,26 @@ struct AnalysisProgressView: View {
 
     // MARK: - Stage rows
 
+    private func rectifyRow(_ progress: PipelineProgress) -> some View {
+        StageRow(
+            icon: "perspective",
+            title: "矫正照片",
+            status: progress.rectifyDone >= progress.rectifyTotal
+                ? .done("\(progress.rectifyTotal) 页")
+                : .running(
+                    fraction: Double(progress.rectifyDone) / Double(max(progress.rectifyTotal, 1)),
+                    label: "\(progress.rectifyDone)/\(progress.rectifyTotal) 页"
+                )
+        )
+    }
+
     private func translateRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "character.book.closed",
             title: "翻译文字",
-            status: progress.pagesDone >= progress.pagesTotal
+            status: progress.rectifyDone < progress.rectifyTotal
+                ? .pending("等待矫正完成")
+                : progress.pagesDone >= progress.pagesTotal
                 ? .done("\(progress.pagesTotal) 页")
                 : .running(
                     fraction: Double(progress.pagesDone) / Double(max(progress.pagesTotal, 1)),
