@@ -2710,68 +2710,7 @@
        "originalDescription": "Handmade bread topped with roasted sesame seeds \"Till walay naan!\"",
        "originalName": "SESAME NAAN",
        "price": "$3.99 (contains egg)"
-      }
-     ],
-     "originalTitle": "RICE -N- NAAN"
-    },
-    {
-     "bbox": {
-      "height": 0.010174418041030475,
-      "width": 0.0532786871797295,
-      "x": 0.8053278700576763,
-      "y": 0.07994186070332199
-     },
-     "chineseTitle": "配菜",
-     "items": [
-      {
-       "bbox": {
-        "height": 0.02001784686969532,
-        "width": 0.13760172252586667,
-        "x": 0.7058298773149796,
-        "y": 0.09508116348043671
-       },
-       "chineseDescription": "自制酸奶，混合烤制的",
-       "chineseName": "酸奶酱",
-       "descriptionBBox": {
-        "height": 0.033306131243337145,
-        "width": 0.2501000024939096,
-        "x": 0.7037714402488852,
-        "y": 0.10479701390050078
-       },
-       "descriptionLines": [
-        {
-         "height": 0.028362946710259296,
-         "width": 0.2501000024939096,
-         "x": 0.7037714402488852,
-         "y": 0.10479701390050078
-        },
-        {
-         "height": 0.02487006666093805,
-         "width": 0.18485415879116263,
-         "x": 0.7038981187609775,
-         "y": 0.11323307848289987
-        }
-       ],
-       "originalDescription": "Yogurt made in-house mixed with roasted cumin and shredded cucumber.",
-       "originalName": "RAITA",
-       "price": "$3.99",
-       "tags": [
-        "vegetarian",
-        "gluten_free"
-       ]
-      }
-     ],
-     "originalTitle": "SIDES"
-    },
-    {
-     "bbox": {
-      "height": 0.01983785144558703,
-      "width": 0.14126477532062054,
-      "x": 0.35344935831704005,
-      "y": 0.052651439430537295
-     },
-     "chineseTitle": "米饭与馕",
-     "items": [
+      },
       {
        "bbox": {
         "height": 0.013802493239600366,
@@ -2862,6 +2801,43 @@
      },
      "chineseTitle": "配菜",
      "items": [
+      {
+       "bbox": {
+        "height": 0.02001784686969532,
+        "width": 0.13760172252586667,
+        "x": 0.7058298773149796,
+        "y": 0.09508116348043671
+       },
+       "chineseDescription": "自制酸奶，混合烤制的",
+       "chineseName": "酸奶酱",
+       "descriptionBBox": {
+        "height": 0.033306131243337145,
+        "width": 0.2501000024939096,
+        "x": 0.7037714402488852,
+        "y": 0.10479701390050078
+       },
+       "descriptionLines": [
+        {
+         "height": 0.028362946710259296,
+         "width": 0.2501000024939096,
+         "x": 0.7037714402488852,
+         "y": 0.10479701390050078
+        },
+        {
+         "height": 0.02487006666093805,
+         "width": 0.18485415879116263,
+         "x": 0.7038981187609775,
+         "y": 0.11323307848289987
+        }
+       ],
+       "originalDescription": "Yogurt made in-house mixed with roasted cumin and shredded cucumber.",
+       "originalName": "RAITA",
+       "price": "$3.99",
+       "tags": [
+        "vegetarian",
+        "gluten_free"
+       ]
+      },
       {
        "bbox": {
         "height": 0.027031338654146086,
@@ -2990,67 +2966,7 @@
        "chineseName": "",
        "originalName": "VOSS ARTISAN WATER",
        "price": "$3.99"
-      }
-     ],
-     "originalTitle": "DRINKS"
-    },
-    {
-     "bbox": {
-      "height": 0.01957172723404177,
-      "width": 0.09917501907622084,
-      "x": 0.7772263223713373,
-      "y": 0.21717418772470853
-     },
-     "chineseTitle": "甜点",
-     "items": [
-      {
-       "bbox": {
-        "height": 0.023223092928623457,
-        "width": 0.19082591012387295,
-        "x": 0.7016451404841729,
-        "y": 0.23680406818307698
-       },
-       "chineseDescription": "传统的甜甜圈球，浸在甜味糖浆中，",
-       "chineseName": "古拉布贾蒙",
-       "descriptionBBox": {
-        "height": 0.02822718686009862,
-        "width": 0.2583005915473342,
-        "x": 0.6978883386866724,
-        "y": 0.24865673451737103
-       },
-       "descriptionLines": [
-        {
-         "height": 0.027296332876745932,
-         "width": 0.2566280570081485,
-         "x": 0.6995608732258581,
-         "y": 0.24865673451737103
-        },
-        {
-         "height": 0.016093174111585506,
-         "width": 0.10851693238836035,
-         "x": 0.6978883386866724,
-         "y": 0.26079074726588414
-        }
-       ],
-       "originalDescription": "Traditional donut holes dipped in a sweet cardamom syrup.",
-       "originalName": "GHULAB JAMUN",
-       "price": "$4.99",
-       "tags": [
-        "vegetarian"
-       ]
-      }
-     ],
-     "originalTitle": "DESSERTS"
-    },
-    {
-     "bbox": {
-      "height": 0.013081395489742298,
-      "width": 0.0737704888894139,
-      "x": 0.3627049188749652,
-      "y": 0.20058139531472186
-     },
-     "chineseTitle": "饮料",
-     "items": [
+      },
       {
        "bbox": {
         "height": 0.013389823094407949,
@@ -3155,6 +3071,33 @@
        "originalDescription": "Pakistani style chilled yogurt and milk smoothie, $5.99 : MANGO :SALTY : SWEET",
        "originalName": "LASSI",
        "price": "$5.99"
+      },
+      {
+       "bbox": {
+        "height": 0.01827886840742754,
+        "width": 0.14301319190678205,
+        "x": 0.10170213905854275,
+        "y": 0.3107157181965048
+       },
+       "chineseDescription": "玻璃瓶装的气泡水。",
+       "chineseName": "",
+       "descriptionBBox": {
+        "height": 0.024563955382137403,
+        "width": 0.20517347875889058,
+        "x": 0.09928765359660331,
+        "y": 0.32101573079625245
+       },
+       "descriptionLines": [
+        {
+         "height": 0.024563955382137403,
+         "width": 0.20517347875889058,
+         "x": 0.09928765359660331,
+         "y": 0.32101573079625245
+        }
+       ],
+       "originalDescription": "Glass bottle of sparkling water.",
+       "originalName": "TOPO CHICO",
+       "price": "$5.99"
       }
      ],
      "originalTitle": "DRINKS"
@@ -3168,6 +3111,42 @@
      },
      "chineseTitle": "甜点",
      "items": [
+      {
+       "bbox": {
+        "height": 0.023223092928623457,
+        "width": 0.19082591012387295,
+        "x": 0.7016451404841729,
+        "y": 0.23680406818307698
+       },
+       "chineseDescription": "传统的甜甜圈球，浸在甜味糖浆中，",
+       "chineseName": "古拉布贾蒙",
+       "descriptionBBox": {
+        "height": 0.02822718686009862,
+        "width": 0.2583005915473342,
+        "x": 0.6978883386866724,
+        "y": 0.24865673451737103
+       },
+       "descriptionLines": [
+        {
+         "height": 0.027296332876745932,
+         "width": 0.2566280570081485,
+         "x": 0.6995608732258581,
+         "y": 0.24865673451737103
+        },
+        {
+         "height": 0.016093174111585506,
+         "width": 0.10851693238836035,
+         "x": 0.6978883386866724,
+         "y": 0.26079074726588414
+        }
+       ],
+       "originalDescription": "Traditional donut holes dipped in a sweet cardamom syrup.",
+       "originalName": "GHULAB JAMUN",
+       "price": "$4.99",
+       "tags": [
+        "vegetarian"
+       ]
+      },
       {
        "bbox": {
         "height": 0.025740671945496896,
@@ -3209,58 +3188,7 @@
        "tags": [
         "vegetarian"
        ]
-      }
-     ],
-     "originalTitle": "DESSERTS"
-    },
-    {
-     "bbox": {
-      "height": 0.013081395489742298,
-      "width": 0.0737704888894139,
-      "x": 0.3627049188749652,
-      "y": 0.20058139531472186
-     },
-     "chineseTitle": "饮料",
-     "items": [
-      {
-       "bbox": {
-        "height": 0.01827886840742754,
-        "width": 0.14301319190678205,
-        "x": 0.10170213905854275,
-        "y": 0.3107157181965048
-       },
-       "chineseDescription": "玻璃瓶装的气泡水。",
-       "chineseName": "",
-       "descriptionBBox": {
-        "height": 0.024563955382137403,
-        "width": 0.20517347875889058,
-        "x": 0.09928765359660331,
-        "y": 0.32101573079625245
-       },
-       "descriptionLines": [
-        {
-         "height": 0.024563955382137403,
-         "width": 0.20517347875889058,
-         "x": 0.09928765359660331,
-         "y": 0.32101573079625245
-        }
-       ],
-       "originalDescription": "Glass bottle of sparkling water.",
-       "originalName": "TOPO CHICO",
-       "price": "$5.99"
-      }
-     ],
-     "originalTitle": "DRINKS"
-    },
-    {
-     "bbox": {
-      "height": 0.01957172723404177,
-      "width": 0.09917501907622084,
-      "x": 0.7772263223713373,
-      "y": 0.21717418772470853
-     },
-     "chineseTitle": "甜点",
-     "items": [
+      },
       {
        "bbox": {
         "height": 0.02720529272716865,

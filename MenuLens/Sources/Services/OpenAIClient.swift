@@ -375,32 +375,16 @@ struct OpenAIClient {
             )
         }
 
-        // Dishes → sections (grouped by consecutive section titles).
+        // Dishes → sections. Grouped BY HEADING, not by adjacency: menus
+        // interleave dishes under one heading across columns, and treating
+        // each run as its own section duplicated the heading (and its
+        // translation) two or three times.
         var sections: [MenuSection] = []
-        var currentTitle: (original: String?, translated: String?, bbox: NormalizedRect?) = (nil, nil, nil)
-        var currentItems: [MenuItemEntry] = []
-        func flush() {
-            guard !currentItems.isEmpty else { return }
-            sections.append(MenuSection(
-                originalTitle: currentTitle.original,
-                chineseTitle: currentTitle.translated,
-                bbox: currentTitle.bbox,
-                items: currentItems
-            ))
-            currentItems = []
-        }
+        var sectionIndexByKey: [String: Int] = [:]
 
         for dish in wire.dishes {
             guard ocrLines.indices.contains(dish.nameLine) else { continue }
-            if dish.sectionOriginal != currentTitle.original {
-                flush()
-                currentTitle = (
-                    dish.sectionOriginal,
-                    dish.sectionTranslated,
-                    ocrLines.indices.contains(dish.sectionTitleLine)
-                        ? ocrLines[dish.sectionTitleLine].box : nil
-                )
-            }
+
             // The model can mis-index a line (a neighbouring column's text,
             // typically). Geometry is ours to check: a description line must
             // sit at/below its dish name, close by, and share the name's
@@ -423,6 +407,7 @@ struct OpenAIClient {
                 for b in descBoxes.dropFirst() { rect = rect.union(b.cgRect) }
                 hull = NormalizedRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
             }
+
             // The model sometimes fills only the per-LINE translations and
             // leaves the dish-level description empty. Those lines are this
             // dish's description, so stitch them back together rather than
@@ -433,7 +418,7 @@ struct OpenAIClient {
                 .joined()
             let translatedDescription = dish.translatedDescription.isEmpty ? stitched : dish.translatedDescription
 
-            currentItems.append(MenuItemEntry(
+            let item = MenuItemEntry(
                 originalName: cleanName(dish.originalName),
                 chineseName: cleanTranslation(dish.translatedName),
                 price: dish.price,
@@ -444,9 +429,29 @@ struct OpenAIClient {
                 descriptionBBox: hull,
                 descriptionLines: descBoxes.isEmpty ? nil : descBoxes,
                 tags: dish.tags.isEmpty ? nil : dish.tags
-            ))
+            )
+
+            let key = dish.sectionOriginal ?? dish.sectionTranslated ?? "line\(dish.sectionTitleLine)"
+            if let existing = sectionIndexByKey[key] {
+                var section = sections[existing]
+                sections[existing] = MenuSection(
+                    originalTitle: section.originalTitle,
+                    chineseTitle: section.chineseTitle,
+                    bbox: section.bbox,
+                    items: section.items + [item]
+                )
+                _ = section
+            } else {
+                sectionIndexByKey[key] = sections.count
+                sections.append(MenuSection(
+                    originalTitle: dish.sectionOriginal,
+                    chineseTitle: dish.sectionTranslated,
+                    bbox: ocrLines.indices.contains(dish.sectionTitleLine)
+                        ? ocrLines[dish.sectionTitleLine].box : nil,
+                    items: [item]
+                ))
+            }
         }
-        flush()
 
         return MenuDocument(
             sourceLanguage: wire.sourceLanguage,

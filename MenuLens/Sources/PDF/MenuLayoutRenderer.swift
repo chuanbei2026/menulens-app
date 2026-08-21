@@ -213,10 +213,16 @@ struct MenuLayoutRenderer {
 
         // Section headings get their translation in the blank space beside
         // them (right first) — "CEBICHES" means nothing to the diner either.
+        // One caption per printed heading: a section split across several
+        // MenuSection entries (same title, non-adjacent dishes) would
+        // otherwise stamp its translation two or three times over.
+        var captionedTitles = Set<String>()
         for section in document.sections {
             guard let bbox = section.bbox, let translated = section.chineseTitle,
                   !translated.isEmpty, translated != section.originalTitle
             else { continue }
+            let key = "\(boxKey(bbox))|\(translated)"
+            guard captionedTitles.insert(key).inserted else { continue }
             placeCaption(translated, anchor: bbox.rect(in: canvas), canvas: canvas,
                          occupancy: &occupancy, color: nameColor)
         }
