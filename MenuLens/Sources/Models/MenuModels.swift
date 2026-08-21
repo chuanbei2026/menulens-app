@@ -61,6 +61,18 @@ struct MenuSection: Codable, Hashable {
     let items: [MenuItemEntry]
 }
 
+/// One OCR-measured text line on the page with its LLM-assigned semantics.
+/// Architecture v2: geometry comes exclusively from OCR; the LLM only ever
+/// classifies and translates lines — it never emits coordinates.
+struct TextLine: Codable, Hashable {
+    /// section_title | dish_name | description | price | other
+    let role: String
+    let original: String
+    /// Empty string = keep the original as printed (prices, numbers).
+    let translated: String
+    let box: NormalizedRect
+}
+
 /// One analyzed menu page (the unit returned by a single OpenAI call).
 struct MenuDocument: Codable, Hashable {
     /// BCP-47-ish language name detected by the model, e.g. "Japanese", "French".
@@ -69,6 +81,9 @@ struct MenuDocument: Codable, Hashable {
     let sourceLanguageChinese: String
     let restaurantName: String?
     let sections: [MenuSection]
+    /// v2 scans: the complete page text inventory (nil on older scans,
+    /// which render through the legacy item-only path).
+    var textLines: [TextLine]?
 
     var allItems: [MenuItemEntry] { sections.flatMap(\.items) }
 }

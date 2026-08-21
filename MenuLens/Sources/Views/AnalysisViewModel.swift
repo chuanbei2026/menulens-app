@@ -55,7 +55,7 @@ final class AnalysisViewModel: ObservableObject {
     let party = PartyStore.shared
 
     /// Model id is a plain preference; the API key lives in the Keychain.
-    @AppStorage("openai_model") var model = "gpt-4.1"
+    @AppStorage("openai_model") var model = "gpt-5-mini"
     /// TargetLanguage raw value the menu gets translated into.
     @AppStorage("target_language") var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
@@ -116,10 +116,10 @@ final class AnalysisViewModel: ObservableObject {
                 for (index, jpeg) in jpegs.enumerated() {
                     let pageImage = images[index]
                     group.addTask {
-                        let document = try await client.analyzeMenu(jpegData: jpeg)
-                        // Snap bboxes onto OCR-detected text lines (no-op when
-                        // OCR finds nothing, e.g. simulator without the model).
-                        return (index, BBoxRefiner.refine(document, in: pageImage))
+                        // v2: OCR first — the line inventory IS the geometry;
+                        // the model only classifies and translates by index.
+                        let ocrLines = OCRService.recognizeLines(in: pageImage)
+                        return (index, try await client.analyzeMenu(jpegData: jpeg, ocrLines: ocrLines))
                     }
                 }
                 for try await (index, document) in group {

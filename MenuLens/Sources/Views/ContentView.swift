@@ -77,6 +77,9 @@ struct ContentView: View {
                 if let idx = args.firstIndex(of: "-targetLang"), idx + 1 < args.count {
                     viewModel.targetLanguageCode = args[idx + 1]
                 }
+                if let idx = args.firstIndex(of: "-model"), idx + 1 < args.count {
+                    viewModel.model = args[idx + 1]
+                }
                 if args.contains("-autoPDF"), let data = viewModel.pdfData {
                     let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                         .appendingPathComponent("sample.pdf")

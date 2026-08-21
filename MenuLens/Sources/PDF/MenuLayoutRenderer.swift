@@ -75,6 +75,34 @@ struct MenuLayoutRenderer {
         let canvas = pageSize
         let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
 
+        // v2 pages: every description/other line not owned by a dish is
+        // erased and rewritten in the target language too — footers,
+        // taglines, set-menu notes. Nothing stays untranslated.
+        if let textLines = document.textLines, !textLines.isEmpty {
+            var owned = Set<String>()
+            for section in document.sections {
+                for item in section.items {
+                    for lineBox in item.descriptionLines ?? [] {
+                        owned.insert(boxKey(lineBox))
+                    }
+                }
+            }
+            for line in textLines {
+                guard line.role == "description" || line.role == "other",
+                      !line.translated.isEmpty,
+                      !owned.contains(boxKey(line.box)),
+                      // Big display text (logos, decorative headlines) keeps
+                      // its original pixels — rewriting it wrecks the design.
+                      line.box.height < 0.03
+                else { continue }
+                let strip = line.box.rect(in: canvas)
+                let paper = paperColor(nearStrip: line.box)
+                paper.withAlphaComponent(0.98).setFill()
+                UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
+                flowTranslation(line.translated, through: [strip])
+            }
+        }
+
         // Section headings get their translation painted right beneath them —
         // "CEBICHES" means nothing to the diner either.
         for section in document.sections {
@@ -106,7 +134,7 @@ struct MenuLayoutRenderer {
                     let strips = lineBoxes.map { $0.rect(in: canvas) }
                     for (index, strip) in strips.enumerated() {
                         let paper = paperColor(nearStrip: lineBoxes[index])
-                        paper.withAlphaComponent(0.94).setFill()
+                        paper.withAlphaComponent(0.98).setFill()
                         UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
                     }
                     // The translated NAME leads the flow (accent-colored) —
@@ -202,6 +230,10 @@ struct MenuLayoutRenderer {
             at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
             maxWidth: canvas.width - nameRect.minX - 8
         )
+    }
+
+    private func boxKey(_ box: NormalizedRect) -> String {
+        "\(box.x)-\(box.y)-\(box.width)-\(box.height)"
     }
 
     /// Strip flow suits short descriptions (1–6 lines) whose combined slot

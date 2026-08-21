@@ -3,7 +3,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("openai_model") private var model = "gpt-4.1"
+    @AppStorage("openai_model") private var model = "gpt-5-mini"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("target_language") private var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     @ObservedObject private var party = PartyStore.shared
@@ -13,7 +13,7 @@ struct SettingsView: View {
     @State private var avatarPickerItem: PhotosPickerItem?
     @State private var showAvatarPicker = false
 
-    private let models = ["gpt-4.1", "gpt-4o", "gpt-4.1-mini", "gpt-4o-mini"]
+    private let models = ["gpt-5-mini", "gpt-5", "gpt-4.1", "gpt-4o"]
 
     private func addMember() {
         party.add(name: newMemberName)
@@ -51,7 +51,7 @@ struct SettingsView: View {
                         ForEach(models, id: \.self) { Text($0) }
                     }
                 } footer: {
-                    Text("每页菜单的估算成本：gpt-4.1 ≈ $0.03 · gpt-4o ≈ $0.025 · gpt-4.1-mini ≈ $0.008 · gpt-4o-mini ≈ $0.004（配图另计，拼图模式约 $0.003/道）。mini 版更快更便宜，但版式坐标和小语种翻译质量会下降。")
+                    Text("每页菜单的估算成本：gpt-5-mini ≈ $0.01（推荐）· gpt-5 ≈ $0.05 · gpt-4.1 ≈ $0.03 · gpt-4o ≈ $0.025（配图另计，拼图模式约 $0.003/道）。")
                 }
 
                 Section {
