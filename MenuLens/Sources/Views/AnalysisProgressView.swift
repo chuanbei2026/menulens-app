@@ -30,6 +30,7 @@ struct AnalysisProgressView: View {
             }
 
             if let progress = viewModel.pipeline {
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
                 VStack(spacing: 18) {
                     rectifyRow(progress)
                     translateRow(progress)
@@ -42,6 +43,7 @@ struct AnalysisProgressView: View {
                         .fill(Color(.secondarySystemBackground))
                 )
                 .padding(.horizontal)
+                }
             }
 
             Text("排版完成后立即可以查看，配图会在后台继续补齐")
@@ -67,6 +69,17 @@ struct AnalysisProgressView: View {
         )
     }
 
+    /// Reasoning models are silent for most of the request, so show the
+    /// clock (and what we already know) rather than a frozen counter.
+    private func thinkingLabel(_ progress: PipelineProgress) -> String {
+        guard progress.linesTotal > 0 else { return "正在读取文字…" }
+        guard let started = progress.translateStartedAt else {
+            return "读到 \(progress.linesTotal) 行，等待模型…"
+        }
+        let seconds = max(0, Int(Date().timeIntervalSince(started)))
+        return "\(progress.linesTotal) 行待翻译 · 已用 \(seconds) 秒"
+    }
+
     private func translateRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "character.book.closed",
@@ -75,10 +88,14 @@ struct AnalysisProgressView: View {
                 ? .pending("等待矫正完成")
                 : progress.pagesDone >= progress.pagesTotal
                 ? .done("\(progress.pagesTotal) 页")
-                : .running(
-                    fraction: Double(progress.pagesDone) / Double(max(progress.pagesTotal, 1)),
-                    label: "\(progress.pagesDone)/\(progress.pagesTotal) 页"
+                : progress.linesDone > 0
+                // Line-level movement: the model streams its answer, and the
+                // OCR inventory gives us an honest denominator.
+                ? .running(
+                    fraction: Double(progress.linesDone) / Double(max(progress.linesTotal, 1)),
+                    label: "\(progress.linesDone)/\(progress.linesTotal) 行"
                 )
+                : .running(fraction: nil, label: thinkingLabel(progress))
         )
     }
 

@@ -13,6 +13,12 @@ struct PipelineProgress: Equatable {
     var rectifyTotal = 0
     var pagesDone = 0
     var pagesTotal = 0
+    /// Text lines the model has translated, across all pages in flight.
+    var linesDone = 0
+    var linesTotal = 0
+    /// When the translation request went out — the progress row counts the
+    /// seconds so a thinking model never looks frozen.
+    var translateStartedAt: Date?
     var layoutState: LayoutState = .waiting
     var imagesDone = 0
     /// nil = count not known yet; 0 = no thumbnails needed (or disabled).
@@ -21,6 +27,16 @@ struct PipelineProgress: Equatable {
     var imagesFinished: Bool {
         if let total = imagesTotal { return imagesDone >= total }
         return false
+    }
+}
+
+/// Collects per-page translated-line counts from concurrent page tasks.
+actor LineProgress {
+    private var byPage: [Int: Int] = [:]
+
+    func record(page: Int, done: Int) -> Int {
+        byPage[page] = done
+        return byPage.values.reduce(0, +)
     }
 }
 
@@ -55,7 +71,7 @@ final class AnalysisViewModel: ObservableObject {
     let party = PartyStore.shared
 
     /// Model id is a plain preference; the API key lives in the Keychain.
-    @AppStorage("openai_model") var model = "gpt-5-mini"
+    @AppStorage("openai_model") var model = "gpt-4.1"
     /// TargetLanguage raw value the menu gets translated into.
     @AppStorage("target_language") var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
@@ -108,6 +124,7 @@ final class AnalysisViewModel: ObservableObject {
             phase = .failed("无法编码所选图片。")
             return
         }
+        pipeline?.translateStartedAt = Date()
         let target = TargetLanguage.from(code: targetLanguageCode)
         let client = OpenAIClient(
             apiKey: KeychainStore.loadAPIKey(),
@@ -119,15 +136,27 @@ final class AnalysisViewModel: ObservableObject {
         // Pages are independent: one failure must not throw away the pages
         // that came back fine (a 3-page scan losing everything to a single
         // timeout is the worst possible outcome for the user).
+        // Per-page line counters, summed for the progress bar.
+        let linesDoneByPage = LineProgress()
         await withTaskGroup(of: (Int, Result<MenuDocument, Error>).self) { group in
             for (index, jpeg) in jpegs.enumerated() {
                 let pageImage = images[index]
-                group.addTask {
+                group.addTask { [weak self] in
                     // v2: OCR first — the line inventory IS the geometry;
                     // the model only classifies and translates by index.
                     let ocrLines = OCRService.recognizeLines(in: pageImage)
+                    await MainActor.run { self?.pipeline?.linesTotal += ocrLines.count }
                     do {
-                        return (index, .success(try await client.analyzeMenu(jpegData: jpeg, ocrLines: ocrLines)))
+                        let document = try await client.analyzeMenu(
+                            jpegData: jpeg, ocrLines: ocrLines,
+                            onProgress: { done in
+                                Task { @MainActor [weak self] in
+                                    let total = await linesDoneByPage.record(page: index, done: done)
+                                    self?.pipeline?.linesDone = total
+                                }
+                            }
+                        )
+                        return (index, .success(document))
                     } catch {
                         return (index, .failure(error))
                     }

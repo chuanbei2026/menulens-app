@@ -36,7 +36,7 @@ struct OpenAIClient {
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v13"
+    private static let promptVersion = "v15"
 
     private var systemPrompt: String {
         """
@@ -58,7 +58,9 @@ struct OpenAIClient {
         3. Group the dishes: for each dish report `originalName` — the dish name ALONE, \
         without its price and without bracketed dietary codes like [GF] or [VG] — and \
         `translatedName`, the translation ALONE (never append the source name in \
-        parentheses). Also its name line index, its description \
+        parentheses). A translated name must stand on its own: when the printed \
+        name omits the dish type ("Clásico", "Limeño" on a cebiche menu), name the \
+        dish in the target language ("经典酸橘汁腌鱼"), don't transliterate. Also its name line index, its description \
         line indices (reading order; empty array if none), the price EXACTLY as printed \
         (null if absent), its section (original + translated title, and the section \
         title's line index, -1 when the menu has no section headings), dietary `tags` \
@@ -167,7 +169,14 @@ struct OpenAIClient {
 
     // MARK: - Request
 
-    func analyzeMenu(jpegData: Data, ocrLines: [OCRService.RecognizedLine]) async throws -> MenuDocument {
+    /// `onProgress` reports how many text lines the model has translated so
+    /// far (0 while it is still thinking), so the UI can show real movement
+    /// instead of a single page counter stuck at 0/1.
+    func analyzeMenu(
+        jpegData: Data,
+        ocrLines: [OCRService.RecognizedLine],
+        onProgress: (@Sendable (Int) -> Void)? = nil
+    ) async throws -> MenuDocument {
         guard !apiKey.isEmpty else { throw ClientError.missingAPIKey }
 
         let inventory = ocrLines.enumerated()
@@ -182,6 +191,7 @@ struct OpenAIClient {
         ])
         if let cached = ResponseCache.load(cacheKey),
            let document = try? JSONDecoder().decode(MenuDocument.self, from: cached) {
+            onProgress?(ocrLines.count)
             return document
         }
 
@@ -204,6 +214,7 @@ struct OpenAIClient {
                     ],
                 ],
             ],
+            "stream": true,
             "response_format": [
                 "type": "json_schema",
                 "json_schema": [
@@ -213,8 +224,14 @@ struct OpenAIClient {
                 ],
             ],
         ]
-        // Reasoning-family models only accept the default temperature.
-        if !model.hasPrefix("gpt-5") && !model.hasPrefix("o") {
+        if model.hasPrefix("gpt-5") || model.hasPrefix("o") {
+            // Reasoning models spend most of the wall clock thinking before
+            // emitting a single token. Menu translation is a transcription
+            // task, not a puzzle — low effort keeps the quality and cuts the
+            // silent wait roughly in half.
+            payload["reasoning_effort"] = "low"
+        } else {
+            // Only the reasoning family rejects a custom temperature.
             payload["temperature"] = 0.2
         }
 
@@ -223,15 +240,60 @@ struct OpenAIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-        // Reasoning models can spend minutes on a dense page, and a slow
-        // network on top of that used to trip the timeout mid-scan.
+        // Reasoning models can spend minutes on a dense page. Streaming keeps
+        // the connection busy (so idle timeouts stop firing) and, more
+        // importantly, lets us count translated lines as they arrive.
         request.timeoutInterval = 420
 
-        var data = Data()
-        var response: URLResponse?
+        struct StreamChunk: Decodable {
+            struct Choice: Decodable {
+                struct Delta: Decodable {
+                    let content: String?
+                    let refusal: String?
+                }
+                let delta: Delta
+            }
+            let choices: [Choice]
+        }
+
+        func streamContent() async throws -> String {
+            let (bytes, response) = try await URLSession.shared.bytes(for: request)
+            if let http = response as? HTTPURLResponse, !(200 ..< 300).contains(http.statusCode) {
+                var body = ""
+                for try await line in bytes.lines { body += line; if body.count > 500 { break } }
+                throw ClientError.badHTTPStatus(http.statusCode, String(body.prefix(500)))
+            }
+            var content = ""
+            var refusal = ""
+            var reported = 0
+            for try await line in bytes.lines {
+                guard line.hasPrefix("data:") else { continue }
+                let payload = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
+                if payload == "[DONE]" { break }
+                guard let data = payload.data(using: .utf8),
+                      let chunk = try? JSONDecoder().decode(StreamChunk.self, from: data),
+                      let delta = chunk.choices.first?.delta
+                else { continue }
+                if let text = delta.refusal { refusal += text }
+                guard let text = delta.content else { continue }
+                content += text
+                // Each translated line object in the response carries one
+                // "index" key — a free, honest progress counter.
+                let seen = content.components(separatedBy: "\"index\"").count - 1
+                if seen != reported {
+                    reported = seen
+                    onProgress?(min(seen, ocrLines.count))
+                }
+            }
+            if !refusal.isEmpty { throw ClientError.refusal(refusal) }
+            guard !content.isEmpty else { throw ClientError.emptyResponse }
+            return content
+        }
+
+        var content = ""
         for attempt in 0 ..< 2 {
             do {
-                (data, response) = try await URLSession.shared.data(for: request)
+                content = try await streamContent()
                 break
             } catch {
                 // One retry for timeouts and dropped connections; anything
@@ -244,28 +306,8 @@ struct OpenAIClient {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
             }
         }
-        if let http = response as? HTTPURLResponse, !(200 ..< 300).contains(http.statusCode) {
-            let body = String(data: data, encoding: .utf8) ?? ""
-            throw ClientError.badHTTPStatus(http.statusCode, String(body.prefix(500)))
-        }
+        guard let jsonData = content.data(using: .utf8) else { throw ClientError.emptyResponse }
 
-        struct ChatResponse: Decodable {
-            struct Choice: Decodable {
-                struct Message: Decodable {
-                    let content: String?
-                    let refusal: String?
-                }
-                let message: Message
-            }
-            let choices: [Choice]
-        }
-
-        let chat = try JSONDecoder().decode(ChatResponse.self, from: data)
-        guard let message = chat.choices.first?.message else { throw ClientError.emptyResponse }
-        if let refusal = message.refusal { throw ClientError.refusal(refusal) }
-        guard let content = message.content, let jsonData = content.data(using: .utf8) else {
-            throw ClientError.emptyResponse
-        }
         let wire = try JSONDecoder().decode(WireResponse.self, from: jsonData)
         let document = try Self.assemble(wire: wire, ocrLines: ocrLines)
         if let encoded = try? JSONEncoder().encode(document) {
