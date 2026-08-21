@@ -128,8 +128,21 @@ struct OpenAIClient {
         ]
     }()
 
+    /// Bump when the prompt or schema changes so stale cache entries miss.
+    private static let promptVersion = "v9"
+
     func analyzeMenu(jpegData: Data) async throws -> MenuDocument {
         guard !apiKey.isEmpty else { throw ClientError.missingAPIKey }
+
+        // Identical request → cached result, no API call.
+        let cacheKey = ResponseCache.key([
+            jpegData,
+            Data("\(model)|\(targetLanguage)|\(Self.promptVersion)".utf8),
+        ])
+        if let cached = ResponseCache.load(cacheKey),
+           let document = try? JSONDecoder().decode(MenuDocument.self, from: cached) {
+            return document
+        }
 
         let dataURL = "data:image/jpeg;base64,\(jpegData.base64EncodedString())"
         let payload: [String: Any] = [
@@ -191,6 +204,8 @@ struct OpenAIClient {
         guard let content = message.content, let jsonData = content.data(using: .utf8) else {
             throw ClientError.emptyResponse
         }
-        return try JSONDecoder().decode(MenuDocument.self, from: jsonData)
+        let document = try JSONDecoder().decode(MenuDocument.self, from: jsonData)
+        ResponseCache.store(cacheKey, jsonData)
+        return document
     }
 }

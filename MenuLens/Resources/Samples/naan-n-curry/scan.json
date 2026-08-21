@@ -1,9 +1,9 @@
 {
-  "createdAt" : "2026-08-20T20:35:58Z",
-  "id" : "44056B9A-09EB-4C0C-AF0E-19DA91753F18",
+  "createdAt" : "2026-08-21T00:33:42Z",
+  "id" : "09E9A3F3-2551-4BF3-A24C-D759FCD350C8",
   "pages" : [
     {
-      "restaurantName" : "Naan N Curry",
+      "restaurantName" : "NAAN N CURRY",
       "sections" : [
         {
           "bbox" : {
@@ -21,8 +21,8 @@
                 "x" : 0.23492723375079563,
                 "y" : 0.2004530009107196
               },
-              "chineseDescription" : "用鹰嘴豆面糊炸制的蔬菜丸子。",
-              "chineseName" : "炸蔬菜丸子",
+              "chineseDescription" : "用鹰嘴豆粉炸制的蔬菜天妇罗。",
+              "chineseName" : "蔬菜天妇罗 [GF] [V]",
               "descriptionBBox" : {
                 "height" : 0.021802325419472246,
                 "width" : 0.2577962584147202,
@@ -47,8 +47,8 @@
               "originalName" : "PAKORA [GF] [V]",
               "price" : "$7.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free"
+                "gluten_free",
+                "vegan"
               ]
             },
             {
@@ -58,8 +58,8 @@
                 "x" : 0.51730387025574,
                 "y" : 0.19382638803579233
               },
-              "chineseDescription" : "自制奶酪用烤炉腌料腌制，配以红辣椒和香菜，再拌入烤孜然。",
-              "chineseName" : "烤奶酪",
+              "chineseDescription" : "自制奶酪用烤炉腌料、红辣椒和香菜腌制，拌以烤孜然。",
+              "chineseName" : "烤炉奶酪 [GF] [VG]",
               "descriptionBBox" : {
                 "height" : 0.03263860616457814,
                 "width" : 0.2621716349101092,
@@ -90,8 +90,8 @@
               "originalName" : "TANDOORI PANEER [GF] [VG]",
               "price" : "$14.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free"
+                "gluten_free",
+                "vegetarian"
               ]
             }
           ],
@@ -114,11 +114,11 @@
                 "y" : 0.2774631936902403
               },
               "chineseDescription" : "又称黄油鸡。甜味奶油番茄和葫芦巴酱，可选鸡肉或奶酪。*可选微辣",
-              "chineseName" : "黄油鸡",
+              "chineseName" : "玛萨拉鸡* [GF]",
               "descriptionBBox" : {
-                "height" : 0.020495338376090078,
-                "width" : 0.3970893896855459,
-                "x" : 0.08731809131622754,
+                "height" : 0.052325581427001944,
+                "width" : 0.4220374226286946,
+                "x" : 0.08523908660665058,
                 "y" : 0.28924418595474266
               },
               "descriptionLines" : [
@@ -139,6 +139,36 @@
                   "width" : 0.1122661077415924,
                   "x" : 0.37214137326018104,
                   "y" : 0.29784824484826045
+                },
+                {
+                  "height" : 0.010348903228310391,
+                  "width" : 0.18711018369108967,
+                  "x" : 0.08523909006713697,
+                  "y" : 0.31087202699258154
+                },
+                {
+                  "height" : 0.010339026812923868,
+                  "width" : 0.13305613364740554,
+                  "x" : 0.37422037558793964,
+                  "y" : 0.3095930231524123
+                },
+                {
+                  "height" : 0.01033079637676515,
+                  "width" : 0.13305613364740554,
+                  "x" : 0.08523908660665058,
+                  "y" : 0.3210645526425764
+                },
+                {
+                  "height" : 0.011879881538054193,
+                  "width" : 0.11284620139741819,
+                  "x" : 0.37182874075676625,
+                  "y" : 0.31964179746576094
+                },
+                {
+                  "height" : 0.010312688985200325,
+                  "width" : 0.08939709037397436,
+                  "x" : 0.3721413725469005,
+                  "y" : 0.3312570783965443
                 }
               ],
               "originalDescription" : "Also known as Butter Chicken. A sweet creamy tomato and fenugreek based sauce available in chicken or paneer. *mild spice level available",
@@ -155,9 +185,29 @@
                 "x" : 0.08316009198901135,
                 "y" : 0.34011627893876195
               },
-              "chineseDescription" : "鹰嘴豆配以大蒜、洋葱和混合香料的清淡酱汁。",
-              "chineseName" : "鹰嘴豆咖喱",
-              "originalDescription" : "Garbanzo beans in a garlic, onion, and all-spice based light sauce.",
+              "chineseDescription" : "鹰嘴豆配大蒜、洋葱和混合香料酱。",
+              "chineseName" : "鹰嘴豆咖喱 [VG] [GF]",
+              "descriptionBBox" : {
+                "height" : 0.022083805011443136,
+                "width" : 0.25987525557312835,
+                "x" : 0.07900207976775836,
+                "y" : 0.35164212911074233
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.2557172481592509,
+                  "x" : 0.0831600871816358,
+                  "y" : 0.35164212911074233
+                },
+                {
+                  "height" : 0.010353841165994027,
+                  "width" : 0.1496881518989946,
+                  "x" : 0.07900207976775836,
+                  "y" : 0.36337209295619144
+                }
+              ],
+              "originalDescription" : "Garbanzo beans in a garlic, onion, and all-spice based bright sauce.",
               "originalName" : "CHANA MASALA [VG] [GF]",
               "price" : "$15.99",
               "tags" : [
@@ -172,8 +222,8 @@
                 "x" : 0.07900208282751084,
                 "y" : 0.38221970575287845
               },
-              "chineseDescription" : "烤茄子与豌豆、大蒜、洋葱和番茄一起炒制。",
-              "chineseName" : "烤茄子泥",
+              "chineseDescription" : "烤茄子与豌豆、大蒜、洋葱和番茄炒制。",
+              "chineseName" : "烤茄子泥 [VG] [GF]",
               "descriptionBBox" : {
                 "height" : 0.02343194463580822,
                 "width" : 0.23284823477530325,
@@ -199,7 +249,6 @@
               "price" : "$16.99",
               "tags" : [
                 "vegan",
-                "vegetarian",
                 "gluten_free"
               ]
             },
@@ -210,13 +259,13 @@
                 "x" : 0.3742203761051287,
                 "y" : 0.2746319368419776
               },
-              "chineseDescription" : "传统咖喱，用洋葱、生姜和大蒜为基础的酱汁烹制。*可选微辣 • 鸡肉 $17.99 • 羊肉 $18.99",
-              "chineseName" : "传统咖喱",
+              "chineseDescription" : "传统咖喱，用洋葱、生姜和大蒜酱烹制。*可选微辣\n• 鸡肉 $17.99\n• 羊肉 $18.99",
+              "chineseName" : "科尔玛* [GF]",
               "descriptionBBox" : {
-                "height" : 0.056745305074837216,
-                "width" : 0.43482406767885534,
+                "height" : 0.05813953452194309,
+                "width" : 0.545011170407059,
                 "x" : 0.37182874075676625,
-                "y" : 0.2848244623069074
+                "y" : 0.2834302328598015
               },
               "descriptionLines" : [
                 {
@@ -224,6 +273,12 @@
                   "width" : 0.26195425964058694,
                   "x" : 0.37422037503071137,
                   "y" : 0.2848244623069074
+                },
+                {
+                  "height" : 0.01328550891725011,
+                  "width" : 0.255717248159251,
+                  "x" : 0.6611226630045742,
+                  "y" : 0.2834302328598015
                 },
                 {
                   "height" : 0.010291290175199252,
@@ -274,7 +329,7 @@
                   "y" : 0.3260284115588321
                 }
               ],
-              "originalDescription" : "Traditional curry cooked in onion, ginger, and garlic based sauce. *mild spice level available • CHICKEN $17.99 • LAMB $18.99",
+              "originalDescription" : "Traditional curry cooked in onion, ginger, and garlic based sauce. *mild spice level available\n• CHICKEN $17.99\n• LAMB $18.99",
               "originalName" : "KORMA* [GF]",
               "tags" : [
                 "gluten_free"
@@ -282,15 +337,59 @@
             },
             {
               "bbox" : {
-                "height" : 0.001,
-                "width" : 0.24324322519657865,
-                "x" : 0.37214138223885546,
-                "y" : 0.3598346547193614
+                "height" : 0.011891279728199367,
+                "width" : 0.14137213659054654,
+                "x" : 0.37214137594589086,
+                "y" : 0.35164212936975403
               },
-              "chineseDescription" : "黄扁豆与洋葱、大蒜、孜然和姜一起烹制。*可选微辣",
-              "chineseName" : "黄扁豆咖喱",
+              "chineseDescription" : "黄扁豆与洋葱、大蒜、孜然和生姜炖煮。*可选微辣",
+              "chineseName" : "炖扁豆* [V] [GF]",
+              "descriptionBBox" : {
+                "height" : 0.04090502959208764,
+                "width" : 0.5348002642598203,
+                "x" : 0.3700623695448232,
+                "y" : 0.35444380736244074
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.017368932812562132,
+                  "width" : 0.24203300785206894,
+                  "x" : 0.6628296259525744,
+                  "y" : 0.35444380736244074
+                },
+                {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.24324322519657865,
+                  "x" : 0.37214138223885546,
+                  "y" : 0.3618346547193614
+                },
+                {
+                  "height" : 0.010315981483675518,
+                  "width" : 0.11434511156870442,
+                  "x" : 0.3700623695448232,
+                  "y" : 0.3748584372062087
+                },
+                {
+                  "height" : 0.010174418629768422,
+                  "width" : 0.04573804400921644,
+                  "x" : 0.6632016646378034,
+                  "y" : 0.3720930231524123
+                },
+                {
+                  "height" : 0.00872092986835904,
+                  "width" : 0.13513513747451755,
+                  "x" : 0.3721413726608701,
+                  "y" : 0.38662790708616934
+                },
+                {
+                  "height" : 0.01281413297556,
+                  "width" : 0.12747468129162653,
+                  "x" : 0.6649544878773099,
+                  "y" : 0.3817027849420258
+                }
+              ],
               "originalDescription" : "Yellow lentils cooked with onion, garlic, cumin, and ginger. *mild spice level available",
-              "originalName" : "DAAL* [VG] [GF]",
+              "originalName" : "DAAL* [V] [GF]",
               "price" : "$14.99",
               "tags" : [
                 "vegan",
@@ -304,15 +403,21 @@
                 "x" : 0.6611226629006927,
                 "y" : 0.27463193637463257
               },
-              "chineseDescription" : "新鲜菠菜与孜然、姜、姜黄和混合香料一起烹制。• 奶酪（素）$17.99 • 鸡肉 $17.99 • 羊肉 $18.99",
-              "chineseName" : "菠菜咖喱",
+              "chineseDescription" : "新鲜菠菜配孜然、生姜、姜黄和混合香料烹制。\n• 奶酪 [VG] $17.99\n• 鸡肉 $17.99\n• 羊肉 $18.99",
+              "chineseName" : "菠菜咖喱 [GF]",
               "descriptionBBox" : {
-                "height" : 0.05548211890648935,
-                "width" : 0.25623963198550903,
-                "x" : 0.6606002791783162,
+                "height" : 0.021802325268067246,
+                "width" : 0.5426195361331139,
+                "x" : 0.37422037503071137,
                 "y" : 0.2834302328598015
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.26195425964058694,
+                  "x" : 0.37422037503071137,
+                  "y" : 0.2848244623069074
+                },
                 {
                   "height" : 0.01328550891725011,
                   "width" : 0.255717248159251,
@@ -324,27 +429,9 @@
                   "width" : 0.14553014424477062,
                   "x" : 0.661122664190851,
                   "y" : 0.2950169873173065
-                },
-                {
-                  "height" : 0.012425920026353565,
-                  "width" : 0.13162200532044543,
-                  "x" : 0.6607638633649596,
-                  "y" : 0.30454348878584714
-                },
-                {
-                  "height" : 0.010432853029106348,
-                  "width" : 0.1122661077415924,
-                  "x" : 0.661122663312156,
-                  "y" : 0.31686046512915655
-                },
-                {
-                  "height" : 0.012883940207458755,
-                  "width" : 0.09247378282840668,
-                  "x" : 0.6606002791783162,
-                  "y" : 0.3260284115588321
                 }
               ],
-              "originalDescription" : "Fresh spinach cooked with cumin, ginger, turmeric, and all-spice. • PANEER (VG) $17.99 • CHICKEN $17.99 • LAMB $18.99",
+              "originalDescription" : "Fresh spinach cooked with cumin, ginger, turmeric, and all-spice.\n• PANEER [VG] $17.99\n• CHICKEN $17.99\n• LAMB $18.99",
               "originalName" : "PALAK [GF]",
               "tags" : [
                 "gluten_free"
@@ -357,12 +444,12 @@
                 "x" : 0.662816614861365,
                 "y" : 0.343622489679386
               },
-              "chineseDescription" : "秋葵与洋葱、番茄和姜一起烹制。*可选纯素",
-              "chineseName" : "秋葵咖喱",
+              "chineseDescription" : "秋葵配洋葱、番茄和生姜烹制。*可选纯素",
+              "chineseName" : "秋葵咖喱* [VG] [GF]",
               "descriptionBBox" : {
-                "height" : 0.040073110555145064,
-                "width" : 0.24203300785206894,
-                "x" : 0.6628296259525744,
+                "height" : 0.027823634419740007,
+                "width" : 0.532721251565788,
+                "x" : 0.37214138223885546,
                 "y" : 0.35444380736244074
               },
               "descriptionLines" : [
@@ -373,16 +460,16 @@
                   "y" : 0.35444380736244074
                 },
                 {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.24324322519657865,
+                  "x" : 0.37214138223885546,
+                  "y" : 0.3618346547193614
+                },
+                {
                   "height" : 0.010174418629768422,
                   "width" : 0.04573804400921644,
                   "x" : 0.6632016646378034,
                   "y" : 0.3720930231524123
-                },
-                {
-                  "height" : 0.01281413297556,
-                  "width" : 0.12747468129162653,
-                  "x" : 0.6649544878773099,
-                  "y" : 0.3817027849420258
                 }
               ],
               "originalDescription" : "Okra cooked with onions, tomato, and ginger. *vegan option available.",
@@ -412,13 +499,13 @@
                 "x" : 0.07068607278405961,
                 "y" : 0.45922989808998094
               },
-              "chineseDescription" : "我们最受欢迎的菜肴！巴基斯坦风味巴斯马蒂米饭，慢炖藏红花，配以肉类或蔬菜。• 鸡肉 $21.99 • 羊肉 $22.99 • 杂菜（纯素）$21.99",
-              "chineseName" : "巴斯马蒂手抓饭",
+              "chineseDescription" : "我们最受欢迎的菜肴！巴基斯坦风味的巴斯马蒂米饭用藏红花慢炖，并与肉类或蔬菜一起炖煮。\n• 鸡肉 $21.99\n• 羊肉 $22.99\n• 杂菜 [VG] $21.99",
+              "chineseName" : "焖饭 [GF]",
               "descriptionBBox" : {
-                "height" : 0.01162790685115822,
-                "width" : 0.2432432251965787,
-                "x" : 0.06860707357634695,
-                "y" : 0.47093023266938205
+                "height" : 0.023310134469747834,
+                "width" : 0.5363825370534043,
+                "x" : 0.06860707161858848,
+                "y" : 0.4694224236942034
               },
               "descriptionLines" : [
                 {
@@ -426,9 +513,21 @@
                   "width" : 0.2432432251965787,
                   "x" : 0.06860707357634695,
                   "y" : 0.47093023266938205
+                },
+                {
+                  "height" : 0.011891279728199255,
+                  "width" : 0.23700623844585694,
+                  "x" : 0.36798337022613586,
+                  "y" : 0.4694224236942034
+                },
+                {
+                  "height" : 0.011627906851158332,
+                  "width" : 0.2515592405050268,
+                  "x" : 0.06860707161858848,
+                  "y" : 0.4811046513127929
                 }
               ],
-              "originalDescription" : "Our most popular dish! Pakistani-style Basmati rice slow-cooked in saffron and simmered with meat or vegetables. • CHICKEN $21.99 • LAMB $22.99 • MIXED VEGETABLES [VG] $21.99",
+              "originalDescription" : "Our most popular dish! Pakistani-style Basmati rice slow-cooked in saffron and simmered with meat or vegetables.\n• CHICKEN $21.99\n• LAMB $22.99\n• MIXED VEGETABLES [VG] $21.99",
               "originalName" : "DUMM BIRYANI [GF]",
               "tags" : [
                 "gluten_free"
@@ -441,12 +540,12 @@
                 "x" : 0.06444906614238537,
                 "y" : 0.5537790698820635
               },
-              "chineseDescription" : "酸辣芒果泡菜酱配芥菜籽、混合香料、洋葱和孜然烹制。• 鸡肉 $18.99 • 羊肉 $19.99 • 奶酪（素）$18.99",
-              "chineseName" : "芒果泡菜咖喱",
+              "chineseDescription" : "用芒果泡菜酱、芥末籽、混合香料、洋葱和孜然烹制。\n• 鸡肉 $18.99\n• 羊肉 $19.99\n• 奶酪 [VG] $18.99",
+              "chineseName" : "芒果泡菜咖喱 [GF]",
               "descriptionBBox" : {
-                "height" : 0.02527796101905888,
-                "width" : 0.2746738692230386,
-                "x" : 0.06212446272783674,
+                "height" : 0.06321022161011458,
+                "width" : 0.5155925162624545,
+                "x" : 0.0540540550311301,
                 "y" : 0.5619313412073923
               },
               "descriptionLines" : [
@@ -461,9 +560,51 @@
                   "width" : 0.27442825787264485,
                   "x" : 0.062370074078230496,
                   "y" : 0.575311438041321
+                },
+                {
+                  "height" : 0.01189786418513017,
+                  "width" : 0.20374220194267872,
+                  "x" : 0.3659043693509059,
+                  "y" : 0.575311438041321
+                },
+                {
+                  "height" : 0.010431207049878544,
+                  "width" : 0.12266111451184537,
+                  "x" : 0.05821206051954515,
+                  "y" : 0.5886627908546894
+                },
+                {
+                  "height" : 0.008732452802992952,
+                  "width" : 0.12474011833895743,
+                  "x" : 0.3617463670259475,
+                  "y" : 0.5886627907828748
+                },
+                {
+                  "height" : 0.010238616139810475,
+                  "width" : 0.09771309331711533,
+                  "x" : 0.058212058989398026,
+                  "y" : 0.6002265003213915
+                },
+                {
+                  "height" : 0.009060022650056565,
+                  "width" : 0.09979209714422738,
+                  "x" : 0.36174636297843515,
+                  "y" : 0.6002265006063452
+                },
+                {
+                  "height" : 0.013222957926455337,
+                  "width" : 0.14137213659054648,
+                  "x" : 0.0540540550311301,
+                  "y" : 0.6119186048910515
+                },
+                {
+                  "height" : 0.013222957926455337,
+                  "width" : 0.17671517692083671,
+                  "x" : 0.3596673613316814,
+                  "y" : 0.6119186046875631
                 }
               ],
-              "originalDescription" : "Tangy mango pickle sauce cooked with mustard seeds, all-spice, onion, and cumin. • CHICKEN $18.99 • LAMB $19.99 • PANEER [VG] $18.99",
+              "originalDescription" : "Tangy mango pickle sauce cooked with mustard seeds, all-spice, onion, and cumin.\n• CHICKEN $18.99\n• LAMB $19.99\n• PANEER [VG] $18.99",
               "originalName" : "ACHARI [GF]",
               "tags" : [
                 "gluten_free"
@@ -476,12 +617,12 @@
                 "x" : 0.05613305888041655,
                 "y" : 0.6351744184736458
               },
-              "chineseDescription" : "慢炖扁豆、羊肉、大麦和新鲜混合香料。健康美味，堪比家乡风味！",
-              "chineseName" : "什锦羊肉粥",
+              "chineseDescription" : "慢炖扁豆、羊肉、大麦和新鲜混合香料。健康美味，堪比家乡！",
+              "chineseName" : "哈里姆",
               "descriptionBBox" : {
-                "height" : 0.011627906851158332,
-                "width" : 0.261954259640587,
-                "x" : 0.05405405780964404,
+                "height" : 0.02470930211010902,
+                "width" : 0.28274427318109296,
+                "x" : 0.05405405746350758,
                 "y" : 0.6482558141616301
               },
               "descriptionLines" : [
@@ -490,6 +631,12 @@
                   "width" : 0.261954259640587,
                   "x" : 0.05405405780964404,
                   "y" : 0.6482558141616301
+                },
+                {
+                  "height" : 0.01328221695879439,
+                  "width" : 0.28274427318109296,
+                  "x" : 0.05405405746350758,
+                  "y" : 0.6596828993129448
                 }
               ],
               "originalDescription" : "Slow cooked lentils, mutton, barley, and fresh all-spice. A wholesome dish, the best outside of our mother land!",
@@ -506,12 +653,12 @@
                 "x" : 0.36798336619464767,
                 "y" : 0.45784883726941805
               },
-              "chineseDescription" : "传统奶油咖喱，用洋葱、大蒜和番茄烹制。不太甜，不太辣——恰到好处。• 鸡肉 $18.99 • 羊肉 $19.99 • 奶酪（素）$18.99",
-              "chineseName" : "传统奶油咖喱",
+              "chineseDescription" : "传统科尔玛配洋葱、大蒜和番茄烹制。不太甜、不太辣，恰到好处。\n• 鸡肉 $18.99\n• 羊肉 $19.99\n• 奶酪 [VG] $18.99",
+              "chineseName" : "莫卧儿科尔玛 [GF]",
               "descriptionBBox" : {
-                "height" : 0.020403157641029623,
-                "width" : 0.4532224502146666,
-                "x" : 0.36798337022613586,
+                "height" : 0.023310134527887327,
+                "width" : 0.45530145279398204,
+                "x" : 0.36590436764682044,
                 "y" : 0.4694224236942034
               },
               "descriptionLines" : [
@@ -522,13 +669,19 @@
                   "y" : 0.4694224236942034
                 },
                 {
+                  "height" : 0.01162790685115822,
+                  "width" : 0.2536382443321389,
+                  "x" : 0.36590436764682044,
+                  "y" : 0.4811046513709325
+                },
+                {
                   "height" : 0.010210632332859126,
                   "width" : 0.15384614718791156,
                   "x" : 0.6673596732528909,
                   "y" : 0.4796149490023739
                 }
               ],
-              "originalDescription" : "Traditional korma cooked with onion, garlic, and tomato. Not too sweet, not too spicy—just right. • CHICKEN $18.99 • LAMB $19.99 • PANEER $18.99 [VG]",
+              "originalDescription" : "Traditional korma cooked with onion, garlic, and tomato. Not too sweet, not too spicy—just right.\n• CHICKEN $18.99\n• LAMB $19.99\n• PANEER [VG] $18.99",
               "originalName" : "MUGHLAI KORMA [GF]",
               "tags" : [
                 "gluten_free"
@@ -541,8 +694,8 @@
                 "x" : 0.36590436999720166,
                 "y" : 0.5508720930375991
               },
-              "chineseDescription" : "清淡酱汁，由酸奶、香菜、混合香料、姜和番茄组成。• 鸡肉 $18.99 • 羊肉 $19.99 • 素食（纯素）$18.99",
-              "chineseName" : "卡拉希锅咖喱",
+              "chineseDescription" : "清淡酱汁，由酸奶、香菜、混合香料、生姜和番茄组成。\n• 鸡肉 $18.99\n• 羊肉 $19.99\n• 素食 [VG] $18.99",
+              "chineseName" : "卡拉希锅 [GF]",
               "descriptionBBox" : {
                 "height" : 0.02616279034195279,
                 "width" : 0.42203741190968663,
@@ -575,7 +728,7 @@
                   "y" : 0.5741279071337593
                 }
               ],
-              "originalDescription" : "Light sauce consisting of yogurt, coriander, all-spice, ginger, and tomatoes. • CHICKEN $18.99 • LAMB $19.99 • VEGETARIAN [VG] $18.99",
+              "originalDescription" : "Light sauce consisting of yogurt, coriander, all-spice, ginger, and tomatoes.\n• CHICKEN $18.99\n• LAMB $19.99\n• VEGETARIAN [VG] $18.99",
               "originalName" : "KARAHI [GF]",
               "tags" : [
                 "gluten_free"
@@ -588,12 +741,12 @@
                 "x" : 0.3617463617027966,
                 "y" : 0.6351744185947698
               },
-              "chineseDescription" : "羊肉末与洋葱、番茄、姜和烤香菜一起炒制。可选原味、豌豆或土豆。",
-              "chineseName" : "羊肉末咖喱",
+              "chineseDescription" : "羊肉末与洋葱、番茄、生姜和烤香菜炒制。可选原味、豌豆或土豆。",
+              "chineseName" : "羊肉末 [GF]",
               "descriptionBBox" : {
-                "height" : 0.04096819468209589,
-                "width" : 0.43891333702006363,
-                "x" : 0.361502461839313,
+                "height" : 0.026225341671895053,
+                "width" : 0.43866943522595164,
+                "x" : 0.361746363633425,
                 "y" : 0.6453488371267465
               },
               "descriptionLines" : [
@@ -620,25 +773,14 @@
                   "width" : 0.1268191221660695,
                   "x" : 0.6694386707049071,
                   "y" : 0.6584302327372115
-                },
-                {
-                  "height" : 0.015560839211279154,
-                  "width" : 0.2561761989006154,
-                  "x" : 0.361502461839313,
-                  "y" : 0.6707561925975632
-                },
-                {
-                  "height" : 0.01326411010724915,
-                  "width" : 0.10602910862556347,
-                  "x" : 0.6673596673868025,
-                  "y" : 0.6698754245111471
                 }
               ],
               "originalDescription" : "Minced lamb sautéed with onions, tomatoes, ginger, and roasted coriander. Available plain, with peas, or potatoes.",
               "originalName" : "KEEMA [GF]",
               "price" : "$18.99",
               "tags" : [
-                "gluten_free"
+                "gluten_free",
+                "contains_lamb"
               ]
             },
             {
@@ -648,9 +790,18 @@
                 "x" : 0.6673596765236331,
                 "y" : 0.4628924119742488
               },
-              "chineseDescription" : "肉类用酸奶、茴香、香菜和洋葱为基础的酱汁烹制。• 鸡肉 $18.99 • 羊肉 $19.99",
-              "chineseName" : "香料炖肉",
-              "originalDescription" : "Meat cooked in a yogurt, fennel, coriander, and onion based sauce. • CHICKEN $18.99 • LAMB $19.99",
+              "chineseDescription" : "肉类用酸奶、茴香、香菜和洋葱酱烹制。\n• 鸡肉 $18.99\n• 羊肉 $19.99",
+              "chineseName" : "罐炖肉 [GF]",
+              "descriptionBBox" : {
+                "height" : 0.022000000000000023,
+                "width" : 0.406,
+                "x" : 0.075,
+                "y" : 0.4638924119742488
+              },
+              "descriptionLines" : [
+
+              ],
+              "originalDescription" : "Meat cooked in a yogurt, fennel, coriander, and onion based sauce.\n• CHICKEN $18.99\n• LAMB $19.99",
               "originalName" : "HANDI [GF]",
               "tags" : [
                 "gluten_free"
@@ -663,8 +814,8 @@
                 "x" : 0.667359664383143,
                 "y" : 0.524709302497386
               },
-              "chineseDescription" : "肉类与焦糖洋葱一起炒制，配以黑胡椒和大蒜为基础的酱汁。• 鸡肉 $18.99 • 羊肉 $19.99 • 素食（纯素）$18.99",
-              "chineseName" : "黑胡椒洋葱炖肉",
+              "chineseDescription" : "肉类与焦糖洋葱、黑胡椒和大蒜酱炒制。\n• 鸡肉 $18.99\n• 羊肉 $19.99\n• 素食 [VG] $18.99",
+              "chineseName" : "巴尔蒂羊肉 [GF]",
               "descriptionBBox" : {
                 "height" : 0.015463131875441016,
                 "width" : 0.21687279798609702,
@@ -679,7 +830,7 @@
                   "y" : 0.5268360547726271
                 }
               ],
-              "originalDescription" : "Meat sautéed with caramelized onion in a black pepper and garlic based sauce. • CHICKEN $18.99 • LAMB $19.99 • VEGETARIAN [VG] $18.99",
+              "originalDescription" : "Meat sautéed with caramelized onion in a black pepper and garlic based sauce.\n• CHICKEN $18.99\n• LAMB $19.99\n• VEGETARIAN [VG] $18.99",
               "originalName" : "BAALTI GOSHT [GF]",
               "tags" : [
                 "gluten_free"
@@ -692,12 +843,32 @@
                 "x" : 0.6672995199325661,
                 "y" : 0.6088414407620649
               },
-              "chineseDescription" : "慢炖洋葱和茴香籽为基础的炖菜，配以姜、炸洋葱和香菜。• 鸡肉 $18.99 • 羊肉 $19.99",
-              "chineseName" : "慢炖茴香炖肉",
-              "originalDescription" : "A slow-cooked onion and fennel seed based stew topped with ginger, fried onion, and cilantro. • CHICKEN $18.99 • LAMB $19.99",
+              "chineseDescription" : "慢炖洋葱和茴香籽炖菜，配以姜丝、炸洋葱和香菜。• 鸡肉 $18.99 • 羊肉 $19.99",
+              "chineseName" : "尼哈里炖肉",
+              "descriptionBBox" : {
+                "height" : 0.027030411873896654,
+                "width" : 0.24983603602676763,
+                "x" : 0.6713102165572616,
+                "y" : 0.6184962018390459
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.014061892154127675,
+                  "width" : 0.24983603602676763,
+                  "x" : 0.6713102165572616,
+                  "y" : 0.6184962018390459
+                },
+                {
+                  "height" : 0.01325917162954604,
+                  "width" : 0.24740123285080273,
+                  "x" : 0.6715176767312168,
+                  "y" : 0.6322674420833965
+                }
+              ],
+              "originalDescription" : "A slow-cooked onion and fennel seed based stew topped with ginger, fried onion, and cilantro.\n• CHICKEN $18.99\n• LAMB $19.99",
               "originalName" : "NEHARI",
               "tags" : [
-                "gluten_free"
+
               ]
             }
           ],
@@ -710,7 +881,7 @@
             "x" : 0.4449064491446309,
             "y" : 0.7107558139581418
           },
-          "chineseTitle" : "烤炉菜",
+          "chineseTitle" : "烤炉菜肴",
           "items" : [
             {
               "bbox" : {
@@ -719,12 +890,12 @@
                 "x" : 0.04365904260264552,
                 "y" : 0.7427325583503537
               },
-              "chineseDescription" : "用酸奶、混合香料、香菜、红辣椒和辣椒片腌制。用手吃更美味。",
-              "chineseName" : "烤羊排",
+              "chineseDescription" : "用酸奶、混合香料、香菜、红辣椒和辣椒片腌制。建议用手吃。",
+              "chineseName" : "烤羊排 [GF]",
               "descriptionBBox" : {
-                "height" : 0.01319497465952335,
-                "width" : 0.2681912711219231,
-                "x" : 0.0457380479109718,
+                "height" : 0.02491506227560858,
+                "width" : 0.28690228083531705,
+                "x" : 0.043659043106250066,
                 "y" : 0.7542468854494252
               },
               "descriptionLines" : [
@@ -733,6 +904,12 @@
                   "width" : 0.2681912711219231,
                   "x" : 0.0457380479109718,
                   "y" : 0.7542468854494252
+                },
+                {
+                  "height" : 0.011891279728199255,
+                  "width" : 0.28690228083531705,
+                  "x" : 0.043659043106250066,
+                  "y" : 0.7672706679968345
                 }
               ],
               "originalDescription" : "Marinated in yogurt, all-spice, coriander, and red chili and red flakes. Ditch the fork and knife and eat with your hands.",
@@ -750,8 +927,22 @@
                 "x" : 0.037422036680954604,
                 "y" : 0.8066860466470953
               },
-              "chineseDescription" : "巴基斯坦风味炸鱼，用香菜、混合香料和红辣椒片腌制。拉合尔的骄傲！",
-              "chineseName" : "拉合尔炸鱼",
+              "chineseDescription" : "巴基斯坦风味炸鱼，腌制有香菜、混合香料和辣椒片。拉合尔的骄傲！",
+              "chineseName" : "拉合尔炸鱼 [GF]",
+              "descriptionBBox" : {
+                "height" : 0.011627906851158332,
+                "width" : 0.2557172481592509,
+                "x" : 0.037422036939085704,
+                "y" : 0.8197674419717076
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.011627906851158332,
+                  "width" : 0.2557172481592509,
+                  "x" : 0.037422036939085704,
+                  "y" : 0.8197674419717076
+                }
+              ],
               "originalDescription" : "Fried Pakistani style fish marinated in coriander, all-spice, and red-chili flakes. The pride of Lahore!",
               "originalName" : "LAHORI FISH [GF]",
               "price" : "$24.99",
@@ -767,8 +958,8 @@
                 "x" : 0.031185034765681748,
                 "y" : 0.8720271798029442
               },
-              "chineseDescription" : "新西兰去骨羊里脊块，用酸奶、红辣椒和香菜腌制。",
-              "chineseName" : "羊肉串",
+              "chineseDescription" : "新西兰无骨羊肉菲力块，用酸奶、红辣椒和香菜腌制。",
+              "chineseName" : "羊肉烤串 [GF]",
               "descriptionBBox" : {
                 "height" : 0.04098793926184874,
                 "width" : 0.422465826885013,
@@ -816,12 +1007,12 @@
                 "x" : 0.3575883601277629,
                 "y" : 0.7412231028922651
               },
-              "chineseDescription" : "去骨鸡肉（鸡腿或鸡胸）用酸奶、孜然、辣椒和香菜腌制，串烤。配洋葱和辣薄荷酸辣酱。“Laal wala tikka!”（红色那种）",
-              "chineseName" : "烤鸡块",
+              "chineseDescription" : "无骨鸡肉（鸡腿或鸡胸）用酸奶、孜然、辣椒和香菜腌制，串烤。配洋葱和辣薄荷酸辣酱。“红色烤鸡！”",
+              "chineseName" : "烤鸡块 [GF]",
               "descriptionBBox" : {
-                "height" : 0.011891279728199255,
-                "width" : 0.28690228083531705,
-                "x" : 0.3596673619212188,
+                "height" : 0.024915062125220988,
+                "width" : 0.2889812717543544,
+                "x" : 0.35758837100218144,
                 "y" : 0.7542468857374458
               },
               "descriptionLines" : [
@@ -830,9 +1021,15 @@
                   "width" : 0.28690228083531705,
                   "x" : 0.3596673619212188,
                   "y" : 0.7542468857374458
+                },
+                {
+                  "height" : 0.013173575849522279,
+                  "width" : 0.2723492540455328,
+                  "x" : 0.35758837100218144,
+                  "y" : 0.7659883720131445
                 }
               ],
-              "originalDescription" : "Boneless chicken (dark or white) marinated in yogurt, cumin, chili, and coriander and cooked on skewers. Served with onions and a spicy mint chutney. “Laal wala tikka!” (The Red One*)",
+              "originalDescription" : "Boneless chicken (dark or white) marinated in yogurt, cumin, chili, and coriander and cooked on skewers. Served with onions and a spicy mint chutney. “Laal wala tikka!” (The Red One)",
               "originalName" : "CHICKEN TIKKA BOTI [GF]",
               "price" : "$20.99",
               "tags" : [
@@ -846,12 +1043,12 @@
                 "x" : 0.35550935597779065,
                 "y" : 0.831257078007228
               },
-              "chineseDescription" : "巴基斯坦经典！去骨鸡肉裹上酸辣茴香籽腌料。配洋葱和辣薄荷酸辣酱。",
-              "chineseName" : "阿查尔鸡块",
+              "chineseDescription" : "巴基斯坦经典！无骨鸡肉用酸辣茴香籽腌料腌制。配洋葱和辣薄荷酸辣酱。",
+              "chineseName" : "泡菜烤鸡块 [GF]",
               "descriptionBBox" : {
-                "height" : 0.011891279728199367,
-                "width" : 0.2494802366779148,
-                "x" : 0.35758836710802794,
+                "height" : 0.026613816530525636,
+                "width" : 0.25155924835880505,
+                "x" : 0.3555093554271377,
                 "y" : 0.844280860803959
               },
               "descriptionLines" : [
@@ -860,6 +1057,12 @@
                   "width" : 0.2494802366779148,
                   "x" : 0.35758836710802794,
                   "y" : 0.844280860803959
+                },
+                {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.22869022313740883,
+                  "x" : 0.3555093554271377,
+                  "y" : 0.8590033976062853
                 }
               ],
               "originalDescription" : "A Pakistani classic! Boneless chicken smothered in a tangy fennel seed marinade. Served with onions and a spicy mint chutney.",
@@ -876,23 +1079,41 @@
                 "x" : 0.671517672688428,
                 "y" : 0.7412231028862087
               },
-              "chineseDescription" : "我们对街头美食的演绎——去骨鸡肉用酸奶、青辣椒和混合香料腌制，成品呈白色。配洋葱和辣薄荷酸辣酱。",
-              "chineseName" : "奶油鸡块",
+              "chineseDescription" : "街头美食新演绎——无骨鸡肉用酸奶、青椒、孜然和混合香料腌制，成品呈白色。配洋葱和辣薄荷酸辣酱。",
+              "chineseName" : "奶油烤鸡块 [GF]",
               "descriptionBBox" : {
-                "height" : 0.011891279728199255,
-                "width" : 0.2702702749490352,
-                "x" : 0.6756756767146715,
+                "height" : 0.026276370144274197,
+                "width" : 0.6049895933240008,
+                "x" : 0.35758837100218144,
                 "y" : 0.7542468855557596
               },
               "descriptionLines" : [
                 {
                   "height" : 0.011891279728199255,
+                  "width" : 0.28690228083531705,
+                  "x" : 0.3596673619212188,
+                  "y" : 0.7542468857374458
+                },
+                {
+                  "height" : 0.011891279728199255,
                   "width" : 0.2702702749490352,
                   "x" : 0.6756756767146715,
                   "y" : 0.7542468855557596
+                },
+                {
+                  "height" : 0.013173575849522279,
+                  "width" : 0.2723492540455328,
+                  "x" : 0.35758837100218144,
+                  "y" : 0.7659883720131445
+                },
+                {
+                  "height" : 0.01325258771263449,
+                  "width" : 0.286902280835317,
+                  "x" : 0.6756756834908653,
+                  "y" : 0.7672706679873993
                 }
               ],
-              "originalDescription" : "Our take on a street favorite—boneless chicken marinated in yogurt, green chilies, all-spice resulting in a white color upon completion. Served with onions and a spicy mint chutney.",
+              "originalDescription" : "Our take on a street favorite—boneless chicken marinated in yogurt, green chilies, cumin, all-spice resulting in a white color upon completion. Served with onions and a spicy mint chutney.",
               "originalName" : "MALAI BOTI [GF]",
               "price" : "$20.99",
               "tags" : [
@@ -906,11 +1127,11 @@
                 "x" : 0.6756756742312318,
                 "y" : 0.8328488373343877
               },
-              "chineseDescription" : "鸡肉或羊肉末加混合香料和香菜调味后串烤。配洋葱和辣薄荷酸辣酱。（4串 - 羊肉加$1）",
-              "chineseName" : "烤羊肉串",
+              "chineseDescription" : "鸡肉或羊肉末加混合香料和香菜调味，串烤。配洋葱和辣薄荷酸辣酱。（4串 - 羊肉加$1）",
+              "chineseName" : "烤肉串 [GF]",
               "descriptionBBox" : {
-                "height" : 0.011891279728199255,
-                "width" : 0.27027025021842066,
+                "height" : 0.026613816578975213,
+                "width" : 0.272349259001346,
                 "x" : 0.6777546853551002,
                 "y" : 0.8442808606464978
               },
@@ -920,14 +1141,19 @@
                   "width" : 0.27027025021842066,
                   "x" : 0.6777546853551002,
                   "y" : 0.8442808606464978
+                },
+                {
+                  "height" : 0.011891279728199367,
+                  "width" : 0.2723492540455328,
+                  "x" : 0.6777546903109134,
+                  "y" : 0.8590033974972736
                 }
               ],
               "originalDescription" : "Minced chicken or lamb seasoned with all-spice and coriander then cooked on skewers. Served with onions and a spicy mint chutney. (4 pcs - Lamb +$1)",
               "originalName" : "SEEKH KABAB [GF]",
               "price" : "$20.99",
               "tags" : [
-                "gluten_free",
-                "contains_lamb"
+                "gluten_free"
               ]
             }
           ],
@@ -938,7 +1164,6 @@
       "sourceLanguageChinese" : "英语"
     },
     {
-      "restaurantName" : "Naan-N-Curry",
       "sections" : [
         {
           "bbox" : {
@@ -947,7 +1172,7 @@
             "x" : 0.35344935831704005,
             "y" : 0.052651439430537295
           },
-          "chineseTitle" : "米饭与烤饼",
+          "chineseTitle" : "米饭和烤饼",
           "items" : [
             {
               "bbox" : {
@@ -956,8 +1181,8 @@
                 "x" : 0.1511572040668772,
                 "y" : 0.07374349251558454
               },
-              "chineseDescription" : "巴斯马蒂米饭用藏红花和全香料慢炖而成。",
-              "chineseName" : "藏红花米饭",
+              "chineseDescription" : "巴斯马蒂米与藏红花和全香料慢炖。",
+              "chineseName" : "藏红花米饭 [素] [无麸质]",
               "descriptionBBox" : {
                 "height" : 0.023023295059549698,
                 "width" : 0.2525693161340553,
@@ -979,7 +1204,7 @@
                 }
               ],
               "originalDescription" : "Basmati rice slow-cooked with saffron and whole spices.",
-              "originalName" : "SAFFRON RICE [V][GF] $3.50",
+              "originalName" : "SAFFRON RICE [V] [GF]",
               "price" : "$3.50",
               "tags" : [
                 "vegetarian",
@@ -993,13 +1218,13 @@
                 "x" : 0.1450661028569951,
                 "y" : 0.11318012274272249
               },
-              "chineseDescription" : "手工现烤面包。\n原味 $2.99\n蒜香 $3.99",
-              "chineseName" : "烤饼",
+              "chineseDescription" : "手工现烤面包。",
+              "chineseName" : "烤饼（含蛋）",
               "descriptionBBox" : {
-                "height" : 0.03052023283247718,
-                "width" : 0.20332293284929967,
+                "height" : 0.03383602867041158,
+                "width" : 0.3818765502876401,
                 "x" : 0.13729508165616158,
-                "y" : 0.12209604578590627
+                "y" : 0.11878024994797187
               },
               "descriptionLines" : [
                 {
@@ -1007,6 +1232,12 @@
                   "width" : 0.19955296670236894,
                   "x" : 0.1410650478030923,
                   "y" : 0.12209604578590627
+                },
+                {
+                  "height" : 0.01575227371467869,
+                  "width" : 0.09590754628608728,
+                  "x" : 0.4232640856577144,
+                  "y" : 0.11878024994797187
                 },
                 {
                   "height" : 0.009023816946046703,
@@ -1021,8 +1252,9 @@
                   "y" : 0.14231257954182908
                 }
               ],
-              "originalDescription" : "Handmade bread baked to order.\nPLAIN $2.99\nGARLIC $3.99",
-              "originalName" : "NAAN (contains egg)\nPLAIN $2.99\nGARLIC $3.99",
+              "originalDescription" : "Handmade bread baked to order.",
+              "originalName" : "NAAN (contains egg)",
+              "price" : "PLAIN $2.99\nGARLIC $3.99",
               "tags" : [
 
               ]
@@ -1035,9 +1267,29 @@
                 "y" : 0.0813163265326271
               },
               "chineseDescription" : "手工面包，撒上烤芝麻。“芝麻烤饼”",
-              "chineseName" : "芝麻烤饼",
-              "originalDescription" : "Handmade bread topped with roasted sesame seeds. 'Til wali naan'",
-              "originalName" : "SESAME NAAN $3.99 (contains egg)",
+              "chineseName" : "芝麻烤饼（含蛋）",
+              "descriptionBBox" : {
+                "height" : 0.017988170926811486,
+                "width" : 0.37810658414070936,
+                "x" : 0.1410650478030923,
+                "y" : 0.11878024994797187
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.014672375088877088,
+                  "width" : 0.19955296670236894,
+                  "x" : 0.1410650478030923,
+                  "y" : 0.12209604578590627
+                },
+                {
+                  "height" : 0.01575227371467869,
+                  "width" : 0.09590754628608728,
+                  "x" : 0.4232640856577144,
+                  "y" : 0.11878024994797187
+                }
+              ],
+              "originalDescription" : "Handmade bread topped with roasted sesame seeds. 'Til waliy naan'",
+              "originalName" : "SESAME NAAN (contains egg)",
               "price" : "$3.99",
               "tags" : [
 
@@ -1051,9 +1303,18 @@
                 "y" : 0.1281266701036594
               },
               "chineseDescription" : "薄的全麦面包。",
-              "chineseName" : "薄全麦面包",
+              "chineseName" : "印度薄饼 [素]",
+              "descriptionBBox" : {
+                "height" : 0.024873329896340588,
+                "width" : 0.41,
+                "x" : 0.07,
+                "y" : 0.1291266701036594
+              },
+              "descriptionLines" : [
+
+              ],
               "originalDescription" : "Thin, whole wheat bread.",
-              "originalName" : "ROTI [V] $2.99",
+              "originalName" : "ROTI [V]",
               "price" : "$2.99",
               "tags" : [
                 "vegetarian"
@@ -1061,6 +1322,123 @@
             }
           ],
           "originalTitle" : "RICE -N- NAAN"
+        },
+        {
+          "bbox" : {
+            "height" : 0.010174418041030475,
+            "width" : 0.0532786871797295,
+            "x" : 0.8053278700576763,
+            "y" : 0.07994186070332199
+          },
+          "chineseTitle" : "配菜",
+          "items" : [
+            {
+              "bbox" : {
+                "height" : 0.02001784686969532,
+                "width" : 0.13760172252586667,
+                "x" : 0.7058298773149796,
+                "y" : 0.09508116348043671
+              },
+              "chineseDescription" : "自制酸奶，混合烤孜然和黄瓜丝。",
+              "chineseName" : "酸奶沙拉 [纯素] [无麸质]",
+              "descriptionBBox" : {
+                "height" : 0.028362946710259296,
+                "width" : 0.2501000024939096,
+                "x" : 0.7037714402488852,
+                "y" : 0.10479701390050078
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.028362946710259296,
+                  "width" : 0.2501000024939096,
+                  "x" : 0.7037714402488852,
+                  "y" : 0.10479701390050078
+                }
+              ],
+              "originalDescription" : "Yogurt made in-house mixed with roasted cumin and shredded cucumber.",
+              "originalName" : "RAITA [VG] [GF]",
+              "price" : "$3.99",
+              "tags" : [
+                "vegan",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox" : {
+                "height" : 0.027031338654146086,
+                "width" : 0.18705322921917,
+                "x" : 0.7037419790175484,
+                "y" : 0.12732203580542434
+              },
+              "chineseDescription" : "新鲜切洋葱，淋上柠檬汁和香料。",
+              "chineseName" : "洋葱沙拉 [素] [无麸质]",
+              "descriptionBBox" : {
+                "height" : 0.028481843359437042,
+                "width" : 0.2566150405500952,
+                "x" : 0.7036827154854325,
+                "y" : 0.1389306220509341
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.028481843359437042,
+                  "width" : 0.2566150405500952,
+                  "x" : 0.7036827154854325,
+                  "y" : 0.1389306220509341
+                },
+                {
+                  "height" : 0.00887888722983221,
+                  "width" : 0.0656152198818849,
+                  "x" : 0.7048973089116859,
+                  "y" : 0.1525373005367685
+                }
+              ],
+              "originalDescription" : "Freshly cut onions topped with lemon juice and spices.",
+              "originalName" : "ONION SALAD [V] [GF]",
+              "price" : "$2.99",
+              "tags" : [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox" : {
+                "height" : 0.02581740940389665,
+                "width" : 0.2032974817419565,
+                "x" : 0.7038008583012652,
+                "y" : 0.16355341717620964
+              },
+              "chineseDescription" : "三种蘸酱：辣薄荷、酸奶薄荷和罗望子。",
+              "chineseName" : "三拼蘸酱 [素] [无麸质]",
+              "descriptionBBox" : {
+                "height" : 0.028171479929205434,
+                "width" : 0.2340053161839858,
+                "x" : 0.7015941608943322,
+                "y" : 0.1745087556630882
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.028171479929205434,
+                  "width" : 0.2340053161839858,
+                  "x" : 0.7015941608943322,
+                  "y" : 0.1745087556630882
+                },
+                {
+                  "height" : 0.016930635275349992,
+                  "width" : 0.11061528250308017,
+                  "x" : 0.7019634130947587,
+                  "y" : 0.1847333583881664
+                }
+              ],
+              "originalDescription" : "Trio of our spicy mint, yogurt mint, and tamarind chutney.",
+              "originalName" : "CHUTNEY TRIO [V] [GF]",
+              "price" : "$3.50",
+              "tags" : [
+                "vegetarian",
+                "gluten_free"
+              ]
+            }
+          ],
+          "originalTitle" : "SIDES"
         },
         {
           "bbox" : {
@@ -1073,15 +1451,36 @@
           "items" : [
             {
               "bbox" : {
-                "height" : 0.001,
-                "width" : 0.25494439456625223,
-                "x" : 0.12049251228483704,
-                "y" : 0.22339062599694293
+                "height" : 0.010423746315012083,
+                "width" : 0.09426229059909834,
+                "x" : 0.12295082309184426,
+                "y" : 0.215116279297072
               },
-              "chineseDescription" : "传统奶茶，带有茴香、小豆蔻和肉桂的香气。\n热饮 $3.50\n冰饮 $3.99",
+              "chineseDescription" : "传统奶茶，带有茴香、小豆蔻和肉桂香气。",
               "chineseName" : "自制奶茶",
-              "originalDescription" : "Traditional milk tea brewed with a hint of fennel, cardamom, and cinnamon.\nHOT $3.50\nICED $3.99",
-              "originalName" : "HOUSE CHAI\nHOT $3.50\nICED $3.99",
+              "descriptionBBox" : {
+                "height" : 0.029274118553697104,
+                "width" : 0.2592633883452625,
+                "x" : 0.11617351850582676,
+                "y" : 0.22539062599694293
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.016565222903764276,
+                  "width" : 0.25494439456625223,
+                  "x" : 0.12049251228483704,
+                  "y" : 0.22539062599694293
+                },
+                {
+                  "height" : 0.020162826572015957,
+                  "width" : 0.21043431545243896,
+                  "x" : 0.11617351850582676,
+                  "y" : 0.23450191797862407
+                }
+              ],
+              "originalDescription" : "Traditional milk tea brewed with a hint of fennel, cardamom, and cinnamon.",
+              "originalName" : "HOUSE CHAI",
+              "price" : "HOT $3.50\nICED $3.99",
               "tags" : [
                 "vegetarian"
               ]
@@ -1093,10 +1492,30 @@
                 "x" : 0.11052289616606763,
                 "y" : 0.279939679475413
               },
-              "chineseDescription" : "可乐、健怡可乐或雪碧罐装饮料。",
+              "chineseDescription" : "可乐、健怡可乐或雪碧罐装。",
               "chineseName" : "汽水",
+              "descriptionBBox" : {
+                "height" : 0.025751341547073814,
+                "width" : 0.3942568006196847,
+                "x" : 0.1098415590535882,
+                "y" : 0.2896556345946888
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.021135957904510283,
+                  "width" : 0.21051863530203432,
+                  "x" : 0.1098415590535882,
+                  "y" : 0.2896556345946888
+                },
+                {
+                  "height" : 0.011722096948490357,
+                  "width" : 0.10245901538479713,
+                  "x" : 0.40163934428847575,
+                  "y" : 0.30368487919327225
+                }
+              ],
               "originalDescription" : "Can of Coke, Diet Coke, or Sprite.",
-              "originalName" : "SODA $2.99",
+              "originalName" : "SODA",
               "price" : "$2.99",
               "tags" : [
 
@@ -1110,23 +1529,35 @@
                 "y" : 0.3107157181965048
               },
               "chineseDescription" : "玻璃瓶装气泡水。",
-              "chineseName" : "托波奇科气泡水",
+              "chineseName" : "TOPO CHICO 气泡水",
               "descriptionBBox" : {
-                "height" : 0.008720929922566789,
-                "width" : 0.0532786871797295,
-                "x" : 0.3975409848117745,
-                "y" : 0.32703488381778634
+                "height" : 0.02795622675559284,
+                "width" : 0.3536281774917161,
+                "x" : 0.09928765359660331,
+                "y" : 0.32101573079625245
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.024563955382137403,
+                  "width" : 0.20517347875889058,
+                  "x" : 0.09928765359660331,
+                  "y" : 0.32101573079625245
+                },
                 {
                   "height" : 0.008720929922566789,
                   "width" : 0.0532786871797295,
                   "x" : 0.3975409848117745,
                   "y" : 0.32703488381778634
+                },
+                {
+                  "height" : 0.010443915254430669,
+                  "width" : 0.05747100529277621,
+                  "x" : 0.3954448257955432,
+                  "y" : 0.3385280422974146
                 }
               ],
               "originalDescription" : "Glass bottle of sparkling water.",
-              "originalName" : "TOPO CHICO $5.99",
+              "originalName" : "TOPO CHICO",
               "price" : "$5.99",
               "tags" : [
 
@@ -1168,7 +1599,7 @@
                 }
               ],
               "originalDescription" : "",
-              "originalName" : "VOSS ARTISAN WATER $3.99",
+              "originalName" : "VOSS ARTISAN WATER",
               "price" : "$3.99",
               "tags" : [
 
@@ -1182,7 +1613,7 @@
                 "y" : 0.247093023021844
               },
               "chineseDescription" : "玻璃瓶装可乐、芬达或雪碧。",
-              "chineseName" : "玻璃瓶装饮料",
+              "chineseName" : "玻璃瓶饮料",
               "descriptionBBox" : {
                 "height" : 0.010763780286078717,
                 "width" : 0.08210876082006748,
@@ -1198,7 +1629,7 @@
                 }
               ],
               "originalDescription" : "Glass bottles of Coke, Fanta, or Sprite.",
-              "originalName" : "*BOTAL* $5.99",
+              "originalName" : "\"BOTAL\"",
               "price" : "$5.99",
               "tags" : [
 
@@ -1206,100 +1637,42 @@
             },
             {
               "bbox" : {
-                "height" : 0.001,
-                "width" : 0.24162850328671032,
-                "x" : 0.4005854877065575,
-                "y" : 0.28910465053385037
+                "height" : 0.011627906159494272,
+                "width" : 0.04713114529954915,
+                "x" : 0.4016393458543238,
+                "y" : 0.28052325616443896
               },
-              "chineseDescription" : "巴基斯坦风味冰镇酸奶牛奶饮品。$5.99\n芒果味\n咸味\n甜味",
-              "chineseName" : "拉西酸奶饮",
-              "originalDescription" : "Pakistani style chilled yogurt and milk smoothie. $5.99\nMANGO\nSALTY\nSWEET",
-              "originalName" : "LASSI\nMANGO\nSALTY\nSWEET",
+              "chineseDescription" : "巴基斯坦风味冰镇酸奶牛奶饮品。",
+              "chineseName" : "拉西",
+              "descriptionBBox" : {
+                "height" : 0.025751341547073814,
+                "width" : 0.3942568006196847,
+                "x" : 0.1098415590535882,
+                "y" : 0.2896556345946888
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.021135957904510283,
+                  "width" : 0.21051863530203432,
+                  "x" : 0.1098415590535882,
+                  "y" : 0.2896556345946888
+                },
+                {
+                  "height" : 0.011722096948490357,
+                  "width" : 0.10245901538479713,
+                  "x" : 0.40163934428847575,
+                  "y" : 0.30368487919327225
+                }
+              ],
+              "originalDescription" : "Pakistani style chilled yogurt and milk smoothie.",
+              "originalName" : "LASSI",
               "price" : "$5.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free"
+                "vegetarian"
               ]
             }
           ],
           "originalTitle" : "DRINKS"
-        },
-        {
-          "bbox" : {
-            "height" : 0.010174418041030475,
-            "width" : 0.0532786871797295,
-            "x" : 0.8053278700576763,
-            "y" : 0.07994186070332199
-          },
-          "chineseTitle" : "配菜",
-          "items" : [
-            {
-              "bbox" : {
-                "height" : 0.02001784686969532,
-                "width" : 0.13760172252586667,
-                "x" : 0.7058298773149796,
-                "y" : 0.09508116348043671
-              },
-              "chineseDescription" : "自制香料酸奶酱，混合烤孜然和黄瓜丝。",
-              "chineseName" : "酸奶酱",
-              "originalDescription" : "Spiced made in-house mixed with roasted cumin and shredded cucumber.",
-              "originalName" : "RAITA [VG][GF] $3.99",
-              "price" : "$3.99",
-              "tags" : [
-                "vegan",
-                "gluten_free"
-              ]
-            },
-            {
-              "bbox" : {
-                "height" : 0.027031338654146086,
-                "width" : 0.18705322921917,
-                "x" : 0.7037419790175484,
-                "y" : 0.12732203580542434
-              },
-              "chineseDescription" : "新鲜切洋葱，淋上柠檬汁和香料。",
-              "chineseName" : "洋葱沙拉",
-              "descriptionBBox" : {
-                "height" : 0.00887888722983221,
-                "width" : 0.0656152198818849,
-                "x" : 0.7048973089116859,
-                "y" : 0.1525373005367685
-              },
-              "descriptionLines" : [
-                {
-                  "height" : 0.00887888722983221,
-                  "width" : 0.0656152198818849,
-                  "x" : 0.7048973089116859,
-                  "y" : 0.1525373005367685
-                }
-              ],
-              "originalDescription" : "Freshly cut onions topped with lemon juice and spices.",
-              "originalName" : "ONION SALAD [VG][GF] $2.99",
-              "price" : "$2.99",
-              "tags" : [
-                "vegan",
-                "gluten_free"
-              ]
-            },
-            {
-              "bbox" : {
-                "height" : 0.02581740940389665,
-                "width" : 0.2032974817419565,
-                "x" : 0.7038008583012652,
-                "y" : 0.16355341717620964
-              },
-              "chineseDescription" : "三种自制辣酱：薄荷辣酱、酸奶薄荷酱和罗望子辣酱。",
-              "chineseName" : "三色酸辣酱",
-              "originalDescription" : "Trio of our spicy mint, yogurt mint, and tamarind chutney.",
-              "originalName" : "CHUTNEY TRIO [VG][GF] $3.50",
-              "price" : "$3.50",
-              "tags" : [
-                "vegan",
-                "gluten_free"
-              ]
-            }
-          ],
-          "originalTitle" : "SIDES"
         },
         {
           "bbox" : {
@@ -1318,7 +1691,7 @@
                 "y" : 0.23680406818307698
               },
               "chineseDescription" : "传统甜甜圈球，浸泡在甜豆蔻糖浆中。",
-              "chineseName" : "古拉布果子",
+              "chineseName" : "古拉布果 [纯素]",
               "descriptionBBox" : {
                 "height" : 0.02822718686009862,
                 "width" : 0.2583005915473342,
@@ -1340,11 +1713,10 @@
                 }
               ],
               "originalDescription" : "Traditional donut holes dipped in a sweet cardamom syrup.",
-              "originalName" : "GHULAB JAMUN [VG] $4.99",
+              "originalName" : "GHULAB JAMUN [VG]",
               "price" : "$4.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free"
+                "vegan"
               ]
             },
             {
@@ -1354,8 +1726,8 @@
                 "x" : 0.6977866443480295,
                 "y" : 0.27929488290658955
               },
-              "chineseDescription" : "牛奶、开心果和杏仁冰淇淋，加入牛奶和豆蔻制成。配玫瑰糖浆。",
-              "chineseName" : "开心果巴达姆冰淇淋",
+              "chineseDescription" : "开心果和杏仁冰淇淋，加入开心果和豆蔻，淋上玫瑰糖浆。",
+              "chineseName" : "开心果杏仁库尔菲 [纯素]",
               "descriptionBBox" : {
                 "height" : 0.03863642280586643,
                 "width" : 0.2677300751633944,
@@ -1382,13 +1754,11 @@
                   "y" : 0.3183139538243226
                 }
               ],
-              "originalDescription" : "Milk, pistachio and almond ice cream made with milk and cardamom. Topped with rose syrup.",
-              "originalName" : "PISTA BADAM KULFI [VG][GF] $5.99",
+              "originalDescription" : "Milk and almond ice cream made with pistachio and cardamom. Topped with rose syrup.",
+              "originalName" : "PISTA BADAM KULFI [VG]",
               "price" : "$5.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free",
-                "contains_lamb"
+                "vegan"
               ]
             },
             {
@@ -1399,7 +1769,7 @@
                 "y" : 0.33529470661766525
               },
               "chineseDescription" : "自制芒果冰淇淋，撒上碎开心果。",
-              "chineseName" : "芒果冰淇淋",
+              "chineseName" : "芒果冰淇淋 [纯素]",
               "descriptionBBox" : {
                 "height" : 0.026990069479691847,
                 "width" : 0.25504287173296947,
@@ -1421,11 +1791,10 @@
                 }
               ],
               "originalDescription" : "Made in-house and topped with crushed pistachio.",
-              "originalName" : "MANGO ICE CREAM [VG][GF] $5.99",
+              "originalName" : "MANGO ICE CREAM [VG]",
               "price" : "$5.99",
               "tags" : [
-                "vegetarian",
-                "gluten_free"
+                "vegan"
               ]
             }
           ],
@@ -1438,7 +1807,7 @@
             "x" : 0.3329470578167458,
             "y" : 0.38429702550145106
           },
-          "chineseTitle" : "平日午餐特惠",
+          "chineseTitle" : "工作日午餐特价",
           "items" : [
             {
               "bbox" : {
@@ -1447,12 +1816,12 @@
                 "x" : 0.07460006873179267,
                 "y" : 0.47577134160758827
               },
-              "chineseDescription" : "我们最受欢迎的菜品！巴基斯坦风味巴斯马蒂米饭用藏红花慢炖，搭配肉类或蔬菜。配酸奶酱和沙拉。（不配烤饼）\n：鸡肉\n：羊肉（加$1）\n：什锦蔬菜[VG]",
-              "chineseName" : "达姆手抓饭",
+              "chineseDescription" : "我们最受欢迎的菜肴！巴基斯坦风味巴斯马蒂米饭，慢炖藏红花，搭配肉类或蔬菜。配酸奶沙拉和蔬菜沙拉。（不含烤饼）\n：鸡肉\n：羊肉（+1美元）\n：什锦蔬菜 [纯素]",
+              "chineseName" : "焖锅香饭 [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.056510705367810665,
-                "width" : 0.35096042425076324,
-                "x" : 0.06912154248768702,
+                "height" : 0.03431671429718697,
+                "width" : 0.25983844606679823,
+                "x" : 0.07295345366134347,
                 "y" : 0.489288299363442
               },
               "descriptionLines" : [
@@ -1467,31 +1836,14 @@
                   "width" : 0.25983844606679823,
                   "x" : 0.07295345366134347,
                   "y" : 0.5010156318622278
-                },
-                {
-                  "height" : 0.022926718337411667,
-                  "width" : 0.28000938935091846,
-                  "x" : 0.07098631924758968,
-                  "y" : 0.5134579164231485
-                },
-                {
-                  "height" : 0.019507482060937775,
-                  "width" : 0.25122341032951107,
-                  "x" : 0.06912154248768702,
-                  "y" : 0.5262915226703149
-                },
-                {
-                  "height" : 0.010174418041030475,
-                  "width" : 0.04098360683755636,
-                  "x" : 0.3790983599008939,
-                  "y" : 0.5290697675540972
                 }
               ],
               "originalDescription" : "Our most popular dish! Pakistani style Basmati rice slow cooked in saffron and blended with meat or vegetables. Served with raita and salad. (not served with naan)\n: CHICKEN\n: LAMB (+$1)\n: MIXED VEGETABLES [VG]",
-              "originalName" : "DUMM BIRYANI [GF] $16.99",
+              "originalName" : "DUMM BIRYANI [GF]",
               "price" : "$16.99",
               "tags" : [
-
+                "gluten_free",
+                "contains_lamb"
               ]
             },
             {
@@ -1501,12 +1853,12 @@
                 "x" : 0.057377051419747915,
                 "y" : 0.5870393903280398
               },
-              "chineseDescription" : "传统咖喱，用洋葱、生姜和大蒜为基底的酱料烹制。\n*可选微辣\n：鸡肉\n：羊肉（加$1）",
-              "chineseName" : "科尔玛咖喱",
+              "chineseDescription" : "传统咖喱，用洋葱、生姜和大蒜为基底的酱料烹制。\n*可选微辣\n：鸡肉\n：羊肉（+1美元）",
+              "chineseName" : "科尔玛咖喱* [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.024548694169506113,
-                "width" : 0.3574412602018676,
-                "x" : 0.05444398470237931,
+                "height" : 0.03522955370097469,
+                "width" : 0.36356942206832715,
+                "x" : 0.04831582283591981,
                 "y" : 0.5978494813608244
               },
               "descriptionLines" : [
@@ -1521,13 +1873,20 @@
                   "width" : 0.2744672768432179,
                   "x" : 0.05444398470237931,
                   "y" : 0.5978494813608244
+                },
+                {
+                  "height" : 0.022584406211688224,
+                  "width" : 0.16382229712701613,
+                  "x" : 0.04831582283591981,
+                  "y" : 0.6104946288501109
                 }
               ],
               "originalDescription" : "Traditional curry cooked in onion, ginger, and garlic based sauce.\n*mild spice level available\n: CHICKEN\n: LAMB (+$1)",
-              "originalName" : "KORMA* [GF] $15.99",
+              "originalName" : "KORMA* [GF]",
               "price" : "$15.99",
               "tags" : [
-                "gluten_free"
+                "gluten_free",
+                "contains_lamb"
               ]
             },
             {
@@ -1538,7 +1897,7 @@
                 "y" : 0.6723373444465763
               },
               "chineseDescription" : "鹰嘴豆配大蒜、洋葱和混合香料酱。",
-              "chineseName" : "鹰嘴豆咖喱",
+              "chineseName" : "鹰嘴豆咖喱 [纯素] [无麸质]",
               "descriptionBBox" : {
                 "height" : 0.029589972632478645,
                 "width" : 0.28966249054106785,
@@ -1560,7 +1919,7 @@
                 }
               ],
               "originalDescription" : "Garbanzo beans in a garlic, onion, and all-spice based sauce.",
-              "originalName" : "CHANA MASALA [VG][GF] $15.99",
+              "originalName" : "CHANA MASALA [VG] [GF]",
               "price" : "$15.99",
               "tags" : [
                 "vegan",
@@ -1574,12 +1933,12 @@
                 "x" : 0.3800645205412729,
                 "y" : 0.49017604270331583
               },
-              "chineseDescription" : "又称黄油鸡。甜味奶油番茄和葫芦巴为基底的酱汁。\n*可选微辣",
-              "chineseName" : "黄油鸡",
+              "chineseDescription" : "又称黄油鸡。甜味奶油番茄和葫芦巴为基底的酱料。\n*可选微辣",
+              "chineseName" : "鸡肉玛莎拉* [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.043929814638468234,
-                "width" : 0.45581239518276573,
-                "x" : 0.06346502212043813,
+                "height" : 0.05064909656964167,
+                "width" : 0.45784687127698254,
+                "x" : 0.06143054602622133,
                 "y" : 0.5134579164231485
               },
               "descriptionLines" : [
@@ -1612,10 +1971,16 @@
                   "width" : 0.14320435062531506,
                   "x" : 0.3760730666778888,
                   "y" : 0.5382919000351978
+                },
+                {
+                  "height" : 0.013388444689662271,
+                  "width" : 0.08820448297753558,
+                  "x" : 0.06143054602622133,
+                  "y" : 0.5507185683031279
                 }
               ],
               "originalDescription" : "Also known as Butter Chicken. A sweet creamy tomato and fenugreek based sauce.\n*mild spice level available",
-              "originalName" : "CHICKEN TIKKA MASALA* [GF] $16.99",
+              "originalName" : "CHICKEN TIKKA MASALA* [GF]",
               "price" : "$16.99",
               "tags" : [
                 "gluten_free"
@@ -1629,11 +1994,11 @@
                 "y" : 0.5600697537340731
               },
               "chineseDescription" : "自制奶酪和豌豆，配甜味奶油番茄和葫芦巴酱。",
-              "chineseName" : "马特尔奶酪咖喱",
+              "chineseName" : "豌豆奶酪 [素] [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.024548694169506113,
-                "width" : 0.3574412602018676,
-                "x" : 0.05444398470237931,
+                "height" : 0.03522955370097469,
+                "width" : 0.36356942206832715,
+                "x" : 0.04831582283591981,
                 "y" : 0.5978494813608244
               },
               "descriptionLines" : [
@@ -1648,10 +2013,16 @@
                   "width" : 0.2744672768432179,
                   "x" : 0.05444398470237931,
                   "y" : 0.5978494813608244
+                },
+                {
+                  "height" : 0.022584406211688224,
+                  "width" : 0.16382229712701613,
+                  "x" : 0.04831582283591981,
+                  "y" : 0.6104946288501109
                 }
               ],
               "originalDescription" : "Homemade cheese and peas in a sweet creamy tomato and fenugreek based sauce.",
-              "originalName" : "MUTTER PANEER [VG][GF] $15.99",
+              "originalName" : "MUTTER PANEER [VG] [GF]",
               "price" : "$15.99",
               "tags" : [
                 "vegetarian",
@@ -1660,41 +2031,24 @@
             },
             {
               "bbox" : {
-                "height" : 0.017789072426937724,
-                "width" : 0.1536885196590082,
-                "x" : 0.364754099545496,
-                "y" : 0.6232528590386556
+                "height" : 0.001,
+                "width" : 0.2654632240213374,
+                "x" : 0.36329316731632744,
+                "y" : 0.6305639133990183
               },
-              "chineseDescription" : "黄扁豆配洋葱、大蒜、孜然和姜烹制。\n*可选微辣",
-              "chineseName" : "黄扁豆咖喱",
+              "chineseDescription" : "黄扁豆配洋葱、大蒜和生姜烹制。\n*可选微辣",
+              "chineseName" : "黄扁豆咖喱* [素] [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.030645149274894035,
-                "width" : 0.44681170503654616,
-                "x" : 0.04089321143374074,
-                "y" : 0.6351744184793272
+                "height" : 0.036773431047558036,
+                "width" : 0.41,
+                "x" : 0.07,
+                "y" : 0.6315639133990183
               },
               "descriptionLines" : [
-                {
-                  "height" : 0.014762048951552531,
-                  "width" : 0.07991803076959425,
-                  "x" : 0.04303278720229307,
-                  "y" : 0.6351744184793272
-                },
-                {
-                  "height" : 0.015109001605604688,
-                  "width" : 0.090344726398427,
-                  "x" : 0.04089321143374074,
-                  "y" : 0.6494222435231013
-                },
-                {
-                  "height" : 0.014656777000184862,
-                  "width" : 0.125,
-                  "x" : 0.3627049164702869,
-                  "y" : 0.6511627907540364
-                }
+
               ],
-              "originalDescription" : "Yellow lentils cooked with onion, garlic, cumin, and ginger.\n*mild spice level available",
-              "originalName" : "DAAL* [M][GF] $14.99",
+              "originalDescription" : "Yellow lentils cooked with onion, garlic, and ginger.\n*mild spice level available",
+              "originalName" : "DAAL* [V] [GF]",
               "price" : "$14.99",
               "tags" : [
                 "vegetarian",
@@ -1709,7 +2063,7 @@
                 "y" : 0.6834900829020408
               },
               "chineseDescription" : "烤茄子与豌豆、大蒜、洋葱和番茄炒制。",
-              "chineseName" : "烤茄子泥",
+              "chineseName" : "烤茄子泥 [纯素] [无麸质]",
               "descriptionBBox" : {
                 "height" : 0.01822891501944124,
                 "width" : 0.14112385028579333,
@@ -1725,59 +2079,38 @@
                 }
               ],
               "originalDescription" : "Roasted eggplant sautéed with peas, garlic, onion, and tomatoes.",
-              "originalName" : "BENGUN BHARTA [VG][GF] $15.99",
+              "originalName" : "BENGUN BHARTA [VG] [GF]",
               "price" : "$15.99",
               "tags" : [
-                "vegetarian",
+                "vegan",
                 "gluten_free"
               ]
             },
             {
               "bbox" : {
-                "height" : 0.019790585795381954,
-                "width" : 0.163362072360131,
-                "x" : 0.6795520680399164,
-                "y" : 0.508006239837977
+                "height" : 0.001,
+                "width" : 0.2801786306511117,
+                "x" : 0.6817197471188599,
+                "y" : 0.5185094451337386
               },
-              "chineseDescription" : "新鲜菠菜配孜然、姜、姜黄和混合香料烹制。\n：鸡肉\n：奶酪[VG]\n：羊肉（加$1）",
-              "chineseName" : "菠菜咖喱",
+              "chineseDescription" : "新鲜菠菜配孜然、生姜、姜黄和混合香料。\n：鸡肉\n：奶酪 [素]\n：羊肉（+1美元）",
+              "chineseName" : "菠菜咖喱 [素] [无麸质]",
               "descriptionBBox" : {
-                "height" : 0.031096208391301894,
-                "width" : 0.45581239518276573,
-                "x" : 0.06346502212043813,
-                "y" : 0.5262915226703149
+                "height" : 0.036560308600334435,
+                "width" : 0.41,
+                "x" : 0.07,
+                "y" : 0.5195094451337386
               },
               "descriptionLines" : [
-                {
-                  "height" : 0.019507482060937775,
-                  "width" : 0.25122341032951107,
-                  "x" : 0.06912154248768702,
-                  "y" : 0.5262915226703149
-                },
-                {
-                  "height" : 0.010174418041030475,
-                  "width" : 0.04098360683755636,
-                  "x" : 0.3790983599008939,
-                  "y" : 0.5290697675540972
-                },
-                {
-                  "height" : 0.01202457529768397,
-                  "width" : 0.07593880930254536,
-                  "x" : 0.06346502212043813,
-                  "y" : 0.5390458518265867
-                },
-                {
-                  "height" : 0.019095831026418986,
-                  "width" : 0.14320435062531506,
-                  "x" : 0.3760730666778888,
-                  "y" : 0.5382919000351978
-                }
+
               ],
               "originalDescription" : "Fresh spinach cooked with cumin, ginger, turmeric, and all-spice.\n: CHICKEN\n: PANEER [VG]\n: LAMB (+$1)",
-              "originalName" : "PALAK [VG][GF] $15.99",
+              "originalName" : "PALAK [VG] [GF]",
               "price" : "$15.99",
               "tags" : [
-                "gluten_free"
+                "vegetarian",
+                "gluten_free",
+                "contains_lamb"
               ]
             },
             {
@@ -1787,13 +2120,28 @@
                 "x" : 0.6772064051123281,
                 "y" : 0.5932355499598484
               },
-              "chineseDescription" : "鸡肉或羊肉末加混合香料和香菜，串烤而成。（2串）\n：羊肉（加$1）",
-              "chineseName" : "烤肉串",
+              "chineseDescription" : "鸡肉或羊肉末，配混合香料和香菜，串烤而成。（2串）\n：羊肉（+1美元）",
+              "chineseName" : "烤肉串 [无麸质]",
+              "descriptionBBox" : {
+                "height" : 0.022584406211688224,
+                "width" : 0.16382229712701613,
+                "x" : 0.04831582283591981,
+                "y" : 0.6104946288501109
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.022584406211688224,
+                  "width" : 0.16382229712701613,
+                  "x" : 0.04831582283591981,
+                  "y" : 0.6104946288501109
+                }
+              ],
               "originalDescription" : "Minced chicken or lamb seasoned with all-spice and coriander cooked on skewers. (2 pcs)\n: Lamb (+$1)",
-              "originalName" : "SEEKH KABAB [GF] $15.99",
+              "originalName" : "SEEKH KABAB [GF]",
               "price" : "$15.99",
               "tags" : [
-
+                "gluten_free",
+                "contains_lamb"
               ]
             },
             {
@@ -1803,8 +2151,8 @@
                 "x" : 0.6731818695459805,
                 "y" : 0.6543976577342475
               },
-              "chineseDescription" : "去骨鸡肉用酸奶、孜然、辣椒和香菜腌制，串烤而成。（白肉或黑肉）",
-              "chineseName" : "烤鸡块",
+              "chineseDescription" : "无骨鸡肉用酸奶、孜然、辣椒和香菜腌制，串烤而成。（白肉或黑肉）",
+              "chineseName" : "鸡肉串 [无麸质]",
               "descriptionBBox" : {
                 "height" : 0.029589972632478645,
                 "width" : 0.28966249054106785,
@@ -1826,7 +2174,7 @@
                 }
               ],
               "originalDescription" : "Boneless chicken marinated in yogurt, cumin, chili, and coriander cooked on skewers. (White or Dark Meat)",
-              "originalName" : "CHICKEN TIKKA BOTI [GF] $16.99",
+              "originalName" : "CHICKEN TIKKA BOTI [GF]",
               "price" : "$16.99",
               "tags" : [
                 "gluten_free"
@@ -1840,7 +2188,7 @@
       "sourceLanguageChinese" : "英语"
     }
   ],
-  "restaurantName" : "Naan N Curry",
+  "restaurantName" : "NAAN N CURRY",
   "sourceLanguage" : "English",
   "sourceLanguageChinese" : "英语",
   "targetLanguage" : "zh-Hans"

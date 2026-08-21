@@ -105,6 +105,20 @@ struct ContentView: View {
                             : SampleData.sampleImage(),
                     ])
                 }
+                // Open a specific history scan by UUID prefix (DEBUG nav).
+                if let idx = args.firstIndex(of: "-openScan"), idx + 1 < args.count {
+                    let prefix = args[idx + 1].uppercased()
+                    Task { @MainActor in
+                        for _ in 0 ..< 20 where viewModel.history.scans.isEmpty {
+                            try? await Task.sleep(nanoseconds: 300_000_000)
+                        }
+                        if let match = viewModel.history.scans.first(where: {
+                            $0.id.uuidString.hasPrefix(prefix)
+                        }) {
+                            viewModel.open(match)
+                        }
+                    }
+                }
                 // Reopen the newest history scan (thumbnails load from disk)
                 // and dump the fully-illustrated PDF to Documents/final.pdf.
                 if args.contains("-openLatest") {

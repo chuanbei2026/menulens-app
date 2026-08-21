@@ -20,19 +20,78 @@ enum BBoxRefiner {
         let lines = recognizeLines(in: image)
         guard !lines.isEmpty else { return document }
 
-        // Pass 1 — anchor every item's NAME line via fuzzy text match.
+        // Pass 1 — anchor every item's NAME line. VLM geometry drifts (often
+        // by a whole row or column), so matching runs in three passes:
+        //   A. text-similarity candidates per item;
+        //   B. items with a single confident candidate estimate the global
+        //      VLM drift (median offset);
+        //   C. drift-corrected spatial scores + globally UNIQUE line
+        //      assignment (greedy by score) anchor every item.
         struct Ref {
             let item: MenuItemEntry
             let nameLine: Line?
         }
-        let refs: [[Ref]] = document.sections.map { section in
-            section.items.map { item in
-                var nameLine = bestMatch(for: item.originalName, in: lines, near: item.bbox.cgRect)
-                // Name unmatched: locate the item via its (longer, more
-                // unique) description prefix and hang a zero-height anchor
-                // just above that line.
+
+        struct Candidate {
+            let section: Int
+            let item: Int
+            let line: Line
+            let textScore: Double
+        }
+        var candidates: [[Int]: [Candidate]] = [:] // [section,item] -> options
+        for (s, section) in document.sections.enumerated() {
+            for (i, item) in section.items.enumerated() {
+                candidates[[s, i]] = textCandidates(for: item.originalName, in: lines)
+                    .map { Candidate(section: s, item: i, line: $0.line, textScore: $0.score) }
+            }
+        }
+
+        // Pass B: estimate global drift from unambiguous matches.
+        var dxs: [CGFloat] = []
+        var dys: [CGFloat] = []
+        for (key, options) in candidates where options.count == 1 && options[0].textScore > 0.8 {
+            let vlm = document.sections[key[0]].items[key[1]].bbox.cgRect
+            dxs.append(options[0].line.box.midX - vlm.midX)
+            dys.append(options[0].line.box.midY - vlm.midY)
+        }
+        let drift = CGPoint(
+            x: dxs.isEmpty ? 0 : dxs.sorted()[dxs.count / 2],
+            y: dys.isEmpty ? 0 : dys.sorted()[dys.count / 2]
+        )
+
+        // Pass C: greedy global assignment, one OCR line per item.
+        var scored: [(candidate: Candidate, score: Double)] = []
+        for (key, options) in candidates {
+            let vlm = document.sections[key[0]].items[key[1]].bbox.cgRect
+            let corrected = CGPoint(x: vlm.midX + drift.x, y: vlm.midY + drift.y)
+            for option in options {
+                let distance = abs(option.line.box.midX - corrected.x)
+                    + abs(option.line.box.midY - corrected.y)
+                scored.append((option, option.textScore - 1.2 * Double(distance)))
+            }
+        }
+        scored.sort { $0.score > $1.score }
+        let lineKey: (CGRect) -> String = { "\($0.origin)-\($0.size)" }
+        var takenLines = Set<String>()
+        var takenItems = Set<[Int]>()
+        var assignment: [[Int]: Line] = [:]
+        for entry in scored where entry.score > -0.2 {
+            let key = [entry.candidate.section, entry.candidate.item]
+            let lk = lineKey(entry.candidate.line.box)
+            guard !takenItems.contains(key), !takenLines.contains(lk) else { continue }
+            takenItems.insert(key)
+            takenLines.insert(lk)
+            assignment[key] = entry.candidate.line
+        }
+
+        let refs: [[Ref]] = document.sections.enumerated().map { s, section in
+            section.items.enumerated().map { i, item in
+                var nameLine = assignment[[s, i]]
+                // Still unmatched: locate via the (longer, more unique)
+                // description prefix and hang a zero-height anchor above it.
                 if nameLine == nil, let description = item.originalDescription {
-                    if let descLine = bestMatch(for: String(description.prefix(30)), in: lines, near: item.bbox.cgRect) {
+                    if let descLine = bestMatch(for: String(description.prefix(30)), in: lines,
+                                                near: item.bbox.cgRect.offsetBy(dx: drift.x, dy: drift.y)) {
                         nameLine = Line(
                             text: "",
                             box: CGRect(x: descLine.box.minX, y: descLine.box.minY - 0.002,
@@ -211,6 +270,33 @@ enum BBoxRefiner {
     }
 
     // MARK: - Fuzzy text matching
+
+    /// All OCR lines whose text plausibly IS this dish name, with scores —
+    /// same scoring as bestMatch but returning every candidate above the
+    /// threshold (the global assignment pass picks between them).
+    private static func textCandidates(for name: String, in lines: [Line]) -> [(line: Line, score: Double)] {
+        let target = normalize(name)
+        guard target.count >= 4 else { return [] }
+        var results: [(Line, Double)] = []
+        for line in lines {
+            let candidate = normalize(line.text)
+            guard candidate.count >= 4 else { continue }
+            var score = 0.0
+            if candidate.contains(target) || target.contains(candidate) {
+                score = Double(min(candidate.count, target.count))
+                    / Double(max(candidate.count, target.count))
+            } else {
+                let k = min(8, min(candidate.count, target.count))
+                if k >= 6, candidate.prefix(k) == target.prefix(k) {
+                    score = 0.55
+                }
+            }
+            if score > 0.45 {
+                results.append((line, score))
+            }
+        }
+        return results
+    }
 
     /// Case/diacritic/punctuation-insensitive containment matching, scored by
     /// length overlap; a shared 8-char prefix counts as a weak match.

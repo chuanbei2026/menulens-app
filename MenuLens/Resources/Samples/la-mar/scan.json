@@ -1,6 +1,6 @@
 {
-  "createdAt" : "2026-08-20T20:33:57Z",
-  "id" : "F928C2E0-A803-4FA7-AEDA-14BB4803B440",
+  "createdAt" : "2026-08-21T00:34:51Z",
+  "id" : "866A70FB-8FB6-4DEF-A5B5-F7AEA128B843",
   "pages" : [
     {
       "restaurantName" : "la mar",
@@ -12,7 +12,7 @@
             "x" : 0.03427708112796168,
             "y" : 0.16127920052251588
           },
-          "chineseTitle" : "腌鱼",
+          "chineseTitle" : "酸橘汁腌鱼",
           "items" : [
             {
               "bbox" : {
@@ -22,19 +22,31 @@
                 "y" : 0.19176219849527343
               },
               "chineseDescription" : "本地比目鱼，经典虎奶，玉米粒，烤玉米，甜薯（鱼）（含麸质）",
-              "chineseName" : "经典",
+              "chineseName" : "经典酸橘汁腌鱼*",
               "descriptionBBox" : {
-                "height" : 0.02049180330741629,
-                "width" : 0.2506596229595845,
+                "height" : 0.024745043829314528,
+                "width" : 0.5567282328197841,
                 "x" : 0.03430079129065646,
-                "y" : 0.20338114733732415
+                "y" : 0.19912790681542591
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.008863896620078138,
+                  "width" : 0.20052769552617983,
+                  "x" : 0.3430079225535327,
+                  "y" : 0.19912790681542591
+                },
                 {
                   "height" : 0.010281642929452328,
                   "width" : 0.2506596229595845,
                   "x" : 0.03430079129065646,
                   "y" : 0.20338114733732415
+                },
+                {
+                  "height" : 0.010388867288339432,
+                  "width" : 0.24802110270636935,
+                  "x" : 0.3430079214040712,
+                  "y" : 0.2078488374161207
                 },
                 {
                   "height" : 0.00875667177262851,
@@ -45,7 +57,7 @@
               ],
               "originalDescription" : "local halibut, classic leche de tigre, choclo, cancha, sweet potato (f)(g)",
               "originalName" : "Clásico*",
-              "price" : "$31",
+              "price" : "31",
               "tags" : [
                 "gluten_free"
               ]
@@ -58,14 +70,20 @@
                 "y" : 0.2338237667366364
               },
               "chineseDescription" : "每日鲜鱼，虾，鱿鱼，章鱼，辣椒虎奶（鱼）（贝类）（含麸质）",
-              "chineseName" : "利梅尼奥",
+              "chineseName" : "利马风味酸橘汁腌鱼*",
               "descriptionBBox" : {
-                "height" : 0.029200819871116557,
-                "width" : 0.18997361451331907,
+                "height" : 0.03493137654180556,
+                "width" : 0.5514511838394371,
                 "x" : 0.03430078931326139,
-                "y" : 0.24846311477549232
+                "y" : 0.24273255810480332
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.011878097643617802,
+                  "width" : 0.21108179074647931,
+                  "x" : 0.3430079170278157,
+                  "y" : 0.24273255810480332
+                },
                 {
                   "height" : 0.00880432715181434,
                   "width" : 0.16094986331307465,
@@ -79,6 +97,12 @@
                   "y" : 0.25870901647072464
                 },
                 {
+                  "height" : 0.010269729328937327,
+                  "width" : 0.24538258245315409,
+                  "x" : 0.34036939069954447,
+                  "y" : 0.2571721309475292
+                },
+                {
                   "height" : 0.008768585861706368,
                   "width" : 0.18997361451331907,
                   "x" : 0.03430078931326139,
@@ -87,7 +111,7 @@
               ],
               "originalDescription" : "catch of the day, shrimp, calamari, octopus, rocoto leche de tigre (f)(sf)(g)",
               "originalName" : "Limeño*",
-              "price" : "$32",
+              "price" : "32",
               "tags" : [
                 "gluten_free",
                 "contains_seafood"
@@ -100,11 +124,11 @@
                 "x" : 0.0369393157619016,
                 "y" : 0.2817622949220451
               },
-              "chineseDescription" : "大西洋三文鱼，芝麻虎奶，腌制蔬菜，秘鲁辣椒脆片，脆云吞（鱼）（芝麻）（含麸质）",
-              "chineseName" : "中式",
+              "chineseDescription" : "大西洋三文鱼，芝麻虎奶，腌制蔬菜，秘鲁辣椒脆片，脆云吞皮（鱼）（芝麻）（含蛋）（含麸质）",
+              "chineseName" : "中式酸橘汁腌鱼*",
               "descriptionBBox" : {
-                "height" : 0.03494760333896196,
-                "width" : 0.28249283781800033,
+                "height" : 0.026226673124572497,
+                "width" : 0.5725593540106036,
                 "x" : 0.034300789512915215,
                 "y" : 0.2935407684200626
               },
@@ -116,21 +140,27 @@
                   "y" : 0.2935407684200626
                 },
                 {
+                  "height" : 0.011627906658610465,
+                  "width" : 0.26649074447887566,
+                  "x" : 0.34036939904464325,
+                  "y" : 0.2979651164865862
+                },
+                {
                   "height" : 0.010424609067010149,
                   "width" : 0.2823218944130441,
                   "x" : 0.034300789512915215,
                   "y" : 0.3066860468456265
                 },
                 {
-                  "height" : 0.010353125998231238,
-                  "width" : 0.17678099903980446,
-                  "x" : 0.03430079630243715,
-                  "y" : 0.31813524576079333
+                  "height" : 0.01034121190915338,
+                  "width" : 0.21372031099969446,
+                  "x" : 0.34300792105028466,
+                  "y" : 0.3094262296354817
                 }
               ],
-              "originalDescription" : "Atlantic salmon, sesame leche de tigre, pickled veggies, peruvian chili crunch, crispy wontons (f)(sm)(g)",
+              "originalDescription" : "Atlantic salmon, sesame leche de tigre, pickled veggies, peruvian chili crunch, crispy wontons (f)(s)(me)(g)",
               "originalName" : "Chifa*",
-              "price" : "$30",
+              "price" : "30",
               "tags" : [
                 "contains_seafood"
               ]
@@ -142,25 +172,49 @@
                 "x" : 0.034222020117788195,
                 "y" : 0.33263478773772004
               },
-              "chineseDescription" : "黄鳍金枪鱼，黄瓜，白萝卜，辣椒虎奶，辣椒油（鱼）（芝麻）（蛋）（含麸质）",
-              "chineseName" : "日式",
+              "chineseDescription" : "黄鳍金枪鱼，黄瓜，白萝卜，辣椒虎奶，辣椒油（鱼）（芝麻）（含蛋）（含麸质）",
+              "chineseName" : "日式酸橘汁腌鱼*",
               "descriptionBBox" : {
-                "height" : 0.010305470619045298,
-                "width" : 0.20052769552617986,
-                "x" : 0.03430079854297859,
-                "y" : 0.3457991802642526
+                "height" : 0.0319767434824102,
+                "width" : 0.5250659613107154,
+                "x" : 0.03166226968513254,
+                "y" : 0.341569767685016
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.010376953687824209,
+                  "width" : 0.21635883125290967,
+                  "x" : 0.34036939974293823,
+                  "y" : 0.341569767685016
+                },
                 {
                   "height" : 0.010305470619045298,
                   "width" : 0.20052769552617986,
                   "x" : 0.03430079854297859,
                   "y" : 0.3457991802642526
+                },
+                {
+                  "height" : 0.011782786885246033,
+                  "width" : 0.2717678134001833,
+                  "x" : 0.03166226968513254,
+                  "y" : 0.35604508214835806
+                },
+                {
+                  "height" : 0.010400781377417179,
+                  "width" : 0.19788917527296473,
+                  "x" : 0.3430079209387155,
+                  "y" : 0.35297131131184
+                },
+                {
+                  "height" : 0.008720929505395048,
+                  "width" : 0.06068601554998476,
+                  "x" : 0.34300791671929076,
+                  "y" : 0.36482558166203116
                 }
               ],
-              "originalDescription" : "ahi tuna, cucumber, daikon, rocoto leche de tigre, chili oil (f)(sm)(e)(g)",
+              "originalDescription" : "ahi tuna, cucumber, daikon, rocoto leche de tigre, chili oil (f)(s)(me)(g)",
               "originalName" : "Nikkei*",
-              "price" : "$32",
+              "price" : "32",
               "tags" : [
                 "contains_seafood"
               ]
@@ -172,11 +226,11 @@
                 "x" : 0.05277044956900684,
                 "y" : 0.3779069767283212
               },
-              "chineseDescription" : "我们最受欢迎的三款生腌：经典、利梅尼奥、日式",
-              "chineseName" : "生腌拼盘",
+              "chineseDescription" : "我们最受欢迎的三款酸橘汁腌鱼：经典、利马风味、日式",
+              "chineseName" : "\/\/\/ 酸橘汁腌鱼品鉴*",
               "descriptionBBox" : {
-                "height" : 0.010281642929452328,
-                "width" : 0.11345646323660455,
+                "height" : 0.029200819698502745,
+                "width" : 0.5277044795320446,
                 "x" : 0.05540896974493439,
                 "y" : 0.39088114733732415
               },
@@ -186,11 +240,29 @@
                   "width" : 0.11345646323660455,
                   "x" : 0.05540896974493439,
                   "y" : 0.39088114733732415
+                },
+                {
+                  "height" : 0.010363405845204232,
+                  "width" : 0.09505323413586042,
+                  "x" : 0.3508902682454152,
+                  "y" : 0.39234736667281656
+                },
+                {
+                  "height" : 0.008768585861706368,
+                  "width" : 0.19788917527296468,
+                  "x" : 0.05540897684240946,
+                  "y" : 0.4098360653533911
+                },
+                {
+                  "height" : 0.010245901639344246,
+                  "width" : 0.2321899669796394,
+                  "x" : 0.35092348229733955,
+                  "y" : 0.40983606539648265
                 }
               ],
               "originalDescription" : "our most popular cebiches Clásico, Limeño, Nikkei",
               "originalName" : "\/\/\/ CEBICHE TASTING*",
-              "price" : "$65",
+              "price" : "65",
               "tags" : [
                 "gluten_free",
                 "contains_seafood"
@@ -206,7 +278,7 @@
             "x" : 0.3403693959595756,
             "y" : 0.16133720928646078
           },
-          "chineseTitle" : "腌鱼片",
+          "chineseTitle" : "秘鲁生鱼片",
           "items" : [
             {
               "bbox" : {
@@ -215,8 +287,8 @@
                 "x" : 0.34300792060926166,
                 "y" : 0.18749999982656929
               },
-              "chineseDescription" : "三文鱼肚，炙烤牛油果，香菜墨西哥辣椒酱，洋葱番茄沙拉（鱼）",
-              "chineseName" : "腌制",
+              "chineseDescription" : "三文鱼肚，炙烤牛油果，香菜墨西哥辣椒酱，chalaca酱（鱼）",
+              "chineseName" : "腌制三文鱼生鱼片*",
               "descriptionBBox" : {
                 "height" : 0.01910979788903422,
                 "width" : 0.24802110270636935,
@@ -239,7 +311,7 @@
               ],
               "originalDescription" : "salmon belly, torched palta, cilantro-jalapeno sauce, chalaca (f)",
               "originalName" : "Curado*",
-              "price" : "$28",
+              "price" : "28",
               "tags" : [
                 "contains_seafood"
               ]
@@ -252,10 +324,10 @@
                 "y" : 0.22913560050049542
               },
               "chineseDescription" : "北海道扇贝，油甘鱼，烤皮基略辣椒虎奶，牛油果，早餐萝卜（贝类）（含麸质）",
-              "chineseName" : "豪华",
+              "chineseName" : "豪华生鱼片*",
               "descriptionBBox" : {
-                "height" : 0.036468261588550654,
-                "width" : 0.24538259063257334,
+                "height" : 0.024709302171663228,
+                "width" : 0.24538258245315409,
                 "x" : 0.34036939069954447,
                 "y" : 0.24273255810480332
               },
@@ -271,20 +343,14 @@
                   "width" : 0.24538258245315409,
                   "x" : 0.34036939069954447,
                   "y" : 0.2571721309475292
-                },
-                {
-                  "height" : 0.010305470619045298,
-                  "width" : 0.24538258245315403,
-                  "x" : 0.3403693988789638,
-                  "y" : 0.2688953490743087
                 }
               ],
               "originalDescription" : "hokkaido scallops, hamachi, roasted piquillo pepper leche de tigre, palta, breakfast radish (sf)(g)",
               "originalName" : "Lujoso*",
-              "price" : "$39",
+              "price" : "39",
               "tags" : [
-                "contains_seafood",
-                "gluten_free"
+                "gluten_free",
+                "contains_seafood"
               ]
             },
             {
@@ -294,8 +360,8 @@
                 "x" : 0.3430079144455489,
                 "y" : 0.2863372092500188
               },
-              "chineseDescription" : "油甘鱼，黄辣椒酱，洋葱番茄沙拉，玉米粒，脆甜薯（鱼）",
-              "chineseName" : "克里奥约",
+              "chineseDescription" : "油甘鱼，黄辣椒酱，chalaca酱，玉米粒，脆甜薯（鱼）",
+              "chineseName" : "克里奥生鱼片*",
               "descriptionBBox" : {
                 "height" : 0.02180232505804891,
                 "width" : 0.26649074447887566,
@@ -318,7 +384,7 @@
               ],
               "originalDescription" : "hamachi, aji amarillo sauce, chalaca, choclo, crispy sweet potato (f)",
               "originalName" : "Criollo*",
-              "price" : "$28",
+              "price" : "28",
               "tags" : [
                 "contains_seafood"
               ]
@@ -330,10 +396,10 @@
                 "x" : 0.3430079159241113,
                 "y" : 0.3299180327178586
               },
-              "chineseDescription" : "炙烤黄鳍金枪鱼，百香果，腌制蔬菜，日式蒜泥蛋黄酱（鱼）（芝麻）（蛋）",
-              "chineseName" : "拉奎阿多",
+              "chineseDescription" : "炙烤金枪鱼，百香果，腌制蔬菜，日式蒜泥蛋黄酱（鱼）（芝麻）（含蛋）",
+              "chineseName" : "烤金枪鱼生鱼片*",
               "descriptionBBox" : {
-                "height" : 0.010376953687824209,
+                "height" : 0.021802325004241174,
                 "width" : 0.21635883125290967,
                 "x" : 0.34036939974293823,
                 "y" : 0.341569767685016
@@ -344,11 +410,17 @@
                   "width" : 0.21635883125290967,
                   "x" : 0.34036939974293823,
                   "y" : 0.341569767685016
+                },
+                {
+                  "height" : 0.010400781377417179,
+                  "width" : 0.19788917527296473,
+                  "x" : 0.3430079209387155,
+                  "y" : 0.35297131131184
                 }
               ],
-              "originalDescription" : "seared ahi tuna, passion fruit, pickled veggies, nikkei aioli (f)(sm)(e)",
+              "originalDescription" : "seared ahi tuna, passion fruit, pickled veggies, nikkei aioli (f)(s)(me)",
               "originalName" : "Laqueado*",
-              "price" : "$31",
+              "price" : "31",
               "tags" : [
                 "contains_seafood"
               ]
@@ -360,10 +432,10 @@
                 "x" : 0.35092348344234225,
                 "y" : 0.3793604651881367
               },
-              "chineseDescription" : "三款腌鱼片拼盘：克里奥约、腌制、拉奎阿多",
-              "chineseName" : "三重奏",
+              "chineseDescription" : "三款生鱼片拼盘：克里奥、腌制三文鱼、烤金枪鱼",
+              "chineseName" : "\/\/\/ 生鱼片三重奏*",
               "descriptionBBox" : {
-                "height" : 0.042245656267167364,
+                "height" : 0.027734600363010342,
                 "width" : 0.23222318103156375,
                 "x" : 0.3508902682454152,
                 "y" : 0.39234736667281656
@@ -380,20 +452,14 @@
                   "width" : 0.2321899669796394,
                   "x" : 0.35092348229733955,
                   "y" : 0.40983606539648265
-                },
-                {
-                  "height" : 0.01041269497793218,
-                  "width" : 0.18733509426010386,
-                  "x" : 0.353562006662824,
-                  "y" : 0.42418032796205174
                 }
               ],
               "originalDescription" : "a selection of our three tiraditos Criollo, Curado, Laqueado",
               "originalName" : "\/\/\/ EL TRIO*",
-              "price" : "$65",
+              "price" : "65",
               "tags" : [
-                "contains_seafood",
-                "gluten_free"
+                "gluten_free",
+                "contains_seafood"
               ]
             }
           ],
@@ -415,10 +481,10 @@
                 "x" : 0.6622691365347931,
                 "y" : 0.18749999994233524
               },
-              "chineseDescription" : "珍宝蟹，冷打土豆泥和甜菜，牛油果慕斯，奶油黄辣椒酱（贝类）（蛋）（含麸质）",
-              "chineseName" : "蟹肉土豆泥",
+              "chineseDescription" : "珍宝蟹，冷打土豆和甜菜，牛油果慕斯，奶油黄辣椒酱（含麸质）（含蛋）（贝类）",
+              "chineseName" : "珍宝蟹土豆泥",
               "descriptionBBox" : {
-                "height" : 0.02180232511930902,
+                "height" : 0.03499094526714619,
                 "width" : 0.2744063336533985,
                 "x" : 0.6596306016869332,
                 "y" : 0.1991279072986304
@@ -435,11 +501,17 @@
                   "width" : 0.2744063336533985,
                   "x" : 0.6596306016869332,
                   "y" : 0.2105532787301152
+                },
+                {
+                  "height" : 0.01028164292945244,
+                  "width" : 0.17678099903980438,
+                  "x" : 0.6596306057131675,
+                  "y" : 0.22383720963632414
                 }
               ],
-              "originalDescription" : "dungeness crab, cold-whipped potato & beets, palta mousse, creamy aji amarillo sauce (sf)(e)(g)",
+              "originalDescription" : "dungeness crab, cold-whipped potato & beets, palta mousse, creamy aji amarillo sauce (g)(e)(sf)",
               "originalName" : "Causa de Cangrejo",
-              "price" : "$34",
+              "price" : "34",
               "tags" : [
                 "contains_seafood"
               ]
@@ -451,8 +523,8 @@
                 "x" : 0.6596306046700299,
                 "y" : 0.2441860468456265
               },
-              "chineseDescription" : "金枪鱼塔塔，脆云吞皮，牛油果慕斯，萝卜，秘鲁酱汁（含麸质）（蛋）（鱼）（贝类）",
-              "chineseName" : "金枪鱼玉米饼",
+              "chineseDescription" : "金枪鱼塔塔，脆云吞皮，牛油果慕斯，萝卜，秘鲁酱汁（含麸质）（含蛋）（鱼）（芝麻）",
+              "chineseName" : "金枪鱼云吞塔可*",
               "descriptionBBox" : {
                 "height" : 0.023565574059042804,
                 "width" : 0.2717678134001833,
@@ -473,9 +545,9 @@
                   "y" : 0.26889534914162505
                 }
               ],
-              "originalDescription" : "tuna tartare, crispy wonton shell, palta mousse, radish, peruvian sauces (g)(e)(f)(sf)",
+              "originalDescription" : "tuna tartare, crispy wonton shell, palta mousse, radish, peruvian sauces (g)(e)(f)(s)",
               "originalName" : "Tuna WonTacos*",
-              "price" : "$28",
+              "price" : "28",
               "tags" : [
                 "contains_seafood"
               ]
@@ -487,8 +559,8 @@
                 "x" : 0.6622691298777034,
                 "y" : 0.29918032780528847
               },
-              "chineseDescription" : "珍宝蟹，脆云吞皮，牛油果慕斯，萝卜，秘鲁酱汁（含麸质）（蛋）（贝类）",
-              "chineseName" : "珍宝蟹玉米饼",
+              "chineseDescription" : "珍宝蟹，脆云吞皮，牛油果慕斯，萝卜，秘鲁酱汁（含麸质）（含蛋）（贝类）",
+              "chineseName" : "珍宝蟹云吞塔可*",
               "descriptionBBox" : {
                 "height" : 0.03360732437502034,
                 "width" : 0.26916428904520606,
@@ -517,7 +589,7 @@
               ],
               "originalDescription" : "dungeness crab, crispy wonton shell, palta mousse, radish, peruvian sauces (g)(e)(sf)",
               "originalName" : "Dungeness Crab WonTacos*",
-              "price" : "$34",
+              "price" : "34",
               "tags" : [
                 "contains_seafood"
               ]
@@ -529,11 +601,11 @@
                 "x" : 0.6596306060557449,
                 "y" : 0.3560450820285257
               },
-              "chineseDescription" : "秘鲁藜麦，新鲜布拉塔奶酪，迷你传家宝番茄，黄辣椒，黄瓜，黄辣椒油醋汁（素食）（奶制品）",
+              "chineseDescription" : "秘鲁藜麦，新鲜布拉塔奶酪，迷你番茄，黄辣椒，黄瓜，黄辣椒油醋汁（素食）（奶制品）",
               "chineseName" : "秘鲁藜麦卡普雷塞",
               "descriptionBBox" : {
-                "height" : 0.03493137635942134,
-                "width" : 0.2770448542633087,
+                "height" : 0.023255813775345247,
+                "width" : 0.26649075456263227,
                 "x" : 0.6596306104538503,
                 "y" : 0.36773255822592743
               },
@@ -549,17 +621,11 @@
                   "width" : 0.22955144672642436,
                   "x" : 0.6596306104538503,
                   "y" : 0.38063524600304144
-                },
-                {
-                  "height" : 0.010245901639344246,
-                  "width" : 0.2770448539066137,
-                  "x" : 0.6596306108105453,
-                  "y" : 0.3924180329460045
                 }
               ],
               "originalDescription" : "peruvian quinoa, fresh burrata, baby heirloom tomatoes, aji amarillo, cucumber, aji amarillo vinaigrette (v)(d)",
               "originalName" : "Peruvian Quinoa Caprese",
-              "price" : "$26",
+              "price" : "26",
               "tags" : [
                 "vegetarian"
               ]
@@ -583,11 +649,37 @@
                 "x" : 0.0343007966601268,
                 "y" : 0.48668032794388305
               },
-              "chineseDescription" : "西班牙章鱼，香草蒜蓉酱，酸豆，大蒜，脆皮秘鲁土豆，青豆泡沫（奶制品）（蛋）（含麸质）（贝类）",
-              "chineseName" : "脆章鱼",
+              "chineseDescription" : "西班牙章鱼，香草酱，刺山柑，大蒜，脆秘鲁土豆，青豆泡沫（奶制品）（含蛋）（含麸质）（贝类）",
+              "chineseName" : "香脆章鱼",
+              "descriptionBBox" : {
+                "height" : 0.02202868860047591,
+                "width" : 0.5936675434009725,
+                "x" : 0.034300791158024466,
+                "y" : 0.49999999994233524
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.010245901639344246,
+                  "width" : 0.21372031099969446,
+                  "x" : 0.034300791158024466,
+                  "y" : 0.49999999994233524
+                },
+                {
+                  "height" : 0.008899637421623585,
+                  "width" : 0.2955144956791201,
+                  "x" : 0.33245383887987684,
+                  "y" : 0.5056352458872755
+                },
+                {
+                  "height" : 0.010400781377417179,
+                  "width" : 0.2163588312529097,
+                  "x" : 0.034300799061319866,
+                  "y" : 0.511627907165394
+                }
+              ],
               "originalDescription" : "spanish octopus, chimichurri, capers, garlic, crispy peruvian potatoes, green pea foam (d)(e)(g)(sf)",
               "originalName" : "Pulpo Crocante",
-              "price" : "$38",
+              "price" : "38",
               "tags" : [
                 "contains_seafood"
               ]
@@ -599,11 +691,11 @@
                 "x" : 0.034300791487486805,
                 "y" : 0.5392441861806555
               },
-              "chineseDescription" : "烤鸡腿肉，安第斯辣酱，脆皮土豆，玉米粒（奶制品）（蛋）（含麸质）",
-              "chineseName" : "鸡肉串",
+              "chineseDescription" : "烤鸡腿，秘鲁烤肉酱，脆土豆，玉米粒（奶制品）（含蛋）（含麸质）",
+              "chineseName" : "烤鸡肉串",
               "descriptionBBox" : {
-                "height" : 0.010245901639344246,
-                "width" : 0.24802110270636932,
+                "height" : 0.022341220398788608,
+                "width" : 0.514511864203795,
                 "x" : 0.03430079739351712,
                 "y" : 0.5522540985697256
               },
@@ -613,11 +705,29 @@
                   "width" : 0.24802110270636932,
                   "x" : 0.03430079739351712,
                   "y" : 0.5522540985697256
+                },
+                {
+                  "height" : 0.01034121190915338,
+                  "width" : 0.11081793587967004,
+                  "x" : 0.4274406363697516,
+                  "y" : 0.5552325585704327
+                },
+                {
+                  "height" : 0.011109242673780106,
+                  "width" : 0.10056405094082793,
+                  "x" : 0.17663090454427577,
+                  "y" : 0.5634860762947341
+                },
+                {
+                  "height" : 0.008875810220593361,
+                  "width" : 0.13192611211283023,
+                  "x" : 0.4168865494844819,
+                  "y" : 0.5654069765610653
                 }
               ],
               "originalDescription" : "grilled chicken thigh, anticuchera, crispy potatoes, choclo (d)(e)(g)",
               "originalName" : "Anticuchos de Pollo",
-              "price" : "$19",
+              "price" : "19",
               "tags" : [
 
               ]
@@ -629,25 +739,43 @@
                 "x" : 0.03430078880952816,
                 "y" : 0.5813953487849025
               },
-              "chineseDescription" : "烤牛心，安第斯辣酱，脆皮土豆，玉米粒（奶制品）（蛋）（含麸质）",
-              "chineseName" : "牛心串",
+              "chineseDescription" : "烤小牛心，秘鲁烤肉酱，脆土豆，玉米粒（奶制品）（含蛋）（含麸质）",
+              "chineseName" : "烤牛心串",
               "descriptionBBox" : {
-                "height" : 0.0101744180820027,
-                "width" : 0.2691292931469681,
-                "x" : 0.03430079214683246,
-                "y" : 0.5930232560207718
+                "height" : 0.03217927923963659,
+                "width" : 0.5092348245902026,
+                "x" : 0.03430079202746287,
+                "y" : 0.5855532786816656
               },
               "descriptionLines" : [
+                {
+                  "height" : 0.010376953687824209,
+                  "width" : 0.12401055135318473,
+                  "x" : 0.41952506526448075,
+                  "y" : 0.5855532786816656
+                },
                 {
                   "height" : 0.0101744180820027,
                   "width" : 0.2691292931469681,
                   "x" : 0.03430079214683246,
                   "y" : 0.5930232560207718
+                },
+                {
+                  "height" : 0.011782786885245922,
+                  "width" : 0.19261213476653427,
+                  "x" : 0.03430079202746287,
+                  "y" : 0.6045081965174426
+                },
+                {
+                  "height" : 0.008720929505395159,
+                  "width" : 0.039577835764964875,
+                  "x" : 0.4591029023901649,
+                  "y" : 0.6090116284159071
                 }
               ],
               "originalDescription" : "grilled veal heart, anticuchera, crispy potatoes, choclo (d)(e)(g)",
               "originalName" : "Anticuchos de Corazon",
-              "price" : "$20",
+              "price" : "20",
               "tags" : [
 
               ]
@@ -659,11 +787,37 @@
                 "x" : 0.03430079338835907,
                 "y" : 0.6264534887060915
               },
-              "chineseDescription" : "鸡肉，虾，墨鱼汁天妇罗，日式塔塔酱，腌制洋葱番茄沙拉（贝类）（含麸质）（奶制品）（蛋）（鱼）",
-              "chineseName" : "日式鸡肉卷",
+              "chineseDescription" : "鸡肉，虾，墨鱼汁天妇罗，秘鲁塔塔酱，腌制chalaca（贝类）（含麸质）（奶制品）（含蛋）（鱼）",
+              "chineseName" : "日式鸡虾天妇罗",
+              "descriptionBBox" : {
+                "height" : 0.02329155523233928,
+                "width" : 0.5197889176821014,
+                "x" : 0.034300793041232985,
+                "y" : 0.6380813956532531
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.24538258245315406,
+                  "x" : 0.034300793041232985,
+                  "y" : 0.6380813956532531
+                },
+                {
+                  "height" : 0.008768585861706368,
+                  "width" : 0.1398416870799144,
+                  "x" : 0.41424802364342006,
+                  "y" : 0.6438953486758908
+                },
+                {
+                  "height" : 0.011782786885245922,
+                  "width" : 0.24538258245315414,
+                  "x" : 0.034300796273422876,
+                  "y" : 0.6495901640003464
+                }
+              ],
               "originalDescription" : "chicken, shrimp, squid ink tempura, tartara chifera, pickled chalaca (sf)(g)(d)(e)(f)",
               "originalName" : "Roquitas Nikkei",
-              "price" : "$32",
+              "price" : "32",
               "tags" : [
                 "contains_seafood"
               ]
@@ -678,18 +832,18 @@
             "x" : 0.04221636252375224,
             "y" : 0.6802325582259273
           },
-          "chineseTitle" : "配菜",
+          "chineseTitle" : "配菜 \/\/\/",
           "items" : [
             {
               "bbox" : {
-                "height" : 0.025,
-                "width" : 0.312,
-                "x" : 0.021,
-                "y" : 0.56
+                "height" : 0.012,
+                "width" : 0.462,
+                "x" : 0.022,
+                "y" : 0.547
               },
               "chineseName" : "炒饭",
               "originalName" : "fried rice",
-              "price" : "$12",
+              "price" : "12",
               "tags" : [
 
               ]
@@ -703,21 +857,21 @@
               },
               "chineseName" : "玉米饭",
               "originalName" : "arroz con choclo",
-              "price" : "$8",
+              "price" : "8",
               "tags" : [
 
               ]
             },
             {
               "bbox" : {
-                "height" : 0.025,
-                "width" : 0.312,
-                "x" : 0.021,
-                "y" : 0.61
+                "height" : 0.012,
+                "width" : 0.462,
+                "x" : 0.022,
+                "y" : 0.575
               },
               "chineseName" : "木薯条",
               "originalName" : "yuca fries",
-              "price" : "$9",
+              "price" : "9",
               "tags" : [
 
               ]
@@ -729,9 +883,9 @@
                 "x" : 0.0343007899029617,
                 "y" : 0.5639534884638435
               },
-              "chineseName" : "脆薯条",
+              "chineseName" : "脆土豆",
               "originalName" : "crispy potatoes",
-              "price" : "$9",
+              "price" : "9",
               "tags" : [
 
               ]
@@ -755,10 +909,10 @@
                 "x" : 0.3720316618251762,
                 "y" : 0.48255813946087944
               },
-              "chineseDescription" : "前菜和主菜任选一款，含甜点\n周一至周五\n前菜\n经典腌鱼\n洋姜腌鱼\n经典藜麦\n日式鸡肉卷\n主菜\n牛柳炒饭\n蘑菇炒饭\n海鲜饭\n甜点\n椰香三奶蛋糕",
+              "chineseDescription" : "可选前菜和主菜，附甜点\n周一至周五\n前菜\n经典酸橘汁腌鱼\n菊芋酸橘汁腌鱼\n经典藜麦\n日式鸡虾天妇罗\n主菜\n秘鲁牛柳炒\n蘑菇炒\n海鲜饭\n甜点\n椰奶三奶蛋糕",
               "chineseName" : "行政午餐",
               "descriptionBBox" : {
-                "height" : 0.12663219560960814,
+                "height" : 0.008899637421623585,
                 "width" : 0.2955144956791201,
                 "x" : 0.33245383887987684,
                 "y" : 0.5056352458872755
@@ -769,59 +923,11 @@
                   "width" : 0.2955144956791201,
                   "x" : 0.33245383887987684,
                   "y" : 0.5056352458872755
-                },
-                {
-                  "height" : 0.0101744180820027,
-                  "width" : 0.039577835764964875,
-                  "x" : 0.46174142552121145,
-                  "y" : 0.5232558141421383
-                },
-                {
-                  "height" : 0.007422711516990033,
-                  "width" : 0.050205717317662824,
-                  "x" : 0.4564274842173555,
-                  "y" : 0.5406200395708087
-                },
-                {
-                  "height" : 0.01034121190915338,
-                  "width" : 0.11081793587967004,
-                  "x" : 0.4274406363697516,
-                  "y" : 0.5552325585704327
-                },
-                {
-                  "height" : 0.008875810220593361,
-                  "width" : 0.13192611211283023,
-                  "x" : 0.4168865494844819,
-                  "y" : 0.5654069765610653
-                },
-                {
-                  "height" : 0.008911551510701443,
-                  "width" : 0.10554089537323963,
-                  "x" : 0.4300791578542772,
-                  "y" : 0.5768442624950937
-                },
-                {
-                  "height" : 0.010376953687824209,
-                  "width" : 0.12401055135318473,
-                  "x" : 0.41952506526448075,
-                  "y" : 0.5855532786816656
-                },
-                {
-                  "height" : 0.008720929505395159,
-                  "width" : 0.039577835764964875,
-                  "x" : 0.4591029023901649,
-                  "y" : 0.6090116284159071
-                },
-                {
-                  "height" : 0.008804326663251816,
-                  "width" : 0.09762532750987474,
-                  "x" : 0.4327176776258894,
-                  "y" : 0.6234631148336318
                 }
               ],
-              "originalDescription" : "choice of starter & main; served with dessert\nM-F\nstarter\ncebiche clásico\nsun choke cebiche\nquinoa clásico\nroquitas chiferas\nmain\nlomo saltado\nmushroom saltado\narroz con mariscos\ndessert\ntres leches de coco",
+              "originalDescription" : "choice of starter & main; served with dessert\nM-F\nstarter\ncebiche clásico\nsunchoke cebiche\nquinoa clásico\nroquitas chiferas\nmain\nlomo saltado\nmushroom saltado\narroz con mariscos\ndessert\ntres leches de coco",
               "originalName" : "EXECUTIVE LUNCH",
-              "price" : "$45",
+              "price" : "45",
               "tags" : [
 
               ]
@@ -845,11 +951,43 @@
                 "x" : 0.03430078825913017,
                 "y" : 0.7674180327232166
               },
-              "chineseDescription" : "烤时令根茎，牛油果，洋蓟油浸，洋蓟脆片（素食）",
-              "chineseName" : "洋姜腌鱼",
+              "chineseDescription" : "烤时令根茎，牛油果，洋蓟油封，洋蓟脆片（素食）",
+              "chineseName" : "菊芋酸橘汁腌菜",
+              "descriptionBBox" : {
+                "height" : 0.023255813780703405,
+                "width" : 0.5989445834819703,
+                "x" : 0.034300799061319866,
+                "y" : 0.7790697676009274
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.010376953687824209,
+                  "width" : 0.2163588312529097,
+                  "x" : 0.034300799061319866,
+                  "y" : 0.7790697677274094
+                },
+                {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.28759893491947447,
+                  "x" : 0.34564644762381574,
+                  "y" : 0.7790697676009274
+                },
+                {
+                  "height" : 0.011854269954024721,
+                  "width" : 0.2612137039724453,
+                  "x" : 0.03430080220243167,
+                  "y" : 0.7904713114276061
+                },
+                {
+                  "height" : 0.010317384219560521,
+                  "width" : 0.17414247878658928,
+                  "x" : 0.34828496331119085,
+                  "y" : 0.7920081968599584
+                }
+              ],
               "originalDescription" : "roasted seasonal roots, palta, artichoke confit, artichoke crisps (v)",
               "originalName" : "Sunchoke Cebiche",
-              "price" : "$26",
+              "price" : "26",
               "tags" : [
                 "vegetarian"
               ]
@@ -862,11 +1000,11 @@
                 "y" : 0.8109631145995343
               },
               "chineseDescription" : "口蘑，牛油果，烤皮基略辣椒虎奶，木薯脆片",
-              "chineseName" : "皮基略腌鱼片",
+              "chineseName" : "皮基略辣椒生菜片",
               "descriptionBBox" : {
-                "height" : 0.011627906658610354,
-                "width" : 0.3034300564387657,
-                "x" : 0.0343008079723496,
+                "height" : 0.023255813659579405,
+                "width" : 0.5936675354097923,
+                "x" : 0.034300796273422876,
                 "y" : 0.8241279070389118
               },
               "descriptionLines" : [
@@ -875,11 +1013,29 @@
                   "width" : 0.3034300564387657,
                   "x" : 0.0343008079723496,
                   "y" : 0.8241279070389118
+                },
+                {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.28232189441304417,
+                  "x" : 0.345646437270171,
+                  "y" : 0.8255813957017025
+                },
+                {
+                  "height" : 0.011830441775869116,
+                  "width" : 0.24538258245315414,
+                  "x" : 0.034300796273422876,
+                  "y" : 0.8355532789226221
+                },
+                {
+                  "height" : 0.010293556529967551,
+                  "width" : 0.15567282280664424,
+                  "x" : 0.34564643569430326,
+                  "y" : 0.8370901639693672
                 }
               ],
               "originalDescription" : "portabello mushroom, palta, roasted piquillo pepper leche de tigre, tapioca crisps",
               "originalName" : "Piquillo Tiradito",
-              "price" : "$27",
+              "price" : "27",
               "tags" : [
                 "vegetarian"
               ]
@@ -891,12 +1047,12 @@
                 "x" : 0.03430079739351712,
                 "y" : 0.8560450818650082
               },
-              "chineseDescription" : "秘鲁藜麦，新鲜布拉塔奶酪，迷你传家宝番茄，黄辣椒，黄瓜，黄辣椒油醋汁（素食）（奶制品）",
+              "chineseDescription" : "秘鲁藜麦，新鲜布拉塔奶酪，迷你番茄，黄辣椒，黄瓜，黄辣椒油醋汁（素食）（奶制品）",
               "chineseName" : "秘鲁藜麦卡普雷塞",
               "descriptionBBox" : {
-                "height" : 0.011878097643617691,
-                "width" : 0.2664907728937529,
-                "x" : 0.0343007903605114,
+                "height" : 0.06540697632742865,
+                "width" : 0.8812664847099272,
+                "x" : 0.034300790223474174,
                 "y" : 0.8677325582404622
               },
               "descriptionLines" : [
@@ -905,11 +1061,29 @@
                   "width" : 0.2664907728937529,
                   "x" : 0.0343007903605114,
                   "y" : 0.8677325582404622
+                },
+                {
+                  "height" : 0.011627906658610465,
+                  "width" : 0.23218996697963945,
+                  "x" : 0.03430079874412911,
+                  "y" : 0.879360465275346
+                },
+                {
+                  "height" : 0.011782786885245922,
+                  "width" : 0.27704485390661376,
+                  "x" : 0.034300790223474174,
+                  "y" : 0.8908811477769241
+                },
+                {
+                  "height" : 0.0101744180820027,
+                  "width" : 0.8364115738113943,
+                  "x" : 0.07915570112200705,
+                  "y" : 0.9229651164858882
                 }
               ],
               "originalDescription" : "peruvian quinoa, fresh burrata, baby heirloom tomatoes, aji amarillo, cucumber, aji amarillo vinaigrette (v)(d)",
               "originalName" : "Peruvian Quinoa Caprese",
-              "price" : "$26",
+              "price" : "26",
               "tags" : [
                 "vegetarian"
               ]
@@ -922,12 +1096,12 @@
                 "y" : 0.7674180329641731
               },
               "chineseDescription" : "炸中式茄子，鹰嘴豆泥，芒果黄辣椒（素食）（含麸质）",
-              "chineseName" : "克里奥约茄子",
+              "chineseName" : "克里奥茄子",
               "descriptionBBox" : {
-                "height" : 0.023255813654221358,
-                "width" : 0.26121370711355707,
+                "height" : 0.023255813780703405,
+                "width" : 0.5989445834819703,
                 "x" : 0.034300799061319866,
-                "y" : 0.7790697677274094
+                "y" : 0.7790697676009274
               },
               "descriptionLines" : [
                 {
@@ -937,17 +1111,30 @@
                   "y" : 0.7790697677274094
                 },
                 {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.28759893491947447,
+                  "x" : 0.34564644762381574,
+                  "y" : 0.7790697676009274
+                },
+                {
                   "height" : 0.011854269954024721,
                   "width" : 0.2612137039724453,
                   "x" : 0.03430080220243167,
                   "y" : 0.7904713114276061
+                },
+                {
+                  "height" : 0.010317384219560521,
+                  "width" : 0.17414247878658928,
+                  "x" : 0.34828496331119085,
+                  "y" : 0.7920081968599584
                 }
               ],
               "originalDescription" : "fried chinese eggplant, chickpea puree, mango aji amarillo (v)(g)",
               "originalName" : "Berenjena Criolla",
-              "price" : "$24",
+              "price" : "24",
               "tags" : [
-                "vegetarian"
+                "vegetarian",
+                "gluten_free"
               ]
             },
             {
@@ -957,11 +1144,11 @@
                 "x" : 0.345646437321745,
                 "y" : 0.8124999998158532
               },
-              "chineseDescription" : "脆皮秘鲁土豆，新鲜奶酪，黑薄荷，辣椒（含麸质）（奶制品）",
-              "chineseName" : "秘鲁薯条",
+              "chineseDescription" : "脆秘鲁土豆，新鲜奶酪，黑薄荷，辣椒（含麸质）（奶制品）",
+              "chineseName" : "秘鲁小土豆",
               "descriptionBBox" : {
                 "height" : 0.023255813659579405,
-                "width" : 0.3034300681376924,
+                "width" : 0.5936675354097923,
                 "x" : 0.034300796273422876,
                 "y" : 0.8241279070389118
               },
@@ -973,15 +1160,27 @@
                   "y" : 0.8241279070389118
                 },
                 {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.28232189441304417,
+                  "x" : 0.345646437270171,
+                  "y" : 0.8255813957017025
+                },
+                {
                   "height" : 0.011830441775869116,
                   "width" : 0.24538258245315414,
                   "x" : 0.034300796273422876,
                   "y" : 0.8355532789226221
+                },
+                {
+                  "height" : 0.010293556529967551,
+                  "width" : 0.15567282280664424,
+                  "x" : 0.34564643569430326,
+                  "y" : 0.8370901639693672
                 }
               ],
               "originalDescription" : "crispy peruvian potatoes, queso fresco, huacatay, rocoto (g)(d)",
               "originalName" : "Papitas Peruanas",
-              "price" : "$22",
+              "price" : "22",
               "tags" : [
                 "vegetarian"
               ]
@@ -993,11 +1192,11 @@
                 "x" : 0.41424801909324677,
                 "y" : 0.6337090165797362
               },
-              "chineseDescription" : "锅炒口蘑，番茄，洋葱，香菜，脆皮土豆",
-              "chineseName" : "野蘑菇炒饭",
+              "chineseDescription" : "锅炒口蘑，番茄，洋葱，香菜，脆土豆",
+              "chineseName" : "野蘑菇炒",
               "descriptionBBox" : {
-                "height" : 0.032181682309571635,
-                "width" : 0.24545819528055407,
+                "height" : 0.03343023245137933,
+                "width" : 0.5198645272773116,
                 "x" : 0.034225183446022926,
                 "y" : 0.6380813956532531
               },
@@ -1007,6 +1206,12 @@
                   "width" : 0.24538258245315406,
                   "x" : 0.034300793041232985,
                   "y" : 0.6380813956532531
+                },
+                {
+                  "height" : 0.008768585861706368,
+                  "width" : 0.1398416870799144,
+                  "x" : 0.41424802364342006,
+                  "y" : 0.6438953486758908
                 },
                 {
                   "height" : 0.011782786885245922,
@@ -1019,11 +1224,17 @@
                   "width" : 0.07666836814951408,
                   "x" : 0.034225183446022926,
                   "y" : 0.661132270766317
+                },
+                {
+                  "height" : 0.008720930482520428,
+                  "width" : 0.05804749174490992,
+                  "x" : 0.45118733519614657,
+                  "y" : 0.662790697622112
                 }
               ],
               "originalDescription" : "wok stir-fried portabello mushroom, tomatoes, onion, cilantro, crispy potatoes",
               "originalName" : "Wild Mushroom Saltado",
-              "price" : "$34",
+              "price" : "34",
               "tags" : [
                 "vegetarian"
               ]
@@ -1035,12 +1246,12 @@
                 "x" : 0.6675461737472568,
                 "y" : 0.8124999998158532
               },
-              "chineseDescription" : "锅炒藜麦饭，西兰花，辣椒，蘑菇蛋卷",
-              "chineseName" : "藜麦炒饭",
+              "chineseDescription" : "锅炒藜麦饭，西兰花，辣椒，蘑菇和蛋卷",
+              "chineseName" : "藜麦机场饭",
               "descriptionBBox" : {
-                "height" : 0.011627906658610354,
-                "width" : 0.3034300564387657,
-                "x" : 0.0343008079723496,
+                "height" : 0.023255813659579405,
+                "width" : 0.5936675354097923,
+                "x" : 0.034300796273422876,
                 "y" : 0.8241279070389118
               },
               "descriptionLines" : [
@@ -1049,11 +1260,29 @@
                   "width" : 0.3034300564387657,
                   "x" : 0.0343008079723496,
                   "y" : 0.8241279070389118
+                },
+                {
+                  "height" : 0.011627906658610354,
+                  "width" : 0.28232189441304417,
+                  "x" : 0.345646437270171,
+                  "y" : 0.8255813957017025
+                },
+                {
+                  "height" : 0.011830441775869116,
+                  "width" : 0.24538258245315414,
+                  "x" : 0.034300796273422876,
+                  "y" : 0.8355532789226221
+                },
+                {
+                  "height" : 0.010293556529967551,
+                  "width" : 0.15567282280664424,
+                  "x" : 0.34564643569430326,
+                  "y" : 0.8370901639693672
                 }
               ],
               "originalDescription" : "wok quinoa fried rice, broccoli, peppers, mushroom & egg omelette",
               "originalName" : "Quinoa Aeropuerto",
-              "price" : "$42",
+              "price" : "42",
               "tags" : [
                 "vegetarian"
               ]
@@ -1065,12 +1294,12 @@
                 "x" : 0.6649076520681034,
                 "y" : 0.8545081969575558
               },
-              "chineseDescription" : "西兰花，口蘑，红椒，油浸番茄，脆皮土豆，安第斯辣酱，黑薄荷（素食）（奶制品）",
-              "chineseName" : "素铁板烧",
+              "chineseDescription" : "西兰花苗，口蘑，红椒，油封番茄，脆土豆，秘鲁烤肉酱，黑薄荷（素食）（奶制品）",
+              "chineseName" : "素食铁板拼盘",
               "descriptionBBox" : {
-                "height" : 0.011878097643617691,
-                "width" : 0.2664907728937529,
-                "x" : 0.0343007903605114,
+                "height" : 0.06540697632742865,
+                "width" : 0.8812664847099272,
+                "x" : 0.034300790223474174,
                 "y" : 0.8677325582404622
               },
               "descriptionLines" : [
@@ -1079,11 +1308,29 @@
                   "width" : 0.2664907728937529,
                   "x" : 0.0343007903605114,
                   "y" : 0.8677325582404622
+                },
+                {
+                  "height" : 0.011627906658610465,
+                  "width" : 0.23218996697963945,
+                  "x" : 0.03430079874412911,
+                  "y" : 0.879360465275346
+                },
+                {
+                  "height" : 0.011782786885245922,
+                  "width" : 0.27704485390661376,
+                  "x" : 0.034300790223474174,
+                  "y" : 0.8908811477769241
+                },
+                {
+                  "height" : 0.0101744180820027,
+                  "width" : 0.8364115738113943,
+                  "x" : 0.07915570112200705,
+                  "y" : 0.9229651164858882
                 }
               ],
               "originalDescription" : "broccolini, portabella mushrooms, red pepper, confit tomato, crispy potatoes, anticuchera, huacatay (v)(d)",
               "originalName" : "Planchaza Vegetariana",
-              "price" : "$58",
+              "price" : "58",
               "tags" : [
                 "vegetarian"
               ]
@@ -1107,11 +1354,31 @@
                 "x" : 0.6622691344168146,
                 "y" : 0.4854651164495509
               },
-              "chineseDescription" : "鸭腿油封炒饭，扇贝煎蛋卷，日式酱汁（含麸质）（贝类）（奶制品）（蛋）",
-              "chineseName" : "老港机场",
-              "originalDescription" : "duck confit fried-wok rice, scallop omelette, nikkei sauce (g)(sf)(d)(e)",
+              "chineseDescription" : "鸭腿油封炒饭，扇贝蛋卷，日式酱汁（含麸质）（贝类）（含蛋）",
+              "chineseName" : "老机场饭",
+              "descriptionBBox" : {
+                "height" : 0.02051563043022908,
+                "width" : 0.2691292931469681,
+                "x" : 0.662269125260289,
+                "y" : 0.4969262296463828
+              },
+              "descriptionLines" : [
+                {
+                  "height" : 0.010341211909153492,
+                  "width" : 0.24274406219993894,
+                  "x" : 0.6622691322773392,
+                  "y" : 0.4969262296463828
+                },
+                {
+                  "height" : 0.01026972884037447,
+                  "width" : 0.2691292931469681,
+                  "x" : 0.662269125260289,
+                  "y" : 0.5071721312362374
+                }
+              ],
+              "originalDescription" : "duck confit fried-wok rice, scallop omelette, nikkei sauce (g)(sf)(e)",
               "originalName" : "Aeropuerto Viejo",
-              "price" : "$48",
+              "price" : "48",
               "tags" : [
                 "contains_seafood"
               ]
@@ -1123,10 +1390,10 @@
                 "x" : 0.6622691288235079,
                 "y" : 0.5276162788866469
               },
-              "chineseDescription" : "锅炒牛里脊，番茄，红洋葱，香菜，墨西哥辣椒，蚝油，酱油，土豆，米饭（贝类）（含麸质）（大豆）（奶制品）（酒精）",
-              "chineseName" : "牛柳炒饭",
+              "chineseDescription" : "锅炒牛里脊，番茄，红洋葱，香菜，墨西哥辣椒，酱油，土豆，米饭（贝类）（含麸质）（芝麻）（奶制品）（含蛋）",
+              "chineseName" : "秘鲁牛柳炒",
               "descriptionBBox" : {
-                "height" : 0.04069767426675763,
+                "height" : 0.033527781123313005,
                 "width" : 0.24340814629524565,
                 "x" : 0.659271310639773,
                 "y" : 0.5392441863320606
@@ -1149,17 +1416,11 @@
                   "width" : 0.24340814629524565,
                   "x" : 0.659271310639773,
                   "y" : 0.5593626558012358
-                },
-                {
-                  "height" : 0.00873284408303554,
-                  "width" : 0.1767809990398045,
-                  "x" : 0.6622691311740291,
-                  "y" : 0.5712090165157827
                 }
               ],
-              "originalDescription" : "wok stir-fried beef tenderloin, tomatoes, red onion, cilantro, jalapeño, oyster sauce, soy sauce, potatoes, rice (sf)(g)(s)(d)(a)",
+              "originalDescription" : "wok stir-fried beef tenderloin, tomatoes, red onion, cilantro, jalapeño, soy sauce, soy sauce, potatoes, rice (sf)(g)(s)(d)(e)",
               "originalName" : "Lomo Saltado",
-              "price" : "$45",
+              "price" : "45",
               "tags" : [
 
               ]
@@ -1171,10 +1432,10 @@
                 "x" : 0.6622691261422841,
                 "y" : 0.5886270490107542
               },
-              "chineseDescription" : "烤阿拉斯加比目鱼，藜麦，牛油果，樱桃番茄，脆利马豆，传家宝玉米，黄辣椒油醋汁（鱼）（含麸质）（奶制品）",
-              "chineseName" : "比目鱼铁板烧",
+              "chineseDescription" : "烤阿拉斯加比目鱼，藜麦，牛油果，樱桃番茄，脆利马豆，传家玉米，黄辣椒油醋汁（鱼）（含麸质）（奶制品）",
+              "chineseName" : "比目鱼沙拉",
               "descriptionBBox" : {
-                "height" : 0.04528450217632274,
+                "height" : 0.021802324975171317,
                 "width" : 0.2744063336533985,
                 "x" : 0.6622691263131425,
                 "y" : 0.6017441862642312
@@ -1191,23 +1452,11 @@
                   "width" : 0.2744063336533985,
                   "x" : 0.6622691263131425,
                   "y" : 0.6132172129307643
-                },
-                {
-                  "height" : 0.010245901639344246,
-                  "width" : 0.24274406219993894,
-                  "x" : 0.6622691322773392,
-                  "y" : 0.6250000002177196
-                },
-                {
-                  "height" : 0.00894729328937216,
-                  "width" : 0.12664907160639982,
-                  "x" : 0.6622691333260876,
-                  "y" : 0.6380813951511818
                 }
               ],
-              "originalDescription" : "grilled alaska halibut, quinoa, avocado, cherry tomatoes, crispy lima beans, heirloom corn, aji amarillo vinaigrette (f)(g)(d)",
+              "originalDescription" : "grilled alaskan halibut, quinoa, avocado, cherry tomatoes, crispy lima beans, heirloom corn, aji amarillo vinaigrette (f)(g)(d)",
               "originalName" : "Halibut Solterito",
-              "price" : "$58",
+              "price" : "58",
               "tags" : [
                 "contains_seafood"
               ]
@@ -1219,7 +1468,7 @@
                 "x" : 0.6622691302065257,
                 "y" : 0.6567622952955401
               },
-              "chineseDescription" : "虾，蛤蜊，鱿鱼，章鱼，锅炒饭，辣椒酱，黄辣椒蛋黄酱，杂蔬（贝类）（鱼）（含麸质）（奶制品）（蛋）（酒精）",
+              "chineseDescription" : "虾，蛤蜊，鱿鱼，章鱼，锅炒饭，辣椒酱，黄辣椒蒜泥蛋黄酱，什锦蔬菜（贝类）（鱼）（含麸质）（奶制品）（含蛋）",
               "chineseName" : "海鲜饭",
               "descriptionBBox" : {
                 "height" : 0.030737705016485206,
@@ -1247,9 +1496,9 @@
                   "y" : 0.6875000002370993
                 }
               ],
-              "originalDescription" : "shrimp, clams, calamari, octopus, wok-fried rice, aji panca, aji amarillo aioli, mixed vegetables (sf)(f)(g)(d)(e)(a)",
+              "originalDescription" : "shrimp, clams, calamari, octopus, wok-fried rice, aji panca, aji amarillo aioli, mixed vegetables (sf)(f)(g)(d)(e)",
               "originalName" : "Arroz con Mariscos",
-              "price" : "$42",
+              "price" : "42",
               "tags" : [
                 "contains_seafood"
               ]

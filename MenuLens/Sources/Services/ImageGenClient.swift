@@ -97,6 +97,12 @@ struct ImageGenClient {
     /// against gpt-image-1's images-per-minute cap.
     private func requestImage(prompt: String) async -> UIImage? {
         guard !apiKey.isEmpty else { return nil }
+
+        // Same prompt → same thumbnail, served from the local cache.
+        let cacheKey = ResponseCache.key([Data("img|\(prompt)".utf8)])
+        if let cached = ResponseCache.load(cacheKey), let image = UIImage(data: cached) {
+            return image
+        }
         let payload: [String: Any] = [
             "model": "gpt-image-1",
             "prompt": prompt,
@@ -132,6 +138,7 @@ struct ImageGenClient {
                   let b64 = decoded.data.first?.b64_json,
                   let imageData = Data(base64Encoded: b64)
             else { return nil }
+            ResponseCache.store(cacheKey, imageData)
             return UIImage(data: imageData)
         }
         return nil
