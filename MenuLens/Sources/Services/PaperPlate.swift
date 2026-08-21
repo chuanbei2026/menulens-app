@@ -60,6 +60,21 @@ enum PaperPlate {
         return (matchedPlate, background)
     }
 
+    /// Per-channel mean (0...1, sRGB-encoded) of a region.
+    private static func average(_ image: CIImage, in rect: CGRect) -> (CGFloat, CGFloat, CGFloat)? {
+        guard rect.width >= 2, rect.height >= 2 else { return nil }
+        let averaged = image.applyingFilter("CIAreaAverage", parameters: [
+            kCIInputExtentKey: CIVector(cgRect: rect),
+        ])
+        var pixel = [UInt8](repeating: 0, count: 4)
+        context.render(
+            averaged, toBitmap: &pixel, rowBytes: 4,
+            bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+            format: .RGBA8, colorSpace: CGColorSpaceCreateDeviceRGB()
+        )
+        return (CGFloat(pixel[0]) / 255, CGFloat(pixel[1]) / 255, CGFloat(pixel[2]) / 255)
+    }
+
     /// Mean luminance test — light paper is the case flattening is built for.
     private static func isLightPaper(_ image: UIImage) -> Bool {
         guard let cg = image.normalizedOrientation().cgImage else { return false }
@@ -136,11 +151,28 @@ enum PaperPlate {
         let divided = field.applyingFilter("CIDivideBlendMode", parameters: [
             kCIInputBackgroundImageKey: source,
         ])
-        // Division normalizes paper to ~1.0 (white); pull contrast back a
-        // touch so print doesn't look bleached.
-        let balanced = divided.applyingFilter("CIColorControls", parameters: [
-            kCIInputContrastKey: 1.05,
-            kCIInputBrightnessKey: -0.02,
+
+        // Division removes the shading but also the stock's own color: paper
+        // lands on flat white. Multiply the paper tone back so the sheet keeps
+        // its character (this menu's cool blue-grey, another's warm cream)
+        // while staying evenly lit. The blurred plate's average IS that color.
+        // CIColorMatrix multiplies in LINEAR light, so linearize it first, and
+        // nudge up slightly — dark logos and photos drag the average down.
+        var tinted = divided
+        if let paper = average(field, in: source.extent) {
+            func linear(_ channel: CGFloat) -> CGFloat {
+                let value = min(channel * 1.04, 1)
+                return value <= 0.04045 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+            }
+            tinted = divided.applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: linear(paper.0), y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: linear(paper.1), z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: linear(paper.2), w: 0),
+            ])
+        }
+
+        let balanced = tinted.applyingFilter("CIColorControls", parameters: [
+            kCIInputContrastKey: 1.04,
         ]).cropped(to: source.extent)
 
         guard let output = context.createCGImage(balanced, from: source.extent) else { return nil }

@@ -301,11 +301,20 @@ struct OpenAIClient {
                         ? ocrLines[dish.sectionTitleLine].box : nil
                 )
             }
-            let descBoxes = dish.descriptionLines
-                .filter { ocrLines.indices.contains($0) }
-                .map { ocrLines[$0].box }
-            let originalDescription = dish.descriptionLines
-                .filter { ocrLines.indices.contains($0) }
+            // The model can mis-index a line (a neighbouring column's text,
+            // typically). Geometry is ours to check: a description line must
+            // sit at/below its dish name, close by, and share the name's
+            // column — otherwise the canvas would rewrite someone else's text.
+            let nameBox = ocrLines[dish.nameLine].box.cgRect
+            let plausible = dish.descriptionLines.filter { index in
+                guard ocrLines.indices.contains(index) else { return false }
+                let box = ocrLines[index].box.cgRect
+                guard box.midY > nameBox.minY - 0.004, box.minY < nameBox.maxY + 0.16 else { return false }
+                let overlap = min(box.maxX, nameBox.maxX + 0.10) - max(box.minX, nameBox.minX - 0.04)
+                return overlap > 0.3 * min(box.width, max(nameBox.width, 0.05))
+            }
+            let descBoxes = plausible.map { ocrLines[$0].box }
+            let originalDescription = plausible
                 .map { ocrLines[$0].text }
                 .joined(separator: " ")
             var hull: NormalizedRect?
