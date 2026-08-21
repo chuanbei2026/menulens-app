@@ -8,6 +8,9 @@ struct ContentView: View {
     /// model reads at analyze time).
     @AppStorage("generate_dish_images") private var generateDishImages = true
     @State private var photosItems: [PhotosPickerItem] = []
+    /// Without a key there is nothing to scan with, so the capture controls
+    /// stay inert until one is entered.
+    @State private var hasAPIKey = !KeychainStore.loadAPIKey().isEmpty
     @State private var showCamera = false
     @State private var showSettings = false
     @State private var showHistory = false
@@ -48,6 +51,9 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .onChange(of: showSettings) {
+                if !showSettings { hasAPIKey = !KeychainStore.loadAPIKey().isEmpty }
+            }
             .sheet(isPresented: $showHistory) {
                 HistoryView(history: viewModel.history) { scan in
                     viewModel.open(scan)
@@ -87,6 +93,13 @@ struct ContentView: View {
                 }
                 if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
                     KeychainStore.saveAPIKey(args[idx + 1])
+                    hasAPIKey = true
+                }
+                // Keychain items outlive an app uninstall, so first-run
+                // onboarding needs an explicit way to reproduce.
+                if args.contains("-clearKey") {
+                    KeychainStore.saveAPIKey("")
+                    hasAPIKey = false
                 }
                 func analyzeAndDump(_ photos: [UIImage]) {
                     Task { @MainActor in
@@ -185,6 +198,7 @@ struct ContentView: View {
             #endif
             .onAppear {
                 viewModel.history.seedBundledSamplesIfNeeded()
+                hasAPIKey = !KeychainStore.loadAPIKey().isEmpty
             }
             .onChange(of: photosItems) {
                 let items = photosItems
@@ -208,6 +222,41 @@ struct ContentView: View {
 
     private var startScreen: some View {
         VStack(spacing: 16) {
+            if !hasAPIKey {
+                // First run: say what is needed before anything can be
+                // scanned, and offer the sample menus as the way to look
+                // around in the meantime.
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("先填一个 OpenAI Key 才能识别新菜单")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Key 只存在这台手机上。现在也可以直接翻看内置的两份真实餐厅菜单。")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    HStack(spacing: 14) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Label("填写 Key", systemImage: "key")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+
+                        Button {
+                            showHistory = true
+                        } label: {
+                            Label("看内置菜单", systemImage: "clock.arrow.circlepath")
+                        }
+                        .controlSize(.small)
+                    }
+                    .font(.footnote)
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+                .padding(.top, 8)
+            }
+
             Spacer()
 
             if viewModel.pickedImages.isEmpty {
@@ -243,12 +292,14 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .disabled(!hasAPIKey)
 
                 PhotosPicker(selection: $photosItems, maxSelectionCount: 8, matching: .images) {
                     Label("相册", systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .disabled(!hasAPIKey)
             }
             .padding(.horizontal)
 
@@ -275,14 +326,16 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(viewModel.pickedImages.isEmpty)
+            .disabled(viewModel.pickedImages.isEmpty || !hasAPIKey)
             .padding(.horizontal)
 
-            Button("看看内置示例菜单（无需 API key）") {
-                showHistory = true
+            if hasAPIKey {
+                Button("看看内置示例菜单") {
+                    showHistory = true
+                }
+                .font(.footnote)
+                .padding(.top, 4)
             }
-            .font(.footnote)
-            .padding(.top, 4)
 
             Spacer().frame(height: 24)
         }
