@@ -114,24 +114,44 @@ final class AnalysisViewModel: ObservableObject {
             model: model,
             targetLanguage: target.promptName
         )
-        do {
-            var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
-            try await withThrowingTaskGroup(of: (Int, MenuDocument).self) { group in
-                for (index, jpeg) in jpegs.enumerated() {
-                    let pageImage = images[index]
-                    group.addTask {
-                        // v2: OCR first — the line inventory IS the geometry;
-                        // the model only classifies and translates by index.
-                        let ocrLines = OCRService.recognizeLines(in: pageImage)
-                        return (index, try await client.analyzeMenu(jpegData: jpeg, ocrLines: ocrLines))
+        var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
+        var lastError: Error?
+        // Pages are independent: one failure must not throw away the pages
+        // that came back fine (a 3-page scan losing everything to a single
+        // timeout is the worst possible outcome for the user).
+        await withTaskGroup(of: (Int, Result<MenuDocument, Error>).self) { group in
+            for (index, jpeg) in jpegs.enumerated() {
+                let pageImage = images[index]
+                group.addTask {
+                    // v2: OCR first — the line inventory IS the geometry;
+                    // the model only classifies and translates by index.
+                    let ocrLines = OCRService.recognizeLines(in: pageImage)
+                    do {
+                        return (index, .success(try await client.analyzeMenu(jpegData: jpeg, ocrLines: ocrLines)))
+                    } catch {
+                        return (index, .failure(error))
                     }
                 }
-                for try await (index, document) in group {
+            }
+            for await (index, result) in group {
+                switch result {
+                case let .success(document):
                     pages[index] = document
                     pipeline?.pagesDone += 1
+                case let .failure(error):
+                    lastError = error
                 }
             }
-            let newScan = MenuScan.combining(pages: pages.compactMap { $0 }, targetLanguage: target)
+        }
+
+        let succeeded = pages.compactMap { $0 }
+        guard !succeeded.isEmpty else {
+            pipeline = nil
+            phase = .failed(lastError?.localizedDescription ?? "识别失败，请重试。")
+            return
+        }
+        do {
+            let newScan = MenuScan.combining(pages: succeeded, targetLanguage: target)
             history.save(scan: newScan, images: images)
             scan = newScan
             scanImages = images

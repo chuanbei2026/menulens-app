@@ -36,7 +36,7 @@ struct OpenAIClient {
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v12"
+    private static let promptVersion = "v13"
 
     private var systemPrompt: String {
         """
@@ -223,9 +223,27 @@ struct OpenAIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-        request.timeoutInterval = 240
+        // Reasoning models can spend minutes on a dense page, and a slow
+        // network on top of that used to trip the timeout mid-scan.
+        request.timeoutInterval = 420
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        var data = Data()
+        var response: URLResponse?
+        for attempt in 0 ..< 2 {
+            do {
+                (data, response) = try await URLSession.shared.data(for: request)
+                break
+            } catch {
+                // One retry for timeouts and dropped connections; anything
+                // else (or a second failure) surfaces to the caller.
+                let code = (error as? URLError)?.code
+                let transient: Set<URLError.Code> = [
+                    .timedOut, .networkConnectionLost, .cannotConnectToHost, .dnsLookupFailed,
+                ]
+                guard attempt == 0, let code, transient.contains(code) else { throw error }
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+            }
+        }
         if let http = response as? HTTPURLResponse, !(200 ..< 300).contains(http.statusCode) {
             let body = String(data: data, encoding: .utf8) ?? ""
             throw ClientError.badHTTPStatus(http.statusCode, String(body.prefix(500)))
@@ -363,12 +381,22 @@ struct OpenAIClient {
                 for b in descBoxes.dropFirst() { rect = rect.union(b.cgRect) }
                 hull = NormalizedRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
             }
+            // The model sometimes fills only the per-LINE translations and
+            // leaves the dish-level description empty. Those lines are this
+            // dish's description, so stitch them back together rather than
+            // dropping the translation.
+            let stitched = plausible
+                .compactMap { roleByIndex[$0]?.translated }
+                .filter { !$0.isEmpty }
+                .joined()
+            let translatedDescription = dish.translatedDescription.isEmpty ? stitched : dish.translatedDescription
+
             currentItems.append(MenuItemEntry(
                 originalName: cleanName(dish.originalName),
                 chineseName: cleanTranslation(dish.translatedName),
                 price: dish.price,
                 originalDescription: originalDescription.isEmpty ? nil : originalDescription,
-                chineseDescription: dish.translatedDescription.isEmpty ? nil : dish.translatedDescription,
+                chineseDescription: translatedDescription.isEmpty ? nil : translatedDescription,
                 bbox: try box(dish.nameLine),
                 photoBBox: dish.photoBBox,
                 descriptionBBox: hull,

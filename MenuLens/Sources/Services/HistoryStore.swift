@@ -83,7 +83,7 @@ final class HistoryStore: ObservableObject {
     /// content to explore before entering any API key. Deleting a sample
     /// from history is permanent (we don't re-seed).
     func seedBundledSamplesIfNeeded() {
-        let flag = "bundled_samples_seeded_v2"
+        let flag = "bundled_samples_seeded_v3"
         guard !UserDefaults.standard.bool(forKey: flag) else { return }
         UserDefaults.standard.set(true, forKey: flag)
         guard let samplesURL = Bundle.main.resourceURL?.appendingPathComponent("Samples"),
