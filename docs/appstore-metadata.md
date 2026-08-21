@@ -55,8 +55,8 @@ included, no setup needed to try.
 
 | 字段 | 值 |
 |---|---|
-| 隐私政策 URL | https://<你的GitHub用户名>.github.io/menulens/privacy-policy.html （推 GitHub Pages 后生效） |
-| 技术支持 URL | 同上仓库的 README 或 issues 页 |
+| 隐私政策 URL | https://chuanbei2026.github.io/menulens-app/privacy-policy.html |
+| 技术支持 URL | https://github.com/chuanbei2026/menulens-app |
 
 ## App 隐私（隐私营养标签）
 
@@ -87,7 +87,7 @@ included, no setup needed to try.
 
 - [ ] Apple Developer Program 注册通过（$99/年，个人）
 - [ ] App Store Connect 创建 App（名称 MenuLens - 口袋菜单，Bundle ID ai.xiangyang.MenuLens）
-- [ ] 把 repo 推到 GitHub 并开 Pages，填隐私政策 URL
+- [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
 - [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
 - [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
