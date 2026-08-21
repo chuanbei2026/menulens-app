@@ -21,12 +21,16 @@ struct ResultView: View {
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
     @State private var showOrderSummary = false
+    /// Canvas shows the untouched original menu (order marks kept) — for
+    /// handing the phone to a server.
+    @State private var showOriginal =
+        ProcessInfo.processInfo.arguments.contains("-showOriginal")
 
     var body: some View {
         Group {
             switch mode {
             case .canvas:
-                MenuCanvasView(viewModel: viewModel) { dishKey in
+                MenuCanvasView(viewModel: viewModel, showOriginal: $showOriginal) { dishKey in
                     listTarget = dishKey
                     mode = .list
                 }
@@ -150,6 +154,7 @@ struct ResultView: View {
 
 private struct MenuCanvasView: View {
     @ObservedObject var viewModel: AnalysisViewModel
+    @Binding var showOriginal: Bool
     let onSelectDish: (String) -> Void
 
     var body: some View {
@@ -164,6 +169,7 @@ private struct MenuCanvasView: View {
                             image: viewModel.scanImages[index],
                             highlights: viewModel.highlightTotals,
                             orderLabels: viewModel.orderLabels,
+                            showOriginal: showOriginal,
                             onSelectDish: onSelectDish
                         )
                         // Keep the page dots clear (multi-page only).
@@ -174,6 +180,24 @@ private struct MenuCanvasView: View {
             .tabViewStyle(.page(indexDisplayMode: multiPage ? .always : .never))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
             .background(Color(.systemGray5))
+            .overlay(alignment: .topTrailing) {
+                // Hand-to-server switch: the original menu, order marks kept.
+                Button {
+                    showOriginal.toggle()
+                } label: {
+                    Label(
+                        showOriginal ? "看译文" : "看原文",
+                        systemImage: showOriginal ? "character.bubble" : "globe"
+                    )
+                    .font(.footnote.weight(.medium))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.regularMaterial, in: Capsule())
+                    .shadow(color: .black.opacity(0.15), radius: 5, y: 2)
+                }
+                .padding(.trailing, 14)
+                .padding(.top, 10)
+            }
         }
     }
 }
@@ -184,6 +208,7 @@ private struct CanvasPage: View {
     let image: UIImage
     let highlights: [String: Int]
     let orderLabels: [String: String]
+    let showOriginal: Bool
     let onSelectDish: (String) -> Void
 
     @State private var rendered: UIImage?
@@ -192,7 +217,7 @@ private struct CanvasPage: View {
     private var highlightSignature: String {
         highlights.sorted { $0.key < $1.key }
             .map { "\($0.key):\($0.value):\(orderLabels[$0.key] ?? "")" }
-            .joined(separator: ",")
+            .joined(separator: ",") + (showOriginal ? "|orig" : "")
     }
 
     var body: some View {
@@ -211,16 +236,28 @@ private struct CanvasPage: View {
             }
         }
         .task(id: highlightSignature) {
-            let renderer = MenuLayoutRenderer(
-                document: document,
-                image: image.normalizedOrientation(),
-                pageWidth: 1600,
-                pageIndex: pageIndex,
-                highlights: highlights,
-                orderLabels: orderLabels
-            )
+            let page = image.normalizedOrientation()
+            let showOriginal = showOriginal
+            let document = document
+            let pageIndex = pageIndex
+            let highlights = highlights
+            let orderLabels = orderLabels
             rendered = await Task.detached(priority: .userInitiated) {
-                renderer.renderImage()
+                // Background reconstruction is only needed when translations
+                // are drawn; the original view paints the raw photo.
+                let prepared = showOriginal ? (plate: nil, background: nil) : PaperPlate.prepare(page)
+                let renderer = MenuLayoutRenderer(
+                    document: document,
+                    image: page,
+                    pageWidth: 1600,
+                    pageIndex: pageIndex,
+                    highlights: highlights,
+                    orderLabels: orderLabels,
+                    paperPlate: prepared.plate,
+                    backgroundImage: prepared.background,
+                    translationsHidden: showOriginal
+                )
+                return renderer.renderImage()
             }.value
         }
     }

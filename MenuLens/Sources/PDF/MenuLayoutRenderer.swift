@@ -48,6 +48,15 @@ struct MenuLayoutRenderer {
     var highlights: [String: Int] = [:]
     /// Per-dish "who ordered it" label (dish key -> "我 · 小明×2").
     var orderLabels: [String: String] = [:]
+    /// Text-free reconstruction of this page (PaperPlate). When present,
+    /// erasing copies the plate's own pixels — paper texture and lighting
+    /// carry through, so patches stop reading as patches.
+    var paperPlate: UIImage?
+    /// Illumination-flattened page painted instead of the raw photo.
+    var backgroundImage: UIImage?
+    /// Show the untouched menu (plus order marks) — for handing the phone
+    /// to a server who reads the original language.
+    var translationsHidden: Bool = false
 
     private static let ciContext = CIContext()
 
@@ -66,14 +75,24 @@ struct MenuLayoutRenderer {
     }
 
     /// Draw into the current UIKit graphics context (canvas image or PDF page).
+    ///
+    /// Three phases so erasure can happen in ONE pass: plan what to erase and
+    /// what to write, erase (ideally by copying the text-free plate), then
+    /// write. A single clipped plate draw means neighbouring strips share
+    /// exactly the paper they sit on — no visible patch edges.
     func draw() {
         let pageRect = CGRect(origin: .zero, size: pageSize)
         UIColor.white.setFill()
         UIBezierPath(rect: pageRect).fill()
-        image.draw(in: pageRect)
+        (backgroundImage ?? image).draw(in: pageRect)
 
         let canvas = pageSize
         let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
+
+        guard !translationsHidden else {
+            drawAllHighlights(in: canvas)
+            return
+        }
 
         // Occupancy map: every printed text line (v2) — or, on legacy scans,
         // every known box — is an obstacle. Translated-name captions are
@@ -96,31 +115,66 @@ struct MenuLayoutRenderer {
             }
         }
 
-        // v2 pages: every description/other line not owned by a dish is
-        // erased and rewritten in the target language too — footers,
-        // taglines, set-menu notes. Nothing stays untranslated.
-        if let textLines = document.textLines, !textLines.isEmpty {
-            var owned = Set<String>()
-            for section in document.sections {
-                for item in section.items {
-                    for lineBox in item.descriptionLines ?? [] {
-                        owned.insert(boxKey(lineBox))
-                    }
-                }
+        // MARK: Phase 1 — plan
+
+        struct Flow {
+            let text: String
+            let strips: [CGRect]
+            let block: CGRect?
+        }
+        var eraseRects: [CGRect] = []
+        var flows: [Flow] = []
+
+        var owned = Set<String>()
+        for section in document.sections {
+            for item in section.items {
+                for lineBox in item.descriptionLines ?? [] { owned.insert(boxKey(lineBox)) }
             }
+        }
+
+        // v2 pages: description/other lines that belong to no dish (footers,
+        // taglines, legends, set-menu notes) are translated in place too.
+        if let textLines = document.textLines {
             for line in textLines {
                 guard line.role == "description" || line.role == "other",
                       !line.translated.isEmpty,
                       !owned.contains(boxKey(line.box)),
-                      // Big display text (logos, decorative headlines) keeps
-                      // its original pixels — rewriting it wrecks the design.
+                      // Big display text (logos) keeps its original pixels.
                       line.box.height < 0.03
                 else { continue }
                 let strip = line.box.rect(in: canvas)
-                let paper = paperColor(nearStrip: line.box)
-                paper.withAlphaComponent(0.98).setFill()
-                UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
-                flowTranslation(line.translated, through: [strip])
+                eraseRects.append(strip.insetBy(dx: -2, dy: -1))
+                flows.append(Flow(text: line.translated, strips: [strip], block: nil))
+            }
+        }
+
+        for section in document.sections {
+            for item in section.items {
+                if let lineBoxes = item.descriptionLines, !lineBoxes.isEmpty,
+                   let zhDesc = item.chineseDescription,
+                   shouldFlowThroughStrips(lineBoxes.map { $0.rect(in: canvas) }, text: zhDesc) {
+                    let strips = lineBoxes.map { $0.rect(in: canvas) }
+                    eraseRects.append(contentsOf: strips.map { $0.insetBy(dx: -2, dy: -1) })
+                    flows.append(Flow(text: zhDesc, strips: strips, block: nil))
+                } else if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
+                    let block = descBox.rect(in: canvas).insetBy(dx: -2, dy: -1)
+                    eraseRects.append(block)
+                    flows.append(Flow(text: zhDesc, strips: [], block: block))
+                }
+            }
+        }
+
+        // MARK: Phase 2 — erase
+
+        erase(eraseRects, pageRect: pageRect)
+
+        // MARK: Phase 3 — write
+
+        for flow in flows {
+            if let block = flow.block {
+                drawFitted(flow.text, in: block.insetBy(dx: 2, dy: 1))
+            } else {
+                flowTranslation(flow.text, through: flow.strips)
             }
         }
 
@@ -130,60 +184,53 @@ struct MenuLayoutRenderer {
             guard let bbox = section.bbox, let translated = section.chineseTitle,
                   !translated.isEmpty, translated != section.originalTitle
             else { continue }
-            placeCaption(
-                translated,
-                anchor: bbox.rect(in: canvas),
-                canvas: canvas,
-                occupancy: &occupancy,
-                color: nameColor
-            )
+            placeCaption(translated, anchor: bbox.rect(in: canvas), canvas: canvas,
+                         occupancy: &occupancy, color: nameColor)
+        }
+        for section in document.sections {
+            for item in section.items {
+                placeCaption(item.chineseName, anchor: item.bbox.rect(in: canvas), canvas: canvas,
+                             occupancy: &occupancy, color: nameColor)
+            }
         }
 
+        drawAllHighlights(in: canvas)
+    }
+
+    /// Erase text regions. With a plate: clip to all regions and draw the
+    /// text-free page once, so every patch inherits the exact local paper,
+    /// texture and shading. Without: fall back to sampled flat fills.
+    private func erase(_ rects: [CGRect], pageRect: CGRect) {
+        guard !rects.isEmpty, let ctx = UIGraphicsGetCurrentContext() else { return }
+        if let plate = paperPlate {
+            ctx.saveGState()
+            let path = UIBezierPath()
+            for rect in rects {
+                path.append(UIBezierPath(roundedRect: rect, cornerRadius: 2))
+            }
+            path.addClip()
+            plate.draw(in: pageRect)
+            ctx.restoreGState()
+        } else {
+            let canvas = pageSize
+            for rect in rects {
+                let normalized = NormalizedRect(
+                    x: rect.minX / canvas.width, y: rect.minY / canvas.height,
+                    width: rect.width / canvas.width, height: rect.height / canvas.height
+                )
+                paperColor(nearStrip: normalized).withAlphaComponent(0.98).setFill()
+                UIBezierPath(roundedRect: rect, cornerRadius: 2).fill()
+            }
+        }
+    }
+
+    private func drawAllHighlights(in canvas: CGSize) {
         for (sectionIndex, section) in document.sections.enumerated() {
             for (itemIndex, item) in section.items.enumerated() {
-                let nameRect = item.bbox.rect(in: canvas)
-
-                // Translated name: accent caption in the blank space next to
-                // the original name line (never inside the description).
-                placeCaption(
-                    item.chineseName,
-                    anchor: nameRect,
-                    canvas: canvas,
-                    occupancy: &occupancy,
-                    color: nameColor
-                )
-
-                if let lineBoxes = item.descriptionLines, !lineBoxes.isEmpty,
-                   let zhDesc = item.chineseDescription,
-                   shouldFlowThroughStrips(lineBoxes.map { $0.rect(in: canvas) }, text: zhDesc) {
-                    // Lens-style: veil each original line strip separately
-                    // (paper color sampled from the line gap right above it)
-                    // and flow the PURE translated description through the
-                    // original slots — Chinese fully replaces the English.
-                    let strips = lineBoxes.map { $0.rect(in: canvas) }
-                    for (index, strip) in strips.enumerated() {
-                        let paper = paperColor(nearStrip: lineBoxes[index])
-                        paper.withAlphaComponent(0.98).setFill()
-                        UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
-                    }
-                    flowTranslation(zhDesc, through: strips)
-                } else if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
-                    // Block mode (set-menu boxes, strip-flow misfits): veil
-                    // the whole region and re-typeset the pure translation.
-                    let block = descBox.rect(in: canvas).insetBy(dx: -2, dy: -1)
-                    let paper = sampledColor(around: descBox)
-                    paper.withAlphaComponent(0.92).setFill()
-                    UIBezierPath(roundedRect: block, cornerRadius: 4).fill()
-
-                    drawFitted(zhDesc, in: block.insetBy(dx: 2, dy: 1))
-                }
-
                 let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
                 if let quantity = highlights[key], quantity > 0 {
-                    drawOrderHighlight(
-                        for: item, quantity: quantity,
-                        label: orderLabels[key], in: canvas
-                    )
+                    drawOrderHighlight(for: item, quantity: quantity,
+                                       label: orderLabels[key], in: canvas)
                 }
             }
         }
@@ -305,21 +352,34 @@ struct MenuLayoutRenderer {
         guard !strips.isEmpty else { return }
         let ink = UIColor(white: 0.20, alpha: 1)
         let accent = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
+        // Chinese is far more compact than the Latin text it replaces, so the
+        // reclaimed strips would otherwise sit empty — and an erased-but-empty
+        // band reads as a bright patch next to bands that still carry text.
+        // Start from the largest size the line height allows and shrink only
+        // as needed: the translation then FILLS the space it inherited.
         let heights = strips.map(\.height).sorted()
-        var fontSize = min(max(heights[heights.count / 2] * 0.78, 9), 18)
+        let lineHeight = heights[heights.count / 2]
+        var fontSize = min(max(lineHeight * 1.1, 9), 20)
 
         func width(_ string: String, _ font: UIFont) -> CGFloat {
             (string as NSString).size(withAttributes: [.font: font]).width
         }
         let totalWidth = strips.reduce(0) { $0 + $1.width }
         while fontSize > 8, width(text, .systemFont(ofSize: fontSize)) > totalWidth * 0.96 {
-            fontSize -= 1
+            fontSize -= 0.5
         }
         let font = UIFont.systemFont(ofSize: fontSize)
 
         let boldFont = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
         var consumed = 0
         var remainder = Substring(text)
+
+        // Spread the translation across ALL inherited strips at a uniform
+        // fill ratio. Greedy packing would fill the first strips and leave
+        // the rest erased-but-empty, which reads as a bright patch beside
+        // bands that still carry text.
+        let textWidth = width(text, font)
+        let fillRatio = min(1.0, textWidth / max(totalWidth, 1) * 1.02)
 
         // Draw one chunk, splitting accent-prefix characters from ink ones.
         func drawChunk(_ chunk: String, at origin: CGPoint) {
@@ -343,13 +403,15 @@ struct MenuLayoutRenderer {
             consumed += chunk.count
         }
 
-        for strip in strips {
+        for (index, strip) in strips.enumerated() {
             guard !remainder.isEmpty else { break }
+            let isLast = index == strips.count - 1
+            let budget = isLast ? strip.width + 2 : strip.width * fillRatio + 2
             var low = 0
             var high = remainder.count
             while low < high {
                 let mid = (low + high + 1) / 2
-                if width(String(remainder.prefix(mid)), font) <= strip.width + 2 {
+                if width(String(remainder.prefix(mid)), font) <= budget {
                     low = mid
                 } else {
                     high = mid - 1

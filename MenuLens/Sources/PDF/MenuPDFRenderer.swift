@@ -24,10 +24,14 @@ struct MenuPDFRenderer {
     func renderPDF() -> Data {
         let layouts: [MenuLayoutRenderer] = scan.pages.enumerated().compactMap { index, document in
             guard index < images.count else { return nil }
+            let page = images[index].normalizedOrientation()
+            let prepared = PaperPlate.prepare(page)
             return MenuLayoutRenderer(
                 document: document,
-                image: images[index].normalizedOrientation(),
-                pageWidth: layoutPageWidth
+                image: page,
+                pageWidth: layoutPageWidth,
+                paperPlate: prepared.plate,
+                backgroundImage: prepared.background
             )
         }
         let initialBounds = CGRect(

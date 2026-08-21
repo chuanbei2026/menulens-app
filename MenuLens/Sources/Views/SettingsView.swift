@@ -5,6 +5,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openai_model") private var model = "gpt-5-mini"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
+    @AppStorage("flatten_lighting") private var flattenLighting = true
     @AppStorage("target_language") private var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
     @ObservedObject private var party = PartyStore.shared
     @State private var apiKey = KeychainStore.loadAPIKey()
@@ -98,6 +99,12 @@ struct SettingsView: View {
                         avatarPickerItem = nil
                         avatarTargetID = nil
                     }
+                }
+
+                Section {
+                    Toggle("整页匀光（推荐）", isOn: $flattenLighting)
+                } footer: {
+                    Text("消除拍照时的阴影和光斑，纸面变得干净均匀，翻译文字与原版融合得更自然。深色菜单会自动跳过。")
                 }
 
                 Section {
