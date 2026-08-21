@@ -38,6 +38,27 @@ struct ResultView: View {
                 DishListView(viewModel: viewModel, scrollTarget: $listTarget)
             }
         }
+        .safeAreaInset(edge: .top) {
+            if let notice = viewModel.notice {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text(notice)
+                        .font(.footnote)
+                    Spacer()
+                    Button {
+                        viewModel.notice = nil
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.borderless)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(.thinMaterial)
+            }
+        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
                 if let progress = viewModel.pipeline,

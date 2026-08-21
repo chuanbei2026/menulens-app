@@ -60,6 +60,8 @@ final class AnalysisViewModel: ObservableObject {
     @Published var generatedImages: [String: UIImage] = [:]
     /// Stage-by-stage progress; nil when nothing is in flight.
     @Published var pipeline: PipelineProgress?
+    /// Non-fatal outcome worth telling the user about (e.g. a page failed).
+    @Published var notice: String?
     /// The rendered PDF for the current scan (re-rendered when thumbnails land).
     @Published var pdfData: Data?
     /// Order cart for the current scan: dish key -> (member id -> quantity),
@@ -173,17 +175,27 @@ final class AnalysisViewModel: ObservableObject {
             }
         }
 
-        let succeeded = pages.compactMap { $0 }
-        guard !succeeded.isEmpty else {
+        // Keep documents and photos PAIRED. Dropping failed pages from the
+        // documents while keeping every image would shift the two lists apart
+        // and paint one page's translations onto another page's photo.
+        var results: [(document: MenuDocument, image: UIImage)] = []
+        for (index, page) in pages.enumerated() {
+            if let page { results.append((page, images[index])) }
+        }
+        guard !results.isEmpty else {
             pipeline = nil
             phase = .failed(lastError?.localizedDescription ?? "识别失败，请重试。")
             return
         }
+        let failedPages = images.count - results.count
+        notice = failedPages > 0
+            ? "有 \(failedPages) 页没能识别，已保留其余 \(results.count) 页。可以重新识别那几页。"
+            : nil
         do {
-            let newScan = MenuScan.combining(pages: succeeded, targetLanguage: target)
-            history.save(scan: newScan, images: images)
+            let newScan = MenuScan.combining(pages: results.map(\.document), targetLanguage: target)
+            history.save(scan: newScan, images: results.map(\.image))
             scan = newScan
-            scanImages = images
+            scanImages = results.map(\.image)
             generatedImages = [:]
             cart = [:]
 
@@ -202,6 +214,7 @@ final class AnalysisViewModel: ObservableObject {
     /// Open a saved scan from the history list.
     func open(_ saved: MenuScan) {
         imageGenTask?.cancel()
+        notice = nil
         scan = saved
         scanImages = history.loadImages(for: saved)
         generatedImages = history.loadGeneratedImages(for: saved)
@@ -224,6 +237,7 @@ final class AnalysisViewModel: ObservableObject {
 
     func reset() {
         imageGenTask?.cancel()
+        notice = nil
         phase = .idle
         pickedImages = []
         scan = nil
