@@ -20,7 +20,8 @@ struct ResultView: View {
         ProcessInfo.processInfo.arguments.contains("-listMode") ? .list : .canvas
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
-    @State private var showOrderSummary = false
+    @State private var showOrderSummary =
+        ProcessInfo.processInfo.arguments.contains("-showSummary")
     /// Canvas shows the untouched original menu (order marks kept) — for
     /// handing the phone to a server.
     @State private var showOriginal =
@@ -295,22 +296,69 @@ private struct OrderSummaryView: View {
 
     @ObservedObject private var party = PartyStore.shared
 
+    /// Dishes a member ordered that clash with what they don't eat.
+    private func conflicts(for member: PartyMember) -> [(item: MenuItemEntry, tags: [DietTag])] {
+        let avoided = member.avoidedTags
+        guard !avoided.isEmpty else { return [] }
+        return viewModel.cartEntries(for: member.id).compactMap { entry in
+            let hits = DietTag.tags(for: entry.item).intersection(avoided)
+            return hits.isEmpty ? nil : (entry.item, hits.sorted { $0.rawValue < $1.rawValue })
+        }
+    }
+
     var body: some View {
         NavigationStack {
             List {
+                // Diet clashes first and loud: this is the one thing in the
+                // summary that can ruin someone's meal.
+                let allConflicts = party.members.map { ($0, conflicts(for: $0)) }
+                    .filter { !$0.1.isEmpty }
+                if !allConflicts.isEmpty {
+                    Section {
+                        ForEach(allConflicts, id: \.0.id) { member, hits in
+                            ForEach(hits, id: \.item.originalName) { hit in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundStyle(.red)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(member.name) \(hit.tags.map(\.avoidanceLabel).joined(separator: "、"))")
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(.red)
+                                        Text("但点了「\(hit.item.chineseName)」\(hit.item.originalName)")
+                                            .font(.footnote)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        }
+                    } header: {
+                        Label("忌口冲突", systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.red)
+                    }
+                }
+
                 // Grouped by person, so it's obvious whose dish is whose.
                 ForEach(party.members) { member in
                     let entries = viewModel.cartEntries(for: member.id)
                     if !entries.isEmpty {
                         Section {
                             ForEach(entries, id: \.key) { entry in
+                                let clash = DietTag.tags(for: entry.item).intersection(member.avoidedTags)
                                 HStack(alignment: .center, spacing: 10) {
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(entry.item.originalName)
-                                            .font(.subheadline.weight(.semibold))
+                                        HStack(spacing: 5) {
+                                            Text(entry.item.originalName)
+                                                .font(.subheadline.weight(.semibold))
+                                            if !clash.isEmpty {
+                                                Image(systemName: "exclamationmark.triangle.fill")
+                                                    .font(.caption)
+                                                    .foregroundStyle(.red)
+                                            }
+                                        }
                                         Text(entry.item.chineseName)
                                             .font(.footnote)
-                                            .foregroundStyle(.orange)
+                                            .foregroundStyle(clash.isEmpty ? .orange : .red)
                                     }
                                     Spacer()
                                     if let price = entry.item.price {
@@ -378,37 +426,31 @@ struct DietTagBadges: View {
     /// Chinese-target users don't look for gluten-free; hide the GF chip
     /// there and keep it for other target languages.
     var showGlutenFree: Bool = true
+    /// Meat markers are only shown where they matter (the list); the canvas
+    /// stays clean.
+    var showMeat: Bool = true
 
     var body: some View {
-        let visible = (tags ?? []).filter { showGlutenFree || $0 != "gluten_free" }
-        if !visible.isEmpty {
-            HStack(spacing: 3) {
-                ForEach(visible, id: \.self) { tag in
-                    badge(for: tag)
-                }
+        let all = (tags ?? []).compactMap(DietTag.init(rawValue:))
+        let visible = all.filter { tag in
+            switch tag {
+            case .glutenFree: return showGlutenFree
+            case .pork, .chicken, .beef, .lamb, .seafood: return showMeat
+            case .vegan, .vegetarian: return true
             }
         }
-    }
-
-    @ViewBuilder
-    private func badge(for tag: String) -> some View {
-        switch tag {
-        case "vegan":
-            Text("🌱").font(.caption)
-        case "vegetarian":
-            Text("🥬").font(.caption)
-        case "gluten_free":
-            // Plain letters, no icon/badge — GF is a familiar abbreviation
-            // to the audiences that look for it.
-            Text("GF")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(.green)
-        case "contains_lamb":
-            Text("🐑").font(.caption)
-        case "contains_seafood":
-            Text("🐟").font(.caption)
-        default:
-            EmptyView()
+        if !visible.isEmpty {
+            HStack(spacing: 3) {
+                ForEach(visible) { tag in
+                    if tag == .glutenFree {
+                        Text(tag.badge)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.green)
+                    } else {
+                        Text(tag.badge).font(.caption)
+                    }
+                }
+            }
         }
     }
 }
@@ -467,6 +509,7 @@ private struct DishListView: View {
                         ForEach(group.rows) { row in
                             DishRow(
                                 item: row.item,
+                                inferredTags: DietTag.tags(for: row.item).map(\.rawValue),
                                 photo: photo(for: row),
                                 quantity: viewModel.quantity(of: row.id),
                                 memberBreakdown: viewModel.orderLabels[row.id],
@@ -576,6 +619,7 @@ private struct DishListView: View {
 
 private struct DishRow: View {
     let item: MenuItemEntry
+    let inferredTags: [String]
     let photo: UIImage?
     let quantity: Int
     let memberBreakdown: String?
@@ -599,7 +643,7 @@ private struct DishRow: View {
                     Text(item.chineseName)
                         .font(.subheadline)
                         .foregroundStyle(.orange)
-                    DietTagBadges(tags: item.tags, showGlutenFree: showGlutenFree)
+                    DietTagBadges(tags: inferredTags, showGlutenFree: showGlutenFree)
                 }
                 if let zhDesc = item.chineseDescription {
                     Text(zhDesc)

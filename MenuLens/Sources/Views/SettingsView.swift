@@ -57,25 +57,52 @@ struct SettingsView: View {
 
                 Section {
                     ForEach($party.members) { $member in
-                        HStack(spacing: 10) {
-                            Button {
-                                avatarTargetID = member.id
-                                showAvatarPicker = true
-                            } label: {
-                                AvatarView(party: party, memberID: member.id, size: 30)
-                            }
-                            .buttonStyle(.borderless)
-                            TextField("名字", text: $member.name)
-                            if party.members.count > 1 {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(spacing: 10) {
                                 Button {
-                                    party.remove(id: member.id)
+                                    avatarTargetID = member.id
+                                    showAvatarPicker = true
                                 } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.gray)
+                                    AvatarView(party: party, memberID: member.id, size: 30)
                                 }
                                 .buttonStyle(.borderless)
+                                TextField("名字", text: $member.name)
+                                if party.members.count > 1 {
+                                    Button {
+                                        party.remove(id: member.id)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.gray)
+                                    }
+                                    .buttonStyle(.borderless)
+                                }
+                            }
+                            // What this person doesn't eat — checked against
+                            // every dish when the order is summarized.
+                            HStack(spacing: 6) {
+                                Text("不吃")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                ForEach(DietTag.avoidable) { tag in
+                                    let on = member.avoidedTags.contains(tag)
+                                    Button {
+                                        party.toggle(tag, for: member.id)
+                                    } label: {
+                                        Text(tag.shortLabel)
+                                            .font(.caption)
+                                            .padding(.horizontal, 7)
+                                            .padding(.vertical, 3)
+                                            .background(
+                                                Capsule().fill(on ? Color.red.opacity(0.15) : Color(.systemGray5))
+                                            )
+                                            .overlay(Capsule().stroke(on ? .red : .clear, lineWidth: 1))
+                                            .foregroundStyle(on ? .red : .secondary)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
                         }
+                        .padding(.vertical, 2)
                     }
                     HStack {
                         TextField("添加成员…", text: $newMemberName)
@@ -86,7 +113,7 @@ struct SettingsView: View {
                 } header: {
                     Text("同行成员")
                 } footer: {
-                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。点头像可从相册上传照片（自动裁成圆形），点 ✕ 删除成员。")
+                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。")
                 }
                 .photosPicker(isPresented: $showAvatarPicker, selection: $avatarPickerItem, matching: .images)
                 .onChange(of: avatarPickerItem) {

@@ -167,6 +167,30 @@ struct ContentView: View {
                             PartyStore.shared.add(name: "小明")
                         }
                         let friend = PartyStore.shared.members.first { $0.name == "小明" }!.id
+                        if args.contains("-demoAvoid") {
+                            // Find a dish with a detectable meat, give it to
+                            // the friend, and mark that meat as avoided so the
+                            // summary has a real clash to warn about.
+                            var clash: (key: String, tag: DietTag)?
+                            for (p, page) in scan.pages.enumerated() where clash == nil {
+                                for (s, section) in page.sections.enumerated() where clash == nil {
+                                    for (i, item) in section.items.enumerated() where clash == nil {
+                                        if let tag = DietTag.tags(for: item).first(where: {
+                                            DietTag.avoidable.contains($0)
+                                        }) {
+                                            clash = (MenuScan.dishKey(page: p, section: s, item: i), tag)
+                                        }
+                                    }
+                                }
+                            }
+                            if let clash {
+                                viewModel.addToCart(clash.key, member: friend)
+                                if !(PartyStore.shared.members.first { $0.id == friend }?
+                                    .avoidedTags.contains(clash.tag) ?? false) {
+                                    PartyStore.shared.toggle(clash.tag, for: friend)
+                                }
+                            }
+                        }
                         for key in keys.prefix(3) { viewModel.addToCart(key) }
                         if let first = keys.first { viewModel.addToCart(first, member: friend) } // ×2 across two people
                         if keys.count > 3 { viewModel.addToCart(keys[3], member: friend) }

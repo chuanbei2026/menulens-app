@@ -36,7 +36,7 @@ struct OpenAIClient {
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v15"
+    private static let promptVersion = "v16"
 
     private var systemPrompt: String {
         """
@@ -64,7 +64,9 @@ struct OpenAIClient {
         line indices (reading order; empty array if none), the price EXACTLY as printed \
         (null if absent), its section (original + translated title, and the section \
         title's line index, -1 when the menu has no section headings), dietary `tags` \
-        (menu markings first, then culinary knowledge; only confident values), and \
+        (menu markings first, then culinary knowledge; mark every meat the dish \
+        actually contains — pork, chicken, beef, lamb, seafood — since diners use \
+        these to avoid what they don't eat), and \
         `photoBBox` — the printed photo of the dish on the page, as x/y/width/height \
         normalized to the photo with top-left origin, ONLY if such a photo exists, \
         else null.
@@ -112,7 +114,11 @@ struct OpenAIClient {
                     "type": "array",
                     "items": [
                         "type": "string",
-                        "enum": ["vegan", "vegetarian", "gluten_free", "contains_lamb", "contains_seafood"],
+                        "enum": [
+                            "vegan", "vegetarian", "gluten_free",
+                            "contains_pork", "contains_chicken", "contains_beef",
+                            "contains_lamb", "contains_seafood",
+                        ],
                     ],
                 ],
                 "photoBBox": ["anyOf": [normalizedRect, ["type": "null"]]],

@@ -6,6 +6,13 @@ import UIKit
 struct PartyMember: Codable, Identifiable, Hashable {
     let id: UUID
     var name: String
+    /// DietTag raw values this person doesn't eat (optional so profiles
+    /// saved before restrictions existed still decode).
+    var avoids: [String]?
+
+    var avoidedTags: Set<DietTag> {
+        Set((avoids ?? []).compactMap(DietTag.init(rawValue:)))
+    }
 }
 
 /// Persistent list of party members. Always contains at least one member;
@@ -26,7 +33,7 @@ final class PartyStore: ObservableObject {
            !decoded.isEmpty {
             members = decoded
         } else {
-            members = [PartyMember(id: UUID(), name: "我")]
+            members = [PartyMember(id: UUID(), name: "我", avoids: [])]
         }
     }
 
@@ -39,7 +46,15 @@ final class PartyStore: ObservableObject {
     func add(name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        members.append(PartyMember(id: UUID(), name: trimmed))
+        members.append(PartyMember(id: UUID(), name: trimmed, avoids: []))
+    }
+
+    /// Toggle one restriction for one member.
+    func toggle(_ tag: DietTag, for id: UUID) {
+        guard let index = members.firstIndex(where: { $0.id == id }) else { return }
+        var avoids = Set(members[index].avoids ?? [])
+        if avoids.contains(tag.rawValue) { avoids.remove(tag.rawValue) } else { avoids.insert(tag.rawValue) }
+        members[index].avoids = Array(avoids).sorted()
     }
 
     /// The last remaining member can't be removed.
