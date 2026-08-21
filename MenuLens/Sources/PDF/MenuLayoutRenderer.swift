@@ -75,6 +75,27 @@ struct MenuLayoutRenderer {
         let canvas = pageSize
         let nameColor = UIColor(red: 0.72, green: 0.20, blue: 0.10, alpha: 1)
 
+        // Occupancy map: every printed text line (v2) — or, on legacy scans,
+        // every known box — is an obstacle. Translated-name captions are
+        // placed only into genuinely blank space, and each placed caption
+        // becomes an obstacle for the next one.
+        var occupancy: [CGRect]
+        if let textLines = document.textLines, !textLines.isEmpty {
+            occupancy = textLines.map { $0.box.rect(in: canvas) }
+        } else {
+            occupancy = []
+            for section in document.sections {
+                if let b = section.bbox { occupancy.append(b.rect(in: canvas)) }
+                for item in section.items {
+                    occupancy.append(item.bbox.rect(in: canvas))
+                    for lineBox in item.descriptionLines ?? [] {
+                        occupancy.append(lineBox.rect(in: canvas))
+                    }
+                    if let hull = item.descriptionBBox { occupancy.append(hull.rect(in: canvas)) }
+                }
+            }
+        }
+
         // v2 pages: every description/other line not owned by a dish is
         // erased and rewritten in the target language too — footers,
         // taglines, set-menu notes. Nothing stays untranslated.
@@ -103,20 +124,18 @@ struct MenuLayoutRenderer {
             }
         }
 
-        // Section headings get their translation painted right beneath them —
-        // "CEBICHES" means nothing to the diner either.
+        // Section headings get their translation in the blank space beside
+        // them (right first) — "CEBICHES" means nothing to the diner either.
         for section in document.sections {
             guard let bbox = section.bbox, let translated = section.chineseTitle,
                   !translated.isEmpty, translated != section.originalTitle
             else { continue }
-            let box = bbox.rect(in: canvas)
-            let size = max(min(box.height * 0.62, 15), 10)
-            TextDraw.text(
+            placeCaption(
                 translated,
-                font: .systemFont(ofSize: size, weight: .semibold),
-                color: nameColor,
-                at: CGPoint(x: box.minX, y: box.maxY + 1),
-                maxWidth: canvas.width - box.minX - 8
+                anchor: bbox.rect(in: canvas),
+                canvas: canvas,
+                occupancy: &occupancy,
+                color: nameColor
             )
         }
 
@@ -124,40 +143,39 @@ struct MenuLayoutRenderer {
             for (itemIndex, item) in section.items.enumerated() {
                 let nameRect = item.bbox.rect(in: canvas)
 
+                // Translated name: accent caption in the blank space next to
+                // the original name line (never inside the description).
+                placeCaption(
+                    item.chineseName,
+                    anchor: nameRect,
+                    canvas: canvas,
+                    occupancy: &occupancy,
+                    color: nameColor
+                )
+
                 if let lineBoxes = item.descriptionLines, !lineBoxes.isEmpty,
                    let zhDesc = item.chineseDescription,
-                   shouldFlowThroughStrips(lineBoxes.map { $0.rect(in: canvas) },
-                                           text: item.chineseName + "  " + zhDesc) {
+                   shouldFlowThroughStrips(lineBoxes.map { $0.rect(in: canvas) }, text: zhDesc) {
                     // Lens-style: veil each original line strip separately
                     // (paper color sampled from the line gap right above it)
-                    // and flow the translation through the original slots.
+                    // and flow the PURE translated description through the
+                    // original slots — Chinese fully replaces the English.
                     let strips = lineBoxes.map { $0.rect(in: canvas) }
                     for (index, strip) in strips.enumerated() {
                         let paper = paperColor(nearStrip: lineBoxes[index])
                         paper.withAlphaComponent(0.98).setFill()
                         UIBezierPath(roundedRect: strip.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
                     }
-                    // The translated NAME leads the flow (accent-colored) —
-                    // menus are too tight for a separate caption line, and
-                    // the original name line above stays untouched anyway.
-                    let lead = item.chineseName + "  "
-                    flowTranslation(lead + zhDesc, through: strips, accentPrefixLength: lead.count)
+                    flowTranslation(zhDesc, through: strips)
                 } else if let descBox = item.descriptionBBox, let zhDesc = item.chineseDescription {
-                    // Veil the original description with SEMI-transparent
-                    // paper color: the original stays faintly visible, edges
-                    // blend into the page, and nothing is ever fully lost.
+                    // Block mode (set-menu boxes, strip-flow misfits): veil
+                    // the whole region and re-typeset the pure translation.
                     let block = descBox.rect(in: canvas).insetBy(dx: -2, dy: -1)
                     let paper = sampledColor(around: descBox)
-                    paper.withAlphaComponent(0.84).setFill()
+                    paper.withAlphaComponent(0.92).setFill()
                     UIBezierPath(roundedRect: block, cornerRadius: 4).fill()
 
-                    drawFitted(
-                        name: item.chineseName, body: zhDesc,
-                        nameColor: nameColor,
-                        in: block.insetBy(dx: 2, dy: 1)
-                    )
-                } else {
-                    drawNameCaption(item, nameRect: nameRect, canvas: canvas, color: nameColor)
+                    drawFitted(zhDesc, in: block.insetBy(dx: 2, dy: 1))
                 }
 
                 let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
@@ -220,16 +238,47 @@ struct MenuLayoutRenderer {
         }
     }
 
-    /// Small translated name painted just beneath the original name line.
-    private func drawNameCaption(_ item: MenuItemEntry, nameRect: CGRect, canvas: CGSize, color: UIColor) {
-        let size = max(min(nameRect.height * 0.72, 15), 9)
-        TextDraw.text(
-            item.chineseName,
-            font: .systemFont(ofSize: size, weight: .semibold),
-            color: color,
-            at: CGPoint(x: nameRect.minX, y: nameRect.maxY + 1),
-            maxWidth: canvas.width - nameRect.minX - 8
+    /// Place a translated-name caption into blank space near its anchor:
+    /// right of the line first (reads like a same-line annotation), below
+    /// as fallback — never over another printed line or an earlier caption.
+    /// The chosen rect joins the occupancy map.
+    private func placeCaption(
+        _ text: String, anchor: CGRect, canvas: CGSize,
+        occupancy: inout [CGRect], color: UIColor
+    ) {
+        guard !text.isEmpty else { return }
+        let fontSize = max(min(anchor.height * 0.8, 16), 10)
+        let font = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
+        let width = (text as NSString).size(withAttributes: [.font: font]).width
+        let height = font.lineHeight
+
+        func isFree(_ rect: CGRect) -> Bool {
+            guard rect.minX >= 4, rect.maxX <= canvas.width - 4,
+                  rect.minY >= 0, rect.maxY <= canvas.height
+            else { return false }
+            for obstacle in occupancy where obstacle != anchor {
+                if rect.intersects(obstacle.insetBy(dx: -3, dy: -1)) { return false }
+            }
+            return true
+        }
+
+        // 1) Right of the line, vertically centered on it.
+        var rect = CGRect(x: anchor.maxX + 10, y: anchor.midY - height / 2, width: width, height: height)
+        if !isFree(rect) {
+            // 2) Just below, left-aligned with the line.
+            rect = CGRect(x: anchor.minX, y: anchor.maxY + 2, width: width, height: height)
+            if !isFree(rect) {
+                // 3) Last resort: below with a small extra offset (accepting
+                //    a possible brush with a rule line, never with text).
+                rect = CGRect(x: anchor.minX, y: anchor.maxY + 4, width: width, height: height)
+            }
+        }
+
+        (text as NSString).draw(
+            at: rect.origin,
+            withAttributes: [.font: font, .foregroundColor: color]
         )
+        occupancy.append(rect)
     }
 
     private func boxKey(_ box: NormalizedRect) -> String {
@@ -336,29 +385,20 @@ struct MenuLayoutRenderer {
 
     /// Chinese name (accent color) + description (dark gray) flowed together
     /// inside the replaced block, font auto-shrunk until it fits.
-    private func drawFitted(name: String, body: String, nameColor: UIColor, in block: CGRect) {
-        let combined = "\(name)  \(body)"
+    private func drawFitted(_ text: String, in block: CGRect) {
         var fontSize = max(min(block.height * 0.8, 15), 11)
         while fontSize > 10 {
             let height = TextDraw.text(
-                combined, font: .systemFont(ofSize: fontSize),
+                text, font: .systemFont(ofSize: fontSize),
                 color: .black, at: .zero, maxWidth: block.width, dryRun: true
             )
             if height <= block.height + 4 { break }
             fontSize -= 1
         }
-        let font = UIFont.systemFont(ofSize: fontSize)
-        let nameFont = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
-        let attributed = NSMutableAttributedString()
-        attributed.append(NSAttributedString(string: name + "  ", attributes: [
-            .font: nameFont, .foregroundColor: nameColor,
-        ]))
-        attributed.append(NSAttributedString(string: body, attributes: [
-            .font: font, .foregroundColor: UIColor(white: 0.22, alpha: 1),
-        ]))
-        attributed.draw(
-            with: CGRect(origin: block.origin, size: CGSize(width: block.width, height: block.height + 6)),
-            options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil
+        TextDraw.text(
+            text, font: .systemFont(ofSize: fontSize),
+            color: UIColor(white: 0.22, alpha: 1),
+            at: block.origin, maxWidth: block.width
         )
     }
 
