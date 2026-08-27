@@ -37,7 +37,8 @@ Store Connect 那一步都过不去。**
 | 第三方 AI 同意屏 | ✅ 已加，可在设置页撤回 | `Sources/Views/AIConsentView.swift` |
 | 六语言内置示例 | ✅ 6 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
 | App 名称 | ✅ **MenuMirror** / **镜中菜单**，已全局替换 | 见 🔴-0 |
-| EU trader 三项 | ✅ 地址 / 电话 / 邮箱均已确定（值不入库） | `docs/trader-info.local.md` |
+| EU trader 三项 | ✅ 地址 / 电话已定（值不入库）；邮箱统一用 Gmail | `docs/trader-info.local.md` |
+| 联系邮箱口径 | ✅ 隐私政策 + DSA + 支持联系统一为同一个 Gmail | `docs/privacy-policy.html` |
 | **MenuMirror 商标查询** | ❌ 待你在 USPTO / EUIPO 各查一次 | — |
 
 ---
@@ -320,7 +321,7 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 ① 在 USPTO / EUIPO 各查一次 MenuMirror 的商标
 ② 确认 DEVELOPMENT_TEAM LNP5ER743F 已是付费 Team（不是 Personal Team）
 ③ App Store Connect：注册 Bundle ID、创建 App、按 locale 填名称
-④ 填 EU DSA trader 三项（值在 App Store Connect 里手敲，不入库）
+④ 填 EU DSA trader 三项（地址/电话的值在 App Store Connect 里手敲，不入库）
 ⑤ 元数据照抄 appstore-metadata.md（隐私标签用改正后的那张表）
 ⑥ 打包 → TestFlight（六种语言各走一遍，看文案溢出）→ 提审
 ```
@@ -333,6 +334,7 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 - ✅ 🔴-3 六种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文
 - ✅ 🔴-4 `PrivacyInfo.xcprivacy`
 - ✅ 🟢-1 EU trader：申报，欧盟发行，三项齐
+- ✅ 联系邮箱全局统一为 Gmail（qq 邮箱对境外发件方投递不可靠）
 - ✅ 源语言 == 目标语言时的重复渲染
 
 ## 4. 参考链接

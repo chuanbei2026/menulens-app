@@ -59,6 +59,7 @@ tracking — bring your own OpenAI API key (in-app guide; a menu costs
 |---|---|
 | 隐私政策 URL | https://chuanbei2026.github.io/menulens-app/privacy-policy.html |
 | 技术支持 URL | https://github.com/chuanbei2026/menulens-app |
+| 联系邮箱 | chuanbei666@gmail.com —— 隐私政策、DSA trader 栏、支持联系统一用这一个 |
 
 ## App 隐私（隐私营养标签）
 
