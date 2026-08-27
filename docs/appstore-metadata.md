@@ -113,7 +113,7 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 > two complete pre-translated sample restaurants (La Mar, Naan n Curry)
 > demonstrating every feature: zoomable in-place translated canvas, dish
 > list with search and thumbnails, group ordering with member tags, order
-> annotation, and PDF export. The samples are bundled in all six app
+> annotation, and PDF export. The samples are bundled in all seven app
 > languages and seeded in the language of the device, so they appear in
 > your own language.
 >
@@ -131,13 +131,16 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 > **先看那份**：有四条不改就会被拒的问题（第三方 AI 同意屏、隐私标签、
 > 内置示例语言、PrivacyInfo.xcprivacy）不在下面这个列表里。
 
-- [ ] Apple Developer Program 注册通过（$99/年，个人）
+- [x] Apple Developer Program 注册通过（$99/年，个人，Team LNP5ER743F）
 - [x] 定新名字：**ForeignMenu** / **外乡人的菜单**（跨 6 个商店筛过无撞名）
 - [ ] 在 USPTO 与 EUIPO 各查一次 ForeignMenu 的商标
-- [ ] App Store Connect 创建 App（Bundle ID ai.xiangyang.MenuLens —— 这个不用改）
+- [x] App Store Connect 创建 App（Bundle ID ai.xiangyang.MenuLens —— 这个不用改）
 - [ ] 填 EU DSA trader 三项（地址 / 电话 / 邮箱，均会公开显示）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
-- [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
+- [x] 签名 + 打包 + 交付：`Apple Distribution` 证书 + App Store 描述文件，
+      经 Transporter 交付 `1.0 (1)`（2026-08-27）
+      —— 注意 Xcode 26 不再自带 iTMSTransporter，`altool` 的上传路径需要
+      先装 Transporter.app；Xcode Organizer 的上传是自带实现，不受影响
 - [ ] 上传 6.9 英寸 iPhone 截图（`docs/screenshots/iphone-6.9/<lang>/`，1320×2868 ✅ 已重拍）
 - [ ] 上传 13 英寸 iPad 截图（`docs/screenshots/ipad-13/<lang>/`，2064×2752 ✅ 已重拍）
       —— en / zh-Hans / fr / ko 四套，按 locale 分别上传；未拍的语言回落主语言
