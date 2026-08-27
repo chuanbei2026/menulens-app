@@ -1,3 +1,3 @@
-"CFBundleDisplayName" = "MenuLens";
+"CFBundleDisplayName" = "MenuMirror";
 "NSCameraUsageDescription" = "Se usa para fotografiar la carta de un restaurante y poder leerla y traducirla.";
 "NSPhotoLibraryUsageDescription" = "Se usa para elegir la foto de una carta de tu galería y poder leerla y traducirla.";

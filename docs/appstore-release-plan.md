@@ -1,4 +1,4 @@
-# 上架路线图与阻碍分析 — MenuLens
+# 上架路线图与阻碍分析 — MenuMirror · 镜中菜单
 
 > 写于 2026-08-26，更新 2026-08-27。已有 Apple Developer Program 会员（个人，$99/年）。
 > 与 `appstore-metadata.md` 配套：那份是**提交时要粘贴的素材**，这份是**顺序、
@@ -14,8 +14,8 @@
 已经被至少五个开发者占用，其中一个就是同类目的直接竞品。名字不换，连 App
 Store Connect 那一步都过不去。**
 
-代码侧现在是干净的：同意屏、隐私清单、六语言示例都已就位。剩下的是你的两个决定
-（新名字、以及 trader 信息里的电话/邮箱）。
+**再更新：名字已定为 MenuMirror / 镜中菜单并全局替换完毕，EU trader 三项也已齐。
+代码侧和元数据侧现在都是干净的 —— 剩下的只有商标查询和打包提审。**
 
 ---
 
@@ -36,8 +36,9 @@ Store Connect 那一步都过不去。**
 | PrivacyInfo.xcprivacy | ✅ 已加（UserDefaults `CA92.1`） | `MenuLens/Resources/PrivacyInfo.xcprivacy` |
 | 第三方 AI 同意屏 | ✅ 已加，可在设置页撤回 | `Sources/Views/AIConsentView.swift` |
 | 六语言内置示例 | ✅ 6 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
-| **App 名称** | ❌ `MenuLens` / `口袋菜单` 均被占用 → 见 🔴-0 | 待定 |
-| **EU trader 电话/邮箱** | ❌ 待补（必填且会公开） | App Store Connect |
+| App 名称 | ✅ **MenuMirror** / **镜中菜单**，已全局替换 | 见 🔴-0 |
+| EU trader 三项 | ✅ 地址 / 电话 / 邮箱均已确定（值不入库） | `docs/trader-info.local.md` |
+| **MenuMirror 商标查询** | ❌ 待你在 USPTO / EUIPO 各查一次 | — |
 
 ---
 
@@ -48,7 +49,7 @@ Store Connect 那一步都过不去。**
 
 ### 🔴 会被拒，必须先修
 
-#### 🔴-0 「MenuLens」这个名字已经被占用 —— 这是现在唯一真正卡住的事
+#### ✅ 🔴-0 「MenuLens」名字被占用 —— 已改名为 MenuMirror / 镜中菜单
 
 用 Apple 自己的 iTunes lookup API 查的（网页搜索给的 id 是假的，已排除）：
 
@@ -85,8 +86,18 @@ Store Connect 那一步都过不去。**
 中文候选（cn/tw/hk 三区都干净）：`菜单镜`、`菜单原样`、`看懂菜单`、`同款菜单`、
 `原版菜单`、`菜单照相馆`。
 
-> ⚠️ iTunes 搜不到 ≠ Apple 一定放行：还有「已预留但未上架」的名字，以及商标是
-> 另一套体系。定下来之后建议自己在 USPTO 和 EUIPO 各查一次。
+> ✅ **2026-08-27 已定并已替换**：英文 **MenuMirror**，中文 **镜中菜单**。
+> 「同一份菜单，照出你的语言」—— 说的是原版式就地翻译这个差异点，同时避开
+> `-Lens` 词根，不会读成那个同类目竞品的仿品。
+> `MenuMirror` 在 us/cn/de/jp/fr/es 六区、`镜中菜单` 在 cn/tw/hk 三区均无同名或同前缀。
+>
+> 已替换：六份 `app.name`、六份 `InfoPlist.strings` 的 `CFBundleDisplayName`、
+> 六份 `consent.body` 里的行文、`project.yml` 的 `CFBundleDisplayName`、
+> README、隐私政策、本文件与 metadata 包。
+> **Xcode 工程名 / target / 目录 / Bundle ID 一律未改**（都不对用户可见）。
+>
+> ⚠️ 仍待你做：iTunes 搜不到 ≠ Apple 一定放行 —— 还有「已预留但未上架」的名字，
+> 而商标是另一套体系。建议在 **USPTO** 和 **EUIPO** 各查一次 MenuMirror。
 
 #### 🔴-1 Guideline 5.1.2(i)：第三方 AI 数据共享，必须**事前**取得明示同意
 
@@ -96,13 +107,13 @@ Store Connect 那一步都过不去。**
 > You must clearly disclose where personal data will be shared with third parties,
 > **including with third-party AI**, and obtain explicit permission before doing so.
 
-MenuLens 把用户拍的菜单照片直接发给 `api.openai.com`，正中这一条。
+本 App 把用户拍的菜单照片直接发给 `api.openai.com`，正中这一条。
 
 要满足这条，业界目前的做法（也是 Apple 审核实际在查的三件事对齐）：
 
 1. **首次调用之前**弹一次说明屏，必须点名服务商（OpenAI）、列出发送的数据类别
    （菜单照片；不含姓名/位置/标识符），说明用途；
-2. 给一条**真正能拒绝**的路径 —— 拒绝后 App 仍可用（MenuLens 天然满足：
+2. 给一条**真正能拒绝**的路径 —— 拒绝后 App 仍可用（本 App 天然满足：
    内置示例菜单不需要联网，可以「只看示例」）；
 3. **隐私政策、同意屏、二进制实际发出的数据**三者必须说同一件事。
 
@@ -237,17 +248,17 @@ BYOK（bring-your-own-key）AI App 被拒，原话：
 
 那个线程最后**没有公开的解决方案**（Apple 只回复「正在调查，会有代表联系你」）。
 
-MenuLens 的处境比它好，但不是免疫：
+MenuMirror 的处境比它好，但不是免疫：
 
 | 差异 | 对我们的影响 |
 |---|---|
-| MenuLens **免费**，没有任何付费层 | ✅ 关键。3.1.1 保护的是 IAP 收入，我们没有东西被「绕过」 |
+| MenuMirror **免费**，没有任何付费层 | ✅ 关键。3.1.1 保护的是 IAP 收入，我们没有东西被「绕过」 |
 | Key 不解锁**我们卖的**内容，只是用户自己的算力账户 | ✅ 可以在 Review Notes 里直说 |
 | 但 Key 确实「enable functionality」 | ⚠️ 审核员照字面套条款仍可能拒 |
 
 **Review Notes 里要主动写清**（照抄即可）：
 
-> MenuLens is free. There is no paid tier, no in-app purchase, and no content sold
+> MenuMirror is free. There is no paid tier, no in-app purchase, and no content sold
 > by the developer. The OpenAI API key is the user's own account with a third party
 > — it does not unlock any developer-provided content, and the developer receives
 > no payment of any kind. Users who prefer not to use a key can browse the bundled
@@ -264,7 +275,7 @@ MenuLens 的处境比它好，但不是免疫：
 #### 🟡-3 年龄分级要重答新问卷
 
 Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
-新问卷**专门问 AI 助手/聊天机器人功能**。MenuLens 不是开放式聊天、
+新问卷**专门问 AI 助手/聊天机器人功能**。MenuMirror 不是开放式聊天、
 不能任意访问网络内容，**4+ 应该仍然拿得到**，但问卷要按实际情况老实答
 （有 AI 生成内容、无用户间交流、无开放式对话）。
 
@@ -305,23 +316,23 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 
 ## 3. 剩下要做的
 
-代码侧已经做完了。剩下全是需要你决定的事：
-
 ```
-① 定新名字（中英文各一个）        ← 现在唯一的硬阻碍，其他都在等它
-② 把新名字替换进 6 份 app.name / InfoPlist.strings / project.yml / docs
-③ 补 trader 的电话 + 邮箱
-④ 在 USPTO / EUIPO 各查一次新名字的商标
-⑤ 打包 → TestFlight（六种语言各走一遍）→ 提审
+① 在 USPTO / EUIPO 各查一次 MenuMirror 的商标
+② 确认 DEVELOPMENT_TEAM LNP5ER743F 已是付费 Team（不是 Personal Team）
+③ App Store Connect：注册 Bundle ID、创建 App、按 locale 填名称
+④ 填 EU DSA trader 三项（值在 App Store Connect 里手敲，不入库）
+⑤ 元数据照抄 appstore-metadata.md（隐私标签用改正后的那张表）
+⑥ 打包 → TestFlight（六种语言各走一遍，看文案溢出）→ 提审
 ```
 
 已完成（2026-08-27）：
 
+- ✅ 🔴-0 改名 MenuMirror / 镜中菜单，六区筛查无撞名
 - ✅ 🔴-1 第三方 AI 同意屏 + 设置页可撤回开关 + 六语言文案
 - ✅ 🔴-2 隐私标签结论改正，`PrivacyInfo.xcprivacy` 与隐私政策三处口径对齐
 - ✅ 🔴-3 六种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文
 - ✅ 🔴-4 `PrivacyInfo.xcprivacy`
-- ✅ 🟢-1 EU trader 决定：申报，欧盟发行
+- ✅ 🟢-1 EU trader：申报，欧盟发行，三项齐
 - ✅ 源语言 == 目标语言时的重复渲染
 
 ## 4. 参考链接

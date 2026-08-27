@@ -24,7 +24,9 @@ targets:
     info:
       path: MenuLens/Info.plist
       properties:
-        CFBundleDisplayName: MenuLens
+        # Marketing name. The Xcode project, target, paths and bundle id
+        # deliberately keep the old name — none of them is user-visible.
+        CFBundleDisplayName: MenuMirror
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         NSCameraUsageDescription: Used to photograph a restaurant menu so it can be read and translated.

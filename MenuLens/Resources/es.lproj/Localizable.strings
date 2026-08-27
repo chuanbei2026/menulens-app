@@ -1,4 +1,4 @@
-"app.name" = "MenuLens";
+"app.name" = "MenuMirror";
 
 /* MARK: - Shared */
 "common.cancel" = "Cancelar";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "Las fotos de la carta se envían a OpenAI";
-"consent.body" = "Para leer y traducir una carta, MenuLens envía la foto a OpenAI. Es lo único que sale de tu teléfono, y solo ocurre cuando tocas Escanear.";
+"consent.body" = "Para leer y traducir una carta, MenuMirror envía la foto a OpenAI. Es lo único que sale de tu teléfono, y solo ocurre cuando tocas Escanear.";
 "consent.sent.header" = "Se envía a OpenAI";
 "consent.sent.photo" = "La foto de la carta que elijas";
 "consent.sent.names" = "Los nombres de los platos, solo si pides imágenes generadas";

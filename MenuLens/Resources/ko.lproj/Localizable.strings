@@ -1,4 +1,4 @@
-"app.name" = "MenuLens";
+"app.name" = "MenuMirror";
 
 /* MARK: - Shared */
 "common.cancel" = "취소";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "메뉴 사진은 OpenAI로 전송됩니다";
-"consent.body" = "메뉴를 인식하고 번역하기 위해 MenuLens는 이 사진을 OpenAI로 보냅니다. 기기에서 나가는 것은 이것뿐이며, 「인식하고 번역」을 누를 때만 전송됩니다.";
+"consent.body" = "메뉴를 인식하고 번역하기 위해 MenuMirror는 이 사진을 OpenAI로 보냅니다. 기기에서 나가는 것은 이것뿐이며, 「인식하고 번역」을 누를 때만 전송됩니다.";
 "consent.sent.header" = "OpenAI로 보내는 것";
 "consent.sent.photo" = "당신이 선택한 메뉴 사진";
 "consent.sent.names" = "요리 이름 — 이미지 생성을 요청한 경우에만";

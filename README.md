@@ -1,4 +1,4 @@
-# MenuLens
+# MenuMirror · 镜中菜单
 
 拍下外语菜单（**支持多页**），得到一份**同版式、可缩放**的对照 PDF：
 
@@ -14,6 +14,24 @@
   - **版式页**（每拍摄页一张）：与照片同比例的大页面，原图淡淡地垫在底下，
     每道菜的双语卡片画在它自己的 bbox 位置上 —— 读起来就像原菜单的双语版
   - **附录页**：每道菜一张可读性优先的卡片（配图 + 双语名称/描述 + 价格），分页排版
+
+## Name
+
+App Store 上的名字是 **MenuMirror**（中文区 **镜中菜单**）。
+「同一份菜单，照出你的语言」—— 译文写在原来的位置上、版式不动，这是产品的差异点。
+
+原名 `MenuLens` 已被至少五个开发者占用（其中一个同为旅行类的菜单翻译 App），
+`口袋菜单` 在中国区也被占用，所以两个名字都换掉了。详见
+`docs/appstore-release-plan.md` 的 🔴-0。
+
+**Xcode 工程名、target 名、目录名和 Bundle ID `ai.xiangyang.MenuLens` 一律没改** ——
+它们都不对用户可见，改动只会带来无谓的 diff 和签名风险。品牌名只存在于：
+
+| 位置 | 内容 |
+|---|---|
+| 六份 `Resources/*.lproj/Localizable.strings` | `app.name`（导航栏标题）、`consent.body` 里的行文 |
+| 六份 `Resources/*.lproj/InfoPlist.strings` | `CFBundleDisplayName`（桌面图标名） |
+| `project.yml` | `CFBundleDisplayName`（基准语言的兜底） |
 
 ## Language
 

@@ -1,7 +1,7 @@
 /* Base language. Every key in this file must exist in all six .lproj
    tables; a missing one falls back to showing the key itself. */
 
-"app.name" = "MenuLens";
+"app.name" = "MenuMirror";
 
 /* MARK: - Shared */
 "common.cancel" = "Cancel";
@@ -136,7 +136,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "Menu photos are sent to OpenAI";
-"consent.body" = "To read and translate a menu, MenuLens sends the photo to OpenAI. This is the only thing that leaves your phone, and it happens only when you tap Scan.";
+"consent.body" = "To read and translate a menu, MenuMirror sends the photo to OpenAI. This is the only thing that leaves your phone, and it happens only when you tap Scan.";
 "consent.sent.header" = "Sent to OpenAI";
 "consent.sent.photo" = "The menu photo you choose";
 "consent.sent.names" = "Dish names, only if you ask for generated dish photos";
