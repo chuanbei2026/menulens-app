@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = AnalysisViewModel()
+    /// Redraws this screen when the app language changes in Settings.
+    @ObservedObject private var loc = Localization.shared
     /// Per-scan choice, surfaced next to the analyze button; the last choice
     /// is remembered as the default for the next scan (same key the view
     /// model reads at analyze time).
@@ -29,7 +31,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("口袋菜单")
+            .navigationTitle(L("app.name"))
             .toolbar {
                 // Home-screen chrome only; the result screen brings its own
                 // minimal toolbar (home / view switch / share).
@@ -251,16 +253,16 @@ struct ContentView: View {
                 // scanned, and offer the sample menus as the way to look
                 // around in the meantime.
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("先填一个 OpenAI Key 才能识别新菜单")
+                    Text(L("onboarding.title"))
                         .font(.subheadline.weight(.semibold))
-                    Text("Key 只存在这台手机上。现在也可以直接翻看内置的两份真实餐厅菜单。")
+                    Text(L("onboarding.body"))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 14) {
                         Button {
                             showSettings = true
                         } label: {
-                            Label("填写 Key", systemImage: "key")
+                            Label(L("onboarding.enterKey"), systemImage: "key")
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
@@ -268,7 +270,7 @@ struct ContentView: View {
                         Button {
                             showHistory = true
                         } label: {
-                            Label("看内置菜单", systemImage: "clock.arrow.circlepath")
+                            Label(L("onboarding.viewSamples"), systemImage: "clock.arrow.circlepath")
                         }
                         .controlSize(.small)
                     }
@@ -288,9 +290,9 @@ struct ContentView: View {
                     Image(systemName: "doc.text.viewfinder")
                         .font(.system(size: 64))
                         .foregroundStyle(.secondary)
-                    Text("拍下菜单，得到同版式的中文对照 PDF")
+                    Text(L("home.headline"))
                         .font(.headline)
-                    Text("支持多页 · 自动配图 · 任意语言 · 本地保存")
+                    Text(L("home.subheadline"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -312,14 +314,14 @@ struct ContentView: View {
                 Button {
                     showCamera = true
                 } label: {
-                    Label(viewModel.pickedImages.isEmpty ? "拍照" : "再拍一页", systemImage: "camera")
+                    Label(viewModel.pickedImages.isEmpty ? L("home.capture") : L("home.captureMore"), systemImage: "camera")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .disabled(!hasAPIKey)
 
                 PhotosPicker(selection: $photosItems, maxSelectionCount: 8, matching: .images) {
-                    Label("相册", systemImage: "photo.on.rectangle")
+                    Label(L("home.library"), systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -329,9 +331,9 @@ struct ContentView: View {
 
             Toggle(isOn: $generateDishImages) {
                 VStack(alignment: .leading, spacing: 1) {
-                    Label("为没有照片的菜生成配图", systemImage: "photo.artframe")
+                    Label(L("home.images.title"), systemImage: "photo.artframe")
                         .font(.subheadline)
-                    Text("AI 生成，约 $0.003/道，稍慢；本次识别生效")
+                    Text(L("home.images.note"))
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
@@ -343,8 +345,8 @@ struct ContentView: View {
             } label: {
                 Label(
                     viewModel.pickedImages.count > 1
-                        ? "识别并翻译（\(viewModel.pickedImages.count) 页）"
-                        : "识别并翻译",
+                        ? L("home.analyze.pages", viewModel.pickedImages.count)
+                        : L("home.analyze"),
                     systemImage: "sparkles"
                 )
                 .frame(maxWidth: .infinity)
@@ -354,7 +356,7 @@ struct ContentView: View {
             .padding(.horizontal)
 
             if hasAPIKey {
-                Button("看看内置示例菜单") {
+                Button(L("home.samples")) {
                     showHistory = true
                 }
                 .font(.footnote)
@@ -386,7 +388,7 @@ struct ContentView: View {
                             }
                             .padding(5)
                         }
-                        Text("第 \(index + 1) 页")
+                        Text(L("page.number", index + 1))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

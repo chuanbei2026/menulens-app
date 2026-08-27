@@ -1,0 +1,127 @@
+"app.name" = "MenuLens";
+
+/* MARK: - Shared */
+"common.cancel" = "Cancelar";
+"common.save" = "Guardar";
+"common.add" = "Añadir";
+"common.close" = "Cerrar";
+"common.unknown" = "Desconocido";
+"list.separator" = ", ";
+"page.number" = "Página %d";
+
+/* MARK: - First run */
+"onboarding.title" = "Añade una clave de OpenAI para escanear una carta";
+"onboarding.body" = "La clave nunca sale de este teléfono. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
+"onboarding.enterKey" = "Añadir clave";
+"onboarding.viewSamples" = "Ver ejemplos";
+
+/* MARK: - Home */
+"home.headline" = "Fotografía una carta y recíbela traducida en su sitio";
+"home.subheadline" = "Varias páginas · Fotos de platos · Cualquier idioma · Guardado en el dispositivo";
+"home.capture" = "Cámara";
+"home.captureMore" = "Otra página";
+"home.library" = "Fotos";
+"home.images.title" = "Generar imagen para los platos sin foto";
+"home.images.note" = "Generado por IA, unos 0,003 $ por plato, algo más lento; se aplica a este escaneo";
+"home.analyze" = "Escanear y traducir";
+"home.analyze.pages" = "Escanear y traducir (%d páginas)";
+"home.samples" = "Ver las cartas de ejemplo";
+
+/* MARK: - Settings */
+"settings.title" = "Ajustes";
+"settings.language" = "Idioma";
+"settings.language.footer" = "Define tanto el idioma de la app como el idioma al que se traducen las cartas. El idioma de la carta se detecta automáticamente.";
+"settings.apiKey.header" = "Clave API de OpenAI";
+"settings.apiKey.help" = "¿Cómo consigo una clave API de OpenAI?";
+"settings.apiKey.footer" = "Regístrate en la plataforma de OpenAI del enlace anterior, añade saldo, crea una clave y pégala aquí. La clave se guarda solo en el llavero de este teléfono y se usa únicamente para llamar a OpenAI directamente: nunca se sube a ningún sitio. Esta app no tiene servidor propio.";
+"settings.model" = "Modelo";
+"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / 0,03 $ (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / 0,01 $ (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso y el más lento. Las imágenes de platos se cobran aparte, unos 0,003 $ cada una en modo collage.";
+"settings.party.header" = "En la mesa";
+"settings.party.footer" = "Al pedir puedes marcar quién ha pedido cada plato, para que llegue a la persona correcta. Si indicas lo que alguien no come, el resumen revisa todos sus platos y avisa de forma bien visible. Toca un avatar para poner una foto y ✕ para quitar a alguien.";
+"settings.member.name" = "Nombre";
+"settings.member.avoid" = "Evita";
+"settings.member.addPlaceholder" = "Añadir a alguien…";
+"settings.flatten" = "Igualar la iluminación (recomendado)";
+"settings.flatten.footer" = "Quita las sombras y los brillos de una foto hecha a mano: el papel queda limpio y uniforme, y el texto traducido se integra con el original. Las cartas oscuras se omiten automáticamente.";
+"settings.grid" = "Modo collage (más barato)";
+"settings.grid.footer" = "Si se generan imágenes o no se marca en la pantalla de inicio, escaneo por escaneo. El modo collage genera cuatro platos en una imagen 2×2 y luego la recorta, unos 0,003 $ por plato (de una en una, unos 0,011 $ y algo mejor). Las fotos impresas en la propia carta siempre tienen prioridad.";
+
+/* MARK: - Scan progress */
+"progress.note" = "Puedes leerla en cuanto termine la maquetación; las imágenes siguen llegando después";
+"progress.stage.rectify" = "Endereza las fotos";
+"progress.stage.translate" = "Traduce el texto";
+"progress.stage.layout" = "Maquetación";
+"progress.stage.images" = "Genera las imágenes";
+"progress.pages" = "%d páginas";
+"progress.pages.fraction" = "%1$d/%2$d páginas";
+"progress.lines.fraction" = "%1$d/%2$d líneas";
+"progress.reading" = "Leyendo el texto…";
+"progress.waitingModel" = "%d líneas leídas, esperando al modelo…";
+"progress.linesElapsed" = "%1$d líneas por traducir · %2$d s transcurridos";
+"progress.waitRectify" = "Esperando el enderezamiento";
+"progress.waitTranslate" = "Esperando la traducción";
+"progress.layoutRunning" = "Maquetando…";
+"progress.imagesOff" = "Desactivado en Ajustes";
+"progress.menuHasPhotos" = "La carta ya tiene fotos";
+"progress.images" = "%d imágenes";
+"progress.images.fraction" = "%1$d/%2$d imágenes";
+
+/* MARK: - Result */
+"result.generatingImages" = "Generando imágenes de los platos";
+"result.selected" = "%d seleccionados";
+"result.summary" = "Resumen";
+"result.tab.canvas" = "Carta";
+"result.tab.list" = "Lista";
+"result.home" = "Volver al inicio";
+"result.exportPDF" = "Exportar PDF";
+"canvas.showTranslation" = "Traducción";
+"canvas.showOriginal" = "Original";
+"canvas.drawing" = "Dibujando la carta…";
+"share.menu" = "Carta";
+"list.searchPlaceholder" = "Buscar plato (traducido u original)";
+"chips.forWhom" = "Para quién:";
+"chips.addMember" = "Añadir a alguien";
+"chips.addMemberNote" = "También puedes gestionar la mesa en Ajustes.";
+
+/* MARK: - Order summary */
+"summary.title" = "Tu pedido";
+"summary.conflicts" = "Conflicto con una restricción";
+"summary.avoidsButOrdered" = "pero ha pedido «%1$@» %2$@";
+"summary.count" = "%d platos";
+"summary.total" = "Total %@";
+"summary.continue" = "Seguir pidiendo";
+"summary.annotate" = "Marcarlo en la carta para el camarero";
+
+/* MARK: - History */
+"history.title" = "Historial";
+"history.empty.title" = "Todavía no hay nada";
+"history.empty.body" = "Las cartas que escaneas se guardan aquí automáticamente, así que en una segunda visita al mismo restaurante no hace falta escanear nada.";
+"history.untitled" = "Carta sin nombre";
+"history.meta" = "%1$@ · %2$d platos · %3$d páginas";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "Vegano";
+"diet.vegetarian" = "Veg";
+"diet.glutenFree" = "Gluten";
+"diet.pork" = "Cerdo";
+"diet.chicken" = "Pollo";
+"diet.beef" = "Ternera";
+"diet.lamb" = "Cordero";
+"diet.seafood" = "Marisco";
+"diet.avoid.gluten" = "evita el gluten";
+"diet.avoid" = "no come %@";
+
+"party.me" = "Yo";
+
+/* MARK: - Errors */
+"error.encodeImages" = "No se han podido codificar las fotos seleccionadas.";
+"error.recognizeFailed" = "El escaneo ha fallado. Inténtalo de nuevo.";
+"notice.partialPages" = "No se han podido escanear %1$d páginas; se han conservado las otras %2$d. Puedes volver a escanear esas páginas.";
+"error.missingKey" = "Todavía no hay clave API de OpenAI: añádela en Ajustes.";
+"error.http" = "La petición a OpenAI ha fallado (HTTP %1$d): %2$@";
+"error.emptyResponse" = "OpenAI ha devuelto un resultado vacío.";
+"error.refusal" = "El modelo ha rechazado esta petición: %@";
+"error.badLineIndex" = "El modelo ha devuelto un número de línea no válido.";
+
+/* MARK: - PDF */
+"pdf.header" = "Platos en paralelo · %1$@ → %2$@";

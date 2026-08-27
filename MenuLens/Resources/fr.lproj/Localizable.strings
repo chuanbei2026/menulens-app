@@ -1,0 +1,127 @@
+"app.name" = "MenuLens";
+
+/* MARK: - Shared */
+"common.cancel" = "Annuler";
+"common.save" = "Enregistrer";
+"common.add" = "Ajouter";
+"common.close" = "Fermer";
+"common.unknown" = "Inconnue";
+"list.separator" = ", ";
+"page.number" = "Page %d";
+
+/* MARK: - First run */
+"onboarding.title" = "Ajoutez une clé OpenAI pour scanner une carte";
+"onboarding.body" = "La clé ne quitte jamais ce téléphone. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
+"onboarding.enterKey" = "Ajouter la clé";
+"onboarding.viewSamples" = "Voir les exemples";
+
+/* MARK: - Home */
+"home.headline" = "Photographiez une carte, recevez-la traduite sur place";
+"home.subheadline" = "Multipage · Photos des plats · Toutes langues · Stocké sur l'appareil";
+"home.capture" = "Photo";
+"home.captureMore" = "Autre page";
+"home.library" = "Galerie";
+"home.images.title" = "Générer une image pour les plats sans photo";
+"home.images.note" = "Généré par IA, environ 0,003 $ par plat, un peu plus lent ; s'applique à ce scan";
+"home.analyze" = "Scanner et traduire";
+"home.analyze.pages" = "Scanner et traduire (%d pages)";
+"home.samples" = "Parcourir les cartes d'exemple";
+
+/* MARK: - Settings */
+"settings.title" = "Réglages";
+"settings.language" = "Langue";
+"settings.language.footer" = "Définit à la fois la langue de l'application et celle dans laquelle les cartes sont traduites. La langue de la carte, elle, est détectée automatiquement.";
+"settings.apiKey.header" = "Clé API OpenAI";
+"settings.apiKey.help" = "Comment obtenir une clé API OpenAI ?";
+"settings.apiKey.footer" = "Créez un compte sur la plateforme OpenAI liée ci-dessus, ajoutez du crédit, puis créez une clé et collez-la ici. La clé est conservée uniquement dans le trousseau de ce téléphone et ne sert qu'à appeler OpenAI directement — elle n'est envoyée nulle part ailleurs. Cette application n'a aucun serveur.";
+"settings.model" = "Modèle";
+"settings.model.footer" = "Mesuré sur une page dense (148 lignes) : gpt-4.1 environ 45 s / 0,03 $ (recommandé, progression affichée pendant la traduction) · gpt-5-mini environ 115 s / 0,01 $ (moins cher, noms mieux traduits, mais plus d'attente) · gpt-5 est le plus précis et le plus lent. Les images de plats sont facturées à part, environ 0,003 $ chacune en mode mosaïque.";
+"settings.party.header" = "À table";
+"settings.party.footer" = "Pendant la commande, vous pouvez noter qui a demandé quoi, pour que chaque plat arrive à la bonne personne. Indiquez ce que quelqu'un ne mange pas et le récapitulatif vérifie chacun de ses plats et vous alerte clairement. Touchez un avatar pour ajouter une photo, ✕ pour retirer la personne.";
+"settings.member.name" = "Nom";
+"settings.member.avoid" = "Évite";
+"settings.member.addPlaceholder" = "Ajouter quelqu'un…";
+"settings.flatten" = "Uniformiser la lumière (recommandé)";
+"settings.flatten.footer" = "Supprime les ombres et les reflets d'une photo prise à main levée : le papier redevient net et uniforme, et le texte traduit se fond dans l'original. Les cartes sombres sont ignorées automatiquement.";
+"settings.grid" = "Mode mosaïque (économique)";
+"settings.grid.footer" = "La génération d'images se coche sur l'écran d'accueil, scan par scan. Le mode mosaïque génère quatre plats dans une seule image 2×2 puis la découpe, environ 0,003 $ par plat (une par une : environ 0,011 $, légèrement mieux). Les photos imprimées sur la carte sont toujours utilisées en priorité.";
+
+/* MARK: - Scan progress */
+"progress.note" = "Lisible dès que la mise en page est prête ; les images des plats continuent d'arriver ensuite";
+"progress.stage.rectify" = "Redressement des photos";
+"progress.stage.translate" = "Traduction du texte";
+"progress.stage.layout" = "Mise en page";
+"progress.stage.images" = "Génération des images";
+"progress.pages" = "%d pages";
+"progress.pages.fraction" = "%1$d/%2$d pages";
+"progress.lines.fraction" = "%1$d/%2$d lignes";
+"progress.reading" = "Lecture du texte…";
+"progress.waitingModel" = "%d lignes lues, en attente du modèle…";
+"progress.linesElapsed" = "%1$d lignes à traduire · %2$d s écoulées";
+"progress.waitRectify" = "En attente du redressement";
+"progress.waitTranslate" = "En attente de la traduction";
+"progress.layoutRunning" = "Mise en page…";
+"progress.imagesOff" = "Désactivé dans les réglages";
+"progress.menuHasPhotos" = "La carte a déjà des photos";
+"progress.images" = "%d images";
+"progress.images.fraction" = "%1$d/%2$d images";
+
+/* MARK: - Result */
+"result.generatingImages" = "Génération des images des plats";
+"result.selected" = "%d sélectionnés";
+"result.summary" = "Récapitulatif";
+"result.tab.canvas" = "Carte";
+"result.tab.list" = "Liste";
+"result.home" = "Retour à l'accueil";
+"result.exportPDF" = "Exporter en PDF";
+"canvas.showTranslation" = "Traduction";
+"canvas.showOriginal" = "Original";
+"canvas.drawing" = "Dessin de la carte…";
+"share.menu" = "Carte";
+"list.searchPlaceholder" = "Rechercher un plat (traduit ou original)";
+"chips.forWhom" = "Pour qui :";
+"chips.addMember" = "Ajouter quelqu'un";
+"chips.addMemberNote" = "Vous pouvez aussi gérer la table dans les réglages.";
+
+/* MARK: - Order summary */
+"summary.title" = "Votre commande";
+"summary.conflicts" = "Conflit avec un régime";
+"summary.avoidsButOrdered" = "mais a commandé « %1$@ » %2$@";
+"summary.count" = "%d plats";
+"summary.total" = "Total %@";
+"summary.continue" = "Continuer la commande";
+"summary.annotate" = "Annoter la carte pour la montrer au serveur";
+
+/* MARK: - History */
+"history.title" = "Historique";
+"history.empty.title" = "Rien d'enregistré";
+"history.empty.body" = "Les cartes scannées sont enregistrées ici automatiquement : lors d'une deuxième visite au même restaurant, aucun scan n'est nécessaire.";
+"history.untitled" = "Carte sans nom";
+"history.meta" = "%1$@ · %2$d plats · %3$d pages";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "Végane";
+"diet.vegetarian" = "Végé";
+"diet.glutenFree" = "Gluten";
+"diet.pork" = "Porc";
+"diet.chicken" = "Poulet";
+"diet.beef" = "Bœuf";
+"diet.lamb" = "Agneau";
+"diet.seafood" = "Fruits de mer";
+"diet.avoid.gluten" = "évite le gluten";
+"diet.avoid" = "ne mange pas de %@";
+
+"party.me" = "Moi";
+
+/* MARK: - Errors */
+"error.encodeImages" = "Impossible d'encoder les photos sélectionnées.";
+"error.recognizeFailed" = "Le scan a échoué. Veuillez réessayer.";
+"notice.partialPages" = "%1$d pages n'ont pas pu être scannées ; les %2$d autres ont été conservées. Vous pouvez rescanner ces pages.";
+"error.missingKey" = "Aucune clé API OpenAI — ajoutez-en une dans les réglages.";
+"error.http" = "Échec de la requête OpenAI (HTTP %1$d) : %2$@";
+"error.emptyResponse" = "OpenAI a renvoyé un résultat vide.";
+"error.refusal" = "Le modèle a refusé cette requête : %@";
+"error.badLineIndex" = "Le modèle a renvoyé un numéro de ligne invalide.";
+
+/* MARK: - PDF */
+"pdf.header" = "Plats en vis-à-vis · %1$@ → %2$@";

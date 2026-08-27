@@ -16,7 +16,9 @@ struct PartyMember: Codable, Identifiable, Hashable {
 }
 
 /// Persistent list of party members. Always contains at least one member;
-/// a fresh install starts with just "我".
+/// a fresh install starts with just the user themselves, named in whatever
+/// language the app opened in. Renaming the app language later leaves the
+/// name alone — by then it is the user's own data.
 @MainActor
 final class PartyStore: ObservableObject {
     static let shared = PartyStore()
@@ -33,7 +35,7 @@ final class PartyStore: ObservableObject {
            !decoded.isEmpty {
             members = decoded
         } else {
-            members = [PartyMember(id: UUID(), name: "我", avoids: [])]
+            members = [PartyMember(id: UUID(), name: L("party.me"), avoids: [])]
         }
     }
 

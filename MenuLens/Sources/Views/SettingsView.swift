@@ -6,7 +6,9 @@ struct SettingsView: View {
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("flatten_lighting") private var flattenLighting = true
-    @AppStorage("target_language") private var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
+    /// The language picker writes through `Localization`, so every screen in
+    /// the app follows the choice immediately — see Localization.swift.
+    @ObservedObject private var loc = Localization.shared
     @ObservedObject private var party = PartyStore.shared
     @State private var apiKey = KeychainStore.loadAPIKey()
     @State private var newMemberName = ""
@@ -25,13 +27,19 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section {
-                    Picker("目标语言", selection: $targetLanguageCode) {
-                        ForEach(TargetLanguage.allCases) { language in
-                            Text(language.displayName).tag(language.rawValue)
+                    Picker(
+                        L("settings.language"),
+                        selection: Binding(
+                            get: { loc.language },
+                            set: { loc.setLanguage($0) }
+                        )
+                    ) {
+                        ForEach(AppLanguage.allCases) { language in
+                            Text(language.displayName).tag(language)
                         }
                     }
                 } footer: {
-                    Text("菜单会被翻译成该语言。菜单本身的语言无需设置，自动识别。")
+                    Text(L("settings.language.footer"))
                 }
 
                 Section {
@@ -39,20 +47,20 @@ struct SettingsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     Link(destination: URL(string: "https://platform.openai.com/api-keys")!) {
-                        Label("如何获取 OpenAI API Key？", systemImage: "questionmark.circle")
+                        Label(L("settings.apiKey.help"), systemImage: "questionmark.circle")
                     }
                 } header: {
-                    Text("OpenAI API Key")
+                    Text(L("settings.apiKey.header"))
                 } footer: {
-                    Text("在上方链接的 OpenAI 平台注册并充值后，创建一个 Key 粘贴到这里。Key 只保存在你手机本地的系统钥匙串（Keychain）中，只用于直接调用 OpenAI —— 不会上传到任何云端，本 App 没有自己的服务器。")
+                    Text(L("settings.apiKey.footer"))
                 }
 
                 Section {
-                    Picker("模型", selection: $model) {
+                    Picker(L("settings.model"), selection: $model) {
                         ForEach(models, id: \.self) { Text($0) }
                     }
                 } footer: {
-                    Text("实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / $0.03（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / $0.01（更省钱，译名更讲究，但要等更久）· gpt-5 最准也最慢。配图另计，拼图模式约 $0.003/道。")
+                    Text(L("settings.model.footer"))
                 }
 
                 Section {
@@ -66,7 +74,7 @@ struct SettingsView: View {
                                     AvatarView(party: party, memberID: member.id, size: 30)
                                 }
                                 .buttonStyle(.borderless)
-                                TextField("名字", text: $member.name)
+                                TextField(L("settings.member.name"), text: $member.name)
                                 if party.members.count > 1 {
                                     Button {
                                         party.remove(id: member.id)
@@ -80,7 +88,7 @@ struct SettingsView: View {
                             // What this person doesn't eat — checked against
                             // every dish when the order is summarized.
                             HStack(spacing: 6) {
-                                Text("不吃")
+                                Text(L("settings.member.avoid"))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 ForEach(DietTag.avoidable) { tag in
@@ -105,15 +113,15 @@ struct SettingsView: View {
                         .padding(.vertical, 2)
                     }
                     HStack {
-                        TextField("添加成员…", text: $newMemberName)
+                        TextField(L("settings.member.addPlaceholder"), text: $newMemberName)
                             .onSubmit { addMember() }
-                        Button("添加", action: addMember)
+                        Button(L("common.add"), action: addMember)
                             .disabled(newMemberName.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 } header: {
-                    Text("同行成员")
+                    Text(L("settings.party.header"))
                 } footer: {
-                    Text("点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。")
+                    Text(L("settings.party.footer"))
                 }
                 .photosPicker(isPresented: $showAvatarPicker, selection: $avatarPickerItem, matching: .images)
                 .onChange(of: avatarPickerItem) {
@@ -129,28 +137,28 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Toggle("整页匀光（推荐）", isOn: $flattenLighting)
+                    Toggle(L("settings.flatten"), isOn: $flattenLighting)
                 } footer: {
-                    Text("消除拍照时的阴影和光斑，纸面变得干净均匀，翻译文字与原版融合得更自然。深色菜单会自动跳过。")
+                    Text(L("settings.flatten.footer"))
                 }
 
                 Section {
-                    Toggle("拼图省钱模式", isOn: $thumbnailGridMode)
+                    Toggle(L("settings.grid"), isOn: $thumbnailGridMode)
                 } footer: {
-                    Text("是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，每道菜约 $0.003（单张模式约 $0.011，画质稍好）。菜单本身的照片始终优先使用。")
+                    Text(L("settings.grid.footer"))
                 }
             }
-            .navigationTitle("设置")
+            .navigationTitle(L("settings.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button(L("common.save")) {
                         KeychainStore.saveAPIKey(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button(L("common.cancel")) { dismiss() }
                 }
             }
         }

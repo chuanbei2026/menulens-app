@@ -16,15 +16,15 @@ struct OpenAIClient {
         var errorDescription: String? {
             switch self {
             case .missingAPIKey:
-                return "尚未设置 OpenAI API Key，请先在设置页填写。"
+                return L("error.missingKey")
             case let .badHTTPStatus(code, body):
-                return "OpenAI 请求失败（HTTP \(code)）：\(body)"
+                return L("error.http", code, body)
             case .emptyResponse:
-                return "OpenAI 返回了空结果。"
+                return L("error.emptyResponse")
             case let .refusal(reason):
-                return "模型拒绝了这次请求：\(reason)"
+                return L("error.refusal", reason)
             case .badLineIndex:
-                return "模型返回了无效的行号。"
+                return L("error.badLineIndex")
             }
         }
     }

@@ -2,14 +2,15 @@ import SwiftUI
 
 /// Result screen with two switchable views (segmented control in the nav bar):
 ///
-/// - **画布** — one zoomable canvas per photographed page (pinch to zoom,
+/// - **Canvas** — one zoomable canvas per photographed page (pinch to zoom,
 ///   double-tap to magnify), pages swiped via bottom page dots. Cards carry
 ///   no images; tapping a card jumps to that dish in the list view.
-/// - **列表** — native iOS list of every dish (with cropped/AI images),
-///   searchable in Chinese or the menu's original language.
+/// - **List** — native iOS list of every dish (with cropped/AI images),
+///   searchable in the translation or the menu's original language.
 struct ResultView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     let onRestart: () -> Void
+    @ObservedObject private var loc = Localization.shared
 
     enum Mode: Hashable {
         case canvas
@@ -66,11 +67,11 @@ struct ResultView: View {
                    let total = progress.imagesTotal, total > 0, !progress.imagesFinished {
                     VStack(spacing: 6) {
                         HStack {
-                            Label("正在生成菜品配图", systemImage: "photo.artframe")
+                            Label(L("result.generatingImages"), systemImage: "photo.artframe")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                             Spacer()
-                            Text("\(progress.imagesDone)/\(total) 张")
+                            Text(L("progress.images.fraction", progress.imagesDone, total))
                                 .font(.footnote.monospacedDigit())
                                 .foregroundStyle(.secondary)
                         }
@@ -91,7 +92,7 @@ struct ResultView: View {
                 if viewModel.cartCount > 0 {
                     HStack(spacing: 10) {
                         Image(systemName: "cart")
-                        Text("已选 \(viewModel.cartCount) 道")
+                        Text(L("result.selected", viewModel.cartCount))
                             .font(.subheadline.weight(.medium))
                         if let total = viewModel.cartTotalText {
                             Text(total)
@@ -99,7 +100,7 @@ struct ResultView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Button("总结") { showOrderSummary = true }
+                        Button(L("result.summary")) { showOrderSummary = true }
                             .buttonStyle(.borderedProminent)
                             .controlSize(.small)
                     }
@@ -110,8 +111,10 @@ struct ResultView: View {
 
                 // Two big view-switch buttons across the very tail of the screen.
                 HStack(spacing: 0) {
-                    viewTab(.canvas, icon: "doc.richtext", selectedIcon: "doc.richtext.fill", title: "画布")
-                    viewTab(.list, icon: "list.bullet", selectedIcon: "list.bullet", title: "列表")
+                    viewTab(.canvas, icon: "doc.richtext", selectedIcon: "doc.richtext.fill",
+                            title: L("result.tab.canvas"))
+                    viewTab(.list, icon: "list.bullet", selectedIcon: "list.bullet",
+                            title: L("result.tab.list"))
                 }
                 .background(.regularMaterial)
             }
@@ -127,12 +130,12 @@ struct ResultView: View {
                 Button(action: onRestart) {
                     Image(systemName: "house")
                 }
-                .accessibilityLabel("返回首页")
+                .accessibilityLabel(L("result.home"))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 if let url = currentShareURL() {
                     ShareLink(item: url) {
-                        Label("导出 PDF", systemImage: "square.and.arrow.up")
+                        Label(L("result.exportPDF"), systemImage: "square.and.arrow.up")
                     }
                 }
             }
@@ -162,7 +165,7 @@ struct ResultView: View {
     /// Re-written whenever the PDF bytes change (e.g. thumbnails landed).
     private func currentShareURL() -> URL? {
         guard let data = viewModel.pdfData, let scan = viewModel.scan else { return nil }
-        let name = (scan.restaurantName ?? "菜单").replacingOccurrences(of: "/", with: "-")
+        let name = (scan.restaurantName ?? L("share.menu")).replacingOccurrences(of: "/", with: "-")
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("\(name)-\(scan.id.uuidString.prefix(8)).pdf")
         if (try? Data(contentsOf: url))?.count != data.count {
@@ -178,6 +181,7 @@ private struct MenuCanvasView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @Binding var showOriginal: Bool
     let onSelectDish: (String) -> Void
+    @ObservedObject private var loc = Localization.shared
 
     var body: some View {
         if let scan = viewModel.scan {
@@ -208,7 +212,7 @@ private struct MenuCanvasView: View {
                     showOriginal.toggle()
                 } label: {
                     Label(
-                        showOriginal ? "看译文" : "看原文",
+                        showOriginal ? L("canvas.showTranslation") : L("canvas.showOriginal"),
                         systemImage: showOriginal ? "character.bubble" : "globe"
                     )
                     .font(.footnote.weight(.medium))
@@ -254,7 +258,7 @@ private struct CanvasPage: View {
                     }
                 }
             } else {
-                ProgressView("正在绘制画布…")
+                ProgressView(L("canvas.drawing"))
             }
         }
         .task(id: highlightSignature) {
@@ -289,6 +293,7 @@ private struct CanvasPage: View {
 
 private struct OrderSummaryView: View {
     @ObservedObject var viewModel: AnalysisViewModel
+    @ObservedObject private var loc = Localization.shared
     /// Called when the user confirms — the caller switches to the canvas
     /// so the annotated menu can be shown to the waiter.
     let onAnnotate: () -> Void
@@ -321,10 +326,10 @@ private struct OrderSummaryView: View {
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .foregroundStyle(.red)
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("\(member.name) \(hit.tags.map(\.avoidanceLabel).joined(separator: "、"))")
+                                        Text("\(member.name) \(hit.tags.map(\.avoidanceLabel).joined(separator: L("list.separator")))")
                                             .font(.subheadline.weight(.semibold))
                                             .foregroundStyle(.red)
-                                        Text("但点了「\(hit.item.chineseName)」\(hit.item.originalName)")
+                                        Text(L("summary.avoidsButOrdered", hit.item.chineseName, hit.item.originalName))
                                             .font(.footnote)
                                             .foregroundStyle(.secondary)
                                     }
@@ -333,7 +338,7 @@ private struct OrderSummaryView: View {
                             }
                         }
                     } header: {
-                        Label("忌口冲突", systemImage: "exclamationmark.triangle.fill")
+                        Label(L("summary.conflicts"), systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.red)
                     }
                 }
@@ -385,20 +390,20 @@ private struct OrderSummaryView: View {
 
                 Section {
                     HStack {
-                        Text("共 \(viewModel.cartCount) 道")
+                        Text(L("summary.count", viewModel.cartCount))
                         Spacer()
                         if let total = viewModel.cartTotalText {
-                            Text("合计 \(total)")
+                            Text(L("summary.total", total))
                                 .font(.body.monospacedDigit().weight(.semibold))
                         }
                     }
                 }
             }
-            .navigationTitle("已点菜品")
+            .navigationTitle(L("summary.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("继续点单") { dismiss() }
+                    Button(L("summary.continue")) { dismiss() }
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -406,7 +411,7 @@ private struct OrderSummaryView: View {
                     onAnnotate()
                     dismiss()
                 } label: {
-                    Label("标注到菜单上给服务员看", systemImage: "checkmark.circle.fill")
+                    Label(L("summary.annotate"), systemImage: "checkmark.circle.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -423,8 +428,8 @@ private struct OrderSummaryView: View {
 /// 🌱 vegan · 🥬 vegetarian · GF gluten-free · 🐑 contains lamb · 🐟 seafood.
 struct DietTagBadges: View {
     let tags: [String]?
-    /// Chinese-target users don't look for gluten-free; hide the GF chip
-    /// there and keep it for other target languages.
+    /// East-Asian-language users don't look for gluten-free; hide the GF
+    /// chip there and keep it for the other languages.
     var showGlutenFree: Bool = true
     /// Meat markers are only shown where they matter (the list); the canvas
     /// stays clean.
@@ -487,6 +492,7 @@ struct QuantityStepper: View {
 private struct DishListView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @Binding var scrollTarget: String?
+    @ObservedObject private var loc = Localization.shared
     @State private var searchText = ""
 
     private struct Row: Identifiable {
@@ -513,7 +519,7 @@ private struct DishListView: View {
                                 photo: photo(for: row),
                                 quantity: viewModel.quantity(of: row.id),
                                 memberBreakdown: viewModel.orderLabels[row.id],
-                                showGlutenFree: TargetLanguage.from(code: viewModel.scan?.targetLanguage).showsGlutenFree,
+                                showGlutenFree: AppLanguage.from(code: viewModel.scan?.targetLanguage).showsGlutenFree,
                                 onPlus: { viewModel.addToCart(row.id) },
                                 onMinus: { viewModel.removeFromCart(row.id) }
                             )
@@ -539,7 +545,7 @@ private struct DishListView: View {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                TextField("搜索菜名（中文或原文）", text: $searchText)
+                TextField(L("list.searchPlaceholder"), text: $searchText)
                     .textFieldStyle(.plain)
                     .autocorrectionDisabled()
                 if !searchText.isEmpty {
@@ -591,7 +597,8 @@ private struct DishListView: View {
                 var title = [section.chineseTitle, section.originalTitle]
                     .compactMap { $0 }.joined(separator: " / ")
                 if multiPage {
-                    title = title.isEmpty ? "第 \(p + 1) 页" : "第 \(p + 1) 页 · \(title)"
+                    let pageLabel = L("page.number", p + 1)
+                    title = title.isEmpty ? pageLabel : "\(pageLabel) · \(title)"
                 }
                 result.append(SectionGroup(id: "p\(p)s\(s)", title: title, rows: rows))
             }
@@ -674,13 +681,14 @@ private struct DishRow: View {
 private struct MemberChips: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @ObservedObject private var party = PartyStore.shared
+    @ObservedObject private var loc = Localization.shared
     @State private var showAddMember = false
     @State private var newName = ""
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                Text("为谁点:")
+                Text(L("chips.forWhom"))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 ForEach(party.members) { member in
@@ -713,15 +721,15 @@ private struct MemberChips: View {
                 .buttonStyle(.plain)
             }
         }
-        .alert("添加成员", isPresented: $showAddMember) {
-            TextField("名字", text: $newName)
-            Button("添加") {
+        .alert(L("chips.addMember"), isPresented: $showAddMember) {
+            TextField(L("settings.member.name"), text: $newName)
+            Button(L("common.add")) {
                 PartyStore.shared.add(name: newName)
                 newName = ""
             }
-            Button("取消", role: .cancel) { newName = "" }
+            Button(L("common.cancel"), role: .cancel) { newName = "" }
         } message: {
-            Text("也可以在设置页管理同行成员。")
+            Text(L("chips.addMemberNote"))
         }
     }
 }

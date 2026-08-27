@@ -77,7 +77,10 @@ struct TextLine: Codable, Hashable {
 struct MenuDocument: Codable, Hashable {
     /// BCP-47-ish language name detected by the model, e.g. "Japanese", "French".
     let sourceLanguage: String
-    /// Chinese name of the detected language, e.g. "日语".
+    /// The detected language's own name written in the TARGET language,
+    /// e.g. "Japanese" for an English target, "日语" for a Chinese one.
+    /// (Field name predates multi-language support; renaming it would break
+    /// every scan already on disk.)
     let sourceLanguageChinese: String
     let restaurantName: String?
     let sections: [MenuSection]
@@ -99,20 +102,21 @@ struct MenuScan: Codable, Hashable, Identifiable {
     let sourceLanguageChinese: String
     /// One document per photographed page, in page order.
     let pages: [MenuDocument]
-    /// TargetLanguage raw value this scan was translated into
+    /// AppLanguage raw value this scan was translated into. Frozen at scan
+    /// time: changing the app language later must not relabel old scans.
     /// (nil on scans made before multi-language support = Chinese).
     var targetLanguage: String?
 
     var allItems: [MenuItemEntry] { pages.flatMap(\.allItems) }
 
     /// Combine per-page analysis results into one scan record.
-    static func combining(pages: [MenuDocument], targetLanguage: TargetLanguage = .simplifiedChinese) -> MenuScan {
+    static func combining(pages: [MenuDocument], targetLanguage: AppLanguage = .simplifiedChinese) -> MenuScan {
         MenuScan(
             id: UUID(),
             createdAt: Date(),
             restaurantName: pages.compactMap(\.restaurantName).first,
             sourceLanguage: pages.first?.sourceLanguage ?? "unknown",
-            sourceLanguageChinese: pages.first?.sourceLanguageChinese ?? "未知",
+            sourceLanguageChinese: pages.first?.sourceLanguageChinese ?? L("common.unknown"),
             pages: pages,
             targetLanguage: targetLanguage.rawValue
         )

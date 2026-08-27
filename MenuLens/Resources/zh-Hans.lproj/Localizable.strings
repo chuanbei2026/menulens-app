@@ -1,0 +1,127 @@
+"app.name" = "口袋菜单";
+
+/* MARK: - Shared */
+"common.cancel" = "取消";
+"common.save" = "保存";
+"common.add" = "添加";
+"common.close" = "关闭";
+"common.unknown" = "未知";
+"list.separator" = "、";
+"page.number" = "第 %d 页";
+
+/* MARK: - First run */
+"onboarding.title" = "先填一个 OpenAI Key 才能识别新菜单";
+"onboarding.body" = "Key 只存在这台手机上。现在也可以直接翻看内置的两份真实餐厅菜单。";
+"onboarding.enterKey" = "填写 Key";
+"onboarding.viewSamples" = "看内置菜单";
+
+/* MARK: - Home */
+"home.headline" = "拍下菜单，得到同版式的对照 PDF";
+"home.subheadline" = "支持多页 · 自动配图 · 任意语言 · 本地保存";
+"home.capture" = "拍照";
+"home.captureMore" = "再拍一页";
+"home.library" = "相册";
+"home.images.title" = "为没有照片的菜生成配图";
+"home.images.note" = "AI 生成，约 $0.003/道，稍慢；本次识别生效";
+"home.analyze" = "识别并翻译";
+"home.analyze.pages" = "识别并翻译（%d 页）";
+"home.samples" = "看看内置示例菜单";
+
+/* MARK: - Settings */
+"settings.title" = "设置";
+"settings.language" = "语言";
+"settings.language.footer" = "同时决定界面语言和菜单翻译的目标语言。菜单本身的语言无需设置，自动识别。";
+"settings.apiKey.header" = "OpenAI API Key";
+"settings.apiKey.help" = "如何获取 OpenAI API Key？";
+"settings.apiKey.footer" = "在上方链接的 OpenAI 平台注册并充值后，创建一个 Key 粘贴到这里。Key 只保存在你手机本地的系统钥匙串（Keychain）中，只用于直接调用 OpenAI —— 不会上传到任何云端，本 App 没有自己的服务器。";
+"settings.model" = "模型";
+"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / $0.03（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / $0.01（更省钱，译名更讲究，但要等更久）· gpt-5 最准也最慢。配图另计，拼图模式约 $0.003/道。";
+"settings.party.header" = "同行成员";
+"settings.party.footer" = "点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。";
+"settings.member.name" = "名字";
+"settings.member.avoid" = "不吃";
+"settings.member.addPlaceholder" = "添加成员…";
+"settings.flatten" = "整页匀光（推荐）";
+"settings.flatten.footer" = "消除拍照时的阴影和光斑，纸面变得干净均匀，翻译文字与原版融合得更自然。深色菜单会自动跳过。";
+"settings.grid" = "拼图省钱模式";
+"settings.grid.footer" = "是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，每道菜约 $0.003（单张模式约 $0.011，画质稍好）。菜单本身的照片始终优先使用。";
+
+/* MARK: - Scan progress */
+"progress.note" = "排版完成后立即可以查看，配图会在后台继续补齐";
+"progress.stage.rectify" = "矫正照片";
+"progress.stage.translate" = "翻译文字";
+"progress.stage.layout" = "排版布局";
+"progress.stage.images" = "生成配图";
+"progress.pages" = "%d 页";
+"progress.pages.fraction" = "%1$d/%2$d 页";
+"progress.lines.fraction" = "%1$d/%2$d 行";
+"progress.reading" = "正在读取文字…";
+"progress.waitingModel" = "读到 %d 行，等待模型…";
+"progress.linesElapsed" = "%1$d 行待翻译 · 已用 %2$d 秒";
+"progress.waitRectify" = "等待矫正完成";
+"progress.waitTranslate" = "等待翻译完成";
+"progress.layoutRunning" = "排版中…";
+"progress.imagesOff" = "已在设置中关闭";
+"progress.menuHasPhotos" = "菜单已有照片";
+"progress.images" = "%d 张";
+"progress.images.fraction" = "%1$d/%2$d 张";
+
+/* MARK: - Result */
+"result.generatingImages" = "正在生成菜品配图";
+"result.selected" = "已选 %d 道";
+"result.summary" = "总结";
+"result.tab.canvas" = "画布";
+"result.tab.list" = "列表";
+"result.home" = "返回首页";
+"result.exportPDF" = "导出 PDF";
+"canvas.showTranslation" = "看译文";
+"canvas.showOriginal" = "看原文";
+"canvas.drawing" = "正在绘制画布…";
+"share.menu" = "菜单";
+"list.searchPlaceholder" = "搜索菜名（译文或原文）";
+"chips.forWhom" = "为谁点:";
+"chips.addMember" = "添加成员";
+"chips.addMemberNote" = "也可以在设置页管理同行成员。";
+
+/* MARK: - Order summary */
+"summary.title" = "已点菜品";
+"summary.conflicts" = "忌口冲突";
+"summary.avoidsButOrdered" = "但点了「%1$@」%2$@";
+"summary.count" = "共 %d 道";
+"summary.total" = "合计 %@";
+"summary.continue" = "继续点单";
+"summary.annotate" = "标注到菜单上给服务员看";
+
+/* MARK: - History */
+"history.title" = "历史记录";
+"history.empty.title" = "还没有记录";
+"history.empty.body" = "识别过的菜单会自动保存在这里，方便再去同一家餐厅时直接查看。";
+"history.untitled" = "未命名菜单";
+"history.meta" = "%1$@ · %2$d 道菜 · %3$d 页";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "纯素";
+"diet.vegetarian" = "素";
+"diet.glutenFree" = "麸质";
+"diet.pork" = "猪肉";
+"diet.chicken" = "鸡肉";
+"diet.beef" = "牛肉";
+"diet.lamb" = "羊肉";
+"diet.seafood" = "海鲜";
+"diet.avoid.gluten" = "忌麸质";
+"diet.avoid" = "不吃%@";
+
+"party.me" = "我";
+
+/* MARK: - Errors */
+"error.encodeImages" = "无法编码所选图片。";
+"error.recognizeFailed" = "识别失败，请重试。";
+"notice.partialPages" = "有 %1$d 页没能识别，已保留其余 %2$d 页。可以重新识别那几页。";
+"error.missingKey" = "尚未设置 OpenAI API Key，请先在设置页填写。";
+"error.http" = "OpenAI 请求失败（HTTP %1$d）：%2$@";
+"error.emptyResponse" = "OpenAI 返回了空结果。";
+"error.refusal" = "模型拒绝了这次请求：%@";
+"error.badLineIndex" = "模型返回了无效的行号。";
+
+/* MARK: - PDF */
+"pdf.header" = "菜品对照 · %1$@ → %2$@";

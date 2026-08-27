@@ -61,7 +61,15 @@ struct MenuPDFRenderer {
             ctx.beginPage(withBounds: page, pageInfo: [:])
             UIColor.white.setFill()
             ctx.fill(page)
-            var header = "菜品对照 · \(scan.sourceLanguageChinese) → \(TargetLanguage.from(code: scan.targetLanguage).displayName)"
+            // Labelled in the scan's OWN target language, not the app's
+            // current one: the pages below it are in that language.
+            let scanLanguage = AppLanguage.from(code: scan.targetLanguage)
+            var header = String(
+                format: Loc.bundle(for: scanLanguage)
+                    .localizedString(forKey: "pdf.header", value: "pdf.header", table: "Localizable"),
+                locale: scanLanguage.locale,
+                scan.sourceLanguageChinese, scanLanguage.displayName
+            )
             if let name = scan.restaurantName { header = "\(name) — " + header }
             TextDraw.text(header, font: .boldSystemFont(ofSize: 30), color: .black,
                           at: CGPoint(x: margin, y: 46), maxWidth: contentWidth)
@@ -74,7 +82,7 @@ struct MenuPDFRenderer {
             if scan.pages.count > 1 {
                 if y + 70 > page.height - margin { newPage() }
                 y += 16
-                y += TextDraw.text("第 \(pageIndex + 1) 页", font: .systemFont(ofSize: 20, weight: .semibold),
+                y += TextDraw.text(L("page.number", pageIndex + 1), font: .systemFont(ofSize: 20, weight: .semibold),
                                    color: .gray, at: CGPoint(x: margin, y: y), maxWidth: contentWidth) + 8
             }
 

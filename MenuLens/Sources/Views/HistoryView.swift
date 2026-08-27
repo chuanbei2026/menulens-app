@@ -5,15 +5,16 @@ struct HistoryView: View {
     @ObservedObject var history: HistoryStore
     let onOpen: (MenuScan) -> Void
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var loc = Localization.shared
 
     var body: some View {
         NavigationStack {
             Group {
                 if history.scans.isEmpty {
                     ContentUnavailableView(
-                        "还没有记录",
+                        L("history.empty.title"),
                         systemImage: "clock.arrow.circlepath",
-                        description: Text("识别过的菜单会自动保存在这里，方便再去同一家餐厅时直接查看。")
+                        description: Text(L("history.empty.body"))
                     )
                 } else {
                     List {
@@ -34,11 +35,11 @@ struct HistoryView: View {
                     }
                 }
             }
-            .navigationTitle("历史记录")
+            .navigationTitle(L("history.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button(L("common.close")) { dismiss() }
                 }
                 if !history.scans.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) { EditButton() }
@@ -51,15 +52,19 @@ struct HistoryView: View {
 
 private struct HistoryRow: View {
     let scan: MenuScan
+    @ObservedObject private var loc = Localization.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(scan.restaurantName ?? "未命名菜单")
+            Text(scan.restaurantName ?? L("history.untitled"))
                 .font(.headline)
-            Text("\(scan.sourceLanguageChinese) · \(scan.allItems.count) 道菜 · \(scan.pages.count) 页")
+            Text(L("history.meta", scan.sourceLanguageChinese, scan.allItems.count, scan.pages.count))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text(scan.createdAt.formatted(date: .abbreviated, time: .shortened))
+            // Date format follows the chosen language too, not the device.
+            Text(scan.createdAt.formatted(
+                Date.FormatStyle(date: .abbreviated, time: .shortened).locale(loc.locale)
+            ))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }

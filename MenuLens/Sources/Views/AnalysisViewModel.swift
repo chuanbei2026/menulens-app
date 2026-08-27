@@ -74,8 +74,9 @@ final class AnalysisViewModel: ObservableObject {
 
     /// Model id is a plain preference; the API key lives in the Keychain.
     @AppStorage("openai_model") var model = "gpt-4.1"
-    /// TargetLanguage raw value the menu gets translated into.
-    @AppStorage("target_language") var targetLanguageCode = TargetLanguage.simplifiedChinese.rawValue
+    /// The app language, which is also what the menu gets translated into.
+    /// Same defaults key `Loc` reads — see Localization.swift.
+    @AppStorage("target_language") var targetLanguageCode = AppLanguage.deviceDefault.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
     @AppStorage("generate_dish_images") var generateDishImages = true
 
@@ -123,11 +124,11 @@ final class AnalysisViewModel: ObservableObject {
         let jpegs = images.compactMap { $0.jpegDataForUpload() }
         guard jpegs.count == images.count else {
             pipeline = nil
-            phase = .failed("无法编码所选图片。")
+            phase = .failed(L("error.encodeImages"))
             return
         }
         pipeline?.translateStartedAt = Date()
-        let target = TargetLanguage.from(code: targetLanguageCode)
+        let target = AppLanguage.from(code: targetLanguageCode)
         let client = OpenAIClient(
             apiKey: KeychainStore.loadAPIKey(),
             model: model,
@@ -184,12 +185,12 @@ final class AnalysisViewModel: ObservableObject {
         }
         guard !results.isEmpty else {
             pipeline = nil
-            phase = .failed(lastError?.localizedDescription ?? "识别失败，请重试。")
+            phase = .failed(lastError?.localizedDescription ?? L("error.recognizeFailed"))
             return
         }
         let failedPages = images.count - results.count
         notice = failedPages > 0
-            ? "有 \(failedPages) 页没能识别，已保留其余 \(results.count) 页。可以重新识别那几页。"
+            ? L("notice.partialPages", failedPages, results.count)
             : nil
         do {
             let newScan = MenuScan.combining(pages: results.map(\.document), targetLanguage: target)
@@ -293,7 +294,7 @@ final class AnalysisViewModel: ObservableObject {
         cart.mapValues { $0.values.reduce(0, +) }
     }
 
-    /// "我 · 小明×2"-style label per dish, for the canvas annotations.
+    /// "Me · Alex×2"-style label per dish, for the canvas annotations.
     var orderLabels: [String: String] {
         cart.mapValues { perMember in
             party.members.compactMap { member in

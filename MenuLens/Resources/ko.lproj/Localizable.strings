@@ -1,0 +1,127 @@
+"app.name" = "MenuLens";
+
+/* MARK: - Shared */
+"common.cancel" = "취소";
+"common.save" = "저장";
+"common.add" = "추가";
+"common.close" = "닫기";
+"common.unknown" = "알 수 없음";
+"list.separator" = ", ";
+"page.number" = "%d페이지";
+
+/* MARK: - First run */
+"onboarding.title" = "새 메뉴를 인식하려면 OpenAI 키가 필요합니다";
+"onboarding.body" = "키는 이 기기에만 저장됩니다. 지금 바로 내장된 실제 식당 메뉴 2개를 살펴볼 수도 있습니다.";
+"onboarding.enterKey" = "키 입력";
+"onboarding.viewSamples" = "샘플 보기";
+
+/* MARK: - Home */
+"home.headline" = "메뉴를 찍으면 원래 레이아웃 그대로 번역됩니다";
+"home.subheadline" = "여러 페이지 · 음식 사진 · 다국어 · 기기 내 저장";
+"home.capture" = "촬영";
+"home.captureMore" = "다음 페이지";
+"home.library" = "사진";
+"home.images.title" = "사진이 없는 요리에 이미지 생성";
+"home.images.note" = "AI 생성, 요리당 약 $0.003, 조금 느립니다. 이번 인식에 적용";
+"home.analyze" = "인식하고 번역";
+"home.analyze.pages" = "인식하고 번역(%d페이지)";
+"home.samples" = "내장 샘플 메뉴 보기";
+
+/* MARK: - Settings */
+"settings.title" = "설정";
+"settings.language" = "언어";
+"settings.language.footer" = "앱의 표시 언어와 메뉴 번역 대상 언어를 함께 바꿉니다. 메뉴 자체의 언어는 자동으로 인식됩니다.";
+"settings.apiKey.header" = "OpenAI API 키";
+"settings.apiKey.help" = "OpenAI API 키는 어떻게 받나요?";
+"settings.apiKey.footer" = "위 링크의 OpenAI 플랫폼에서 가입하고 크레딧을 충전한 뒤 키를 만들어 여기에 붙여 넣으세요. 키는 이 기기의 키체인에만 저장되며 OpenAI를 직접 호출하는 데만 쓰입니다. 어디에도 업로드되지 않으며, 이 앱에는 자체 서버가 없습니다.";
+"settings.model" = "모델";
+"settings.model.footer" = "빽빽한 메뉴 한 페이지(148행) 실측: gpt-4.1 약 45초 / $0.03(권장, 번역 진행 상황이 보임) · gpt-5-mini 약 115초 / $0.01(더 저렴하고 번역이 정성스럽지만 오래 기다림) · gpt-5는 가장 정확하고 가장 느립니다. 요리 이미지는 별도 과금, 콜라주 모드에서 요리당 약 $0.003.";
+"settings.party.header" = "같이 먹는 사람";
+"settings.party.footer" = "주문할 때 누가 시킨 요리인지 표시해 두면 음식이 나올 때 헷갈리지 않습니다. 못 먹는 것을 설정하면 주문 요약이 모든 요리를 확인해 눈에 띄게 알려 줍니다. 아이콘을 눌러 사진을 넣고, ✕로 삭제합니다.";
+"settings.member.name" = "이름";
+"settings.member.avoid" = "못 먹는 것";
+"settings.member.addPlaceholder" = "사람 추가…";
+"settings.flatten" = "페이지 밝기 고르게(권장)";
+"settings.flatten.footer" = "손으로 찍을 때 생긴 그림자와 반사를 없애 지면이 깔끔해지고, 번역된 글자가 원본에 자연스럽게 어울립니다. 어두운 메뉴는 자동으로 건너뜁니다.";
+"settings.grid" = "콜라주 절약 모드";
+"settings.grid.footer" = "요리 이미지를 만들지 여부는 홈 화면에서 인식할 때마다 선택합니다. 콜라주 모드는 2×2 한 장을 만든 뒤 잘라 쓰며 요리당 약 $0.003입니다(한 장씩은 약 $0.011, 화질이 조금 더 좋음). 메뉴에 인쇄된 사진은 항상 우선 사용됩니다.";
+
+/* MARK: - Scan progress */
+"progress.note" = "레이아웃이 끝나면 바로 볼 수 있고, 요리 이미지는 뒤에서 계속 채워집니다";
+"progress.stage.rectify" = "사진 보정";
+"progress.stage.translate" = "텍스트 번역";
+"progress.stage.layout" = "레이아웃";
+"progress.stage.images" = "요리 이미지 생성";
+"progress.pages" = "%d페이지";
+"progress.pages.fraction" = "%1$d/%2$d페이지";
+"progress.lines.fraction" = "%1$d/%2$d행";
+"progress.reading" = "텍스트를 읽는 중…";
+"progress.waitingModel" = "%d행을 읽었고 모델을 기다리는 중…";
+"progress.linesElapsed" = "번역할 %1$d행 · %2$d초 경과";
+"progress.waitRectify" = "보정 완료 대기";
+"progress.waitTranslate" = "번역 완료 대기";
+"progress.layoutRunning" = "배치 중…";
+"progress.imagesOff" = "설정에서 꺼짐";
+"progress.menuHasPhotos" = "메뉴에 사진 있음";
+"progress.images" = "%d장";
+"progress.images.fraction" = "%1$d/%2$d장";
+
+/* MARK: - Result */
+"result.generatingImages" = "요리 이미지 생성 중";
+"result.selected" = "%d개 선택";
+"result.summary" = "요약";
+"result.tab.canvas" = "메뉴";
+"result.tab.list" = "목록";
+"result.home" = "홈으로";
+"result.exportPDF" = "PDF 내보내기";
+"canvas.showTranslation" = "번역문";
+"canvas.showOriginal" = "원문";
+"canvas.drawing" = "메뉴를 그리는 중…";
+"share.menu" = "메뉴";
+"list.searchPlaceholder" = "요리 이름 검색(번역문 또는 원문)";
+"chips.forWhom" = "누구 것:";
+"chips.addMember" = "사람 추가";
+"chips.addMemberNote" = "설정에서도 같이 먹는 사람을 관리할 수 있습니다.";
+
+/* MARK: - Order summary */
+"summary.title" = "주문한 요리";
+"summary.conflicts" = "못 먹는 재료 충돌";
+"summary.avoidsButOrdered" = "그런데 「%1$@」%2$@ 를 주문했습니다";
+"summary.count" = "총 %d개";
+"summary.total" = "합계 %@";
+"summary.continue" = "계속 주문";
+"summary.annotate" = "메뉴에 표시해 직원에게 보여주기";
+
+/* MARK: - History */
+"history.title" = "기록";
+"history.empty.title" = "아직 기록이 없습니다";
+"history.empty.body" = "인식한 메뉴는 여기에 자동으로 저장되므로, 같은 식당에 다시 갈 때는 다시 인식할 필요가 없습니다.";
+"history.untitled" = "이름 없는 메뉴";
+"history.meta" = "%1$@ · 요리 %2$d개 · %3$d페이지";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "비건";
+"diet.vegetarian" = "채식";
+"diet.glutenFree" = "글루텐";
+"diet.pork" = "돼지고기";
+"diet.chicken" = "닭고기";
+"diet.beef" = "소고기";
+"diet.lamb" = "양고기";
+"diet.seafood" = "해산물";
+"diet.avoid.gluten" = "글루텐 피함";
+"diet.avoid" = "%@ 안 먹음";
+
+"party.me" = "나";
+
+/* MARK: - Errors */
+"error.encodeImages" = "선택한 사진을 변환할 수 없습니다.";
+"error.recognizeFailed" = "인식에 실패했습니다. 다시 시도해 주세요.";
+"notice.partialPages" = "%1$d페이지를 인식하지 못했지만 나머지 %2$d페이지는 보관했습니다. 해당 페이지만 다시 인식할 수 있습니다.";
+"error.missingKey" = "OpenAI API 키가 없습니다. 먼저 설정에서 입력해 주세요.";
+"error.http" = "OpenAI 요청이 실패했습니다(HTTP %1$d): %2$@";
+"error.emptyResponse" = "OpenAI가 빈 결과를 반환했습니다.";
+"error.refusal" = "모델이 이 요청을 거부했습니다: %@";
+"error.badLineIndex" = "모델이 잘못된 행 번호를 반환했습니다.";
+
+/* MARK: - PDF */
+"pdf.header" = "요리 대역 · %1$@ → %2$@";

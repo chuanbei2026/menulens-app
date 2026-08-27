@@ -1,6 +1,6 @@
 # MenuLens
 
-拍下外语菜单（**支持多页**），得到一份**同版式、可缩放**的中文对照 PDF：
+拍下外语菜单（**支持多页**），得到一份**同版式、可缩放**的对照 PDF：
 
 - 📷 **输入**：菜单照片，一页或多页（连拍或相册多选，最多 8 页）
 - 🧠 **识别**：每页各调一次 OpenAI 视觉模型（默认 `gpt-4.1`，**页间并发**），
@@ -14,6 +14,24 @@
   - **版式页**（每拍摄页一张）：与照片同比例的大页面，原图淡淡地垫在底下，
     每道菜的双语卡片画在它自己的 bbox 位置上 —— 读起来就像原菜单的双语版
   - **附录页**：每道菜一张可读性优先的卡片（配图 + 双语名称/描述 + 价格），分页排版
+
+## Language
+
+设置页里只有**一个**语言开关，它同时决定两件事：**界面语言**和**菜单翻译的目标语言**。
+支持 `zh-Hans` / `en` / `ja` / `ko` / `fr` / `es`。菜单原文语言永远自动识别，不需要设置。
+
+- 全新安装跟随**设备语言**（`AppLanguage.deviceDefault`），设备语言不在上述六种里则回落英文。
+- 切换后**立即生效、不需要重启**，也不会丢掉正在看的识别结果。
+- 所有界面文案走 `L("key")`（`MenuLens/Sources/Localization/Localization.swift`），
+  它按 App 内的选择显式加载 `<lang>.lproj/Localizable.strings`。
+  **不要**用 `NSLocalizedString` 或 SwiftUI 的 `Text("字面量")` —— 那两者跟随的是
+  *设备* 语言，会出现「界面中文、译文法语」的错配。
+- 加新文案：六份 `MenuLens/Resources/*.lproj/Localizable.strings` 同时加同一个 key
+  （键集合和格式占位符必须完全一致），再在代码里 `L("新key")`。
+- 已保存的识别结果**保留自己当初的语言**（`MenuScan.targetLanguage`）：换界面语言不会
+  重译旧菜单，PDF 表头也仍按那份扫描自己的语言渲染。
+- 例外：桌面图标名和相机/相册权限弹窗由 iOS 自己绘制，只能跟随**设备**语言
+  （`<lang>.lproj/InfoPlist.strings`）；`EditButton`、搜索框等系统控件同理。
 
 ## Architecture
 
@@ -41,6 +59,7 @@ Key files:
 | `MenuLens/Sources/Services/KeychainStore.swift` | API key 存 Keychain |
 | `MenuLens/Sources/PDF/MenuPDFRenderer.swift` | 版式页 + 附录页的 PDF 渲染 |
 | `MenuLens/Sources/Views/` | SwiftUI：主流程、结果页、逐词对照 FlowLayout、设置页、相机 |
+| `MenuLens/Sources/Localization/Localization.swift` | `L("key")` + `AppLanguage`：按 App 内选择加载 `.lproj`，见上面 Language 一节 |
 
 ## Getting started
 

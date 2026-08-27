@@ -24,20 +24,21 @@ enum DietTag: String, CaseIterable, Identifiable {
     /// Short label used on member chips and warnings.
     var shortLabel: String {
         switch self {
-        case .vegan: return "纯素"
-        case .vegetarian: return "素"
-        case .glutenFree: return "麸质"
-        case .pork: return "猪肉"
-        case .chicken: return "鸡肉"
-        case .beef: return "牛肉"
-        case .lamb: return "羊肉"
-        case .seafood: return "海鲜"
+        case .vegan: return L("diet.vegan")
+        case .vegetarian: return L("diet.vegetarian")
+        case .glutenFree: return L("diet.glutenFree")
+        case .pork: return L("diet.pork")
+        case .chicken: return L("diet.chicken")
+        case .beef: return L("diet.beef")
+        case .lamb: return L("diet.lamb")
+        case .seafood: return L("diet.seafood")
         }
     }
 
-    /// What a member's avoidance means in a sentence ("不吃猪肉" / "忌麸质").
+    /// What a member's avoidance means in a sentence ("doesn't eat pork").
+    /// Gluten is phrased separately: it is avoided, not "not eaten".
     var avoidanceLabel: String {
-        self == .glutenFree ? "忌麸质" : "不吃\(shortLabel)"
+        self == .glutenFree ? L("diet.avoid.gluten") : L("diet.avoid", shortLabel)
     }
 
     var badge: String {

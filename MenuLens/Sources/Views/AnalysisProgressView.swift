@@ -5,6 +5,7 @@ import SwiftUI
 /// its own live progress, so a 1–2 minute wait never looks stuck.
 struct AnalysisProgressView: View {
     @ObservedObject var viewModel: AnalysisViewModel
+    @ObservedObject private var loc = Localization.shared
 
     var body: some View {
         VStack(spacing: 22) {
@@ -46,7 +47,7 @@ struct AnalysisProgressView: View {
                 }
             }
 
-            Text("排版完成后立即可以查看，配图会在后台继续补齐")
+            Text(L("progress.note"))
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
 
@@ -59,12 +60,12 @@ struct AnalysisProgressView: View {
     private func rectifyRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "perspective",
-            title: "矫正照片",
+            title: L("progress.stage.rectify"),
             status: progress.rectifyDone >= progress.rectifyTotal
-                ? .done("\(progress.rectifyTotal) 页")
+                ? .done(L("progress.pages", progress.rectifyTotal))
                 : .running(
                     fraction: Double(progress.rectifyDone) / Double(max(progress.rectifyTotal, 1)),
-                    label: "\(progress.rectifyDone)/\(progress.rectifyTotal) 页"
+                    label: L("progress.pages.fraction", progress.rectifyDone, progress.rectifyTotal)
                 )
         )
     }
@@ -72,28 +73,28 @@ struct AnalysisProgressView: View {
     /// Reasoning models are silent for most of the request, so show the
     /// clock (and what we already know) rather than a frozen counter.
     private func thinkingLabel(_ progress: PipelineProgress) -> String {
-        guard progress.linesTotal > 0 else { return "正在读取文字…" }
+        guard progress.linesTotal > 0 else { return L("progress.reading") }
         guard let started = progress.translateStartedAt else {
-            return "读到 \(progress.linesTotal) 行，等待模型…"
+            return L("progress.waitingModel", progress.linesTotal)
         }
         let seconds = max(0, Int(Date().timeIntervalSince(started)))
-        return "\(progress.linesTotal) 行待翻译 · 已用 \(seconds) 秒"
+        return L("progress.linesElapsed", progress.linesTotal, seconds)
     }
 
     private func translateRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "character.book.closed",
-            title: "翻译文字",
+            title: L("progress.stage.translate"),
             status: progress.rectifyDone < progress.rectifyTotal
-                ? .pending("等待矫正完成")
+                ? .pending(L("progress.waitRectify"))
                 : progress.pagesDone >= progress.pagesTotal
-                ? .done("\(progress.pagesTotal) 页")
+                ? .done(L("progress.pages", progress.pagesTotal))
                 : progress.linesDone > 0
                 // Line-level movement: the model streams its answer, and the
                 // OCR inventory gives us an honest denominator.
                 ? .running(
                     fraction: Double(progress.linesDone) / Double(max(progress.linesTotal, 1)),
-                    label: "\(progress.linesDone)/\(progress.linesTotal) 行"
+                    label: L("progress.lines.fraction", progress.linesDone, progress.linesTotal)
                 )
                 : .running(fraction: nil, label: thinkingLabel(progress))
         )
@@ -102,11 +103,11 @@ struct AnalysisProgressView: View {
     private func layoutRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "doc.richtext",
-            title: "排版布局",
+            title: L("progress.stage.layout"),
             status: {
                 switch progress.layoutState {
-                case .waiting: return .pending("等待翻译完成")
-                case .running: return .running(fraction: nil, label: "排版中…")
+                case .waiting: return .pending(L("progress.waitTranslate"))
+                case .running: return .running(fraction: nil, label: L("progress.layoutRunning"))
                 case .done: return .done(nil)
                 }
             }()
@@ -116,19 +117,19 @@ struct AnalysisProgressView: View {
     private func imagesRow(_ progress: PipelineProgress) -> some View {
         StageRow(
             icon: "photo.artframe",
-            title: "生成配图",
+            title: L("progress.stage.images"),
             status: {
                 if !viewModel.generateDishImages {
-                    return .pending("已在设置中关闭")
+                    return .pending(L("progress.imagesOff"))
                 }
                 guard let total = progress.imagesTotal else {
-                    return .pending("等待翻译完成")
+                    return .pending(L("progress.waitTranslate"))
                 }
-                if total == 0 { return .done("菜单已有照片") }
-                if progress.imagesDone >= total { return .done("\(total) 张") }
+                if total == 0 { return .done(L("progress.menuHasPhotos")) }
+                if progress.imagesDone >= total { return .done(L("progress.images", total)) }
                 return .running(
                     fraction: Double(progress.imagesDone) / Double(total),
-                    label: "\(progress.imagesDone)/\(total) 张"
+                    label: L("progress.images.fraction", progress.imagesDone, total)
                 )
             }()
         )

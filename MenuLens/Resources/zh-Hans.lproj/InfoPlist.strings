@@ -1,2 +1,3 @@
-/* Chinese display name under the home-screen icon */
 "CFBundleDisplayName" = "口袋菜单";
+"NSCameraUsageDescription" = "拍摄菜单照片，用于识别与翻译菜单内容。";
+"NSPhotoLibraryUsageDescription" = "从相册选择菜单照片，用于识别与翻译菜单内容。";

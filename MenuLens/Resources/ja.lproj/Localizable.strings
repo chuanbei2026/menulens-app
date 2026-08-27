@@ -1,0 +1,127 @@
+"app.name" = "MenuLens";
+
+/* MARK: - Shared */
+"common.cancel" = "キャンセル";
+"common.save" = "保存";
+"common.add" = "追加";
+"common.close" = "閉じる";
+"common.unknown" = "不明";
+"list.separator" = "・";
+"page.number" = "%dページ目";
+
+/* MARK: - First run */
+"onboarding.title" = "新しいメニューを読み取るには OpenAI キーが必要です";
+"onboarding.body" = "キーはこの端末から外に出ません。今すぐ、内蔵の実店舗メニュー2件を見てみることもできます。";
+"onboarding.enterKey" = "キーを入力";
+"onboarding.viewSamples" = "サンプルを見る";
+
+/* MARK: - Home */
+"home.headline" = "メニューを撮ると、同じレイアウトのまま翻訳されます";
+"home.subheadline" = "複数ページ対応 · 料理写真 · 多言語 · 端末内に保存";
+"home.capture" = "撮影";
+"home.captureMore" = "次のページ";
+"home.library" = "写真";
+"home.images.title" = "写真のない料理に画像を生成";
+"home.images.note" = "AI 生成、1品あたり約 $0.003、やや時間がかかります。今回の読み取りに適用";
+"home.analyze" = "読み取って翻訳";
+"home.analyze.pages" = "読み取って翻訳（%dページ）";
+"home.samples" = "内蔵のサンプルメニューを見る";
+
+/* MARK: - Settings */
+"settings.title" = "設定";
+"settings.language" = "言語";
+"settings.language.footer" = "アプリの表示言語と、メニューの翻訳先言語の両方を切り替えます。メニュー自体の言語は自動で判別されます。";
+"settings.apiKey.header" = "OpenAI API キー";
+"settings.apiKey.help" = "OpenAI API キーの取得方法";
+"settings.apiKey.footer" = "上のリンクから OpenAI のプラットフォームに登録し、残高を追加してからキーを作成し、ここに貼り付けてください。キーはこの端末のキーチェーンにのみ保存され、OpenAI を直接呼び出すためだけに使われます。どこにもアップロードされません。このアプリは独自のサーバーを持ちません。";
+"settings.model" = "モデル";
+"settings.model.footer" = "文字の詰まった1ページ（148行）での実測：gpt-4.1 約45秒 / $0.03（おすすめ、翻訳の進捗が見えます）· gpt-5-mini 約115秒 / $0.01（安価で訳語も丁寧ですが待ち時間が長い）· gpt-5 は最も正確で最も遅い。料理画像は別料金、コラージュモードで1品約 $0.003。";
+"settings.party.header" = "同席する人";
+"settings.party.footer" = "注文時に「誰が頼んだか」を記録できるので、料理が来たときに取り違えません。食べられないものを設定すると、注文一覧が全品をチェックしてはっきり警告します。アイコンをタップして写真を設定、✕ で削除します。";
+"settings.member.name" = "名前";
+"settings.member.avoid" = "苦手";
+"settings.member.addPlaceholder" = "人を追加…";
+"settings.flatten" = "ページ全体の明るさを均一化（推奨）";
+"settings.flatten.footer" = "手持ち撮影の影やテカリを取り除き、紙面がきれいに整うので、訳文が元のデザインに自然に溶け込みます。暗いメニューは自動的にスキップされます。";
+"settings.grid" = "コラージュ節約モード";
+"settings.grid.footer" = "料理画像を生成するかどうかは、ホーム画面で読み取りごとにチェックします。コラージュモードは2×2の1枚をまとめて生成して切り分け、1品約 $0.003（1枚ずつは約 $0.011 で画質はやや上）。メニューに印刷された写真は常に優先されます。";
+
+/* MARK: - Scan progress */
+"progress.note" = "レイアウトができ次第すぐ読めます。料理画像は裏で埋まっていきます";
+"progress.stage.rectify" = "写真の補正";
+"progress.stage.translate" = "文字の翻訳";
+"progress.stage.layout" = "レイアウト";
+"progress.stage.images" = "料理画像の生成";
+"progress.pages" = "%dページ";
+"progress.pages.fraction" = "%1$d/%2$dページ";
+"progress.lines.fraction" = "%1$d/%2$d行";
+"progress.reading" = "文字を読み取り中…";
+"progress.waitingModel" = "%d行を読み取り、モデルの応答待ち…";
+"progress.linesElapsed" = "%1$d行を翻訳中 · 経過 %2$d秒";
+"progress.waitRectify" = "補正の完了待ち";
+"progress.waitTranslate" = "翻訳の完了待ち";
+"progress.layoutRunning" = "レイアウト中…";
+"progress.imagesOff" = "設定でオフ";
+"progress.menuHasPhotos" = "メニューに写真あり";
+"progress.images" = "%d枚";
+"progress.images.fraction" = "%1$d/%2$d枚";
+
+/* MARK: - Result */
+"result.generatingImages" = "料理画像を生成中";
+"result.selected" = "%d品を選択中";
+"result.summary" = "注文一覧";
+"result.tab.canvas" = "メニュー";
+"result.tab.list" = "リスト";
+"result.home" = "ホームに戻る";
+"result.exportPDF" = "PDF を書き出す";
+"canvas.showTranslation" = "訳文";
+"canvas.showOriginal" = "原文";
+"canvas.drawing" = "メニューを描画中…";
+"share.menu" = "メニュー";
+"list.searchPlaceholder" = "料理名を検索（訳文・原文）";
+"chips.forWhom" = "誰の注文:";
+"chips.addMember" = "人を追加";
+"chips.addMemberNote" = "設定画面でも同席する人を管理できます。";
+
+/* MARK: - Order summary */
+"summary.title" = "注文した料理";
+"summary.conflicts" = "苦手な食材との衝突";
+"summary.avoidsButOrdered" = "でも「%1$@」%2$@ を注文しています";
+"summary.count" = "計 %d 品";
+"summary.total" = "合計 %@";
+"summary.continue" = "注文を続ける";
+"summary.annotate" = "メニューに印を付けて店員に見せる";
+
+/* MARK: - History */
+"history.title" = "履歴";
+"history.empty.title" = "まだ履歴がありません";
+"history.empty.body" = "読み取ったメニューはここに自動保存されるので、同じお店に再訪したときは読み取り直す必要がありません。";
+"history.untitled" = "名称未設定のメニュー";
+"history.meta" = "%1$@ · %2$d品 · %3$dページ";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "ヴィーガン";
+"diet.vegetarian" = "ベジ";
+"diet.glutenFree" = "グルテン";
+"diet.pork" = "豚肉";
+"diet.chicken" = "鶏肉";
+"diet.beef" = "牛肉";
+"diet.lamb" = "羊肉";
+"diet.seafood" = "魚介";
+"diet.avoid.gluten" = "グルテンを避ける";
+"diet.avoid" = "%@を食べない";
+
+"party.me" = "自分";
+
+/* MARK: - Errors */
+"error.encodeImages" = "選択した写真を変換できませんでした。";
+"error.recognizeFailed" = "読み取りに失敗しました。もう一度お試しください。";
+"notice.partialPages" = "%1$dページを読み取れませんでしたが、残りの %2$dページは保持しました。そのページだけ読み取り直せます。";
+"error.missingKey" = "OpenAI API キーが未設定です。まず設定画面で入力してください。";
+"error.http" = "OpenAI へのリクエストが失敗しました（HTTP %1$d）：%2$@";
+"error.emptyResponse" = "OpenAI から空の結果が返りました。";
+"error.refusal" = "モデルがこのリクエストを拒否しました：%@";
+"error.badLineIndex" = "モデルが不正な行番号を返しました。";
+
+/* MARK: - PDF */
+"pdf.header" = "料理対訳 · %1$@ → %2$@";

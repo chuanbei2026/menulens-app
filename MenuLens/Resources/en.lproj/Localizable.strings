@@ -1,0 +1,135 @@
+/* Base language. Every key in this file must exist in all six .lproj
+   tables; a missing one falls back to showing the key itself. */
+
+"app.name" = "MenuLens";
+
+/* MARK: - Shared */
+"common.cancel" = "Cancel";
+"common.save" = "Save";
+"common.add" = "Add";
+"common.close" = "Close";
+"common.unknown" = "Unknown";
+/* Joins several restrictions in one sentence: "no pork, no seafood" */
+"list.separator" = ", ";
+"page.number" = "Page %d";
+
+/* MARK: - First run */
+"onboarding.title" = "Add an OpenAI key to scan a new menu";
+"onboarding.body" = "The key never leaves this phone. In the meantime you can browse the two real restaurant menus already inside.";
+"onboarding.enterKey" = "Add key";
+"onboarding.viewSamples" = "Browse samples";
+
+/* MARK: - Home */
+"home.headline" = "Photograph a menu, get it back translated in place";
+"home.subheadline" = "Multi-page · Dish photos · Any language · Stored on device";
+"home.capture" = "Camera";
+"home.captureMore" = "Another page";
+"home.library" = "Photos";
+"home.images.title" = "Generate photos for dishes that have none";
+"home.images.note" = "AI-generated, about $0.003 a dish, a little slower; applies to this scan";
+"home.analyze" = "Scan and translate";
+"home.analyze.pages" = "Scan and translate (%d pages)";
+"home.samples" = "Browse the built-in sample menus";
+
+/* MARK: - Settings */
+"settings.title" = "Settings";
+"settings.language" = "Language";
+"settings.language.footer" = "Sets both the app's own language and the language menus are translated into. The menu's own language is detected automatically.";
+"settings.apiKey.header" = "OpenAI API Key";
+"settings.apiKey.help" = "How do I get an OpenAI API key?";
+"settings.apiKey.footer" = "Sign up on the OpenAI platform linked above, add credit, then create a key and paste it here. The key is stored only in this phone's system Keychain and is used only to call OpenAI directly — it is never uploaded anywhere. This app has no server of its own.";
+"settings.model" = "Model";
+"settings.model.footer" = "Measured on one densely printed page (148 lines): gpt-4.1 about 45s / $0.03 (recommended, shows progress as it translates) · gpt-5-mini about 115s / $0.01 (cheaper, more careful naming, but a longer wait) · gpt-5 is the most accurate and the slowest. Dish photos are billed separately, about $0.003 each in collage mode.";
+"settings.party.header" = "Who's at the table";
+"settings.party.footer" = "While ordering you can mark who asked for each dish, so the right plate reaches the right person. Set someone's restrictions and the summary checks every dish they ordered and warns loudly. Tap an avatar to upload a photo, tap ✕ to remove a person.";
+"settings.member.name" = "Name";
+"settings.member.avoid" = "Avoids";
+"settings.member.addPlaceholder" = "Add someone…";
+"settings.flatten" = "Even out lighting (recommended)";
+"settings.flatten.footer" = "Removes the shadows and glare of a hand-held photo so the paper looks clean and even, and the translated text blends into the original. Dark menus are skipped automatically.";
+"settings.grid" = "Collage mode (cheaper)";
+"settings.grid.footer" = "Whether to generate dish photos at all is a checkbox on the home screen, ticked per scan. Collage mode generates four dishes in one 2×2 image and slices it, about $0.003 a dish (one-at-a-time is about $0.011 and looks slightly better). Photos printed on the menu itself are always used first.";
+
+/* MARK: - Scan progress */
+"progress.note" = "You can read the menu the moment layout finishes; dish photos keep filling in behind it";
+"progress.stage.rectify" = "Straightening photos";
+"progress.stage.translate" = "Translating text";
+"progress.stage.layout" = "Laying out the page";
+"progress.stage.images" = "Generating dish photos";
+"progress.pages" = "%d pages";
+"progress.pages.fraction" = "%1$d/%2$d pages";
+"progress.lines.fraction" = "%1$d/%2$d lines";
+"progress.reading" = "Reading the text…";
+"progress.waitingModel" = "%d lines read, waiting for the model…";
+"progress.linesElapsed" = "%1$d lines to translate · %2$ds elapsed";
+"progress.waitRectify" = "Waiting for straightening";
+"progress.waitTranslate" = "Waiting for translation";
+"progress.layoutRunning" = "Laying out…";
+"progress.imagesOff" = "Turned off in Settings";
+"progress.menuHasPhotos" = "Menu already has photos";
+"progress.images" = "%d photos";
+"progress.images.fraction" = "%1$d/%2$d photos";
+
+/* MARK: - Result */
+"result.generatingImages" = "Generating dish photos";
+"result.selected" = "%d selected";
+"result.summary" = "Summary";
+"result.tab.canvas" = "Menu";
+"result.tab.list" = "List";
+"result.home" = "Back to home";
+"result.exportPDF" = "Export PDF";
+"canvas.showTranslation" = "Translation";
+"canvas.showOriginal" = "Original";
+"canvas.drawing" = "Drawing the menu…";
+"share.menu" = "Menu";
+"list.searchPlaceholder" = "Search dishes (translated or original)";
+"chips.forWhom" = "Ordering for:";
+"chips.addMember" = "Add someone";
+"chips.addMemberNote" = "You can also manage the table in Settings.";
+
+/* MARK: - Order summary */
+"summary.title" = "Your order";
+"summary.conflicts" = "Restriction clash";
+/* %1$@ = translated dish name, %2$@ = name as printed on the menu */
+"summary.avoidsButOrdered" = "but ordered “%1$@” %2$@";
+"summary.count" = "%d dishes";
+"summary.total" = "Total %@";
+"summary.continue" = "Keep ordering";
+"summary.annotate" = "Mark it on the menu to show the server";
+
+/* MARK: - History */
+"history.title" = "History";
+"history.empty.title" = "Nothing saved yet";
+"history.empty.body" = "Menus you scan are saved here automatically, so a second visit to the same restaurant needs no scanning at all.";
+"history.untitled" = "Untitled menu";
+/* %1$@ = source language, %2$d = dish count, %3$d = page count */
+"history.meta" = "%1$@ · %2$d dishes · %3$d pages";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "Vegan";
+"diet.vegetarian" = "Veg";
+"diet.glutenFree" = "Gluten";
+"diet.pork" = "Pork";
+"diet.chicken" = "Chicken";
+"diet.beef" = "Beef";
+"diet.lamb" = "Lamb";
+"diet.seafood" = "Seafood";
+"diet.avoid.gluten" = "avoids gluten";
+"diet.avoid" = "doesn't eat %@";
+
+/* Name of the one profile a fresh install starts with */
+"party.me" = "Me";
+
+/* MARK: - Errors */
+"error.encodeImages" = "Could not encode the selected photos.";
+"error.recognizeFailed" = "Scanning failed. Please try again.";
+"notice.partialPages" = "%1$d pages could not be scanned; the other %2$d were kept. You can scan those pages again.";
+"error.missingKey" = "No OpenAI API key yet — add one in Settings first.";
+"error.http" = "OpenAI request failed (HTTP %1$d): %2$@";
+"error.emptyResponse" = "OpenAI returned an empty result.";
+"error.refusal" = "The model refused this request: %@";
+"error.badLineIndex" = "The model returned an invalid line number.";
+
+/* MARK: - PDF */
+/* %1$@ = source language, %2$@ = target language */
+"pdf.header" = "Dish reference · %1$@ → %2$@";

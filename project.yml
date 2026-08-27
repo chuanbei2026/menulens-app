@@ -1,6 +1,9 @@
 name: MenuLens
 options:
   bundleIdPrefix: ai.xiangyang
+  # Base language is English: the strings in Info.plist below are the
+  # fallback every device sees when it speaks none of our six languages.
+  developmentLanguage: en
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -24,8 +27,17 @@ targets:
         CFBundleDisplayName: MenuLens
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
-        NSCameraUsageDescription: 拍摄菜单照片，用于识别与翻译菜单内容。
-        NSPhotoLibraryUsageDescription: 从相册选择菜单照片，用于识别与翻译菜单内容。
+        NSCameraUsageDescription: Used to photograph a restaurant menu so it can be read and translated.
+        NSPhotoLibraryUsageDescription: Used to pick a menu photo from your library so it can be read and translated.
+        # Declared explicitly so the App Store lists all six languages; the
+        # per-language tables live in MenuLens/Resources/<lang>.lproj.
+        CFBundleLocalizations:
+          - en
+          - zh-Hans
+          - ja
+          - ko
+          - fr
+          - es
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         # iPad must support all orientations (multitasking requirement).
