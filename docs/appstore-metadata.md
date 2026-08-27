@@ -27,7 +27,8 @@
 【多人点单】给同桌的每个人建档（可传头像），谁点的菜一目了然。确认后一键
 把所点菜品标注回原菜单——服务员对着屏幕就能下单，上菜时按名字对号入座。
 
-【六种目标语言】中文（简体）、English、日本語、한국어、Français、Español。
+【六种语言】中文（简体）、English、日本語、한국어、Français、Español。
+一个开关同时切换界面语言和翻译目标语言，全新安装自动跟随系统语言。
 菜单原文语言自动识别，无需设置。
 
 【隐私优先】没有服务器、没有账号、没有追踪。你的 OpenAI API Key 和所有
@@ -43,9 +44,10 @@ preserving the original layout. Dish names stay bilingual so you can order
 by pointing. Auto-straightens hand-held photos, handles multi-page menus,
 generates dish thumbnails, tracks who ordered what for group dining, and
 annotates the order back onto the menu for your server. Six target
-languages. No server, no account, no tracking — bring your own OpenAI API
-key (in-app guide; a menu costs ~$0.05–0.25). Two full sample restaurants
-included, no setup needed to try.
+languages — one switch sets both the interface and the translation target,
+and a fresh install follows your system language. No server, no account, no
+tracking — bring your own OpenAI API key (in-app guide; a menu costs
+~$0.05–0.25). Two full sample restaurants included, no setup needed to try.
 
 ## 关键词 (100 字符)
 
@@ -60,8 +62,20 @@ included, no setup needed to try.
 
 ## App 隐私（隐私营养标签）
 
-选择 **"不收集数据 / Data Not Collected"** —— 无服务器、无 SDK、无标识符。
-（照片经 HTTPS 直连 OpenAI 处理、不经过开发者服务器，属于"不由开发者收集"。）
+> ⚠️ 2026-08-26 更正：原来这里写"不收集数据"，**是错的**。Apple 对 "collect"
+> 的定义包含"发给你集成的第三方、且留存超过实时服务该请求所必需"，OpenAI 对 API
+> 数据有约 30 天滥用监控留存 —— 所以菜单照片必须申报。详见
+> `appstore-release-plan.md` 的 🔴-2。
+
+| 字段 | 值 |
+|---|---|
+| 数据类型 | User Content → **Photos or Videos**（菜单照片） |
+| 用途 | App Functionality |
+| 关联身份 | **Not Linked to You**（不发送任何账号或标识符） |
+| 用于追踪 | **Not Used for Tracking** |
+
+其余数据（历史记录、同行成员姓名与头像、API Key）全部不出设备，不申报。
+营养标签、App 内同意屏、隐私政策三处口径必须完全一致 —— Apple 会交叉比对。
 
 ## 出口合规
 
@@ -85,11 +99,17 @@ included, no setup needed to try.
 
 ## 提审前 checklist
 
+> 完整的顺序、阻碍分析和判断在 `appstore-release-plan.md`。下面只是机械步骤。
+> **先看那份**：有四条不改就会被拒的问题（第三方 AI 同意屏、隐私标签、
+> 内置示例语言、PrivacyInfo.xcprivacy）不在下面这个列表里。
+
 - [ ] Apple Developer Program 注册通过（$99/年，个人）
 - [ ] App Store Connect 创建 App（名称 MenuLens - 口袋菜单，Bundle ID ai.xiangyang.MenuLens）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
 - [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
 - [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
-- [ ] TestFlight 内测一轮再提正式审核
+- [ ] TestFlight 内测一轮再提正式审核（六种语言各走一遍，看文案溢出）
+- [ ] 申报 EU DSA trader 状态，或取消勾选欧盟国家（不申报会被移除，见 release plan 🟢-1）
+- [ ] 回答新版年龄分级问卷（2025-07 改版，专门问 AI 功能）
 - [x] 创建低限额测试 Key（已存 docs/review-key.local.md，本地文件），过审后作废
