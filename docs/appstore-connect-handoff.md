@@ -101,11 +101,28 @@ https://chuanbei2026.github.io/menulens-app/privacy-policy.html
 | 问题类型 | 答 |
 |---|---|
 | 暴力 / 恐怖 / 성적内容 / 赌博 / 药物 / 脏话 | **全部 None / 无** |
-| **AI 功能相关**（新问卷专门问） | 有 **AI 生成内容**（为没有照片的菜生成参考小图）；**没有**开放式聊天/对话；**没有**用户间交流 |
 | 不受限制的网页访问 | **No** |
 | 用户生成内容 | **No**（没有社交、没有 UGC 分享） |
+| **Alcohol, Tobacco, or Drug Use or References** | **None** —— 见下方说明 |
 
-预期结果：**4+**。如果问卷把它推到更高分级，把问卷截图发回给交接人，不要自己降级答题。
+> ✏️ **2026-08-27 修正**：这份交接单原先写「新问卷专门问 AI 功能」。实测下来
+> 现行问卷里**没有**这一问（七步答完，结果 4+：172 国 4+ / 巴西 AL / 韩国 ALL /
+> 越南 00+）。不要去找不存在的那一题。
+
+**关于酒精那一问**（内置示例是真实餐厅菜单，值得说清楚）：
+
+已扫过两份内置示例的全部菜品和文本行 —— **零个菜品**提到酒精，没有酒水单、
+没有任何饮酒的描绘或推荐。唯一命中是 La Mar 那张菜单上的过敏原说明行，
+OCR 打坏后读作 `ⓐ contains alcohol / ⓢ contains soy / raw or undercooked…`
+—— 那是**食品安全标注**，和「contains soy」并列，不是对饮酒的指涉。
+
+所以 **None 站得住**。保守起见改成 Infrequent/Mild 的代价是分级被推到 13+，
+失去 4+，对一个旅行工具类 App 不值得。
+
+（用户自己拍的菜单可能包含酒水单，但那是用户提供的内容，不是 App 自身的内容 ——
+Apple 分级问卷问的是后者。本 App 没有分享、没有社交，不触发 UGC 的那套问题。）
+
+预期结果：**4+**。
 
 ---
 
@@ -193,8 +210,12 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 ### 6.5 技术支持 URL（两种语言都填）
 
 ```
-https://github.com/chuanbei2026/menulens-app
+https://chuanbei2026.github.io/menulens-app/support.html
 ```
+
+⚠️ **不要填 GitHub 仓库地址** —— 那是开发者向的 README。Apple 有时会要求支持页面上
+有可联系到开发者的方式。上面这个页面是专门为此建的，含联系邮箱、费用说明、
+「不填 Key 也能用」的说明和排障 FAQ，中英双语。
 
 Marketing URL 留空。Promotional Text 留空。
 
@@ -240,6 +261,25 @@ ForeignMenu is free. There is no paid tier, no in-app purchase, and no content s
 Optionally, this demo API key can be used to test live recognition:
 <<<在这里粘贴测试 KEY>>>
 ```
+
+### 6.8 App Review 联系人（提交必填）
+
+| 字段 | 值 |
+|---|---|
+| First Name | `Xiangyang` |
+| Last Name | `Shi` |
+| Email | `chuanbei666@gmail.com` |
+| Phone | ⚠️ **问交接人** —— 和 EU DSA 那栏填的是同一个号码（本文件刻意不写电话） |
+
+### 6.9 Content Rights（App Information 里，提交必答）
+
+问题：*Does your app contain, show, or access third-party content?*
+
+**答 Yes。** 理由：内置的两份示例是**真实餐厅**（La Mar、Naan n Curry）菜单的照片，
+画面里有店名和 logo；而且 App 的核心功能本身就是处理用户拍摄的第三方菜单。
+
+⚠️ 这一题的后续追问（是否拥有相应权利）涉及法律判断，**由交接人决定**，
+不要代答。相关事实见交接单第 11 节。
 
 ### 🔑 唯一需要人工提供的值
 
@@ -346,3 +386,39 @@ Apple 的验证：邮箱和电话走双重验证收码；地址需要上传证�
 - 需要那个测试 Key、地址、或电话
 
 这些都不要自行猜测处理。
+
+---
+
+## 11. Content Rights 的事实依据（交接人决策用，agent 不要代答）
+
+ASC 在 App Information 里问：*Does your app contain, show, or access third-party content?*
+
+### 事实
+
+| 事实 | 细节 |
+|---|---|
+| 内置示例是真实餐厅的菜单照片 | La Mar（秘鲁菜，Issaquah 店）、Naan n Curry（印巴菜） |
+| 画面里有第三方商标 | 主截图 `02_canvas.png` 左上角是 **naan n curry 的 logo**，页面上有店名 |
+| App 核心功能 | 处理**用户自己拍摄**的第三方菜单 —— 这部分是用户提供的内容，不由开发者分发 |
+| 暴露面最大的地方 | **不是 App 内，而是 App Store 商品页截图** —— 那是开发者主动的营销素材 |
+
+### 判断
+
+「这个 App 包含第三方内容」这句事实上成立，**答 Yes 是正确的**，绝大多数 App 都是 Yes。
+
+真正需要人来定的是后续那一问（是否拥有必要的权利）。相关考量：
+
+- 菜单的**文字列表**是事实性汇编，著作权很弱；照片是自己拍的
+- **logo 是商标**，这是风险实际所在。在 App 内作为演示展示，通常算描述性/指名性使用；
+  但把它放进 **App Store 营销截图**性质不同 —— 可能被读作暗示背书
+- 实际风险：小（App 很小、不易被注意到），但非零，而且正是 **5.2.1** 投诉针对的那一类
+
+### 可选做法（成本递增）
+
+| 方案 | 做法 | 代价 |
+|---|---|---|
+| A | 答 Yes，照现状提交 | 0。最可能没事，同类 App 普遍这么做 |
+| B | 保留 App 内示例，但把截图里的 logo 区域模糊/遮掉 | 主截图观感变差 |
+| C | 换一份自己有权利的菜单重烤示例 | 要重跑七种语言 + 重拍 28 张截图 |
+
+交接人尚未决定。**没有明确指示前按 A（答 Yes）填，并把这一节指给交接人看。**
