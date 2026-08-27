@@ -59,12 +59,10 @@ targets:
         SWIFT_VERSION: "5.10"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
-        # Baked in so regenerated projects never ask for the team again;
-        # teammates should override with their own. NOTE: as of 2026-08-27 the
-        # local signing assets for this team are still free-tier (7-day
-        # provisioning profiles, no Apple Distribution certificate), so an
-        # App Store archive will fail until Xcode is signed in to the paid
-        # membership and issues a distribution certificate.
+        # Paid individual team (Xiangyang Shi). Baked in so regenerated
+        # projects never ask for the team again; teammates should override
+        # with their own. App Store export needs -allowProvisioningUpdates
+        # the first time, so xcodebuild can create the store profile.
         DEVELOPMENT_TEAM: LNP5ER743F
         GENERATE_INFOPLIST_FILE: false
         CURRENT_PROJECT_VERSION: 1

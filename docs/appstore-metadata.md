@@ -123,8 +123,9 @@ tracking — bring your own OpenAI API key (in-app guide; a menu costs
 - [ ] 填 EU DSA trader 三项（地址 / 电话 / 邮箱，均会公开显示）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
-- [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
-- [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
+- [ ] 上传 6.9 英寸 iPhone 截图（`docs/screenshots/iphone-6.9/<lang>/`，1320×2868 ✅ 已重拍）
+- [ ] 上传 13 英寸 iPad 截图（`docs/screenshots/ipad-13/<lang>/`，2064×2752 ✅ 已重拍）
+      —— en / zh-Hans / fr / ko 四套，按 locale 分别上传；未拍的语言回落主语言
 - [ ] TestFlight 内测一轮再提正式审核（七种语言各走一遍，看文案溢出）
 - [ ] 申报 EU DSA trader 状态，或取消勾选欧盟国家（不申报会被移除，见 release plan 🟢-1）
 - [ ] 回答新版年龄分级问卷（2025-07 改版，专门问 AI 功能）

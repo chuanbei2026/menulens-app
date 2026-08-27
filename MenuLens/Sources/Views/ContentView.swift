@@ -178,10 +178,22 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        if !PartyStore.shared.members.contains(where: { $0.name == "小明" }) {
-                            PartyStore.shared.add(name: "小明")
+                        // A companion name that matches the app language —
+                        // a Chinese name in an English App Store screenshot
+                        // reads as a leftover, not as a feature.
+                        let companion: String = switch Loc.language {
+                        case .simplifiedChinese: "小明"
+                        case .japanese: "ゆき"
+                        case .korean: "지훈"
+                        case .hindi: "आरव"
+                        case .french: "Camille"
+                        case .spanish: "Lucía"
+                        case .english: "Alex"
                         }
-                        let friend = PartyStore.shared.members.first { $0.name == "小明" }!.id
+                        if !PartyStore.shared.members.contains(where: { $0.name == companion }) {
+                            PartyStore.shared.add(name: companion)
+                        }
+                        let friend = PartyStore.shared.members.first { $0.name == companion }!.id
                         if args.contains("-demoAvoid") {
                             // Find a dish with a detectable meat, give it to
                             // the friend, and mark that meat as avoided so the

@@ -218,8 +218,12 @@ struct MenuLayoutRenderer {
         // otherwise stamp its translation two or three times over.
         var captionedTitles = Set<String>()
         for section in document.sections {
+            // The exact-inequality this used to do let "Small Plates" stamp
+            // itself next to "SMALL PLATES" — menus shout their headings, so
+            // the comparison has to ignore case and padding.
             guard let bbox = section.bbox, let translated = section.chineseTitle,
-                  !translated.isEmpty, translated != section.originalTitle
+                  !translated.isEmpty,
+                  !MenuItemEntry.sameText(translated, section.originalTitle)
             else { continue }
             let key = "\(boxKey(bbox))|\(translated)"
             guard captionedTitles.insert(key).inserted else { continue }
@@ -228,6 +232,11 @@ struct MenuLayoutRenderer {
         }
         for section in document.sections {
             for item in section.items {
+                // Nothing to caption when the menu is already in the reader's
+                // language: the caption would just echo the printed name in
+                // orange beside it. The descriptions still get rewritten, so
+                // the page is far from unchanged.
+                guard !item.translationIsRedundant else { continue }
                 placeCaption(item.chineseName, anchor: item.bbox.rect(in: canvas), canvas: canvas,
                              occupancy: &occupancy, color: nameColor)
             }
