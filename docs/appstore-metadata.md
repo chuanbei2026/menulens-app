@@ -5,7 +5,9 @@
 | 字段 | 值 |
 |---|---|
 | App 名称 (App Store) | 按语言分别填：英文及其他区 **MenuMirror**，中文区 **镜中菜单**（App Store Connect 支持按 locale 设名称 —— 比塞成一个 `A - B` 串更好，也不用挤 30 字符上限） |
-| 副标题 (30 字符) | 拍菜单，秒变母语，还能点菜 |
+| 主语言 | **English (U.S.)** |
+| 副标题 · en (30 字符上限) | `Menus translated in place` (25) |
+| 副标题 · zh-Hans | `拍菜单，秒变母语，还能点菜` |
 | Bundle ID | ai.xiangyang.MenuLens |
 | 类别 | 主：旅行 Travel；次：美食佳饮 Food & Drink |
 | 价格 | 免费 |
@@ -49,9 +51,22 @@ and a fresh install follows your system language. No server, no account, no
 tracking — bring your own OpenAI API key (in-app guide; a menu costs
 ~$0.05–0.25). Two full sample restaurants included, no setup needed to try.
 
-## 关键词 (100 字符)
+## 关键词 (100 字符上限，按 locale 各填一套)
 
+**en**（82 字符）
+
+```
+menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,camera
+```
+
+**zh-Hans**
+
+```
 菜单,翻译,旅行,点菜,menu,translator,travel,印度,日本,restaurant,菜單,OCR,hindi
+```
+
+> 关键词里**不要**重复 App 名称和副标题里已有的词 —— Apple 已经索引了它们，
+> 重复是浪费额度。
 
 ## URL
 
