@@ -82,7 +82,7 @@ Store Connect 那一步都过不去。**
 |---|---|
 | App Store 名称 + 副标题 | **Bundle ID `ai.xiangyang.MenuLens`**（永不对用户可见） |
 | `project.yml` 的 `CFBundleDisplayName` | 代码里的类名、target 名 |
-| 六份 `Localizable.strings` 的 `app.name` | 签名、证书、Team |
+| 七份 `Localizable.strings` 的 `app.name` | 签名、证书、Team |
 | `InfoPlist.strings` 的 `CFBundleDisplayName` | 截图（名字只出现在导航栏，会随 `app.name` 自动变） |
 | README / docs / 隐私政策标题 | |
 
@@ -96,8 +96,8 @@ Store Connect 那一步都过不去。**
 > `-Lens` 词根，不会读成那个同类目竞品的仿品。
 > `MenuMirror` 在 us/cn/de/jp/fr/es 六区、`镜中菜单` 在 cn/tw/hk 三区均无同名或同前缀。
 >
-> 已替换：六份 `app.name`、六份 `InfoPlist.strings` 的 `CFBundleDisplayName`、
-> 六份 `consent.body` 里的行文、`project.yml` 的 `CFBundleDisplayName`、
+> 已替换：七份 `app.name`、七份 `InfoPlist.strings` 的 `CFBundleDisplayName`、
+> 七份 `consent.body` 里的行文、`project.yml` 的 `CFBundleDisplayName`、
 > README、隐私政策、本文件与 metadata 包。
 > **Xcode 工程名 / target / 目录 / Bundle ID 一律未改**（都不对用户可见）。
 >
@@ -132,7 +132,7 @@ Store Connect 那一步都过不去。**
 > - 设置页有可随时关闭的开关（新规要求可事后撤回）。
 > - 许可检查**下沉到了 `AnalysisViewModel`**（`analyze()` 与配图生成各一道），
 >   而不是只挡在按钮上 —— 从历史记录打开旧扫描会触发补配图，那条路径同样会发请求。
-> - 六种语言文案齐备，同意屏本身也跟随 App 语言。
+> - 七种语言文案齐备，同意屏本身也跟随 App 语言。
 
 #### 🔴-2 隐私营养标签不能填「不收集数据」
 
@@ -194,7 +194,7 @@ Samples/naan-n-curry/scan.json  targetLanguage = zh-Hans   源语言 = 英语
 | B | 按语言分目录 `Samples/<lang>/`，每种语言烤一套 | 6× API 成本 + 改 `HistoryStore.seedBundledSamplesIfNeeded` | 最完整，但对首次上架过度 |
 | C | 不动示例，Review Notes 里说明并附 demo Key | 0 | ⚠️ 赌审核员愿意用 Key 实测。不建议单独用 |
 
-> ✅ **2026-08-27 已修，直接做了方案 B（全六种语言）**：
+> ✅ **2026-08-27 已修，直接做了方案 B（全七种语言）**：
 >
 > - 新增 `tools/retarget_sample.py`：**不重跑整条流水线**（重跑会重排
 >   `p<页>_s<节>_i<项>` 的 dishKey，把已烤好的 71 张配图全指错菜），
@@ -202,7 +202,7 @@ Samples/naan-n-curry/scan.json  targetLanguage = zh-Hans   源语言 = 英语
 >   配图直接沿用。
 > - 示例改成按语言分目录 `Samples/<lang>/<餐厅>/`，`HistoryStore` 在首次启动时
 >   按当时的 App 语言 seed，**回落是英文而不是中文**。seed 标志位升到 `v5`。
-> - 六种语言 × 2 家餐厅全部烤好并抽查过。
+> - 七种语言 × 2 家餐厅全部烤好并抽查过。
 >
 > 过程中修掉两个真问题：
 >
@@ -395,7 +395,7 @@ https://euipo.europa.eu/eSearch
 3. 创建 App 记录（名称、副标题、类别：旅行 / 美食佳饮、免费）
 4. `xcodegen generate` → Product → Archive → Distribute → App Store Connect
 5. 填元数据（照抄 `appstore-metadata.md`，注意按 🔴-2 改隐私标签）
-6. **先发 TestFlight 自测一轮**（尤其六种语言各点一遍，看有没有文案溢出）
+6. **先发 TestFlight 自测一轮**（尤其七种语言各点一遍，看有没有文案溢出）
 7. 提交审核
 
 ---
@@ -418,9 +418,9 @@ https://euipo.europa.eu/eSearch
 已完成（2026-08-27）：
 
 - ✅ 🔴-0 改名 MenuMirror / 镜中菜单，六区筛查无撞名
-- ✅ 🔴-1 第三方 AI 同意屏 + 设置页可撤回开关 + 六语言文案
+- ✅ 🔴-1 第三方 AI 同意屏 + 设置页可撤回开关 + 七语言文案
 - ✅ 🔴-2 隐私标签结论改正，`PrivacyInfo.xcprivacy` 与隐私政策三处口径对齐
-- ✅ 🔴-3 六种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文
+- ✅ 🔴-3 七种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文
 - ✅ 🔴-4 `PrivacyInfo.xcprivacy`
 - ✅ 🟢-1 EU trader：申报，欧盟发行，三项齐
 - ✅ 联系邮箱全局统一为 Gmail（qq 邮箱对境外发件方投递不可靠）
