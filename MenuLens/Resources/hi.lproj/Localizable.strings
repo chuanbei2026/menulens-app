@@ -1,4 +1,4 @@
-"app.name" = "MenuMirror";
+"app.name" = "ForeignMenu";
 
 /* MARK: - Shared */
 "common.cancel" = "रद्द करें";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "मेन्यू की फ़ोटो OpenAI को भेजी जाती है";
-"consent.body" = "मेन्यू पढ़ने और अनुवाद करने के लिए MenuMirror फ़ोटो OpenAI को भेजता है। आपके फ़ोन से बाहर सिर्फ़ यही जाता है, और वह भी तभी जब आप स्कैन दबाते हैं।";
+"consent.body" = "मेन्यू पढ़ने और अनुवाद करने के लिए ForeignMenu फ़ोटो OpenAI को भेजता है। आपके फ़ोन से बाहर सिर्फ़ यही जाता है, और वह भी तभी जब आप स्कैन दबाते हैं।";
 "consent.sent.header" = "OpenAI को भेजा जाता है";
 "consent.sent.photo" = "आपकी चुनी हुई मेन्यू की फ़ोटो";
 "consent.sent.names" = "व्यंजनों के नाम — सिर्फ़ तब जब आप तस्वीरें बनवाना चाहें";

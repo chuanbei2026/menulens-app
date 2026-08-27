@@ -1,4 +1,4 @@
-"app.name" = "MenuMirror";
+"app.name" = "ForeignMenu";
 
 /* MARK: - Shared */
 "common.cancel" = "キャンセル";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "メニューの写真は OpenAI に送信されます";
-"consent.body" = "メニューを読み取って翻訳するため、MenuMirror はこの写真を OpenAI に送信します。端末から出るのはこれだけで、「読み取って翻訳」を押したときにのみ送信されます。";
+"consent.body" = "メニューを読み取って翻訳するため、ForeignMenu はこの写真を OpenAI に送信します。端末から出るのはこれだけで、「読み取って翻訳」を押したときにのみ送信されます。";
 "consent.sent.header" = "OpenAI に送るもの";
 "consent.sent.photo" = "あなたが選んだメニューの写真";
 "consent.sent.names" = "料理名 —— 画像生成を依頼した場合のみ";

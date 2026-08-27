@@ -1,4 +1,4 @@
-# 上架路线图与阻碍分析 — MenuMirror · 镜中菜单
+# 上架路线图与阻碍分析 — ForeignMenu · 外乡人的菜单
 
 > 写于 2026-08-26，更新 2026-08-27。已有 Apple Developer Program 会员（个人，$99/年）。
 > 与 `appstore-metadata.md` 配套：那份是**提交时要粘贴的素材**，这份是**顺序、
@@ -14,7 +14,7 @@
 已经被至少五个开发者占用，其中一个就是同类目的直接竞品。名字不换，连 App
 Store Connect 那一步都过不去。**
 
-**再更新：名字已定为 MenuMirror / 镜中菜单并全局替换完毕，EU trader 三项也已齐。
+**再更新：名字已定为 ForeignMenu / 外乡人的菜单并全局替换完毕，EU trader 三项也已齐。
 代码侧和元数据侧现在都是干净的 —— 剩下的只有商标查询和打包提审。**
 
 ---
@@ -39,11 +39,11 @@ Store Connect 那一步都过不去。**
 | PrivacyInfo.xcprivacy | ✅ 已加（UserDefaults `CA92.1`） | `MenuLens/Resources/PrivacyInfo.xcprivacy` |
 | 第三方 AI 同意屏 | ✅ 已加，可在设置页撤回 | `Sources/Views/AIConsentView.swift` |
 | 七语言内置示例 | ✅ 7 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
-| App 名称 | ✅ **MenuMirror** / **镜中菜单**，已全局替换 | 见 🔴-0 |
+| App 名称 | ✅ **ForeignMenu** / **外乡人的菜单**，已全局替换 | 见 🔴-0 |
 | EU trader 三项 | ✅ 地址 / 电话已定（值不入库）；邮箱统一用 Gmail | `docs/trader-info.local.md` |
 | 联系邮箱口径 | ✅ 隐私政策 + DSA + 支持联系统一为同一个 Gmail | `docs/privacy-policy.html` |
 | 签名 Team | ⚠️ `LNP5ER743F`，但本机签名资产仍是免费层（见 🟢-2） | `project.yml` |
-| **MenuMirror 商标查询** | ❌ 只能你在浏览器里手查（两个库都挡自动访问） | — |
+| **ForeignMenu 商标查询** | ❌ 只能你在浏览器里手查（两个库都挡自动访问） | — |
 
 ---
 
@@ -54,7 +54,7 @@ Store Connect 那一步都过不去。**
 
 ### 🔴 会被拒，必须先修
 
-#### ✅ 🔴-0 「MenuLens」名字被占用 —— 已改名为 MenuMirror / 镜中菜单
+#### ✅ 🔴-0 「MenuLens」名字被占用 —— 已改名为 ForeignMenu / 外乡人的菜单
 
 用 Apple 自己的 iTunes lookup API 查的（网页搜索给的 id 是假的，已排除）：
 
@@ -87,14 +87,14 @@ Store Connect 那一步都过不去。**
 | README / docs / 隐私政策标题 | |
 
 已经跨 us/cn/de/jp 四个商店筛过、**四个商店都没有同名或同前缀**的候选：
-`MenuPaper`、`PaperMenu`、`MenuMirror`、`MenuPlate`、`MenuTwin`、`Menuscope`。
+`MenuPaper`、`PaperMenu`、`ForeignMenu`、`MenuPlate`、`MenuTwin`、`Menuscope`。
 中文候选（cn/tw/hk 三区都干净）：`菜单镜`、`菜单原样`、`看懂菜单`、`同款菜单`、
 `原版菜单`、`菜单照相馆`。
 
-> ✅ **2026-08-27 已定并已替换**：英文 **MenuMirror**，中文 **镜中菜单**。
+> ✅ **2026-08-27 已定并已替换**：英文 **ForeignMenu**，中文 **外乡人的菜单**。
 > 「同一份菜单，照出你的语言」—— 说的是原版式就地翻译这个差异点，同时避开
 > `-Lens` 词根，不会读成那个同类目竞品的仿品。
-> `MenuMirror` 在 us/cn/de/jp/fr/es 六区、`镜中菜单` 在 cn/tw/hk 三区均无同名或同前缀。
+> `ForeignMenu` 在 us/cn/de/jp/fr/es 六区、`外乡人的菜单` 在 cn/tw/hk 三区均无同名或同前缀。
 >
 > 已替换：七份 `app.name`、七份 `InfoPlist.strings` 的 `CFBundleDisplayName`、
 > 七份 `consent.body` 里的行文、`project.yml` 的 `CFBundleDisplayName`、
@@ -102,7 +102,7 @@ Store Connect 那一步都过不去。**
 > **Xcode 工程名 / target / 目录 / Bundle ID 一律未改**（都不对用户可见）。
 >
 > ⚠️ 仍待你做：iTunes 搜不到 ≠ Apple 一定放行 —— 还有「已预留但未上架」的名字，
-> 而商标是另一套体系。建议在 **USPTO** 和 **EUIPO** 各查一次 MenuMirror。
+> 而商标是另一套体系。建议在 **USPTO** 和 **EUIPO** 各查一次 ForeignMenu。
 
 #### 🔴-1 Guideline 5.1.2(i)：第三方 AI 数据共享，必须**事前**取得明示同意
 
@@ -253,17 +253,17 @@ BYOK（bring-your-own-key）AI App 被拒，原话：
 
 那个线程最后**没有公开的解决方案**（Apple 只回复「正在调查，会有代表联系你」）。
 
-MenuMirror 的处境比它好，但不是免疫：
+ForeignMenu 的处境比它好，但不是免疫：
 
 | 差异 | 对我们的影响 |
 |---|---|
-| MenuMirror **免费**，没有任何付费层 | ✅ 关键。3.1.1 保护的是 IAP 收入，我们没有东西被「绕过」 |
+| ForeignMenu **免费**，没有任何付费层 | ✅ 关键。3.1.1 保护的是 IAP 收入，我们没有东西被「绕过」 |
 | Key 不解锁**我们卖的**内容，只是用户自己的算力账户 | ✅ 可以在 Review Notes 里直说 |
 | 但 Key 确实「enable functionality」 | ⚠️ 审核员照字面套条款仍可能拒 |
 
 **Review Notes 里要主动写清**（照抄即可）：
 
-> MenuMirror is free. There is no paid tier, no in-app purchase, and no content sold
+> ForeignMenu is free. There is no paid tier, no in-app purchase, and no content sold
 > by the developer. The OpenAI API key is the user's own account with a third party
 > — it does not unlock any developer-provided content, and the developer receives
 > no payment of any kind. Users who prefer not to use a key can browse the bundled
@@ -280,7 +280,7 @@ MenuMirror 的处境比它好，但不是免疫：
 #### 🟡-3 年龄分级要重答新问卷
 
 Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
-新问卷**专门问 AI 助手/聊天机器人功能**。MenuMirror 不是开放式聊天、
+新问卷**专门问 AI 助手/聊天机器人功能**。ForeignMenu 不是开放式聊天、
 不能任意访问网络内容，**4+ 应该仍然拿得到**，但问卷要按实际情况老实答
 （有 AI 生成内容、无用户间交流、无开放式对话）。
 
@@ -333,7 +333,7 @@ Team ID 是 `LNP5ER743F`（已确认，保持不变）。但 2026-08-27 查本�
 > ```
 >
 > IPA 自检：Apple Distribution 签名 · App Store 类型描述文件（无设备列表）·
-> `get-task-allow: False` · MenuMirror 1.0 (1) · MinimumOSVersion 17.0 ·
+> `get-task-allow: False` · ForeignMenu 1.0 (1) · MinimumOSVersion 17.0 ·
 > 七套 lproj 与示例 · PrivacyInfo.xcprivacy 在。**这就是能上传的包。**
 
 **当时实测的断点记录（留档）**：
@@ -351,10 +351,10 @@ Team ID 是 `LNP5ER743F`（已确认，保持不变）。但 2026-08-27 查本�
 
 ```bash
 xcodebuild -project MenuLens.xcodeproj -scheme MenuLens -configuration Release \
-  -destination 'generic/platform=iOS' -archivePath /tmp/MenuMirror.xcarchive archive
+  -destination 'generic/platform=iOS' -archivePath /tmp/ForeignMenu.xcarchive archive
 
 # ExportOptions.plist: method=app-store-connect, teamID=LNP5ER743F, signingStyle=automatic
-xcodebuild -exportArchive -archivePath /tmp/MenuMirror.xcarchive \
+xcodebuild -exportArchive -archivePath /tmp/ForeignMenu.xcarchive \
   -exportOptionsPlist /tmp/ExportOptions.plist -exportPath /tmp/export
 ```
 
@@ -373,7 +373,7 @@ xcodebuild -exportArchive -archivePath /tmp/MenuMirror.xcarchive \
 #### 🟢-3 商标查询只能手动
 
 两个库都挡自动访问（Justia 403、USPTO 公开 API 404），而且都是需要浏览器的
-JS 应用。网页搜索没有搜到任何叫 MenuMirror 的产品或商标 —— 这是**弱正面信号，
+JS 应用。网页搜索没有搜到任何叫 ForeignMenu 的产品或商标 —— 这是**弱正面信号，
 不是清权检索**。
 
 请自己各查一次（第 9 类「软件」和第 42 类「SaaS」）：
@@ -385,7 +385,7 @@ EUIPO
 https://euipo.europa.eu/eSearch
 
 > App Store 的**名称可用性**我已经用 Apple 自己的 API 查过了，那个是权威的：
-> `MenuMirror` 在 us/cn/de/jp/fr/es 六区、`镜中菜单` 在 cn/tw/hk 三区均无撞名。
+> `ForeignMenu` 在 us/cn/de/jp/fr/es 六区、`外乡人的菜单` 在 cn/tw/hk 三区均无撞名。
 > 商标是另一套体系，两者不能互相替代。
 
 #### 🟢-4 其余机械步骤
@@ -404,7 +404,7 @@ https://euipo.europa.eu/eSearch
 
 ```
 ① App Store Connect：创建 App 记录，主语言英文，按 locale 填名称
-   （MenuMirror / 镜中菜单），Bundle ID 选 ai.xiangyang.MenuLens
+   （ForeignMenu / 外乡人的菜单），Bundle ID 选 ai.xiangyang.MenuLens
 ② 填 EU DSA trader 三项（地址/电话手敲，不入库）
 ③ 元数据照抄 appstore-metadata.md（隐私标签用改正后那张表）
 ④ 上传截图：`docs/screenshots/iphone-6.9/` 与 `ipad-13/` 下四套，按 locale
@@ -417,7 +417,7 @@ https://euipo.europa.eu/eSearch
 
 已完成（2026-08-27）：
 
-- ✅ 🔴-0 改名 MenuMirror / 镜中菜单，六区筛查无撞名
+- ✅ 🔴-0 改名 ForeignMenu / 外乡人的菜单，六区筛查无撞名
 - ✅ 🔴-1 第三方 AI 同意屏 + 设置页可撤回开关 + 七语言文案
 - ✅ 🔴-2 隐私标签结论改正，`PrivacyInfo.xcprivacy` 与隐私政策三处口径对齐
 - ✅ 🔴-3 七种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文

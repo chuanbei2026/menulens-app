@@ -1,4 +1,4 @@
-"app.name" = "镜中菜单";
+"app.name" = "外乡人的菜单";
 
 /* MARK: - Shared */
 "common.cancel" = "取消";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "菜单照片会发送给 OpenAI";
-"consent.body" = "为了识别和翻译菜单，镜中菜单会把这张照片发送给 OpenAI。这是唯一离开你手机的东西，而且只在你点「识别并翻译」时才发生。";
+"consent.body" = "为了识别和翻译菜单，外乡人的菜单会把这张照片发送给 OpenAI。这是唯一离开你手机的东西，而且只在你点「识别并翻译」时才发生。";
 "consent.sent.header" = "会发给 OpenAI";
 "consent.sent.photo" = "你选择的菜单照片";
 "consent.sent.names" = "菜名 —— 仅当你要求生成配图时";

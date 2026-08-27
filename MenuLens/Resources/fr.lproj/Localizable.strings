@@ -1,4 +1,4 @@
-"app.name" = "MenuMirror";
+"app.name" = "ForeignMenu";
 
 /* MARK: - Shared */
 "common.cancel" = "Annuler";
@@ -128,7 +128,7 @@
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
 "consent.title" = "Les photos de carte sont envoyées à OpenAI";
-"consent.body" = "Pour lire et traduire une carte, MenuMirror envoie la photo à OpenAI. C'est la seule chose qui quitte votre téléphone, et cela n'arrive que lorsque vous touchez Scanner.";
+"consent.body" = "Pour lire et traduire une carte, ForeignMenu envoie la photo à OpenAI. C'est la seule chose qui quitte votre téléphone, et cela n'arrive que lorsque vous touchez Scanner.";
 "consent.sent.header" = "Envoyé à OpenAI";
 "consent.sent.photo" = "La photo de carte que vous choisissez";
 "consent.sent.names" = "Les noms des plats, uniquement si vous demandez des images générées";

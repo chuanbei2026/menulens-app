@@ -26,7 +26,7 @@ targets:
       properties:
         # Marketing name. The Xcode project, target, paths and bundle id
         # deliberately keep the old name — none of them is user-visible.
-        CFBundleDisplayName: MenuMirror
+        CFBundleDisplayName: ForeignMenu
         # Driven by the build settings below, NOT hardcoded — the generated
         # Info.plist used to carry a literal 1.0/1, which meant
         # MARKETING_VERSION was dead and bumping it shipped nothing.

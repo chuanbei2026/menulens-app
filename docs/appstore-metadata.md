@@ -1,10 +1,10 @@
-# App Store 提审资料包 — MenuMirror · 镜中菜单
+# App Store 提审资料包 — ForeignMenu · 外乡人的菜单
 
 ## 基本信息
 
 | 字段 | 值 |
 |---|---|
-| App 名称 (App Store) | 按语言分别填：英文及其他区 **MenuMirror**，中文区 **镜中菜单**（App Store Connect 支持按 locale 设名称 —— 比塞成一个 `A - B` 串更好，也不用挤 30 字符上限） |
+| App 名称 (App Store) | 按语言分别填：英文及其他区 **ForeignMenu**，中文区 **外乡人的菜单**（App Store Connect 支持按 locale 设名称 —— 比塞成一个 `A - B` 串更好，也不用挤 30 字符上限） |
 | 主语言 | **English (U.S.)** |
 | 副标题 · en (30 字符上限) | `Menus translated in place` (25) |
 | 副标题 · zh-Hans | `拍菜单，秒变母语，还能点菜` |
@@ -15,7 +15,7 @@
 
 ## 描述（中文）
 
-出国吃饭看不懂菜单？拍一张，镜中菜单把整份菜单原版式翻译成你的语言。
+出国吃饭看不懂菜单？拍一张，外乡人的菜单把整份菜单原版式翻译成你的语言。
 
 【原版式翻译】不是干巴巴的文字列表——译文直接写在菜单原来的位置上，
 版式、字号、行距都保留，像拿到了一份母语版菜单。菜名保留原文对照，点菜时
@@ -41,7 +41,7 @@
 
 ## Description (English)
 
-Point your camera at any foreign menu — MenuMirror translates it in place,
+Point your camera at any foreign menu — ForeignMenu translates it in place,
 preserving the original layout. Dish names stay bilingual so you can order
 by pointing. Auto-straightens hand-held photos, handles multi-page menus,
 generates dish thumbnails, tracks who ordered what for group dining, and
@@ -99,7 +99,7 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 
 ## 审核备注（Review Notes 粘贴用）
 
-> MenuMirror translates restaurant menus photographed by the user. It calls
+> ForeignMenu translates restaurant menus photographed by the user. It calls
 > the OpenAI API directly from the device; users supply their own API key
 > (Settings → OpenAI API Key). No developer server is involved.
 >
@@ -117,7 +117,7 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 > languages and seeded in the language of the device, so they appear in
 > your own language.
 >
-> MenuMirror is free. There is no paid tier, no in-app purchase, and no
+> ForeignMenu is free. There is no paid tier, no in-app purchase, and no
 > content sold by the developer. The OpenAI API key is the user's own
 > account with a third party — it unlocks no developer-provided content,
 > and the developer receives no payment of any kind.
@@ -132,8 +132,8 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 > 内置示例语言、PrivacyInfo.xcprivacy）不在下面这个列表里。
 
 - [ ] Apple Developer Program 注册通过（$99/年，个人）
-- [x] 定新名字：**MenuMirror** / **镜中菜单**（跨 6 个商店筛过无撞名）
-- [ ] 在 USPTO 与 EUIPO 各查一次 MenuMirror 的商标
+- [x] 定新名字：**ForeignMenu** / **外乡人的菜单**（跨 6 个商店筛过无撞名）
+- [ ] 在 USPTO 与 EUIPO 各查一次 ForeignMenu 的商标
 - [ ] App Store Connect 创建 App（Bundle ID ai.xiangyang.MenuLens —— 这个不用改）
 - [ ] 填 EU DSA trader 三项（地址 / 电话 / 邮箱，均会公开显示）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效

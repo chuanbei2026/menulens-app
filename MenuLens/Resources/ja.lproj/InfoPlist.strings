@@ -1,3 +1,3 @@
-"CFBundleDisplayName" = "MenuMirror";
+"CFBundleDisplayName" = "ForeignMenu";
 "NSCameraUsageDescription" = "メニューを撮影し、その内容を読み取って翻訳するために使用します。";
 "NSPhotoLibraryUsageDescription" = "写真からメニューの画像を選び、その内容を読み取って翻訳するために使用します。";
