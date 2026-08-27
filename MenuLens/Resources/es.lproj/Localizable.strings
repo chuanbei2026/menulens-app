@@ -125,3 +125,18 @@
 
 /* MARK: - PDF */
 "pdf.header" = "Platos en paralelo · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "Las fotos de la carta se envían a OpenAI";
+"consent.body" = "Para leer y traducir una carta, MenuLens envía la foto a OpenAI. Es lo único que sale de tu teléfono, y solo ocurre cuando tocas Escanear.";
+"consent.sent.header" = "Se envía a OpenAI";
+"consent.sent.photo" = "La foto de la carta que elijas";
+"consent.sent.names" = "Los nombres de los platos, solo si pides imágenes generadas";
+"consent.kept.header" = "Nunca sale de este teléfono";
+"consent.kept.body" = "Tu clave API, tu historial de traducciones y los nombres y fotos de las personas de tu mesa.";
+"consent.retention" = "OpenAI responde a la petición y conserva brevemente los datos de la API para vigilar abusos. No existe ningún servidor del desarrollador: nada pasa por nosotros.";
+"consent.policy" = "Leer la política de privacidad";
+"consent.agree" = "Aceptar y continuar";
+"consent.decline" = "Ahora no";
+"settings.consent" = "Enviar fotos de la carta a OpenAI";
+"settings.consent.footer" = "Necesario para escanear una carta nueva. Si lo desactivas no se envía nada; las cartas de ejemplo y tus traducciones guardadas siguen funcionando. Se te preguntará de nuevo la próxima vez que escanees.";

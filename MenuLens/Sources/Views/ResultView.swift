@@ -594,8 +594,9 @@ private struct DishListView: View {
                     return Row(id: MenuScan.dishKey(page: p, section: s, item: i), item: item, pageIndex: p)
                 }
                 guard !rows.isEmpty else { continue }
-                var title = [section.chineseTitle, section.originalTitle]
-                    .compactMap { $0 }.joined(separator: " / ")
+                var title = MenuItemEntry.bilingual(
+                    translated: section.chineseTitle, original: section.originalTitle
+                )
                 if multiPage {
                     let pageLabel = L("page.number", p + 1)
                     title = title.isEmpty ? pageLabel : "\(pageLabel) · \(title)"
@@ -647,9 +648,14 @@ private struct DishRow: View {
                 Text(item.originalName)
                     .font(.headline)
                 HStack(spacing: 5) {
-                    Text(item.chineseName)
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
+                    // Nothing to compare when the menu is already in the
+                    // reader's language — printing the same name twice
+                    // (bold, then orange) just looks broken.
+                    if !item.translationIsRedundant {
+                        Text(item.chineseName)
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
+                    }
                     DietTagBadges(tags: inferredTags, showGlutenFree: showGlutenFree)
                 }
                 if let zhDesc = item.chineseDescription {

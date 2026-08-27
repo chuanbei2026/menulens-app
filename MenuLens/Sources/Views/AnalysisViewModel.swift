@@ -79,6 +79,10 @@ final class AnalysisViewModel: ObservableObject {
     @AppStorage("target_language") var targetLanguageCode = AppLanguage.deviceDefault.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
     @AppStorage("generate_dish_images") var generateDishImages = true
+    /// Permission to send anything to OpenAI at all (guideline 5.1.2(i)).
+    /// Checked here, not only at the button, because opening a saved scan
+    /// can also start thumbnail generation — see AIConsentView.
+    @AppStorage("openai_consent_granted") var aiConsentGranted = false
 
     /// Generate thumbnails 4-at-a-time in one 2x2 collage image, then slice —
     /// ~4x cheaper per dish than one request per dish.
@@ -107,6 +111,9 @@ final class AnalysisViewModel: ObservableObject {
     func analyze() async {
         let originals = pickedImages
         guard !originals.isEmpty else { return }
+        // Backstop: the button already asks first, but nothing may reach
+        // OpenAI without permission, whatever calls this.
+        guard aiConsentGranted else { return }
         phase = .analyzing
         pipeline = PipelineProgress(rectifyTotal: originals.count, pagesTotal: originals.count)
 
@@ -373,7 +380,9 @@ final class AnalysisViewModel: ObservableObject {
     /// window; each result is persisted immediately, and the PDF is
     /// re-rendered once at the end.
     private func startImageGenerationIfNeeded() {
-        guard generateDishImages, let scan, !KeychainStore.loadAPIKey().isEmpty else {
+        guard generateDishImages, aiConsentGranted, let scan,
+              !KeychainStore.loadAPIKey().isEmpty
+        else {
             pipeline?.imagesTotal = 0
             return
         }

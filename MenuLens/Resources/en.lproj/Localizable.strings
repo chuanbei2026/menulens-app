@@ -133,3 +133,18 @@
 /* MARK: - PDF */
 /* %1$@ = source language, %2$@ = target language */
 "pdf.header" = "Dish reference · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "Menu photos are sent to OpenAI";
+"consent.body" = "To read and translate a menu, MenuLens sends the photo to OpenAI. This is the only thing that leaves your phone, and it happens only when you tap Scan.";
+"consent.sent.header" = "Sent to OpenAI";
+"consent.sent.photo" = "The menu photo you choose";
+"consent.sent.names" = "Dish names, only if you ask for generated dish photos";
+"consent.kept.header" = "Never leaves this phone";
+"consent.kept.body" = "Your API key, your translation history, and the names and photos of the people at your table.";
+"consent.retention" = "OpenAI answers the request and keeps API data briefly for abuse monitoring. There is no developer server — nothing passes through us.";
+"consent.policy" = "Read the privacy policy";
+"consent.agree" = "Agree and continue";
+"consent.decline" = "Not now";
+"settings.consent" = "Send menu photos to OpenAI";
+"settings.consent.footer" = "Required to scan a new menu. Turn it off and nothing is sent; the sample menus and your saved translations keep working. You'll be asked again next time you scan.";

@@ -125,3 +125,18 @@
 
 /* MARK: - PDF */
 "pdf.header" = "菜品对照 · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "菜单照片会发送给 OpenAI";
+"consent.body" = "为了识别和翻译菜单，口袋菜单会把这张照片发送给 OpenAI。这是唯一离开你手机的东西，而且只在你点「识别并翻译」时才发生。";
+"consent.sent.header" = "会发给 OpenAI";
+"consent.sent.photo" = "你选择的菜单照片";
+"consent.sent.names" = "菜名 —— 仅当你要求生成配图时";
+"consent.kept.header" = "永远不离开这台手机";
+"consent.kept.body" = "你的 API Key、所有翻译记录，以及同行成员的姓名和头像。";
+"consent.retention" = "OpenAI 处理这次请求，并会短期保留 API 数据用于滥用监控。本 App 没有自己的服务器 —— 数据不经过我们。";
+"consent.policy" = "查看隐私政策";
+"consent.agree" = "同意并继续";
+"consent.decline" = "暂不";
+"settings.consent" = "把菜单照片发送给 OpenAI";
+"settings.consent.footer" = "识别新菜单必须开启。关掉后什么都不会被发送，示例菜单和已保存的翻译照常可用。下次识别时会再问你一次。";

@@ -125,3 +125,18 @@
 
 /* MARK: - PDF */
 "pdf.header" = "料理対訳 · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "メニューの写真は OpenAI に送信されます";
+"consent.body" = "メニューを読み取って翻訳するため、MenuLens はこの写真を OpenAI に送信します。端末から出るのはこれだけで、「読み取って翻訳」を押したときにのみ送信されます。";
+"consent.sent.header" = "OpenAI に送るもの";
+"consent.sent.photo" = "あなたが選んだメニューの写真";
+"consent.sent.names" = "料理名 —— 画像生成を依頼した場合のみ";
+"consent.kept.header" = "この端末から出ないもの";
+"consent.kept.body" = "API キー、翻訳の履歴、同席する人の名前と写真。";
+"consent.retention" = "OpenAI はリクエストに応答し、不正利用の監視のため API データを短期間保持します。開発者のサーバーは存在せず、データが当方を経由することはありません。";
+"consent.policy" = "プライバシーポリシーを読む";
+"consent.agree" = "同意して続ける";
+"consent.decline" = "今はしない";
+"settings.consent" = "メニューの写真を OpenAI に送信";
+"settings.consent.footer" = "新しいメニューの読み取りに必要です。オフにすると何も送信されず、サンプルメニューと保存済みの翻訳はそのまま使えます。次に読み取るときに再度確認します。";

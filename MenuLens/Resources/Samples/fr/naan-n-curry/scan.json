@@ -1,0 +1,5046 @@
+{
+  "createdAt": "2026-08-21T06:24:34Z",
+  "id": "81BDC87C-E484-428A-A558-5B5A857AC277",
+  "pages": [
+    {
+      "restaurantName": "NAAN N CURRY",
+      "sections": [
+        {
+          "bbox": {
+            "height": 0.011891279728199255,
+            "width": 0.13513513747451755,
+            "x": 0.4386694389290614,
+            "y": 0.17440543619476456
+          },
+          "chineseTitle": "PETITES ASSIETTES",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.014729035400183221,
+                "width": 0.2397552935385433,
+                "x": 0.51730387025574,
+                "y": 0.19382638803579233
+              },
+              "chineseDescription": "Fromage fait maison mariné au tandoori avec piment rouge et coriandre, sauté au cumin rôti.",
+              "chineseName": "Paneer tandoori",
+              "descriptionBBox": {
+                "height": 0.03263860616457814,
+                "width": 0.2621716349101092,
+                "x": 0.515592518464796,
+                "y": 0.20427999832533084
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.014500554258664144,
+                  "width": 0.26035223517271067,
+                  "x": 0.5174119182021946,
+                  "y": 0.20427999832533084
+                },
+                {
+                  "height": 0.013204354797052176,
+                  "width": 0.24158706541386,
+                  "x": 0.5174461493210577,
+                  "y": 0.2152695471442364
+                },
+                {
+                  "height": 0.0072674416469691305,
+                  "width": 0.09147608801843288,
+                  "x": 0.515592518464796,
+                  "y": 0.22965116284293985
+                }
+              ],
+              "originalDescription": "Home-made cheese in a tandoori marinade with red chili and coriander tossed with roasted cumin.",
+              "originalName": "TANDOORI PANEER",
+              "price": "$14.99",
+              "tags": [
+                "gluten_free",
+                "vegetarian"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010302813109833164,
+                "width": 0.14553014424477054,
+                "x": 0.23492723375079563,
+                "y": 0.2004530009107196
+              },
+              "chineseDescription": "Beignets de légumes frits dans une pâte de pois chiches.",
+              "chineseName": "Pakora",
+              "descriptionBBox": {
+                "height": 0.021802325419472246,
+                "width": 0.2577962584147202,
+                "x": 0.2349272346262782,
+                "y": 0.20930232562869688
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.013234480861089248,
+                  "width": 0.2577962519863629,
+                  "x": 0.2349272410546355,
+                  "y": 0.20930232562869688
+                },
+                {
+                  "height": 0.010174418629768422,
+                  "width": 0.04365904327343115,
+                  "x": 0.2349272346262782,
+                  "y": 0.2209302324184007
+                }
+              ],
+              "originalDescription": "Fried vegetable fritters in a garbanzo bean batter.",
+              "originalName": "PAKORA",
+              "price": "$7.99",
+              "tags": [
+                "gluten_free",
+                "vegan"
+              ]
+            }
+          ],
+          "originalTitle": "SMALL PLATES"
+        },
+        {
+          "bbox": {
+            "height": 0.011627906851158332,
+            "width": 0.13929313276343447,
+            "x": 0.43451143638335554,
+            "y": 0.25290697686511854
+          },
+          "chineseTitle": "LES CLASSIQUES",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.011891279728199367,
+                "width": 0.1891891875182017,
+                "x": 0.08939709068303356,
+                "y": 0.2774631936902403
+              },
+              "chineseDescription": "Aussi connu sous le nom de poulet au beurre. Sauce douce et crémeuse à base de tomate et de fenugrec. Disponible au poulet ou au paneer.",
+              "chineseName": "Tikka masala",
+              "descriptionBBox": {
+                "height": 0.03197674426614927,
+                "width": 0.2640332608896776,
+                "x": 0.08523909006713697,
+                "y": 0.28924418595474266
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.008720930408378402,
+                  "width": 0.23700623844585694,
+                  "x": 0.08939708857424927,
+                  "y": 0.28924418595474266
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.26195425964058705,
+                  "x": 0.08731809131622754,
+                  "y": 0.29784824460263337
+                },
+                {
+                  "height": 0.010348903228310391,
+                  "width": 0.18711018369108967,
+                  "x": 0.08523909006713697,
+                  "y": 0.31087202699258154
+                }
+              ],
+              "originalDescription": "Also known as Butter Chicken. A sweet creamy tomato and fenugreek based sauce available in chicken or paneer.",
+              "originalName": "TIKKA MASALA",
+              "price": "$19.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010251783973633355,
+                "width": 0.09147608801843282,
+                "x": 0.3742203761051287,
+                "y": 0.2746319368419776
+              },
+              "chineseDescription": "Curry traditionnel mijoté dans une sauce à l’oignon, au gingembre et à l’ail.",
+              "chineseName": "Korma",
+              "descriptionBBox": {
+                "height": 0.02331507271655231,
+                "width": 0.26403326141111727,
+                "x": 0.37214137326018104,
+                "y": 0.2848244623069074
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.26195425964058694,
+                  "x": 0.37422037503071137,
+                  "y": 0.2848244623069074
+                },
+                {
+                  "height": 0.010291290175199252,
+                  "width": 0.1122661077415924,
+                  "x": 0.37214137326018104,
+                  "y": 0.29784824484826045
+                }
+              ],
+              "originalDescription": "Traditional curry cooked in onion, ginger, and garlic based sauce.",
+              "originalName": "KORMA",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010251784513652717,
+                "width": 0.0790020774210678,
+                "x": 0.6611226629006927,
+                "y": 0.27463193637463257
+              },
+              "chineseDescription": "Épinards frais cuisinés avec cumin, gingembre, curcuma et épices.",
+              "chineseName": "Palak",
+              "descriptionBBox": {
+                "height": 0.021802325268067246,
+                "width": 0.255717248159251,
+                "x": 0.6611226630045742,
+                "y": 0.2834302328598015
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.01328550891725011,
+                  "width": 0.255717248159251,
+                  "x": 0.6611226630045742,
+                  "y": 0.2834302328598015
+                },
+                {
+                  "height": 0.010215570810562236,
+                  "width": 0.14553014424477062,
+                  "x": 0.661122664190851,
+                  "y": 0.2950169873173065
+                }
+              ],
+              "originalDescription": "Fresh spinach cooked with cumin, ginger, turmeric, and all-spice.",
+              "originalName": "PALAK",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.01162790685115822,
+                "width": 0.22245321165607268,
+                "x": 0.08316009198901135,
+                "y": 0.34011627893876195
+              },
+              "chineseDescription": "Pois chiches dans une sauce légère à l’ail, à l’oignon et aux épices.",
+              "chineseName": "Chana masala",
+              "descriptionBBox": {
+                "height": 0.022083805011443136,
+                "width": 0.25987525557312835,
+                "x": 0.07900207976775836,
+                "y": 0.35164212911074233
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.2557172481592509,
+                  "x": 0.0831600871816358,
+                  "y": 0.35164212911074233
+                },
+                {
+                  "height": 0.010353841165994027,
+                  "width": 0.1496881518989946,
+                  "x": 0.07900207976775836,
+                  "y": 0.36337209295619144
+                }
+              ],
+              "originalDescription": "Garbanzo beans in a garlic, onion, and all- spice based light sauce.",
+              "originalName": "CHANA MASALA",
+              "price": "$15.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.016071286098873427,
+                "width": 0.2336722301316223,
+                "x": 0.662816614861365,
+                "y": 0.343622489679386
+              },
+              "chineseDescription": "Gombos préparés avec des oignons, tomates et gingembre.",
+              "chineseName": "Bhindi masala",
+              "descriptionBBox": {
+                "height": 0.027823634419740007,
+                "width": 0.24203300785206894,
+                "x": 0.6628296259525744,
+                "y": 0.35444380736244074
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.017368932812562132,
+                  "width": 0.24203300785206894,
+                  "x": 0.6628296259525744,
+                  "y": 0.35444380736244074
+                },
+                {
+                  "height": 0.010174418629768422,
+                  "width": 0.04573804400921644,
+                  "x": 0.6632016646378034,
+                  "y": 0.3720930231524123
+                }
+              ],
+              "originalDescription": "Okra cooked with onions, tomato, and ginger.",
+              "originalName": "BHINDI MASALA",
+              "price": "$16.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free",
+                "vegan"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.011891279728199367,
+                "width": 0.14137213659054654,
+                "x": 0.37214137594589086,
+                "y": 0.35164212936975403
+              },
+              "chineseDescription": "Lentilles jaunes mijotées avec oignon, ail, cumin et gingembre.",
+              "chineseName": "Daal",
+              "descriptionBBox": {
+                "height": 0.023339763970522842,
+                "width": 0.24532223789061092,
+                "x": 0.3700623695448232,
+                "y": 0.3618346547193614
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.24324322519657865,
+                  "x": 0.37214138223885546,
+                  "y": 0.3618346547193614
+                },
+                {
+                  "height": 0.010315981483675518,
+                  "width": 0.11434511156870442,
+                  "x": 0.3700623695448232,
+                  "y": 0.3748584372062087
+                }
+              ],
+              "originalDescription": "Yellow lentils cooked with onion, garlic, cumin, and ginger.",
+              "originalName": "DAAL",
+              "price": "$14.99",
+              "tags": [
+                "vegan",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.011891279728199367,
+                "width": 0.23076922696452087,
+                "x": 0.07900208282751084,
+                "y": 0.38221970575287845
+              },
+              "chineseDescription": "Aubergine rôtie sautée avec petits pois, ail, oignon et tomates.",
+              "chineseName": "Baingan bharta",
+              "descriptionBBox": {
+                "height": 0.02343194463580822,
+                "width": 0.23284823477530325,
+                "x": 0.07692307687830935,
+                "y": 0.39389534886366495
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011627906851158332,
+                  "width": 0.23284823079163286,
+                  "x": 0.07692308086197973,
+                  "y": 0.39389534886366495
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.17047816543950062,
+                  "x": 0.07692307687830935,
+                  "y": 0.4054360137712738
+                }
+              ],
+              "originalDescription": "Roasted eggplant sautéed with peas, garlic, onion, and tomatoes.",
+              "originalName": "BENGUN BHARTA",
+              "price": "$16.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            }
+          ],
+          "originalTitle": "THE CLASSICS"
+        },
+        {
+          "bbox": {
+            "height": 0.010386762910629121,
+            "width": 0.1912681913453137,
+            "x": 0.40956341143753017,
+            "y": 0.4273255813101158
+          },
+          "chineseTitle": "SPÉCIALITÉS PAKISTANAISES",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.01024684603594972,
+                "width": 0.14553014424477057,
+                "x": 0.07068607278405961,
+                "y": 0.45922989808998094
+              },
+              "chineseDescription": "Notre plat le plus populaire ! Riz basmati à la pakistanaise, lentement cuit au safran et mijoté avec de la viande ou des légumes.",
+              "chineseName": "Dumm biryani",
+              "descriptionBBox": {
+                "height": 0.033599778468605956,
+                "width": 0.25363823826437615,
+                "x": 0.06652807385923915,
+                "y": 0.47093023266938205
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.2432432251965787,
+                  "x": 0.06860707357634695,
+                  "y": 0.47093023266938205
+                },
+                {
+                  "height": 0.011627906851158332,
+                  "width": 0.2515592405050268,
+                  "x": 0.06860707161858848,
+                  "y": 0.4811046513127929
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.2245322154831848,
+                  "x": 0.06652807385923915,
+                  "y": 0.49263873140978864
+                }
+              ],
+              "originalDescription": "Our most popular dish! Pakistani-style Basmati rice slow-cooked in saffron and simmered with meat or vegetables.",
+              "originalName": "DUMM BIRYANI",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010441083465265177,
+                "width": 0.16216216249635962,
+                "x": 0.36798336619464767,
+                "y": 0.45784883726941805
+              },
+              "chineseDescription": "Korma traditionnel préparé avec oignon, ail et amandes. Ni trop sucré, ni trop épicé — juste parfait !",
+              "chineseName": "Korma moghol",
+              "descriptionBBox": {
+                "height": 0.03348455279520868,
+                "width": 0.2557172431475788,
+                "x": 0.3638253688313805,
+                "y": 0.4694224236942034
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.23700623844585694,
+                  "x": 0.36798337022613586,
+                  "y": 0.4694224236942034
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.2536382443321389,
+                  "x": 0.36590436764682044,
+                  "y": 0.4811046513709325
+                },
+                {
+                  "height": 0.008720929868358929,
+                  "width": 0.13929313276343447,
+                  "x": 0.3638253688313805,
+                  "y": 0.49418604662105314
+                }
+              ],
+              "originalDescription": "Traditional korma cooked with onion, garlic, and almonds. Not too sweet, not too spicy—just right!",
+              "originalName": "MUGHLAI KORMA",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010998054106940325,
+                "width": 0.08543272961287285,
+                "x": 0.6672628462370813,
+                "y": 0.45598353102125655
+              },
+              "chineseDescription": "Viande cuite dans une sauce à base de yaourt, fenouil, coriandre et oignon.",
+              "chineseName": "Handi",
+              "descriptionBBox": {
+                "height": 0.02493316936098422,
+                "width": 0.2806652726247233,
+                "x": 0.6673596732528909,
+                "y": 0.4648924119742488
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.01330526228804274,
+                  "width": 0.28066526935398106,
+                  "x": 0.6673596765236331,
+                  "y": 0.4648924119742488
+                },
+                {
+                  "height": 0.010210632332859126,
+                  "width": 0.15384614718791156,
+                  "x": 0.6673596732528909,
+                  "y": 0.4796149490023739
+                }
+              ],
+              "originalDescription": "Meat cooked in a yogurt, fennel, coriander, and onion based sauce.",
+              "originalName": "HANDI",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.01162790685115822,
+                "width": 0.14968815189899465,
+                "x": 0.667359664383143,
+                "y": 0.524709302497386
+              },
+              "chineseDescription": "Viande sautée avec oignons caramélisés, dans une sauce au poivre noir et à l'ail.",
+              "chineseName": "Balti gosht",
+              "descriptionBBox": {
+                "height": 0.026185997274818296,
+                "width": 0.2748039406354462,
+                "x": 0.6692223956813727,
+                "y": 0.5349691558097299
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.013749840305453676,
+                  "width": 0.2748039406354462,
+                  "x": 0.6692223956813727,
+                  "y": 0.5349691558097299
+                },
+                {
+                  "height": 0.013190036721839826,
+                  "width": 0.24532222902369072,
+                  "x": 0.6694386806544748,
+                  "y": 0.5479651163627084
+                }
+              ],
+              "originalDescription": "Meat sautéed with caramelized onion in a black pepper and garlic based sauce.",
+              "originalName": "BAALTI GOSHT",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.010207339834383933,
+                "width": 0.08939708419132077,
+                "x": 0.06444906614238537,
+                "y": 0.5537790698820635
+              },
+              "chineseDescription": "Sauce acidulée aux mangues marinées, préparée avec graines de moutarde, épices, oignon et cumin.",
+              "chineseName": "Achari",
+              "descriptionBBox": {
+                "height": 0.02527796101905888,
+                "width": 0.2746738692230386,
+                "x": 0.06212446272783674,
+                "y": 0.5619313412073923
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.014190782912050226,
+                  "width": 0.25200891726600483,
+                  "x": 0.06212446272783674,
+                  "y": 0.5619313412073923
+                },
+                {
+                  "height": 0.01189786418513017,
+                  "width": 0.27442825787264485,
+                  "x": 0.062370074078230496,
+                  "y": 0.575311438041321
+                }
+              ],
+              "originalDescription": "Tangy mango picklesauce cooked with mustard seeds, all-spice, onion, and cumin.",
+              "originalName": "ACHARI",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.01162790685115822,
+                "width": 0.08939708419132081,
+                "x": 0.36590436999720166,
+                "y": 0.5508720930375991
+              },
+              "chineseDescription": "Sauce légère au yaourt, coriandre, épices, gingembre et tomates.",
+              "chineseName": "Karahi",
+              "descriptionBBox": {
+                "height": 0.02492164669116359,
+                "width": 0.27858626958023464,
+                "x": 0.3659043693509059,
+                "y": 0.5622876555352876
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.013293739893428302,
+                  "width": 0.27858626552686894,
+                  "x": 0.3659043734042716,
+                  "y": 0.5622876555352876
+                },
+                {
+                  "height": 0.01189786418513017,
+                  "width": 0.20374220194267872,
+                  "x": 0.3659043693509059,
+                  "y": 0.575311438041321
+                }
+              ],
+              "originalDescription": "Light sauce consisting of yogurt, coriander, all-spice, ginger, and tomatoes.",
+              "originalName": "KARAHI",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.011968281098967415,
+                "width": 0.06664836271462227,
+                "x": 0.6672995199325661,
+                "y": 0.6088414407620649
+              },
+              "chineseDescription": "Ragoût longuement mijoté à l’oignon et aux graines de fenouil, garni de gingembre, oignons frits et coriandre.",
+              "chineseName": "Nehari",
+              "descriptionBBox": {
+                "height": 0.038480542138858875,
+                "width": 0.24983603602676763,
+                "x": 0.6713102165572616,
+                "y": 0.6184962018390459
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.014061892154127675,
+                  "width": 0.24983603602676763,
+                  "x": 0.6713102165572616,
+                  "y": 0.6184962018390459
+                },
+                {
+                  "height": 0.01325917162954604,
+                  "width": 0.24740123285080273,
+                  "x": 0.6715176767312168,
+                  "y": 0.6322674420833965
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.1288981259931815,
+                  "x": 0.6715176728661951,
+                  "y": 0.6453488371267465
+                }
+              ],
+              "originalDescription": "A slow-cooked onion and fennel seed based stew topped with ginger, fried onion, and cilantro.",
+              "originalName": "NEHARI"
+            },
+            {
+              "bbox": {
+                "height": 0.011627906851158332,
+                "width": 0.11226610774159237,
+                "x": 0.05613305888041655,
+                "y": 0.6351744184736458
+              },
+              "chineseDescription": "Lentilles, mouton, orge et épices cuits lentement. Un plat complet, le meilleur hors de notre terre natale !",
+              "chineseName": "Haleem",
+              "descriptionBBox": {
+                "height": 0.034883720855773404,
+                "width": 0.2848232782610928,
+                "x": 0.05197505238350768,
+                "y": 0.6482558141616301
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011627906851158332,
+                  "width": 0.261954259640587,
+                  "x": 0.05405405780964404,
+                  "y": 0.6482558141616301
+                },
+                {
+                  "height": 0.01328221695879439,
+                  "width": 0.28274427318109296,
+                  "x": 0.05405405746350758,
+                  "y": 0.6596828993129448
+                },
+                {
+                  "height": 0.010432853029106348,
+                  "width": 0.18295217603686564,
+                  "x": 0.05197505238350768,
+                  "y": 0.6727066819882972
+                }
+              ],
+              "originalDescription": "Slow cooked lentils, mutton, barley, and fresh all-spice. A wholesome dish, the best outside of our mother land!",
+              "originalName": "HALEEM",
+              "price": "$18.99"
+            },
+            {
+              "bbox": {
+                "height": 0.011627906851158332,
+                "width": 0.13513513747451755,
+                "x": 0.3617463617027966,
+                "y": 0.6351744185947698
+              },
+              "chineseDescription": "Agneau haché sauté avec oignons, tomates, gingembre et coriandre rôtie. Proposé nature, avec petits pois ou pommes de terre.",
+              "chineseName": "Keema",
+              "descriptionBBox": {
+                "height": 0.0380612178860813,
+                "width": 0.26843517291603514,
+                "x": 0.361502461839313,
+                "y": 0.6482558139227611
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.010294582673674446,
+                  "width": 0.22453221548318475,
+                  "x": 0.3617463690775344,
+                  "y": 0.6482558139227611
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.26819127112192315,
+                  "x": 0.361746363633425,
+                  "y": 0.6596828990704422
+                },
+                {
+                  "height": 0.015560839211279154,
+                  "width": 0.2561761989006154,
+                  "x": 0.361502461839313,
+                  "y": 0.6707561925975632
+                }
+              ],
+              "originalDescription": "Minced lamb sauteéd with onions, tomatoes, ginger, and roasted coriander. Available plain, with peas, or potatoes.",
+              "originalName": "KEEMA",
+              "price": "$18.99",
+              "tags": [
+                "gluten_free",
+                "contains_lamb"
+              ]
+            }
+          ],
+          "originalTitle": "PAKISTANI STAPLES"
+        },
+        {
+          "bbox": {
+            "height": 0.01162790685115822,
+            "width": 0.11018710391448033,
+            "x": 0.4449064491446309,
+            "y": 0.7107558139581418
+          },
+          "chineseTitle": "TANDOORI",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.013213081511068703,
+                "width": 0.18918918751820174,
+                "x": 0.04365904260264552,
+                "y": 0.7427325583503537
+              },
+              "chineseDescription": "Marinées dans du yaourt, épices, coriandre, piment rouge et flocons de piment. Dégustez-les avec les mains.",
+              "chineseName": "Côtelettes d’agneau",
+              "descriptionBBox": {
+                "height": 0.03963759927007371,
+                "width": 0.2889812792706902,
+                "x": 0.04158004467087695,
+                "y": 0.7542468854494252
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.01319497465952335,
+                  "width": 0.2681912711219231,
+                  "x": 0.0457380479109718,
+                  "y": 0.7542468854494252
+                },
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.28690228083531705,
+                  "x": 0.043659043106250066,
+                  "y": 0.7672706679968345
+                },
+                {
+                  "height": 0.013590033975084848,
+                  "width": 0.23492723461874493,
+                  "x": 0.04158004467087695,
+                  "y": 0.7802944507444141
+                }
+              ],
+              "originalDescription": "Marinated in yogurt, all-spice, coriander, and red chilli and red flakes. Ditch the fork and knife and eat with your hands.",
+              "originalName": "LAMB CHOPS",
+              "price": "$25.99",
+              "tags": [
+                "gluten_free",
+                "contains_lamb"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.013137362146431575,
+                "width": 0.25363824433213883,
+                "x": 0.3575883601277629,
+                "y": 0.7412231028922651
+              },
+              "chineseDescription": "Morceaux de poulet (blanc ou cuisse), marinés dans du yaourt, cumin, piment et coriandre, cuits sur brochette. Servis avec oignons et chutney de menthe épicé.",
+              "chineseName": "Poulet tikka boti",
+              "descriptionBBox": {
+                "height": 0.05098567213676419,
+                "width": 0.2889812876989943,
+                "x": 0.35758836032348834,
+                "y": 0.7542468857374458
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.28690228083531705,
+                  "x": 0.3596673619212188,
+                  "y": 0.7542468857374458
+                },
+                {
+                  "height": 0.013173575849522279,
+                  "width": 0.2723492540455328,
+                  "x": 0.35758837100218144,
+                  "y": 0.7659883720131445
+                },
+                {
+                  "height": 0.010403223782946558,
+                  "width": 0.26611226729481113,
+                  "x": 0.35758836032348834,
+                  "y": 0.7802944505937108
+                },
+                {
+                  "height": 0.01308139507254813,
+                  "width": 0.28898128466242906,
+                  "x": 0.35758836336005356,
+                  "y": 0.7921511628016619
+                }
+              ],
+              "originalDescription": "Boneless chicken (dark or white) marinated in yogurt, cumin, chili, and coriander and cooked on skewers. Served with onions and a spicy mint chutney. \"Laal wala tikka!\"",
+              "originalName": "CHICKEN TIKKA BOTI",
+              "price": "$20.99"
+            },
+            {
+              "bbox": {
+                "height": 0.013137362146431575,
+                "width": 0.18295217603686564,
+                "x": 0.671517672688428,
+                "y": 0.7412231028862087
+              },
+              "chineseDescription": "Notre version d’un classique de rue — poulet désossé mariné au yaourt, piment vert et épices ; à la cuisson la viande reste blanche. Servi avec des oignons et un chutney de menthe épicé.",
+              "chineseName": "Malai boti",
+              "descriptionBBox": {
+                "height": 0.05098567248464514,
+                "width": 0.29521830058880694,
+                "x": 0.6756756744581275,
+                "y": 0.7542468855557596
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.2702702749490352,
+                  "x": 0.6756756767146715,
+                  "y": 0.7542468855557596
+                },
+                {
+                  "height": 0.01325258771263449,
+                  "width": 0.286902280835317,
+                  "x": 0.6756756834908653,
+                  "y": 0.7672706679873993
+                },
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.25987525581347504,
+                  "x": 0.6756756744581275,
+                  "y": 0.7802944507962426
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.29521829614376516,
+                  "x": 0.6756756789031693,
+                  "y": 0.7936046511892465
+                }
+              ],
+              "originalDescription": "Our take on a street favorite—boneless chicken marinated in yogurt, green chilies, and all-spice resulting in a white color upon completion. Served with onions and a",
+              "originalName": "MALAI BOTI",
+              "price": "$20.99"
+            },
+            {
+              "bbox": {
+                "height": 0.011627906851158332,
+                "width": 0.18918918751820168,
+                "x": 0.037422036680954604,
+                "y": 0.8066860466470953
+              },
+              "chineseDescription": "Poisson frit à la pakistanaise, mariné dans de la coriandre, des épices et des flocons de piment rouge. La fierté de Lahore !",
+              "chineseName": "Poisson de Lahore",
+              "descriptionBBox": {
+                "height": 0.037790697427708686,
+                "width": 0.27027025158189205,
+                "x": 0.03534303950098449,
+                "y": 0.8197674419717076
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011627906851158332,
+                  "width": 0.2557172481592509,
+                  "x": 0.037422036939085704,
+                  "y": 0.8197674419717076
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.2702702502184208,
+                  "x": 0.03534304086445574,
+                  "y": 0.8328488373689946
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.14137213659054648,
+                  "x": 0.03534303950098449,
+                  "y": 0.845930232548258
+                }
+              ],
+              "originalDescription": "Fried Pakistani style fish marinated in coriander, all-spice, and red-chili flakes. The pride of Lahore!",
+              "originalName": "LAHORI FISH",
+              "price": "$24.99",
+              "tags": [
+                "gluten_free",
+                "contains_seafood"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.013219665967999616,
+                "width": 0.19334719517242582,
+                "x": 0.35550935597779065,
+                "y": 0.831257078007228
+              },
+              "chineseDescription": "Grand classique ! Poulet désossé dans une marinade acidulée aux graines de fenouil. Servi avec oignons et chutney de menthe épicé.",
+              "chineseName": "Achari boti",
+              "descriptionBBox": {
+                "height": 0.053083363366846825,
+                "width": 0.28495176493850294,
+                "x": 0.35538086673954294,
+                "y": 0.844280860803959
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.2494802366779148,
+                  "x": 0.35758836710802794,
+                  "y": 0.844280860803959
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.22869022313740883,
+                  "x": 0.3555093554271377,
+                  "y": 0.8590033976062853
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.28482327700820503,
+                  "x": 0.35550935466984085,
+                  "y": 0.8720271799262362
+                },
+                {
+                  "height": 0.012480070474868765,
+                  "width": 0.09619099201220938,
+                  "x": 0.35538086673954294,
+                  "y": 0.8848841536959371
+                }
+              ],
+              "originalDescription": "A Pakistani classic! Boneless chicken smothered in a tangy fennel seed marinade. Served with onions and a spicy mint chutney.",
+              "originalName": "ACHARI BOTI",
+              "price": "$20.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.01162790685115822,
+                "width": 0.2058212057697909,
+                "x": 0.6756756742312318,
+                "y": 0.8328488373343877
+              },
+              "chineseDescription": "Poulet ou agneau haché, épicé et coriandré, grillé sur brochette. Servi avec oignons et chutney de menthe épicé (4 pièces – Agneau supplément 1€).",
+              "chineseName": "Seekh kabab",
+              "descriptionBBox": {
+                "height": 0.05688192989582008,
+                "width": 0.2848232770082051,
+                "x": 0.677754676915163,
+                "y": 0.8442808606464978
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199255,
+                  "width": 0.27027025021842066,
+                  "x": 0.6777546853551002,
+                  "y": 0.8442808606464978
+                },
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.2723492540455328,
+                  "x": 0.6777546903109134,
+                  "y": 0.8590033974972736
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.2848232770082051,
+                  "x": 0.677754676915163,
+                  "y": 0.8735465117391495
+                },
+                {
+                  "height": 0.01453488329393815,
+                  "width": 0.23076922696452085,
+                  "x": 0.6777546773493405,
+                  "y": 0.8866279072483797
+                }
+              ],
+              "originalDescription": "Minced chicken or lamb seasoned with all-spice and coriander then cooked on skewers. Served with onions and a spicy mint chutney (4pcs - Lamb +$1)",
+              "originalName": "SEEKH KABAB",
+              "price": "$20.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.013147238561818209,
+                "width": 0.18711018369108967,
+                "x": 0.031185034765681748,
+                "y": 0.8720271798029442
+              },
+              "chineseDescription": "Cubes de filet mignon d’agneau de Nouvelle-Zélande, marinés au yaourt, piment et coriandre.",
+              "chineseName": "Boti kabab",
+              "descriptionBBox": {
+                "height": 0.040821130350842894,
+                "width": 0.26403325793276416,
+                "x": 0.02910603186673931,
+                "y": 0.8850509626069429
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.011891279728199367,
+                  "width": 0.24740123285080276,
+                  "x": 0.03326404301326804,
+                  "y": 0.8850509626069429
+                },
+                {
+                  "height": 0.01162790685115822,
+                  "width": 0.261954259640587,
+                  "x": 0.031185030158916497,
+                  "y": 0.899709302436824
+                },
+                {
+                  "height": 0.01308139507254824,
+                  "width": 0.13513512510921039,
+                  "x": 0.02910603186673931,
+                  "y": 0.9127906978852376
+                }
+              ],
+              "originalDescription": "Filet mignon cubes of boneless New Zealand lamb marinated in yogurt, red chili, and coriander.",
+              "originalName": "BOTI KABAB",
+              "price": "$25.99",
+              "tags": [
+                "gluten_free",
+                "contains_lamb"
+              ]
+            }
+          ],
+          "originalTitle": "TANDOORI"
+        }
+      ],
+      "sourceLanguage": "English",
+      "sourceLanguageChinese": "anglais",
+      "textLines": [
+        {
+          "box": {
+            "height": 0.01718143860589061,
+            "width": 0.45789118292266007,
+            "x": 0.3781214620911816,
+            "y": 0.05313411089030928
+          },
+          "original": "A simple connection that has allowed us to serve customers since 2005. We bring you dishes",
+          "role": "other",
+          "translated": "Un lien simple qui nous permet de servir nos clients depuis 2005. Nous vous proposons des plats"
+        },
+        {
+          "box": {
+            "height": 0.012118122450762714,
+            "width": 0.19366943507758688,
+            "x": 0.3802955574258334,
+            "y": 0.047682262144231435
+          },
+          "original": "You like to eat. We like to feed.",
+          "role": "other",
+          "translated": "Vous aimez manger. Nous aimons vous régaler."
+        },
+        {
+          "box": {
+            "height": 0.01947252396683996,
+            "width": 0.09379074986981806,
+            "x": 0.16620233883011015,
+            "y": 0.06511838910257117
+          },
+          "original": "nAAN",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.018395874265366152,
+            "width": 0.4537819440399615,
+            "x": 0.3781011014452631,
+            "y": 0.06136710846831139
+          },
+          "original": "from our homeland that we grew up on and cant get enough of. Everything is made in-house",
+          "role": "other",
+          "translated": "venus de notre pays d’origine, ceux de notre enfance dont on ne se lasse pas. Tout est préparé sur place"
+        },
+        {
+          "box": {
+            "height": 0.01935113407882405,
+            "width": 0.45167726983513984,
+            "x": 0.37808071467109633,
+            "y": 0.06949939987600351
+          },
+          "original": "as we refuse to use pre-packaged spice mixes. We roast and grind our own spice mixes on a",
+          "role": "other",
+          "translated": "car nous refusons d’utiliser des mélanges d’épices préfabriqués. Nous torréfions et moulons nos propres épices tous les jours."
+        },
+        {
+          "box": {
+            "height": 0.02314934131108215,
+            "width": 0.4643847497974068,
+            "x": 0.3780616453308749,
+            "y": 0.07703811066531852
+          },
+          "original": "daily basis. The menu provides options for everyone, so go ahead, LIVE IT UP. Or as they say in",
+          "role": "other",
+          "translated": "Le menu offre des options pour tous, alors allez-y, PROFITEZ-EN. Comme on dit au Pakistan et en Inde : « ASH KAR YAAR ! »"
+        },
+        {
+          "box": {
+            "height": 0.010332442355992955,
+            "width": 0.18295217603686564,
+            "x": 0.3783783831527383,
+            "y": 0.09286523199038343
+          },
+          "original": "Pakistan and India: \"ASH KAR YAAR!\"",
+          "role": "other",
+          "translated": "Pakistan et Inde : « ASH KAR YAAR ! »"
+        },
+        {
+          "box": {
+            "height": 0.020055549466056366,
+            "width": 0.4060394435493061,
+            "x": 0.3760079188641189,
+            "y": 0.10107145965485442
+          },
+          "original": "[GF] • Gluten Free | [VG] = Vegetarian | [V] = Vegan",
+          "role": "other",
+          "translated": "[GF] • Sans gluten | [VG] = Végétarien | [V] = Végétalien"
+        },
+        {
+          "box": {
+            "height": 0.019078244979357284,
+            "width": 0.11440678972092788,
+            "x": 0.15381531679978644,
+            "y": 0.10746669130737452
+          },
+          "original": "CURRY",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.014566660197377845,
+            "width": 0.27279025036086907,
+            "x": 0.3760834353373777,
+            "y": 0.12002400353348797
+          },
+          "original": "PLEASE ORDER RICE AND NAAN SEPARATELY.",
+          "role": "other",
+          "translated": "MERCI DE COMMANDER LE RIZ ET LE NAAN SÉPARÉMENT."
+        },
+        {
+          "box": {
+            "height": 0.00581395342557911,
+            "width": 0.062370059169478714,
+            "x": 0.17879418047763074,
+            "y": 0.13081395353139647
+          },
+          "original": "EST.2005",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013745474788367629,
+            "width": 0.24570671588520565,
+            "x": 0.3781391922713142,
+            "y": 0.1312344721971127
+          },
+          "original": "ALL FOOD IS MEDIUM SPICY AND HALAL.",
+          "role": "other",
+          "translated": "TOUS LES PLATS SONT ÉPICÉS MOYENNEMENT ET HALAL."
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.237006238445857,
+            "x": 0.37837837528850615,
+            "y": 0.1466591168982626
+          },
+          "original": "Automatic gratuity: 18% for a party of 6 or more",
+          "role": "other",
+          "translated": "Pourboire automatique : 18% pour les groupes de 6 personnes ou plus"
+        },
+        {
+          "box": {
+            "height": 0.0072674416469691305,
+            "width": 0.07692307359395578,
+            "x": 0.16839917134578022,
+            "y": 0.15843023259221312
+          },
+          "original": "ISSAQUAH",
+          "role": "other",
+          "translated": "ISSAQUAH"
+        },
+        {
+          "box": {
+            "height": 0.010388408889856926,
+            "width": 0.14760914807188258,
+            "x": 0.47401247326135604,
+            "y": 0.1555232559709685
+          },
+          "original": "20% for a party of 10 or more",
+          "role": "other",
+          "translated": "20% pour les groupes de 10 personnes ou plus"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.13513513747451755,
+            "x": 0.4386694389290614,
+            "y": 0.17440543619476456
+          },
+          "original": "SMALL PLATES",
+          "role": "section_title",
+          "translated": "PETITES ASSIETTES"
+        },
+        {
+          "box": {
+            "height": 0.014729035400183221,
+            "width": 0.2397552935385433,
+            "x": 0.51730387025574,
+            "y": 0.19382638803579233
+          },
+          "original": "TANDOORI PANEER [GFJ [VG] $14.99",
+          "role": "dish_name",
+          "translated": "Paneer tandoori"
+        },
+        {
+          "box": {
+            "height": 0.010302813109833164,
+            "width": 0.14553014424477054,
+            "x": 0.23492723375079563,
+            "y": 0.2004530009107196
+          },
+          "original": "PAKORA (GF] [V| $7.99",
+          "role": "dish_name",
+          "translated": "Pakora"
+        },
+        {
+          "box": {
+            "height": 0.013234480861089248,
+            "width": 0.2577962519863629,
+            "x": 0.2349272410546355,
+            "y": 0.20930232562869688
+          },
+          "original": "Fried vegetable fritters in a garbanzo bean",
+          "role": "description",
+          "translated": "Beignets de légumes frits dans une pâte de pois chiches"
+        },
+        {
+          "box": {
+            "height": 0.014500554258664144,
+            "width": 0.26035223517271067,
+            "x": 0.5174119182021946,
+            "y": 0.20427999832533084
+          },
+          "original": "Home-made cheese in a tandoori marinade",
+          "role": "description",
+          "translated": "Fromage fait maison mariné au tandoori"
+        },
+        {
+          "box": {
+            "height": 0.010174418629768422,
+            "width": 0.04365904327343115,
+            "x": 0.2349272346262782,
+            "y": 0.2209302324184007
+          },
+          "original": "batter.",
+          "role": "description",
+          "translated": "Pâte de pois chiches."
+        },
+        {
+          "box": {
+            "height": 0.013204354797052176,
+            "width": 0.24158706541386,
+            "x": 0.5174461493210577,
+            "y": 0.2152695471442364
+          },
+          "original": "with red chili and coriander tossed with",
+          "role": "description",
+          "translated": "au piment rouge et coriandre, sauté au cumin rôti."
+        },
+        {
+          "box": {
+            "height": 0.0072674416469691305,
+            "width": 0.09147608801843288,
+            "x": 0.515592518464796,
+            "y": 0.22965116284293985
+          },
+          "original": "roasted cumin.",
+          "role": "description",
+          "translated": "Au cumin rôti."
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.13929313276343447,
+            "x": 0.43451143638335554,
+            "y": 0.25290697686511854
+          },
+          "original": "THE CLASSICS",
+          "role": "section_title",
+          "translated": "LES CLASSIQUES"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.1891891875182017,
+            "x": 0.08939709068303356,
+            "y": 0.2774631936902403
+          },
+          "original": "TIKKA MASALA* (GF] $19.99",
+          "role": "dish_name",
+          "translated": "Tikka masala"
+        },
+        {
+          "box": {
+            "height": 0.010251783973633355,
+            "width": 0.09147608801843282,
+            "x": 0.3742203761051287,
+            "y": 0.2746319368419776
+          },
+          "original": "KORMA* (GF]",
+          "role": "dish_name",
+          "translated": "Korma"
+        },
+        {
+          "box": {
+            "height": 0.010251784513652717,
+            "width": 0.0790020774210678,
+            "x": 0.6611226629006927,
+            "y": 0.27463193637463257
+          },
+          "original": "PALAK (GF]",
+          "role": "dish_name",
+          "translated": "Palak"
+        },
+        {
+          "box": {
+            "height": 0.008720930408378402,
+            "width": 0.23700623844585694,
+            "x": 0.08939708857424927,
+            "y": 0.28924418595474266
+          },
+          "original": "Also known as Butter Chicken. A sweet",
+          "role": "description",
+          "translated": "Aussi connu sous le nom de poulet au beurre. Une sauce douce"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.26195425964058694,
+            "x": 0.37422037503071137,
+            "y": 0.2848244623069074
+          },
+          "original": "Traditional curry cooked in onion, ginger, and",
+          "role": "description",
+          "translated": "Curry traditionnel mijoté dans une sauce à l’oignon, au gingembre"
+        },
+        {
+          "box": {
+            "height": 0.01328550891725011,
+            "width": 0.255717248159251,
+            "x": 0.6611226630045742,
+            "y": 0.2834302328598015
+          },
+          "original": "Fresh spinach cooked with cumin, ginger,",
+          "role": "description",
+          "translated": "Épinards frais cuisinés avec cumin, gingembre,"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.26195425964058705,
+            "x": 0.08731809131622754,
+            "y": 0.29784824460263337
+          },
+          "original": "creamy tomato and fenugreek based sauce",
+          "role": "description",
+          "translated": "sauce crémeuse à la tomate et au fenugrec"
+        },
+        {
+          "box": {
+            "height": 0.010291290175199252,
+            "width": 0.1122661077415924,
+            "x": 0.37214137326018104,
+            "y": 0.29784824484826045
+          },
+          "original": "garlic based sauce.",
+          "role": "description",
+          "translated": "et à l’ail."
+        },
+        {
+          "box": {
+            "height": 0.010215570810562236,
+            "width": 0.14553014424477062,
+            "x": 0.661122664190851,
+            "y": 0.2950169873173065
+          },
+          "original": "turmeric, and all-spice.",
+          "role": "description",
+          "translated": "curcuma et épices."
+        },
+        {
+          "box": {
+            "height": 0.010339026812923868,
+            "width": 0.13305613364740554,
+            "x": 0.37422037558793964,
+            "y": 0.3095930231524123
+          },
+          "original": "*mild spice level available",
+          "role": "other",
+          "translated": "*version douce disponible"
+        },
+        {
+          "box": {
+            "height": 0.012425920026353565,
+            "width": 0.13162200532044543,
+            "x": 0.6607638633649596,
+            "y": 0.30454348878584714
+          },
+          "original": ": PANEER [VG] $17.99",
+          "role": "price",
+          "translated": ": PANEER [VG] 17,99€"
+        },
+        {
+          "box": {
+            "height": 0.010348903228310391,
+            "width": 0.18711018369108967,
+            "x": 0.08523909006713697,
+            "y": 0.31087202699258154
+          },
+          "original": "available in chicken or paneer.",
+          "role": "description",
+          "translated": "proposée au poulet ou au paneer."
+        },
+        {
+          "box": {
+            "height": 0.01033079637676515,
+            "width": 0.13305613364740554,
+            "x": 0.08523908660665058,
+            "y": 0.3210645526425764
+          },
+          "original": "*mild spice level available",
+          "role": "other",
+          "translated": "*version douce disponible"
+        },
+        {
+          "box": {
+            "height": 0.011879881538054193,
+            "width": 0.11284620139741819,
+            "x": 0.37182874075676625,
+            "y": 0.31964179746576094
+          },
+          "original": ": CHICKEN $17.99",
+          "role": "price",
+          "translated": ": POULET 17,99€"
+        },
+        {
+          "box": {
+            "height": 0.010432853029106348,
+            "width": 0.1122661077415924,
+            "x": 0.661122663312156,
+            "y": 0.31686046512915655
+          },
+          "original": ":CHICKEN $17.99",
+          "role": "price",
+          "translated": ":POULET 17,99€"
+        },
+        {
+          "box": {
+            "height": 0.010312688985200325,
+            "width": 0.08939709037397436,
+            "x": 0.3721413725469005,
+            "y": 0.3312570783965443
+          },
+          "original": ": LAMB $18.99",
+          "role": "price",
+          "translated": ": AGNEAU 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.012883940207458755,
+            "width": 0.09247378282840668,
+            "x": 0.6606002791783162,
+            "y": 0.3260284115588321
+          },
+          "original": ":LAMB $18.99",
+          "role": "price",
+          "translated": ":AGNEAU 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.22245321165607268,
+            "x": 0.08316009198901135,
+            "y": 0.34011627893876195
+          },
+          "original": "CHANA MASALA [VG] [GF] $15.99",
+          "role": "dish_name",
+          "translated": "Chana masala"
+        },
+        {
+          "box": {
+            "height": 0.016071286098873427,
+            "width": 0.2336722301316223,
+            "x": 0.662816614861365,
+            "y": 0.343622489679386
+          },
+          "original": "BHINDI MASALA* [VG] [GF] $16.99",
+          "role": "dish_name",
+          "translated": "Bhindi masala"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.2557172481592509,
+            "x": 0.0831600871816358,
+            "y": 0.35164212911074233
+          },
+          "original": "Garbanzo beans in a garlic, onion, and all-",
+          "role": "description",
+          "translated": "Pois chiches dans une sauce légère à l’ail, à l’oignon"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.14137213659054654,
+            "x": 0.37214137594589086,
+            "y": 0.35164212936975403
+          },
+          "original": "DAAL* [V] [GF] $14.99",
+          "role": "dish_name",
+          "translated": "Daal"
+        },
+        {
+          "box": {
+            "height": 0.017368932812562132,
+            "width": 0.24203300785206894,
+            "x": 0.6628296259525744,
+            "y": 0.35444380736244074
+          },
+          "original": "Okra cooked with onions, tomato, and",
+          "role": "description",
+          "translated": "Gombos cuisinés avec oignons, tomate"
+        },
+        {
+          "box": {
+            "height": 0.010353841165994027,
+            "width": 0.1496881518989946,
+            "x": 0.07900207976775836,
+            "y": 0.36337209295619144
+          },
+          "original": "spice based light sauce.",
+          "role": "description",
+          "translated": "et épices."
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.24324322519657865,
+            "x": 0.37214138223885546,
+            "y": 0.3618346547193614
+          },
+          "original": "Yellow lentils cooked with onion, garlic,",
+          "role": "description",
+          "translated": "Lentilles jaunes mijotées avec oignon, ail,"
+        },
+        {
+          "box": {
+            "height": 0.010315981483675518,
+            "width": 0.11434511156870442,
+            "x": 0.3700623695448232,
+            "y": 0.3748584372062087
+          },
+          "original": "cumin, and ginger.",
+          "role": "description",
+          "translated": "cumin et gingembre."
+        },
+        {
+          "box": {
+            "height": 0.010174418629768422,
+            "width": 0.04573804400921644,
+            "x": 0.6632016646378034,
+            "y": 0.3720930231524123
+          },
+          "original": "ginger.",
+          "role": "description",
+          "translated": "gingembre."
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.23076922696452087,
+            "x": 0.07900208282751084,
+            "y": 0.38221970575287845
+          },
+          "original": "BENGUN BHARTA [VG] [GF] $16.99",
+          "role": "dish_name",
+          "translated": "Baingan bharta"
+        },
+        {
+          "box": {
+            "height": 0.00872092986835904,
+            "width": 0.13513513747451755,
+            "x": 0.3721413726608701,
+            "y": 0.38662790708616934
+          },
+          "original": "*mild spice level available",
+          "role": "other",
+          "translated": "*version douce disponible"
+        },
+        {
+          "box": {
+            "height": 0.01281413297556,
+            "width": 0.12747468129162653,
+            "x": 0.6649544878773099,
+            "y": 0.3817027849420258
+          },
+          "original": "*vegan option available.",
+          "role": "other",
+          "translated": "*option végane disponible"
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.23284823079163286,
+            "x": 0.07692308086197973,
+            "y": 0.39389534886366495
+          },
+          "original": "Roasted eggplant sautéed with peas,",
+          "role": "description",
+          "translated": "Aubergine rôtie sautée avec petits pois,"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.17047816543950062,
+            "x": 0.07692307687830935,
+            "y": 0.4054360137712738
+          },
+          "original": "garlic, onion, and tomatoes.",
+          "role": "description",
+          "translated": "ail, oignon et tomates."
+        },
+        {
+          "box": {
+            "height": 0.010386762910629121,
+            "width": 0.1912681913453137,
+            "x": 0.40956341143753017,
+            "y": 0.4273255813101158
+          },
+          "original": "PAKISTANI STAPLES",
+          "role": "section_title",
+          "translated": "SPÉCIALITÉS PAKISTANAISES"
+        },
+        {
+          "box": {
+            "height": 0.01024684603594972,
+            "width": 0.14553014424477057,
+            "x": 0.07068607278405961,
+            "y": 0.45922989808998094
+          },
+          "original": "DUMM BIRYANI [GF]",
+          "role": "dish_name",
+          "translated": "Dumm biryani"
+        },
+        {
+          "box": {
+            "height": 0.010441083465265177,
+            "width": 0.16216216249635962,
+            "x": 0.36798336619464767,
+            "y": 0.45784883726941805
+          },
+          "original": "MUGHLAI KORMA [GF]",
+          "role": "dish_name",
+          "translated": "Korma moghol"
+        },
+        {
+          "box": {
+            "height": 0.010998054106940325,
+            "width": 0.08543272961287285,
+            "x": 0.6672628462370813,
+            "y": 0.45598353102125655
+          },
+          "original": "HANDI [GE]",
+          "role": "dish_name",
+          "translated": "Handi"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.2432432251965787,
+            "x": 0.06860707357634695,
+            "y": 0.47093023266938205
+          },
+          "original": "Our most popular dish! Pakistani-style",
+          "role": "description",
+          "translated": "Notre plat le plus populaire ! Riz basmati à la pakistanaise"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.23700623844585694,
+            "x": 0.36798337022613586,
+            "y": 0.4694224236942034
+          },
+          "original": "Traditional korma cooked with onion,",
+          "role": "description",
+          "translated": "Korma traditionnel cuisiné avec oignon,"
+        },
+        {
+          "box": {
+            "height": 0.01330526228804274,
+            "width": 0.28066526935398106,
+            "x": 0.6673596765236331,
+            "y": 0.4648924119742488
+          },
+          "original": "Meat cooked in a yogurt, fennel, coriander,",
+          "role": "description",
+          "translated": "Viande cuite dans une sauce au yaourt, fenouil, coriandre,"
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.2515592405050268,
+            "x": 0.06860707161858848,
+            "y": 0.4811046513127929
+          },
+          "original": "Basmati rice slow-cooked in saffron and",
+          "role": "description",
+          "translated": "cuit doucement au safran et aux épices entières"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.2536382443321389,
+            "x": 0.36590436764682044,
+            "y": 0.4811046513709325
+          },
+          "original": "garlic, and almonds. Not too sweet, not",
+          "role": "description",
+          "translated": "ail et amandes. Parfaitement équilibré entre doux et épicé !"
+        },
+        {
+          "box": {
+            "height": 0.010210632332859126,
+            "width": 0.15384614718791156,
+            "x": 0.6673596732528909,
+            "y": 0.4796149490023739
+          },
+          "original": "and onion based sauce.",
+          "role": "description",
+          "translated": "et oignon."
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.2245322154831848,
+            "x": 0.06652807385923915,
+            "y": 0.49263873140978864
+          },
+          "original": "simmered with meat or vegetables.",
+          "role": "description",
+          "translated": "mijoté avec viande ou légumes."
+        },
+        {
+          "box": {
+            "height": 0.008720929868358929,
+            "width": 0.13929313276343447,
+            "x": 0.3638253688313805,
+            "y": 0.49418604662105314
+          },
+          "original": "too spicy—just right!",
+          "role": "description",
+          "translated": "Juste parfait !"
+        },
+        {
+          "box": {
+            "height": 0.010419684655263994,
+            "width": 0.11850311922292844,
+            "x": 0.6652806650091179,
+            "y": 0.49127906972944724
+          },
+          "original": ": CHICKEN $18.99",
+          "role": "price",
+          "translated": ": POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.010325857899062152,
+            "width": 0.1185031192229285,
+            "x": 0.06652806625651914,
+            "y": 0.5056625141810837
+          },
+          "original": ":CHICKEN $21.99",
+          "role": "price",
+          "translated": ":POULET 21,99€"
+        },
+        {
+          "box": {
+            "height": 0.010362071602152745,
+            "width": 0.12266111451184536,
+            "x": 0.36382536613285077,
+            "y": 0.5043604652732941
+          },
+          "original": ": CHICKEN $18.99",
+          "role": "price",
+          "translated": ": POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.010362071602152745,
+            "width": 0.09355509184554489,
+            "x": 0.6673596668630903,
+            "y": 0.5043604652732941
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.009878234172056355,
+            "width": 0.100152267629169,
+            "x": 0.06427359267793258,
+            "y": 0.5184134882002451
+          },
+          "original": ":LAMB $22.99",
+          "role": "price",
+          "translated": ":AGNEAU 22,99€"
+        },
+        {
+          "box": {
+            "height": 0.0103077510475168,
+            "width": 0.09771309949976892,
+            "x": 0.3638253629770733,
+            "y": 0.5158550396796736
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.015463131875441016,
+            "width": 0.21687279798609702,
+            "x": 0.06408253329042782,
+            "y": 0.5268360547726271
+          },
+          "original": ":MIXED VEGETABLES [VG]$21.99",
+          "role": "price",
+          "translated": ":LÉGUMES VARIÉS [VG] 21,99€"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.14137213659054648,
+            "x": 0.363825367983313,
+            "y": 0.5276162790962232
+          },
+          "original": ":PANEER $18.99 [VG]",
+          "role": "price",
+          "translated": ":PANEER 18,99€ [VG]"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.14968815189899465,
+            "x": 0.667359664383143,
+            "y": 0.524709302497386
+          },
+          "original": "BAALTI GOSHT [GF]",
+          "role": "dish_name",
+          "translated": "Balti gosht"
+        },
+        {
+          "box": {
+            "height": 0.013749840305453676,
+            "width": 0.2748039406354462,
+            "x": 0.6692223956813727,
+            "y": 0.5349691558097299
+          },
+          "original": "Meat sautéed with caramelized onion in a",
+          "role": "description",
+          "translated": "Viande sautée avec oignon caramélisé dans une sauce"
+        },
+        {
+          "box": {
+            "height": 0.010207339834383933,
+            "width": 0.08939708419132077,
+            "x": 0.06444906614238537,
+            "y": 0.5537790698820635
+          },
+          "original": "ACHARI [GF]",
+          "role": "dish_name",
+          "translated": "Achari"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.08939708419132081,
+            "x": 0.36590436999720166,
+            "y": 0.5508720930375991
+          },
+          "original": "KARAHI [GF]",
+          "role": "dish_name",
+          "translated": "Karahi"
+        },
+        {
+          "box": {
+            "height": 0.013190036721839826,
+            "width": 0.24532222902369072,
+            "x": 0.6694386806544748,
+            "y": 0.5479651163627084
+          },
+          "original": "black pepper and garlic based sauce.",
+          "role": "description",
+          "translated": "au poivre noir et à l’ail."
+        },
+        {
+          "box": {
+            "height": 0.014190782912050226,
+            "width": 0.25200891726600483,
+            "x": 0.06212446272783674,
+            "y": 0.5619313412073923
+          },
+          "original": "Tangy mango picklesauce cooked with",
+          "role": "description",
+          "translated": "Sauce acidulée aux mangues marinées"
+        },
+        {
+          "box": {
+            "height": 0.013293739893428302,
+            "width": 0.27858626552686894,
+            "x": 0.3659043734042716,
+            "y": 0.5622876555352876
+          },
+          "original": "Light sauce consisting of yogurt, coriander,",
+          "role": "description",
+          "translated": "Sauce légère au yaourt, coriandre,"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.12058211068473323,
+            "x": 0.6673596705758593,
+            "y": 0.5610465118844984
+          },
+          "original": ": CHICKEN $18.99",
+          "role": "price",
+          "translated": ": POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.01189786418513017,
+            "width": 0.27442825787264485,
+            "x": 0.062370074078230496,
+            "y": 0.575311438041321
+          },
+          "original": "mustard seeds, all-spice, onion, and cumin.",
+          "role": "description",
+          "translated": "graines de moutarde, épices, oignon et cumin."
+        },
+        {
+          "box": {
+            "height": 0.01189786418513017,
+            "width": 0.20374220194267872,
+            "x": 0.3659043693509059,
+            "y": 0.575311438041321
+          },
+          "original": "all-spice, ginger, and tomatoes.",
+          "role": "description",
+          "translated": "épices, gingembre et tomates."
+        },
+        {
+          "box": {
+            "height": 0.010243553537474637,
+            "width": 0.0956340894900033,
+            "x": 0.6673596691150122,
+            "y": 0.5741279071337593
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.010431207049878544,
+            "width": 0.12266111451184537,
+            "x": 0.05821206051954515,
+            "y": 0.5886627908546894
+          },
+          "original": ":CHICKEN $18.99",
+          "role": "price",
+          "translated": ":POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.008732452802992952,
+            "width": 0.12474011833895743,
+            "x": 0.3617463670259475,
+            "y": 0.5886627907828748
+          },
+          "original": ": CHICKEN $18.99",
+          "role": "price",
+          "translated": ": POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.17671517692083671,
+            "x": 0.6673596650478978,
+            "y": 0.5843023257532001
+          },
+          "original": ": VEGETARIAN [VG] $18.99",
+          "role": "price",
+          "translated": ": VÉGÉTARIEN [VG] 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.010238616139810475,
+            "width": 0.09771309331711533,
+            "x": 0.058212058989398026,
+            "y": 0.6002265003213915
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.009060022650056565,
+            "width": 0.09979209714422738,
+            "x": 0.36174636297843515,
+            "y": 0.6002265006063452
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.013222957926455337,
+            "width": 0.14137213659054648,
+            "x": 0.0540540550311301,
+            "y": 0.6119186048910515
+          },
+          "original": ":PANEER (VG] $18.99",
+          "role": "price",
+          "translated": ":PANEER (VG] 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.013222957926455337,
+            "width": 0.17671517692083671,
+            "x": 0.3596673613316814,
+            "y": 0.6119186046875631
+          },
+          "original": ":VEGETARIAN [VG] $18.99",
+          "role": "price",
+          "translated": ":VÉGÉTARIEN [VG] 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.011968281098967415,
+            "width": 0.06664836271462227,
+            "x": 0.6672995199325661,
+            "y": 0.6088414407620649
+          },
+          "original": "NEHARI",
+          "role": "dish_name",
+          "translated": "Nehari"
+        },
+        {
+          "box": {
+            "height": 0.014061892154127675,
+            "width": 0.24983603602676763,
+            "x": 0.6713102165572616,
+            "y": 0.6184962018390459
+          },
+          "original": "A slow-cooked onion and fennel seed",
+          "role": "description",
+          "translated": "Ragoût mijoté à l’oignon et aux graines de fenouil"
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.11226610774159237,
+            "x": 0.05613305888041655,
+            "y": 0.6351744184736458
+          },
+          "original": "HALEEM $18.99",
+          "role": "dish_name",
+          "translated": "Haleem"
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.13513513747451755,
+            "x": 0.3617463617027966,
+            "y": 0.6351744185947698
+          },
+          "original": "KEEMA [GF] $18.99",
+          "role": "dish_name",
+          "translated": "Keema"
+        },
+        {
+          "box": {
+            "height": 0.01325917162954604,
+            "width": 0.24740123285080273,
+            "x": 0.6715176767312168,
+            "y": 0.6322674420833965
+          },
+          "original": "based stew topped with ginger, fried",
+          "role": "description",
+          "translated": "garniture de gingembre, oignons frits"
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.261954259640587,
+            "x": 0.05405405780964404,
+            "y": 0.6482558141616301
+          },
+          "original": "Slow cooked lentils, mutton, barley, and",
+          "role": "description",
+          "translated": "Lentilles, mouton, orge et épices cuits lentement"
+        },
+        {
+          "box": {
+            "height": 0.010294582673674446,
+            "width": 0.22453221548318475,
+            "x": 0.3617463690775344,
+            "y": 0.6482558139227611
+          },
+          "original": "Minced lamb sauteéd with onions,",
+          "role": "description",
+          "translated": "Agneau haché sauté avec oignons,"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.1288981259931815,
+            "x": 0.6715176728661951,
+            "y": 0.6453488371267465
+          },
+          "original": "onion, and cilantro.",
+          "role": "description",
+          "translated": "oignon et coriandre."
+        },
+        {
+          "box": {
+            "height": 0.01328221695879439,
+            "width": 0.28274427318109296,
+            "x": 0.05405405746350758,
+            "y": 0.6596828993129448
+          },
+          "original": "fresh all-spice. A wholesome dish, the best",
+          "role": "description",
+          "translated": "fraîches épices. Un plat complet, le meilleur"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.26819127112192315,
+            "x": 0.361746363633425,
+            "y": 0.6596828990704422
+          },
+          "original": "tomatoes, ginger, and roasted coriander.",
+          "role": "description",
+          "translated": "tomates, gingembre et coriandre rôtie."
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.1268191221660695,
+            "x": 0.6694386707049071,
+            "y": 0.6584302327372115
+          },
+          "original": ":CHICKEN $18.99",
+          "role": "price",
+          "translated": ":POULET 18,99€"
+        },
+        {
+          "box": {
+            "height": 0.010432853029106348,
+            "width": 0.18295217603686564,
+            "x": 0.05197505238350768,
+            "y": 0.6727066819882972
+          },
+          "original": "outside of our mother land!",
+          "role": "description",
+          "translated": "hors de notre terre natale !"
+        },
+        {
+          "box": {
+            "height": 0.015560839211279154,
+            "width": 0.2561761989006154,
+            "x": 0.361502461839313,
+            "y": 0.6707561925975632
+          },
+          "original": "Available plain, with peas, or potatoes.",
+          "role": "description",
+          "translated": "Proposé nature, avec petits pois ou pommes de terre."
+        },
+        {
+          "box": {
+            "height": 0.01326411010724915,
+            "width": 0.10602910862556347,
+            "x": 0.6673596673868025,
+            "y": 0.6698754245111471
+          },
+          "original": ": LAMB $19.99",
+          "role": "price",
+          "translated": ": AGNEAU 19,99€"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.11018710391448033,
+            "x": 0.4449064491446309,
+            "y": 0.7107558139581418
+          },
+          "original": "TANDOORI",
+          "role": "section_title",
+          "translated": "TANDOORI"
+        },
+        {
+          "box": {
+            "height": 0.013213081511068703,
+            "width": 0.18918918751820174,
+            "x": 0.04365904260264552,
+            "y": 0.7427325583503537
+          },
+          "original": "LAMB CHOPS [GF] $25.99",
+          "role": "dish_name",
+          "translated": "Côtelettes d’agneau"
+        },
+        {
+          "box": {
+            "height": 0.013137362146431575,
+            "width": 0.25363824433213883,
+            "x": 0.3575883601277629,
+            "y": 0.7412231028922651
+          },
+          "original": "CHICKEN TIKKA BOTI [GF] $20.99",
+          "role": "dish_name",
+          "translated": "Poulet tikka boti"
+        },
+        {
+          "box": {
+            "height": 0.013137362146431575,
+            "width": 0.18295217603686564,
+            "x": 0.671517672688428,
+            "y": 0.7412231028862087
+          },
+          "original": "MALAI BOTI [GF] $20.99",
+          "role": "dish_name",
+          "translated": "Malai boti"
+        },
+        {
+          "box": {
+            "height": 0.01319497465952335,
+            "width": 0.2681912711219231,
+            "x": 0.0457380479109718,
+            "y": 0.7542468854494252
+          },
+          "original": "Marinated in yogurt, all-spice, coriander,",
+          "role": "description",
+          "translated": "Marinées dans yaourt, épices, coriandre,"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.28690228083531705,
+            "x": 0.3596673619212188,
+            "y": 0.7542468857374458
+          },
+          "original": "Boneless chicken (dark or white) marinated",
+          "role": "description",
+          "translated": "Poulet désossé (blanc ou cuisse) mariné"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.2702702749490352,
+            "x": 0.6756756767146715,
+            "y": 0.7542468855557596
+          },
+          "original": "Our take on a street favorite—boneless",
+          "role": "description",
+          "translated": "Notre version : poulet désossé"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.28690228083531705,
+            "x": 0.043659043106250066,
+            "y": 0.7672706679968345
+          },
+          "original": "and red chilli and red flakes. Ditch the fork",
+          "role": "description",
+          "translated": "et piment rouge et flocons de piment. Mangez"
+        },
+        {
+          "box": {
+            "height": 0.013173575849522279,
+            "width": 0.2723492540455328,
+            "x": 0.35758837100218144,
+            "y": 0.7659883720131445
+          },
+          "original": "in yogurt, cumin, chili, and coriander and",
+          "role": "description",
+          "translated": "au yaourt, cumin, piment et coriandre puis"
+        },
+        {
+          "box": {
+            "height": 0.01325258771263449,
+            "width": 0.286902280835317,
+            "x": 0.6756756834908653,
+            "y": 0.7672706679873993
+          },
+          "original": "chicken marinated in yogurt, green chilies,",
+          "role": "description",
+          "translated": "mariné dans du yaourt, piment vert et épices,"
+        },
+        {
+          "box": {
+            "height": 0.013590033975084848,
+            "width": 0.23492723461874493,
+            "x": 0.04158004467087695,
+            "y": 0.7802944507444141
+          },
+          "original": "and knife and eat with your hands.",
+          "role": "description",
+          "translated": "avec les mains."
+        },
+        {
+          "box": {
+            "height": 0.010403223782946558,
+            "width": 0.26611226729481113,
+            "x": 0.35758836032348834,
+            "y": 0.7802944505937108
+          },
+          "original": "cooked on skewers. Served with onions",
+          "role": "description",
+          "translated": "cuit sur brochettes. Oignons"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.25987525581347504,
+            "x": 0.6756756744581275,
+            "y": 0.7802944507962426
+          },
+          "original": "and all-spice resulting in a white color",
+          "role": "description",
+          "translated": "cuisson laissant la viande blanche. Servi avec"
+        },
+        {
+          "box": {
+            "height": 0.01308139507254813,
+            "width": 0.28898128466242906,
+            "x": 0.35758836336005356,
+            "y": 0.7921511628016619
+          },
+          "original": "and a spicy mint chutney. \"Laal wala tikka!\"",
+          "role": "description",
+          "translated": "et chutney de menthe épicé. « Laal wala tikka ! »"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.29521829614376516,
+            "x": 0.6756756789031693,
+            "y": 0.7936046511892465
+          },
+          "original": "upon completion. Served with onions and a",
+          "role": "description",
+          "translated": "oignons et chutney de menthe épicé."
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.18918918751820168,
+            "x": 0.037422036680954604,
+            "y": 0.8066860466470953
+          },
+          "original": "LAHORI FISH [GF] $24.99",
+          "role": "dish_name",
+          "translated": "Poisson de Lahore"
+        },
+        {
+          "box": {
+            "height": 0.010414746177560996,
+            "width": 0.10810811245267549,
+            "x": 0.35758835552002405,
+            "y": 0.8066860465088525
+          },
+          "original": "(\"The Red One\")",
+          "role": "other",
+          "translated": "("
+        },
+        {
+          "box": {
+            "height": 0.013246003255703687,
+            "width": 0.13721412893632245,
+            "x": 0.6756756821014853,
+            "y": 0.8066860466739971
+          },
+          "original": "spicy mint chutney.",
+          "role": "description",
+          "translated": "chutney de menthe épicé."
+        },
+        {
+          "box": {
+            "height": 0.011627906851158332,
+            "width": 0.2557172481592509,
+            "x": 0.037422036939085704,
+            "y": 0.8197674419717076
+          },
+          "original": "Fried Pakistani style fish marinated in",
+          "role": "description",
+          "translated": "Poisson frit à la pakistanaise, mariné dans"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.2702702502184208,
+            "x": 0.03534304086445574,
+            "y": 0.8328488373689946
+          },
+          "original": "coriander, all-spice, and red-chili flakes.",
+          "role": "description",
+          "translated": "coriandre, épices et flocons de piment rouge."
+        },
+        {
+          "box": {
+            "height": 0.013219665967999616,
+            "width": 0.19334719517242582,
+            "x": 0.35550935597779065,
+            "y": 0.831257078007228
+          },
+          "original": "ACHARI BOTI [GF] $20.99",
+          "role": "dish_name",
+          "translated": "Achari boti"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.2058212057697909,
+            "x": 0.6756756742312318,
+            "y": 0.8328488373343877
+          },
+          "original": "SEEKH KABAB [GF] $20.99",
+          "role": "dish_name",
+          "translated": "Seekh kabab"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.14137213659054648,
+            "x": 0.03534303950098449,
+            "y": 0.845930232548258
+          },
+          "original": "The pride of Lahore!",
+          "role": "description",
+          "translated": "La fierté de Lahore !"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.2494802366779148,
+            "x": 0.35758836710802794,
+            "y": 0.844280860803959
+          },
+          "original": "A Pakistani classic! Boneless chicken",
+          "role": "description",
+          "translated": "Grand classique pakistanais ! Poulet désossé"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199255,
+            "width": 0.27027025021842066,
+            "x": 0.6777546853551002,
+            "y": 0.8442808606464978
+          },
+          "original": "Minced chicken or lamb seasoned with",
+          "role": "description",
+          "translated": "Poulet ou agneau haché épicé à la coriandre"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.22869022313740883,
+            "x": 0.3555093554271377,
+            "y": 0.8590033976062853
+          },
+          "original": "smothered in a tangy fennel seed",
+          "role": "description",
+          "translated": "dans une marinade acidulée au fenouil"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.2723492540455328,
+            "x": 0.6777546903109134,
+            "y": 0.8590033974972736
+          },
+          "original": "all-spice and coriander then cooked on",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013147238561818209,
+            "width": 0.18711018369108967,
+            "x": 0.031185034765681748,
+            "y": 0.8720271798029442
+          },
+          "original": "BOTI KABAB [GF] $25.99",
+          "role": "dish_name",
+          "translated": "Boti kabab"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.28482327700820503,
+            "x": 0.35550935466984085,
+            "y": 0.8720271799262362
+          },
+          "original": "marinade. Served with onions and a spicy",
+          "role": "description",
+          "translated": "marinade. Servi avec oignons et chutney"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.2848232770082051,
+            "x": 0.677754676915163,
+            "y": 0.8735465117391495
+          },
+          "original": "skewers. Served with onions and a spicy",
+          "role": "description",
+          "translated": "sur brochettes, oignons et chutney"
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.24740123285080276,
+            "x": 0.03326404301326804,
+            "y": 0.8850509626069429
+          },
+          "original": "Filet mignon cubes of boneless New",
+          "role": "description",
+          "translated": "Cubes de filet mignon d’agneau de Nouvelle-Zélande"
+        },
+        {
+          "box": {
+            "height": 0.012480070474868765,
+            "width": 0.09619099201220938,
+            "x": 0.35538086673954294,
+            "y": 0.8848841536959371
+          },
+          "original": "mint chutney.",
+          "role": "description",
+          "translated": "menthe épicée."
+        },
+        {
+          "box": {
+            "height": 0.01453488329393815,
+            "width": 0.23076922696452085,
+            "x": 0.6777546773493405,
+            "y": 0.8866279072483797
+          },
+          "original": "mint chutney (4pcs - Lamb +$1)",
+          "role": "other",
+          "translated": "chutney menthe épicée (4 pièces – agneau +1€)"
+        },
+        {
+          "box": {
+            "height": 0.01162790685115822,
+            "width": 0.261954259640587,
+            "x": 0.031185030158916497,
+            "y": 0.899709302436824
+          },
+          "original": "Zealand lamb marinated in yogurt, red",
+          "role": "description",
+          "translated": "mariné dans du yaourt, piment"
+        },
+        {
+          "box": {
+            "height": 0.01308139507254824,
+            "width": 0.13513512510921039,
+            "x": 0.02910603186673931,
+            "y": 0.9127906978852376
+          },
+          "original": "chili, and coriander.",
+          "role": "description",
+          "translated": "rouge et coriandre."
+        },
+        {
+          "box": {
+            "height": 0.011891279728199367,
+            "width": 0.4303533965223612,
+            "x": 0.2889813130693804,
+            "y": 0.9416761041651432
+          },
+          "original": "Consuming raw or undercooked meats may increase your risk of foodborne illness.",
+          "role": "other",
+          "translated": "Consommer de la viande crue ou mal cuite peut augmenter le risque d’intoxication alimentaire."
+        }
+      ]
+    },
+    {
+      "sections": [
+        {
+          "bbox": {
+            "height": 0.01983785144558703,
+            "width": 0.14126477532062054,
+            "x": 0.35344935831704005,
+            "y": 0.052651439430537295
+          },
+          "chineseTitle": "RIZ & NAAN",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.01589917954829012,
+                "width": 0.18729447122115814,
+                "x": 0.1511572040668772,
+                "y": 0.07374349251558454
+              },
+              "chineseDescription": "Riz basmati cuit longuement au safran et aux épices entières.",
+              "chineseName": "Riz au safran",
+              "descriptionBBox": {
+                "height": 0.023023295059549698,
+                "width": 0.2525693161340553,
+                "x": 0.1474878707310941,
+                "y": 0.08329526905930817
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.017577643921596442,
+                  "width": 0.250912109156236,
+                  "x": 0.1491450777089134,
+                  "y": 0.08329526905930817
+                },
+                {
+                  "height": 0.010602244579504205,
+                  "width": 0.08002426120115438,
+                  "x": 0.1474878707310941,
+                  "y": 0.09571631953935367
+                }
+              ],
+              "originalDescription": "Basmati rice slow-cooked with saffron and whole spices",
+              "originalName": "SAFFRON RICE",
+              "price": "$3.50",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.024501977457630608,
+                "width": 0.23317723974959398,
+                "x": 0.4274014723053923,
+                "y": 0.0813163265326271
+              },
+              "chineseDescription": "Pain maison garni de graines de sésame grillées.",
+              "chineseName": "Naan au sésame",
+              "descriptionBBox": {
+                "height": 0.03007454233970208,
+                "width": 0.23311184278761848,
+                "x": 0.4233103902852325,
+                "y": 0.09223664120271335
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.021796329503138145,
+                  "width": 0.23114371897926472,
+                  "x": 0.42527851409358625,
+                  "y": 0.09223664120271335
+                },
+                {
+                  "height": 0.022876763737640915,
+                  "width": 0.19631204639284422,
+                  "x": 0.4233103902852325,
+                  "y": 0.09943441980477452
+                }
+              ],
+              "originalDescription": "Handmade bread topped with roasted sesame seeds \"Till walay naan!\"",
+              "originalName": "SESAME NAAN",
+              "price": "$3.99 (contains egg)"
+            },
+            {
+              "bbox": {
+                "height": 0.013802493239600366,
+                "width": 0.131914788249573,
+                "x": 0.1450661028569951,
+                "y": 0.11318012274272249
+              },
+              "chineseDescription": "Pain maison cuit à la commande.",
+              "chineseName": "Naan",
+              "descriptionBBox": {
+                "height": 0.014672375088877088,
+                "width": 0.19955296670236894,
+                "x": 0.1410650478030923,
+                "y": 0.12209604578590627
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.014672375088877088,
+                  "width": 0.19955296670236894,
+                  "x": 0.1410650478030923,
+                  "y": 0.12209604578590627
+                }
+              ],
+              "originalDescription": "Handmade bread baked to order.",
+              "originalName": "NAAN"
+            },
+            {
+              "bbox": {
+                "height": 0.009023816946046703,
+                "width": 0.08811474871891803,
+                "x": 0.13934426645338246,
+                "y": 0.13341804331562435
+              },
+              "chineseName": "Nature",
+              "originalName": "PLAIN",
+              "price": "$2.99"
+            },
+            {
+              "bbox": {
+                "height": 0.010303699076554373,
+                "width": 0.09631147350461675,
+                "x": 0.13729508165616158,
+                "y": 0.14231257954182908
+              },
+              "chineseName": "Ail",
+              "originalName": "GARLIC",
+              "price": "$3.99"
+            },
+            {
+              "bbox": {
+                "height": 0.01575227371467869,
+                "width": 0.09590754628608728,
+                "x": 0.4232640856577144,
+                "y": 0.11878024994797187
+              },
+              "chineseDescription": "Galette fine à la farine complète.",
+              "chineseName": "Roti",
+              "descriptionBBox": {
+                "height": 0.01521887894355356,
+                "width": 0.15275308479117666,
+                "x": 0.42159745474355126,
+                "y": 0.13012667010365941
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.01521887894355356,
+                  "width": 0.15275308479117666,
+                  "x": 0.42159745474355126,
+                  "y": 0.13012667010365941
+                }
+              ],
+              "originalDescription": "Thin, whole wheat bread.",
+              "originalName": "ROTI",
+              "price": "$2.99",
+              "tags": [
+                "vegetarian"
+              ]
+            }
+          ],
+          "originalTitle": "RICE -N- NAAN"
+        },
+        {
+          "bbox": {
+            "height": 0.010174418041030475,
+            "width": 0.0532786871797295,
+            "x": 0.8053278700576763,
+            "y": 0.07994186070332199
+          },
+          "chineseTitle": "ACCOMPAGNEMENTS",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.02001784686969532,
+                "width": 0.13760172252586667,
+                "x": 0.7058298773149796,
+                "y": 0.09508116348043671
+              },
+              "chineseDescription": "Yaourt maison mélangé au cumin rôti et concombre râpé.",
+              "chineseName": "Raita",
+              "descriptionBBox": {
+                "height": 0.033306131243337145,
+                "width": 0.2501000024939096,
+                "x": 0.7037714402488852,
+                "y": 0.10479701390050078
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.028362946710259296,
+                  "width": 0.2501000024939096,
+                  "x": 0.7037714402488852,
+                  "y": 0.10479701390050078
+                },
+                {
+                  "height": 0.02487006666093805,
+                  "width": 0.18485415879116263,
+                  "x": 0.7038981187609775,
+                  "y": 0.11323307848289987
+                }
+              ],
+              "originalDescription": "Yogurt made in-house mixed with roasted cumin and shredded cucumber.",
+              "originalName": "RAITA",
+              "price": "$3.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.027031338654146086,
+                "width": 0.18705322921917,
+                "x": 0.7037419790175484,
+                "y": 0.12732203580542434
+              },
+              "chineseDescription": "Oignons frais coupés, citronnés et épicés.",
+              "chineseName": "Salade d’oignon",
+              "descriptionBBox": {
+                "height": 0.028481843359437042,
+                "width": 0.2566150405500952,
+                "x": 0.7036827154854325,
+                "y": 0.1389306220509341
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.028481843359437042,
+                  "width": 0.2566150405500952,
+                  "x": 0.7036827154854325,
+                  "y": 0.1389306220509341
+                },
+                {
+                  "height": 0.00887888722983221,
+                  "width": 0.0656152198818849,
+                  "x": 0.7048973089116859,
+                  "y": 0.1525373005367685
+                }
+              ],
+              "originalDescription": "Freshly cut onions tapped with lemon juice and spices",
+              "originalName": "ONION SALAD",
+              "price": "$2.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.02581740940389665,
+                "width": 0.2032974817419565,
+                "x": 0.7038008583012652,
+                "y": 0.16355341717620964
+              },
+              "chineseDescription": "Trio de nos chutneys : menthe épicée, menthe au yaourt et tamarin.",
+              "chineseName": "Trio de chutneys",
+              "descriptionBBox": {
+                "height": 0.028171479929205434,
+                "width": 0.2340053161839858,
+                "x": 0.7015941608943322,
+                "y": 0.1745087556630882
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.028171479929205434,
+                  "width": 0.2340053161839858,
+                  "x": 0.7015941608943322,
+                  "y": 0.1745087556630882
+                },
+                {
+                  "height": 0.016930635275349992,
+                  "width": 0.11061528250308017,
+                  "x": 0.7019634130947587,
+                  "y": 0.1847333583881664
+                }
+              ],
+              "originalDescription": "Trio of our spicy mint, yogurt mint, and tamarind chutnys.",
+              "originalName": "CHUTNEY TRIO",
+              "price": "$3.50",
+              "tags": [
+                "vegan",
+                "gluten_free"
+              ]
+            }
+          ],
+          "originalTitle": "SIDES"
+        },
+        {
+          "bbox": {
+            "height": 0.013081395489742298,
+            "width": 0.0737704888894139,
+            "x": 0.3627049188749652,
+            "y": 0.20058139531472186
+          },
+          "chineseTitle": "BOISSONS",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.010423746315012083,
+                "width": 0.09426229059909834,
+                "x": 0.12295082309184426,
+                "y": 0.215116279297072
+              },
+              "chineseDescription": "Thé au lait traditionnel infusé avec une touche de fenouil, cardamome et cannelle.",
+              "chineseName": "Chai maison",
+              "descriptionBBox": {
+                "height": 0.029274118553697104,
+                "width": 0.2592633883452625,
+                "x": 0.11617351850582676,
+                "y": 0.22539062599694293
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.016565222903764276,
+                  "width": 0.25494439456625223,
+                  "x": 0.12049251228483704,
+                  "y": 0.22539062599694293
+                },
+                {
+                  "height": 0.020162826572015957,
+                  "width": 0.21043431545243896,
+                  "x": 0.11617351850582676,
+                  "y": 0.23450191797862407
+                }
+              ],
+              "originalDescription": "Traditional milk tea brewed with a hint of fennel, cardamom, and cinnamon.",
+              "originalName": "HOUSE CHAI"
+            },
+            {
+              "bbox": {
+                "height": 0.021296148530409953,
+                "width": 0.21292130665112569,
+                "x": 0.4068890221427531,
+                "y": 0.2251712477010851
+              },
+              "chineseName": "Eau Voss artisanale",
+              "originalName": "VOSS ARTISAN WATER",
+              "price": "$3.99"
+            },
+            {
+              "bbox": {
+                "height": 0.013389823094407949,
+                "width": 0.10450819145394052,
+                "x": 0.4057377062965952,
+                "y": 0.247093023021844
+              },
+              "chineseDescription": "Bouteilles en verre de Coca, Fanta ou Sprite.",
+              "chineseName": "Bouteille",
+              "descriptionBBox": {
+                "height": 0.02170910526261083,
+                "width": 0.24145734780150935,
+                "x": 0.40691826551495774,
+                "y": 0.25752299423040625
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.02170910526261083,
+                  "width": 0.24145734780150935,
+                  "x": 0.40691826551495774,
+                  "y": 0.25752299423040625
+                }
+              ],
+              "originalDescription": "Glass bottles of Coke, Fanta, or Sprite.",
+              "originalName": "BOTTLE",
+              "price": "$5.99"
+            },
+            {
+              "bbox": {
+                "height": 0.011341570596076989,
+                "width": 0.0842820786233444,
+                "x": 0.11052289616606763,
+                "y": 0.279939679475413
+              },
+              "chineseDescription": "Canette de Coca, Coca Light ou Sprite.",
+              "chineseName": "Soda",
+              "descriptionBBox": {
+                "height": 0.021135957904510283,
+                "width": 0.21051863530203432,
+                "x": 0.1098415590535882,
+                "y": 0.2896556345946888
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.021135957904510283,
+                  "width": 0.21051863530203432,
+                  "x": 0.1098415590535882,
+                  "y": 0.2896556345946888
+                }
+              ],
+              "originalDescription": "Can of Coke, Diet Coke, or Sprite.",
+              "originalName": "SODA",
+              "price": "$2.99"
+            },
+            {
+              "bbox": {
+                "height": 0.011627906159494272,
+                "width": 0.04713114529954915,
+                "x": 0.4016393458543238,
+                "y": 0.28052325616443896
+              },
+              "chineseDescription": "Boisson pakistanaise à base de yaourt et de lait, servie très fraîche. Goûts : mangue, salé ou sucré.",
+              "chineseName": "Lassi",
+              "descriptionBBox": {
+                "height": 0.05786730701799492,
+                "width": 0.24676916519772463,
+                "x": 0.3954448257955432,
+                "y": 0.2911046505338504
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.02396690315333827,
+                  "width": 0.24162850328671032,
+                  "x": 0.4005854877065575,
+                  "y": 0.2911046505338504
+                },
+                {
+                  "height": 0.011722096948490357,
+                  "width": 0.10245901538479713,
+                  "x": 0.40163934428847575,
+                  "y": 0.30368487919327225
+                },
+                {
+                  "height": 0.012071156289707785,
+                  "width": 0.06147540512905331,
+                  "x": 0.39959016724421653,
+                  "y": 0.3151207114607948
+                },
+                {
+                  "height": 0.008720929922566789,
+                  "width": 0.0532786871797295,
+                  "x": 0.3975409848117745,
+                  "y": 0.32703488381778634
+                },
+                {
+                  "height": 0.010443915254430669,
+                  "width": 0.05747100529277621,
+                  "x": 0.3954448257955432,
+                  "y": 0.3385280422974146
+                }
+              ],
+              "originalDescription": "Pakistani style chilled yogurt and milk smoothie, $5.99 : MANGO :SALTY : SWEET",
+              "originalName": "LASSI",
+              "price": "$5.99"
+            },
+            {
+              "bbox": {
+                "height": 0.01827886840742754,
+                "width": 0.14301319190678205,
+                "x": 0.10170213905854275,
+                "y": 0.3107157181965048
+              },
+              "chineseDescription": "Bouteille en verre d’eau pétillante.",
+              "chineseName": "Topo Chico",
+              "descriptionBBox": {
+                "height": 0.024563955382137403,
+                "width": 0.20517347875889058,
+                "x": 0.09928765359660331,
+                "y": 0.32101573079625245
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.024563955382137403,
+                  "width": 0.20517347875889058,
+                  "x": 0.09928765359660331,
+                  "y": 0.32101573079625245
+                }
+              ],
+              "originalDescription": "Glass bottle of sparkling water.",
+              "originalName": "TOPO CHICO",
+              "price": "$5.99"
+            }
+          ],
+          "originalTitle": "DRINKS"
+        },
+        {
+          "bbox": {
+            "height": 0.01957172723404177,
+            "width": 0.09917501907622084,
+            "x": 0.7772263223713373,
+            "y": 0.21717418772470853
+          },
+          "chineseTitle": "DESSERTS",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.023223092928623457,
+                "width": 0.19082591012387295,
+                "x": 0.7016451404841729,
+                "y": 0.23680406818307698
+              },
+              "chineseDescription": "Boules de pâte frites plongées dans un sirop sucré à la cardamome.",
+              "chineseName": "Gulab jamun",
+              "descriptionBBox": {
+                "height": 0.02822718686009862,
+                "width": 0.2583005915473342,
+                "x": 0.6978883386866724,
+                "y": 0.24865673451737103
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.027296332876745932,
+                  "width": 0.2566280570081485,
+                  "x": 0.6995608732258581,
+                  "y": 0.24865673451737103
+                },
+                {
+                  "height": 0.016093174111585506,
+                  "width": 0.10851693238836035,
+                  "x": 0.6978883386866724,
+                  "y": 0.26079074726588414
+                }
+              ],
+              "originalDescription": "Traditional donut holes dipped in a sweet cardamom syrup.",
+              "originalName": "GHULAB JAMUN",
+              "price": "$4.99",
+              "tags": [
+                "vegetarian"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.025740671945496896,
+                "width": 0.2234507188147542,
+                "x": 0.6977866443480295,
+                "y": 0.27929488290658955
+              },
+              "chineseDescription": "Glace à la pistache et à l’amande, préparée avec lait et cardamome. Nappée de sirop de rose.",
+              "chineseName": "Kulfi pistache & amande",
+              "descriptionBBox": {
+                "height": 0.03863642280586643,
+                "width": 0.2677300751633944,
+                "x": 0.69467213196563,
+                "y": 0.29130543717795043
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.027497710842340983,
+                  "width": 0.26475207694542446,
+                  "x": 0.6976501301836,
+                  "y": 0.29130543717795043
+                },
+                {
+                  "height": 0.02686244256917525,
+                  "width": 0.23788993589339713,
+                  "x": 0.6978975004922252,
+                  "y": 0.30140920113911873
+                },
+                {
+                  "height": 0.011627906159494272,
+                  "width": 0.04303278632488727,
+                  "x": 0.69467213196563,
+                  "y": 0.3183139538243226
+                }
+              ],
+              "originalDescription": "Pistachio and almond ice cream made with milk and cardamom. Topped with rose syrup.",
+              "originalName": "PISTA BADAM KULFI",
+              "price": "$5.99",
+              "tags": [
+                "vegetarian"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.02720529272716865,
+                "width": 0.22381548044074817,
+                "x": 0.6934130646845742,
+                "y": 0.33529470661766525
+              },
+              "chineseDescription": "Préparée maison et recouverte de pistaches concassées.",
+              "chineseName": "Glace à la mangue",
+              "descriptionBBox": {
+                "height": 0.026990069479691847,
+                "width": 0.25504287173296947,
+                "x": 0.6946721320162936,
+                "y": 0.34800993061498553
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.02567062717229307,
+                  "width": 0.2540228238669775,
+                  "x": 0.6956921798822856,
+                  "y": 0.34800993061498553
+                },
+                {
+                  "height": 0.013081395489742409,
+                  "width": 0.0655737709400902,
+                  "x": 0.6946721320162936,
+                  "y": 0.36191860460493497
+                }
+              ],
+              "originalDescription": "Made in-house and topped with crushed pistachio.",
+              "originalName": "MANGO ICE CREAM",
+              "price": "$5.99",
+              "tags": [
+                "vegetarian"
+              ]
+            }
+          ],
+          "originalTitle": "DESSERTS"
+        },
+        {
+          "bbox": {
+            "height": 0.03434356922115733,
+            "width": 0.3937129632546483,
+            "x": 0.3329470578167458,
+            "y": 0.38429702550145106
+          },
+          "chineseTitle": "SUGGESTIONS DÉJEUNER EN SEMAINE",
+          "items": [
+            {
+              "bbox": {
+                "height": 0.024432009026843615,
+                "width": 0.19891943982852403,
+                "x": 0.07460006873179267,
+                "y": 0.47577134160758827
+              },
+              "chineseDescription": "Notre plat le plus populaire ! Riz basmati à la pakistanaise doucement cuit au safran et mijoté avec viande ou légumes. Servi avec raita et salade. (Pas servi avec naan)",
+              "chineseName": "Dumm biryani",
+              "descriptionBBox": {
+                "height": 0.056510705367810665,
+                "width": 0.2818741661108211,
+                "x": 0.06912154248768702,
+                "y": 0.489288299363442
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.022786400975538745,
+                  "width": 0.2496827101622004,
+                  "x": 0.07495771680849413,
+                  "y": 0.489288299363442
+                },
+                {
+                  "height": 0.022589381798401198,
+                  "width": 0.25983844606679823,
+                  "x": 0.07295345366134347,
+                  "y": 0.5010156318622278
+                },
+                {
+                  "height": 0.022926718337411667,
+                  "width": 0.28000938935091846,
+                  "x": 0.07098631924758968,
+                  "y": 0.5134579164231485
+                },
+                {
+                  "height": 0.019507482060937775,
+                  "width": 0.25122341032951107,
+                  "x": 0.06912154248768702,
+                  "y": 0.5262915226703149
+                }
+              ],
+              "originalDescription": "Our most popular dishl Pakistani style Basmati rice slow cooked in saffron and simmered with meat or vegetables. Served with raita and salad. (not served with naan)",
+              "originalName": "DUMM BIRYANI",
+              "price": "$16.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.026982629768730226,
+                "width": 0.2726512074897794,
+                "x": 0.3800645205412729,
+                "y": 0.49017604270331583
+              },
+              "chineseDescription": "Aussi connu sous le nom de poulet au beurre. Sauce douce et crémeuse à la tomate et au fenugrec.",
+              "chineseName": "Poulet tikka masala",
+              "descriptionBBox": {
+                "height": 0.03319659141268716,
+                "width": 0.2537571076423891,
+                "x": 0.38029357834950295,
+                "y": 0.5038231832186996
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.022876889763217778,
+                  "width": 0.2537571076423891,
+                  "x": 0.38029357834950295,
+                  "y": 0.5038231832186996
+                },
+                {
+                  "height": 0.01883644433609266,
+                  "width": 0.23683688802958391,
+                  "x": 0.38051907816269614,
+                  "y": 0.5181833302952941
+                }
+              ],
+              "originalDescription": "Also known as Butter Chicken. A sweet creamy tomato and fenugreek based",
+              "originalName": "CHICKEN TIKKA MASALA*",
+              "price": "$16.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.019790585795381954,
+                "width": 0.163362072360131,
+                "x": 0.6795520680399164,
+                "y": 0.508006239837977
+              },
+              "chineseDescription": "Épinards frais préparés avec cumin, gingembre, curcuma et épices.",
+              "chineseName": "Palak",
+              "descriptionBBox": {
+                "height": 0.027455671233952317,
+                "width": 0.2801786306511117,
+                "x": 0.6817197471188599,
+                "y": 0.5205094451337386
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.02202315736453142,
+                  "width": 0.2801786306511117,
+                  "x": 0.6817197471188599,
+                  "y": 0.5205094451337386
+                },
+                {
+                  "height": 0.013081395489742409,
+                  "width": 0.1475409777788278,
+                  "x": 0.6823770539384549,
+                  "y": 0.5348837208779486
+                }
+              ],
+              "originalDescription": "Fresh spinach cooked with cumin, ginger, turmeric, and all-soice",
+              "originalName": "PALAK",
+              "price": "$15.99",
+              "tags": [
+                "vegan",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.02729567003068356,
+                "width": 0.24205760887446798,
+                "x": 0.3716823462006827,
+                "y": 0.5600697537340731
+              },
+              "chineseDescription": "Fromage frais maison et petits pois dans une sauce crémeuse douce à la tomate et au fenugrec.",
+              "chineseName": "Mutter paneer",
+              "descriptionBBox": {
+                "height": 0.03826419897107414,
+                "width": 0.2632627530599704,
+                "x": 0.36885245857935967,
+                "y": 0.5722009172014496
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.028470230829609644,
+                  "width": 0.26029645584817424,
+                  "x": 0.3718187557911558,
+                  "y": 0.5722009172014496
+                },
+                {
+                  "height": 0.02119614965882355,
+                  "width": 0.24128468831380212,
+                  "x": 0.37015650302844283,
+                  "y": 0.5879603511667592
+                },
+                {
+                  "height": 0.008720929922566789,
+                  "width": 0.04303278632488727,
+                  "x": 0.36885245857935967,
+                  "y": 0.601744186249957
+                }
+              ],
+              "originalDescription": "Homemade cheese and peas in : sweet creamy tomato and fenugreek based sauce.",
+              "originalName": "MUTTER PANEER",
+              "price": "$15.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.016158283892853342,
+                "width": 0.14549180170968443,
+                "x": 0.057377051419747915,
+                "y": 0.5870393903280398
+              },
+              "chineseDescription": "Curry traditionnel mijoté dans une sauce à l’oignon, au gingembre et à l’ail.",
+              "chineseName": "Korma",
+              "descriptionBBox": {
+                "height": 0.03522955370097469,
+                "width": 0.28059543870967746,
+                "x": 0.04831582283591981,
+                "y": 0.5978494813608244
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.024548694169506113,
+                  "width": 0.2744672768432179,
+                  "x": 0.05444398470237931,
+                  "y": 0.5978494813608244
+                },
+                {
+                  "height": 0.022584406211688224,
+                  "width": 0.16382229712701613,
+                  "x": 0.04831582283591981,
+                  "y": 0.6104946288501109
+                }
+              ],
+              "originalDescription": "Traditional curry cooked in onion, ginger, and garlic based sauce.",
+              "originalName": "KORMA*",
+              "price": "$15.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.021869269229253918,
+                "width": 0.1903758031920293,
+                "x": 0.6772064051123281,
+                "y": 0.5932355499598484
+              },
+              "chineseDescription": "Poulet ou agneau haché, relevé aux épices et coriandre, grillé sur brochette (2 pièces). Agneau (supplément 1€).",
+              "chineseName": "Seekh kabab",
+              "descriptionBBox": {
+                "height": 0.04120209251736373,
+                "width": 0.2922382169090707,
+                "x": 0.6756967184661526,
+                "y": 0.605779534924142
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.023123949576817737,
+                  "width": 0.29043193530010925,
+                  "x": 0.6775030000751141,
+                  "y": 0.605779534924142
+                },
+                {
+                  "height": 0.022324296691972112,
+                  "width": 0.29028303905199926,
+                  "x": 0.6756967184661526,
+                  "y": 0.6191980918856423
+                },
+                {
+                  "height": 0.013069567868185472,
+                  "width": 0.11321285890421984,
+                  "x": 0.6759644269185826,
+                  "y": 0.6339120595733203
+                }
+              ],
+              "originalDescription": "Mirced chicken or lamb seasoned with all- spice and coriander cooked on skewers. (2 pcs). Lamb (+$1)",
+              "originalName": "SEEKH KABAB",
+              "price": "S159",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.017789072426937724,
+                "width": 0.1536885196590082,
+                "x": 0.364754099545496,
+                "y": 0.6232528590386556
+              },
+              "chineseDescription": "Lentilles jaunes mijotées avec oignon, ail, cumin et gingembre.",
+              "chineseName": "Daal",
+              "descriptionBBox": {
+                "height": 0.033255654355202946,
+                "width": 0.2660514748673779,
+                "x": 0.3627049164702869,
+                "y": 0.6325639133990183
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.030865718933648312,
+                  "width": 0.2654632240213374,
+                  "x": 0.36329316731632744,
+                  "y": 0.6325639133990183
+                },
+                {
+                  "height": 0.014656777000184862,
+                  "width": 0.125,
+                  "x": 0.3627049164702869,
+                  "y": 0.6511627907540364
+                }
+              ],
+              "originalDescription": "Yellow lentils cooked with onion, garlic, cumin, and ginger.",
+              "originalName": "DAAL*",
+              "price": "$14.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.026610387780311995,
+                "width": 0.25217640100841454,
+                "x": 0.6731818695459805,
+                "y": 0.6543976577342475
+              },
+              "chineseDescription": "Poulet désossé mariné au yaourt, cumin, piment et coriandre, cuit sur brochette (blanc ou cuisse).",
+              "chineseName": "Poulet tikka boti",
+              "descriptionBBox": {
+                "height": 0.048112154454807765,
+                "width": 0.26236700242565525,
+                "x": 0.6731281671570517,
+                "y": 0.6679165738891323
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.025924840149158412,
+                  "width": 0.26236700242565525,
+                  "x": 0.6731281671570517,
+                  "y": 0.6679165738891323
+                },
+                {
+                  "height": 0.021779703821281693,
+                  "width": 0.2554393481182796,
+                  "x": 0.6735497000304769,
+                  "y": 0.6826983978471911
+                },
+                {
+                  "height": 0.02124897618760302,
+                  "width": 0.21079147502940188,
+                  "x": 0.6733839111436302,
+                  "y": 0.694779752156337
+                }
+              ],
+              "originalDescription": "Boneless chEken marinabed in vogurt, cumin,chill, and c-rlander cooked on skewers. (White or Dark (eat)",
+              "originalName": "CHICKEN TIKKA BOTI",
+              "price": "$16.99",
+              "tags": [
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.0248676600571357,
+                "width": 0.2457999226012965,
+                "x": 0.037880956620912044,
+                "y": 0.6723373444465763
+              },
+              "chineseDescription": "Pois chiches dans une sauce légère à l’ail, à l’oignon et aux épices.",
+              "chineseName": "Chana masala",
+              "descriptionBBox": {
+                "height": 0.029589972632478645,
+                "width": 0.28966249054106785,
+                "x": 0.034836069474791585,
+                "y": 0.6857848686514635
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.024989892748744302,
+                  "width": 0.2865080747980371,
+                  "x": 0.037990485217822355,
+                  "y": 0.6857848686514635
+                },
+                {
+                  "height": 0.013341804320203376,
+                  "width": 0.13319671794932375,
+                  "x": 0.034836069474791585,
+                  "y": 0.7020330369637388
+                }
+              ],
+              "originalDescription": "Garbanzo beans in a garlic, onion, and all- spice based sauce.",
+              "originalName": "CHANA MASALA",
+              "price": "$15.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            },
+            {
+              "bbox": {
+                "height": 0.027573528556387505,
+                "width": 0.250207278890849,
+                "x": 0.3573638111822384,
+                "y": 0.6834900829020408
+              },
+              "chineseDescription": "Aubergine rôtie, mijotée avec pois, ail, oignon et tomates.",
+              "chineseName": "Baingan bharta",
+              "descriptionBBox": {
+                "height": 0.03387035911294678,
+                "width": 0.28563427668745794,
+                "x": 0.3553506482400309,
+                "y": 0.696135430494013
+              },
+              "descriptionLines": [
+                {
+                  "height": 0.03105335162888634,
+                  "width": 0.28563427668745794,
+                  "x": 0.3553506482400309,
+                  "y": 0.696135430494013
+                },
+                {
+                  "height": 0.01822891501944124,
+                  "width": 0.14112385028579333,
+                  "x": 0.35579640251568484,
+                  "y": 0.7117768745875186
+                }
+              ],
+              "originalDescription": "Roasted eggplant sautéed with peas, garlic, onion, and tomatoes.",
+              "originalName": "BENGUN BHARTA",
+              "price": "$15.99",
+              "tags": [
+                "vegetarian",
+                "gluten_free"
+              ]
+            }
+          ],
+          "originalTitle": "WEEKDAY LUNCH SPECIALS"
+        }
+      ],
+      "sourceLanguage": "English",
+      "sourceLanguageChinese": "anglais",
+      "textLines": [
+        {
+          "box": {
+            "height": 0.01983785144558703,
+            "width": 0.14126477532062054,
+            "x": 0.35344935831704005,
+            "y": 0.052651439430537295
+          },
+          "original": "RICE -N- NAAN",
+          "role": "section_title",
+          "translated": "RIZ & NAAN"
+        },
+        {
+          "box": {
+            "height": 0.01589917954829012,
+            "width": 0.18729447122115814,
+            "x": 0.1511572040668772,
+            "y": 0.07374349251558454
+          },
+          "original": "SAFFRON RICE (V] (GF) $3.50",
+          "role": "dish_name",
+          "translated": "Riz au safran"
+        },
+        {
+          "box": {
+            "height": 0.017577643921596442,
+            "width": 0.250912109156236,
+            "x": 0.1491450777089134,
+            "y": 0.08329526905930817
+          },
+          "original": "Basmati rice slow-cooked with saffron and",
+          "role": "description",
+          "translated": "Riz basmati mijoté au safran et"
+        },
+        {
+          "box": {
+            "height": 0.024501977457630608,
+            "width": 0.23317723974959398,
+            "x": 0.4274014723053923,
+            "y": 0.0813163265326271
+          },
+          "original": "SESAME NAAN $3.99 (contains egg)",
+          "role": "dish_name",
+          "translated": "Naan au sésame"
+        },
+        {
+          "box": {
+            "height": 0.010174418041030475,
+            "width": 0.0532786871797295,
+            "x": 0.8053278700576763,
+            "y": 0.07994186070332199
+          },
+          "original": "SIDES",
+          "role": "section_title",
+          "translated": "ACCOMPAGNEMENTS"
+        },
+        {
+          "box": {
+            "height": 0.010602244579504205,
+            "width": 0.08002426120115438,
+            "x": 0.1474878707310941,
+            "y": 0.09571631953935367
+          },
+          "original": "whole spices",
+          "role": "description",
+          "translated": "aux épices entières."
+        },
+        {
+          "box": {
+            "height": 0.021796329503138145,
+            "width": 0.23114371897926472,
+            "x": 0.42527851409358625,
+            "y": 0.09223664120271335
+          },
+          "original": "Handmade bread topped with roasted",
+          "role": "description",
+          "translated": "Pain maison garni de graines de sésame"
+        },
+        {
+          "box": {
+            "height": 0.022876763737640915,
+            "width": 0.19631204639284422,
+            "x": 0.4233103902852325,
+            "y": 0.09943441980477452
+          },
+          "original": "sesame seeds \"Till walay naan!\"",
+          "role": "description",
+          "translated": "grillées."
+        },
+        {
+          "box": {
+            "height": 0.02001784686969532,
+            "width": 0.13760172252586667,
+            "x": 0.7058298773149796,
+            "y": 0.09508116348043671
+          },
+          "original": "RAITA (VG) [GF] $3.99",
+          "role": "dish_name",
+          "translated": "Raita"
+        },
+        {
+          "box": {
+            "height": 0.028362946710259296,
+            "width": 0.2501000024939096,
+            "x": 0.7037714402488852,
+            "y": 0.10479701390050078
+          },
+          "original": "Yogurt made in-house mixed with roasted",
+          "role": "description",
+          "translated": "Yaourt maison mélangé au cumin rôti"
+        },
+        {
+          "box": {
+            "height": 0.013802493239600366,
+            "width": 0.131914788249573,
+            "x": 0.1450661028569951,
+            "y": 0.11318012274272249
+          },
+          "original": "NAAN (contains egg)",
+          "role": "dish_name",
+          "translated": "Naan"
+        },
+        {
+          "box": {
+            "height": 0.014672375088877088,
+            "width": 0.19955296670236894,
+            "x": 0.1410650478030923,
+            "y": 0.12209604578590627
+          },
+          "original": "Handmade bread baked to order.",
+          "role": "description",
+          "translated": "Pain maison cuit à la demande."
+        },
+        {
+          "box": {
+            "height": 0.01575227371467869,
+            "width": 0.09590754628608728,
+            "x": 0.4232640856577144,
+            "y": 0.11878024994797187
+          },
+          "original": "ROTI IV) $2.99",
+          "role": "dish_name",
+          "translated": "Roti"
+        },
+        {
+          "box": {
+            "height": 0.02487006666093805,
+            "width": 0.18485415879116263,
+            "x": 0.7038981187609775,
+            "y": 0.11323307848289987
+          },
+          "original": "cumin and shredded cucumber.",
+          "role": "description",
+          "translated": "et concombre râpé."
+        },
+        {
+          "box": {
+            "height": 0.009023816946046703,
+            "width": 0.08811474871891803,
+            "x": 0.13934426645338246,
+            "y": 0.13341804331562435
+          },
+          "original": ":PLAIN $2.99",
+          "role": "dish_name",
+          "translated": "Nature"
+        },
+        {
+          "box": {
+            "height": 0.01521887894355356,
+            "width": 0.15275308479117666,
+            "x": 0.42159745474355126,
+            "y": 0.13012667010365941
+          },
+          "original": "Thin, whole wheat bread.",
+          "role": "description",
+          "translated": "Galette fine de blé complet."
+        },
+        {
+          "box": {
+            "height": 0.027031338654146086,
+            "width": 0.18705322921917,
+            "x": 0.7037419790175484,
+            "y": 0.12732203580542434
+          },
+          "original": "ONION SALAD IV] [GF) $2.99",
+          "role": "dish_name",
+          "translated": "Salade d’oignon"
+        },
+        {
+          "box": {
+            "height": 0.010303699076554373,
+            "width": 0.09631147350461675,
+            "x": 0.13729508165616158,
+            "y": 0.14231257954182908
+          },
+          "original": ":GARLIC $3.99",
+          "role": "dish_name",
+          "translated": "Ail"
+        },
+        {
+          "box": {
+            "height": 0.028481843359437042,
+            "width": 0.2566150405500952,
+            "x": 0.7036827154854325,
+            "y": 0.1389306220509341
+          },
+          "original": "Freshly cut onions tapped with lemon juice",
+          "role": "description",
+          "translated": "Oignons frais coupés, citronnés"
+        },
+        {
+          "box": {
+            "height": 0.00887888722983221,
+            "width": 0.0656152198818849,
+            "x": 0.7048973089116859,
+            "y": 0.1525373005367685
+          },
+          "original": "and spices",
+          "role": "description",
+          "translated": "et épicés."
+        },
+        {
+          "box": {
+            "height": 0.02581740940389665,
+            "width": 0.2032974817419565,
+            "x": 0.7038008583012652,
+            "y": 0.16355341717620964
+          },
+          "original": "CHUTNEY TRIO [VG] (GF] $3.50",
+          "role": "dish_name",
+          "translated": "Trio de chutneys"
+        },
+        {
+          "box": {
+            "height": 0.028171479929205434,
+            "width": 0.2340053161839858,
+            "x": 0.7015941608943322,
+            "y": 0.1745087556630882
+          },
+          "original": "Trio of our spicy mint, yogurt mint, and",
+          "role": "description",
+          "translated": "Trio de nos chutneys : menthe épicée,"
+        },
+        {
+          "box": {
+            "height": 0.016930635275349992,
+            "width": 0.11061528250308017,
+            "x": 0.7019634130947587,
+            "y": 0.1847333583881664
+          },
+          "original": "tamarind chutnys.",
+          "role": "description",
+          "translated": "menthe au yaourt et tamarin."
+        },
+        {
+          "box": {
+            "height": 0.013081395489742298,
+            "width": 0.0737704888894139,
+            "x": 0.3627049188749652,
+            "y": 0.20058139531472186
+          },
+          "original": "DRINKS",
+          "role": "section_title",
+          "translated": "BOISSONS"
+        },
+        {
+          "box": {
+            "height": 0.010423746315012083,
+            "width": 0.09426229059909834,
+            "x": 0.12295082309184426,
+            "y": 0.215116279297072
+          },
+          "original": "HOUSE CHAI",
+          "role": "dish_name",
+          "translated": "Chai maison"
+        },
+        {
+          "box": {
+            "height": 0.01957172723404177,
+            "width": 0.09917501907622084,
+            "x": 0.7772263223713373,
+            "y": 0.21717418772470853
+          },
+          "original": "DESSERTS",
+          "role": "section_title",
+          "translated": "DESSERTS"
+        },
+        {
+          "box": {
+            "height": 0.016565222903764276,
+            "width": 0.25494439456625223,
+            "x": 0.12049251228483704,
+            "y": 0.22539062599694293
+          },
+          "original": "Traditional milk tea brewed with a hint of",
+          "role": "description",
+          "translated": "Thé au lait traditionnel infusé"
+        },
+        {
+          "box": {
+            "height": 0.021296148530409953,
+            "width": 0.21292130665112569,
+            "x": 0.4068890221427531,
+            "y": 0.2251712477010851
+          },
+          "original": "VOSS ARTISAN WATER $3.99",
+          "role": "dish_name",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.020162826572015957,
+            "width": 0.21043431545243896,
+            "x": 0.11617351850582676,
+            "y": 0.23450191797862407
+          },
+          "original": "fennel, cardamom, and cinnamon.",
+          "role": "description",
+          "translated": "fenouil, cardamome et cannelle."
+        },
+        {
+          "box": {
+            "height": 0.023223092928623457,
+            "width": 0.19082591012387295,
+            "x": 0.7016451404841729,
+            "y": 0.23680406818307698
+          },
+          "original": "GHULAB JAMUN [VG] $4.99",
+          "role": "dish_name",
+          "translated": "Gulab jamun"
+        },
+        {
+          "box": {
+            "height": 0.010739543386456996,
+            "width": 0.0821031003015443,
+            "x": 0.1146861540136043,
+            "y": 0.24826394940138496
+          },
+          "original": ": HOT $3.50",
+          "role": "price",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013389823094407949,
+            "width": 0.10450819145394052,
+            "x": 0.4057377062965952,
+            "y": 0.247093023021844
+          },
+          "original": "\"BOTAL* $5.99",
+          "role": "dish_name",
+          "translated": "Bouteille"
+        },
+        {
+          "box": {
+            "height": 0.027296332876745932,
+            "width": 0.2566280570081485,
+            "x": 0.6995608732258581,
+            "y": 0.24865673451737103
+          },
+          "original": "Traditional donut holes dipped in a sweet",
+          "role": "description",
+          "translated": "Beignets sucrés plongés dans un sirop"
+        },
+        {
+          "box": {
+            "height": 0.010763780286078717,
+            "width": 0.08210876082006748,
+            "x": 0.11468332485193712,
+            "y": 0.25987973793104446
+          },
+          "original": ": ICED $3.99",
+          "role": "price",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.02170910526261083,
+            "width": 0.24145734780150935,
+            "x": 0.40691826551495774,
+            "y": 0.25752299423040625
+          },
+          "original": "Glass bottles of Coke, Fanta, or Sprite.",
+          "role": "description",
+          "translated": "Bouteilles en verre de Coca, Fanta ou Sprite."
+        },
+        {
+          "box": {
+            "height": 0.016093174111585506,
+            "width": 0.10851693238836035,
+            "x": 0.6978883386866724,
+            "y": 0.26079074726588414
+          },
+          "original": "cardamom syrup.",
+          "role": "description",
+          "translated": "à la cardamome."
+        },
+        {
+          "box": {
+            "height": 0.011341570596076989,
+            "width": 0.0842820786233444,
+            "x": 0.11052289616606763,
+            "y": 0.279939679475413
+          },
+          "original": "SODA $2.99",
+          "role": "dish_name",
+          "translated": "Soda"
+        },
+        {
+          "box": {
+            "height": 0.011627906159494272,
+            "width": 0.04713114529954915,
+            "x": 0.4016393458543238,
+            "y": 0.28052325616443896
+          },
+          "original": "LASSI",
+          "role": "dish_name",
+          "translated": "Lassi"
+        },
+        {
+          "box": {
+            "height": 0.025740671945496896,
+            "width": 0.2234507188147542,
+            "x": 0.6977866443480295,
+            "y": 0.27929488290658955
+          },
+          "original": "PISTA BADAM KULFI [VG] $5.99",
+          "role": "dish_name",
+          "translated": "Kulfi pistache & amande"
+        },
+        {
+          "box": {
+            "height": 0.021135957904510283,
+            "width": 0.21051863530203432,
+            "x": 0.1098415590535882,
+            "y": 0.2896556345946888
+          },
+          "original": "Can of Coke, Diet Coke, or Sprite.",
+          "role": "description",
+          "translated": "Canette de Coca, Coca Light ou Sprite."
+        },
+        {
+          "box": {
+            "height": 0.02396690315333827,
+            "width": 0.24162850328671032,
+            "x": 0.4005854877065575,
+            "y": 0.2911046505338504
+          },
+          "original": "Pakistani style chilled yogurt and milk",
+          "role": "description",
+          "translated": "Lassi pakistanais frais au yaourt et lait"
+        },
+        {
+          "box": {
+            "height": 0.027497710842340983,
+            "width": 0.26475207694542446,
+            "x": 0.6976501301836,
+            "y": 0.29130543717795043
+          },
+          "original": "Pistachio and almond ice cream made with",
+          "role": "description",
+          "translated": "Glace à la pistache et à l’amande préparée"
+        },
+        {
+          "box": {
+            "height": 0.011722096948490357,
+            "width": 0.10245901538479713,
+            "x": 0.40163934428847575,
+            "y": 0.30368487919327225
+          },
+          "original": "smoothie, $5.99",
+          "role": "description",
+          "translated": "boisson, 5,99€"
+        },
+        {
+          "box": {
+            "height": 0.02686244256917525,
+            "width": 0.23788993589339713,
+            "x": 0.6978975004922252,
+            "y": 0.30140920113911873
+          },
+          "original": "milk and cardamom. Topped with rose",
+          "role": "description",
+          "translated": "au lait et cardamome. Nappée de sirop de rose."
+        },
+        {
+          "box": {
+            "height": 0.01827886840742754,
+            "width": 0.14301319190678205,
+            "x": 0.10170213905854275,
+            "y": 0.3107157181965048
+          },
+          "original": "TOPO CHICO $5.99",
+          "role": "dish_name",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.024563955382137403,
+            "width": 0.20517347875889058,
+            "x": 0.09928765359660331,
+            "y": 0.32101573079625245
+          },
+          "original": "Glass bottle of sparkling water.",
+          "role": "description",
+          "translated": "Bouteille d’eau pétillante."
+        },
+        {
+          "box": {
+            "height": 0.012071156289707785,
+            "width": 0.06147540512905331,
+            "x": 0.39959016724421653,
+            "y": 0.3151207114607948
+          },
+          "original": ": MANGO",
+          "role": "description",
+          "translated": ": MANGUE"
+        },
+        {
+          "box": {
+            "height": 0.011627906159494272,
+            "width": 0.04303278632488727,
+            "x": 0.69467213196563,
+            "y": 0.3183139538243226
+          },
+          "original": "syrup.",
+          "role": "description",
+          "translated": "au sirop de rose."
+        },
+        {
+          "box": {
+            "height": 0.008720929922566789,
+            "width": 0.0532786871797295,
+            "x": 0.3975409848117745,
+            "y": 0.32703488381778634
+          },
+          "original": ":SALTY",
+          "role": "description",
+          "translated": ": SALÉ"
+        },
+        {
+          "box": {
+            "height": 0.010443915254430669,
+            "width": 0.05747100529277621,
+            "x": 0.3954448257955432,
+            "y": 0.3385280422974146
+          },
+          "original": ": SWEET",
+          "role": "description",
+          "translated": ": SUCRÉ"
+        },
+        {
+          "box": {
+            "height": 0.02720529272716865,
+            "width": 0.22381548044074817,
+            "x": 0.6934130646845742,
+            "y": 0.33529470661766525
+          },
+          "original": "MANGO ICE CREAM [VG| $5.99",
+          "role": "dish_name",
+          "translated": "Glace à la mangue"
+        },
+        {
+          "box": {
+            "height": 0.02567062717229307,
+            "width": 0.2540228238669775,
+            "x": 0.6956921798822856,
+            "y": 0.34800993061498553
+          },
+          "original": "Made in-house and topped with crushed",
+          "role": "description",
+          "translated": "Préparée maison et parsemée de pistaches concassées."
+        },
+        {
+          "box": {
+            "height": 0.013081395489742409,
+            "width": 0.0655737709400902,
+            "x": 0.6946721320162936,
+            "y": 0.36191860460493497
+          },
+          "original": "pistachio.",
+          "role": "description",
+          "translated": "pistache."
+        },
+        {
+          "box": {
+            "height": 0.03434356922115733,
+            "width": 0.3937129632546483,
+            "x": 0.3329470578167458,
+            "y": 0.38429702550145106
+          },
+          "original": "WEEKDAY LUNCH SPECIALS",
+          "role": "section_title",
+          "translated": "SUGGESTIONS DÉJEUNER EN SEMAINE"
+        },
+        {
+          "box": {
+            "height": 0.019524942662240252,
+            "width": 0.1452112368785352,
+            "x": 0.4540209870721733,
+            "y": 0.416976443190352
+          },
+          "original": "11:00AM - 3:00PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.025929197725831687,
+            "width": 0.37261574584523405,
+            "x": 0.34133821125258934,
+            "y": 0.4284402107243508
+          },
+          "original": "Our menu's most popular items served in an individual size",
+          "role": "description",
+          "translated": "Nos plats les plus appréciés en portion individuelle,"
+        },
+        {
+          "box": {
+            "height": 0.022629511250322643,
+            "width": 0.29429161591341846,
+            "x": 0.37852813905845495,
+            "y": 0.44350356742102615
+          },
+          "original": "portion with rice, naan, and a small side salad.",
+          "role": "description",
+          "translated": "accompagnés de riz, naan et petite salade."
+        },
+        {
+          "box": {
+            "height": 0.023671811841797563,
+            "width": 0.2905823355507252,
+            "x": 0.3802776594886278,
+            "y": 0.45674117860081465
+          },
+          "original": "**lunch specials not available on weekends or holidays",
+          "role": "other",
+          "translated": "**Offres déjeuner non disponibles les week-ends et jours fériés"
+        },
+        {
+          "box": {
+            "height": 0.024432009026843615,
+            "width": 0.19891943982852403,
+            "x": 0.07460006873179267,
+            "y": 0.47577134160758827
+          },
+          "original": "DUMM BIRYANI [GF] $16.99",
+          "role": "dish_name",
+          "translated": "Dumm biryani"
+        },
+        {
+          "box": {
+            "height": 0.022786400975538745,
+            "width": 0.2496827101622004,
+            "x": 0.07495771680849413,
+            "y": 0.489288299363442
+          },
+          "original": "Our most popular dishl Pakistani style",
+          "role": "description",
+          "translated": "Notre plat le plus populaire ! Biryani pakistanais"
+        },
+        {
+          "box": {
+            "height": 0.026982629768730226,
+            "width": 0.2726512074897794,
+            "x": 0.3800645205412729,
+            "y": 0.49017604270331583
+          },
+          "original": "CHICKEN TIKKA MASALA* [GF] $16.99",
+          "role": "dish_name",
+          "translated": "Poulet tikka masala"
+        },
+        {
+          "box": {
+            "height": 0.022589381798401198,
+            "width": 0.25983844606679823,
+            "x": 0.07295345366134347,
+            "y": 0.5010156318622278
+          },
+          "original": "Basmati rice slow cooked in saffron and",
+          "role": "description",
+          "translated": "Riz basmati cuisiné gentiment au safran"
+        },
+        {
+          "box": {
+            "height": 0.022876889763217778,
+            "width": 0.2537571076423891,
+            "x": 0.38029357834950295,
+            "y": 0.5038231832186996
+          },
+          "original": "Also known as Butter Chicken. A sweet",
+          "role": "description",
+          "translated": "Aussi connu sous le nom de poulet au beurre. Une sauce douce"
+        },
+        {
+          "box": {
+            "height": 0.022926718337411667,
+            "width": 0.28000938935091846,
+            "x": 0.07098631924758968,
+            "y": 0.5134579164231485
+          },
+          "original": "simmered with meat or vegetables. Served",
+          "role": "description",
+          "translated": "et mijoté avec viande ou légumes. Servi"
+        },
+        {
+          "box": {
+            "height": 0.019790585795381954,
+            "width": 0.163362072360131,
+            "x": 0.6795520680399164,
+            "y": 0.508006239837977
+          },
+          "original": "PALAK [VG] [GF] $15.99",
+          "role": "dish_name",
+          "translated": "Palak"
+        },
+        {
+          "box": {
+            "height": 0.01883644433609266,
+            "width": 0.23683688802958391,
+            "x": 0.38051907816269614,
+            "y": 0.5181833302952941
+          },
+          "original": "creamy tomato and fenugreek based",
+          "role": "description",
+          "translated": "crème tomate et fenugrec"
+        },
+        {
+          "box": {
+            "height": 0.019507482060937775,
+            "width": 0.25122341032951107,
+            "x": 0.06912154248768702,
+            "y": 0.5262915226703149
+          },
+          "original": "with raita and salad. (not served with naan)",
+          "role": "description",
+          "translated": "avec raita et salade. (naan non inclus)"
+        },
+        {
+          "box": {
+            "height": 0.02202315736453142,
+            "width": 0.2801786306511117,
+            "x": 0.6817197471188599,
+            "y": 0.5205094451337386
+          },
+          "original": "Fresh spinach cooked with cumin, ginger,",
+          "role": "description",
+          "translated": "Épinards frais préparés avec cumin, gingembre,"
+        },
+        {
+          "box": {
+            "height": 0.010174418041030475,
+            "width": 0.04098360683755636,
+            "x": 0.3790983599008939,
+            "y": 0.5290697675540972
+          },
+          "original": "sauce.",
+          "role": "description",
+          "translated": "sauce."
+        },
+        {
+          "box": {
+            "height": 0.01202457529768397,
+            "width": 0.07593880930254536,
+            "x": 0.06346502212043813,
+            "y": 0.5390458518265867
+          },
+          "original": ":CHICKEN",
+          "role": "other",
+          "translated": ": POULET"
+        },
+        {
+          "box": {
+            "height": 0.019095831026418986,
+            "width": 0.14320435062531506,
+            "x": 0.3760730666778888,
+            "y": 0.5382919000351978
+          },
+          "original": "•mild spice level available",
+          "role": "other",
+          "translated": "•version douce disponible"
+        },
+        {
+          "box": {
+            "height": 0.013081395489742409,
+            "width": 0.1475409777788278,
+            "x": 0.6823770539384549,
+            "y": 0.5348837208779486
+          },
+          "original": "turmeric, and all-soice",
+          "role": "description",
+          "translated": "curcuma et épices."
+        },
+        {
+          "box": {
+            "height": 0.013388444689662271,
+            "width": 0.08820448297753558,
+            "x": 0.06143054602622133,
+            "y": 0.5507185683031279
+          },
+          "original": ":LAMB (+$1)",
+          "role": "other",
+          "translated": ": AGNEAU (+1€)"
+        },
+        {
+          "box": {
+            "height": 0.010811564580003652,
+            "width": 0.07394015404485887,
+            "x": 0.6802430384700684,
+            "y": 0.546193054882078
+          },
+          "original": ": CHICKEN",
+          "role": "other",
+          "translated": ":POULET"
+        },
+        {
+          "box": {
+            "height": 0.022517771399763298,
+            "width": 0.1843834880432348,
+            "x": 0.05653609885672321,
+            "y": 0.5604848138342923
+          },
+          "original": ":MIXED VEGETABLES (VG]",
+          "role": "other",
+          "translated": ":LÉGUMES VARIÉS (VG]"
+        },
+        {
+          "box": {
+            "height": 0.02729567003068356,
+            "width": 0.24205760887446798,
+            "x": 0.3716823462006827,
+            "y": 0.5600697537340731
+          },
+          "original": "MUTTER PANEER [VG] [GF] $15.99",
+          "role": "dish_name",
+          "translated": "Mutter paneer"
+        },
+        {
+          "box": {
+            "height": 0.013081395489742409,
+            "width": 0.0942622905990983,
+            "x": 0.6803278703083743,
+            "y": 0.5595930232216986
+          },
+          "original": ": PANEER [VG)",
+          "role": "other",
+          "translated": ":PANEER (VG)"
+        },
+        {
+          "box": {
+            "height": 0.028470230829609644,
+            "width": 0.26029645584817424,
+            "x": 0.3718187557911558,
+            "y": 0.5722009172014496
+          },
+          "original": "Homemade cheese and peas in : sweet",
+          "role": "description",
+          "translated": "Fromage maison et petits pois dans une"
+        },
+        {
+          "box": {
+            "height": 0.013418936214422805,
+            "width": 0.0779803628135326,
+            "x": 0.6782229339039754,
+            "y": 0.5710521594473227
+          },
+          "original": ": LAMB ($1)",
+          "role": "other",
+          "translated": ": AGNEAU (+1€)"
+        },
+        {
+          "box": {
+            "height": 0.016158283892853342,
+            "width": 0.14549180170968443,
+            "x": 0.057377051419747915,
+            "y": 0.5870393903280398
+          },
+          "original": "KORMA* [GF] $15.99",
+          "role": "dish_name",
+          "translated": "Korma"
+        },
+        {
+          "box": {
+            "height": 0.02119614965882355,
+            "width": 0.24128468831380212,
+            "x": 0.37015650302844283,
+            "y": 0.5879603511667592
+          },
+          "original": "creamy tomato and fenugreek based",
+          "role": "description",
+          "translated": "sauce crémeuse douce à la tomate et fenugrec"
+        },
+        {
+          "box": {
+            "height": 0.024548694169506113,
+            "width": 0.2744672768432179,
+            "x": 0.05444398470237931,
+            "y": 0.5978494813608244
+          },
+          "original": "Traditional curry cooked in onion, ginger,",
+          "role": "description",
+          "translated": "Curry traditionnel mijoté avec oignon, gingembre,"
+        },
+        {
+          "box": {
+            "height": 0.021869269229253918,
+            "width": 0.1903758031920293,
+            "x": 0.6772064051123281,
+            "y": 0.5932355499598484
+          },
+          "original": "SEEKH KABAB [GF] S159",
+          "role": "dish_name",
+          "translated": "Seekh kabab"
+        },
+        {
+          "box": {
+            "height": 0.008720929922566789,
+            "width": 0.04303278632488727,
+            "x": 0.36885245857935967,
+            "y": 0.601744186249957
+          },
+          "original": "sauce.",
+          "role": "description",
+          "translated": "sauce."
+        },
+        {
+          "box": {
+            "height": 0.022584406211688224,
+            "width": 0.16382229712701613,
+            "x": 0.04831582283591981,
+            "y": 0.6104946288501109
+          },
+          "original": "and garlic based sauce.",
+          "role": "description",
+          "translated": "et ail."
+        },
+        {
+          "box": {
+            "height": 0.023123949576817737,
+            "width": 0.29043193530010925,
+            "x": 0.6775030000751141,
+            "y": 0.605779534924142
+          },
+          "original": "Mirced chicken or lamb seasoned with all-",
+          "role": "description",
+          "translated": "Poulet ou agneau haché, épicé et parfumé à la coriandre,"
+        },
+        {
+          "box": {
+            "height": 0.01751704137237431,
+            "width": 0.14713970991018427,
+            "x": 0.050500945946152745,
+            "y": 0.6223586602441766
+          },
+          "original": "*mild spice level available",
+          "role": "other",
+          "translated": "*version douce disponible"
+        },
+        {
+          "box": {
+            "height": 0.017789072426937724,
+            "width": 0.1536885196590082,
+            "x": 0.364754099545496,
+            "y": 0.6232528590386556
+          },
+          "original": "DAAL* [M [GF] $14.99",
+          "role": "dish_name",
+          "translated": "Daal"
+        },
+        {
+          "box": {
+            "height": 0.022324296691972112,
+            "width": 0.29028303905199926,
+            "x": 0.6756967184661526,
+            "y": 0.6191980918856423
+          },
+          "original": "spice and coriander cooked on skewers. (2",
+          "role": "description",
+          "translated": "grillé sur brochette (2 pièces). Agneau (+1€)"
+        },
+        {
+          "box": {
+            "height": 0.014762048951552531,
+            "width": 0.07991803076959425,
+            "x": 0.04303278720229307,
+            "y": 0.6351744184793272
+          },
+          "original": ": CHICKEN",
+          "role": "other",
+          "translated": ": POULET"
+        },
+        {
+          "box": {
+            "height": 0.030865718933648312,
+            "width": 0.2654632240213374,
+            "x": 0.36329316731632744,
+            "y": 0.6325639133990183
+          },
+          "original": "Yellow lentils cooked with onion, garlic,",
+          "role": "description",
+          "translated": "Lentilles jaunes mijotées avec oignon, ail,"
+        },
+        {
+          "box": {
+            "height": 0.013069567868185472,
+            "width": 0.11321285890421984,
+            "x": 0.6759644269185826,
+            "y": 0.6339120595733203
+          },
+          "original": "pcs). Lamb (+$1)",
+          "role": "other",
+          "translated": "cumin et gingembre."
+        },
+        {
+          "box": {
+            "height": 0.015109001605604688,
+            "width": 0.090344726398427,
+            "x": 0.04089321143374074,
+            "y": 0.6494222435231013
+          },
+          "original": ": LAMB (+$1)",
+          "role": "other",
+          "translated": ": AGNEAU (+1€)"
+        },
+        {
+          "box": {
+            "height": 0.014656777000184862,
+            "width": 0.125,
+            "x": 0.3627049164702869,
+            "y": 0.6511627907540364
+          },
+          "original": "cumin, and ginger.",
+          "role": "description",
+          "translated": "cumin et gingembre."
+        },
+        {
+          "box": {
+            "height": 0.026610387780311995,
+            "width": 0.25217640100841454,
+            "x": 0.6731818695459805,
+            "y": 0.6543976577342475
+          },
+          "original": "CHICKEN TIKKA BOTI [GF) $16.99",
+          "role": "dish_name",
+          "translated": "Poulet tikka boti"
+        },
+        {
+          "box": {
+            "height": 0.016081465244899174,
+            "width": 0.1487774045663922,
+            "x": 0.360057895856674,
+            "y": 0.6616778427365767
+          },
+          "original": "\"mild spice level available",
+          "role": "other",
+          "translated": "*version douce possible"
+        },
+        {
+          "box": {
+            "height": 0.0248676600571357,
+            "width": 0.2457999226012965,
+            "x": 0.037880956620912044,
+            "y": 0.6723373444465763
+          },
+          "original": "CHANA MASALA (VG] [GF] $15.99",
+          "role": "dish_name",
+          "translated": "Chana masala"
+        },
+        {
+          "box": {
+            "height": 0.025924840149158412,
+            "width": 0.26236700242565525,
+            "x": 0.6731281671570517,
+            "y": 0.6679165738891323
+          },
+          "original": "Boneless chEken marinabed in vogurt,",
+          "role": "description",
+          "translated": "Poulet désossé mariné au yaourt,"
+        },
+        {
+          "box": {
+            "height": 0.024989892748744302,
+            "width": 0.2865080747980371,
+            "x": 0.037990485217822355,
+            "y": 0.6857848686514635
+          },
+          "original": "Garbanzo beans in a garlic, onion, and all-",
+          "role": "description",
+          "translated": "Pois chiches dans une sauce légère à l’ail, à l’oignon"
+        },
+        {
+          "box": {
+            "height": 0.027573528556387505,
+            "width": 0.250207278890849,
+            "x": 0.3573638111822384,
+            "y": 0.6834900829020408
+          },
+          "original": "BENGUN BHARTA (VG] (GF] $15.99",
+          "role": "dish_name",
+          "translated": "Baingan bharta"
+        },
+        {
+          "box": {
+            "height": 0.021779703821281693,
+            "width": 0.2554393481182796,
+            "x": 0.6735497000304769,
+            "y": 0.6826983978471911
+          },
+          "original": "cumin,chill, and c-rlander cooked on",
+          "role": "description",
+          "translated": "cumin, piment, coriandre puis grillé sur"
+        },
+        {
+          "box": {
+            "height": 0.02124897618760302,
+            "width": 0.21079147502940188,
+            "x": 0.6733839111436302,
+            "y": 0.694779752156337
+          },
+          "original": "skewers. (White or Dark (eat)",
+          "role": "other",
+          "translated": "brochette (blanc ou cuisse)"
+        },
+        {
+          "box": {
+            "height": 0.013341804320203376,
+            "width": 0.13319671794932375,
+            "x": 0.034836069474791585,
+            "y": 0.7020330369637388
+          },
+          "original": "spice based sauce.",
+          "role": "description",
+          "translated": "et épices."
+        },
+        {
+          "box": {
+            "height": 0.03105335162888634,
+            "width": 0.28563427668745794,
+            "x": 0.3553506482400309,
+            "y": 0.696135430494013
+          },
+          "original": "Roasted eggplant sautéed with peas, garlic,",
+          "role": "description",
+          "translated": "Aubergine rôtie, mijotée avec petits pois, ail,"
+        },
+        {
+          "box": {
+            "height": 0.01822891501944124,
+            "width": 0.14112385028579333,
+            "x": 0.35579640251568484,
+            "y": 0.7117768745875186
+          },
+          "original": "onion, and tomatoes.",
+          "role": "description",
+          "translated": "oignon et tomates."
+        },
+        {
+          "box": {
+            "height": 0.018869622992742086,
+            "width": 0.08423622021965654,
+            "x": 0.4538651338363536,
+            "y": 0.7622260241196415
+          },
+          "original": "HOURS",
+          "role": "section_title",
+          "translated": "HORAIRES"
+        },
+        {
+          "box": {
+            "height": 0.016787962810511536,
+            "width": 0.11232377465907817,
+            "x": 0.21028362581104632,
+            "y": 0.7817373450380581
+          },
+          "original": "MON (takeout only)",
+          "role": "other",
+          "translated": "LUNDI (à emporter seulement)"
+        },
+        {
+          "box": {
+            "height": 0.01838998479491727,
+            "width": 0.13879732248176385,
+            "x": 0.35576211962124826,
+            "y": 0.7864266525420944
+          },
+          "original": "4:00PM - 9:00 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.03262043847516649,
+            "width": 0.3467449885542675,
+            "x": 0.5193329167011188,
+            "y": 0.7917790169942608
+          },
+          "original": "LAST SEATING TIME KITCHEN CLOSING TIME",
+          "role": "other",
+          "translated": "HEURE LIMITE POUR S’ASSEOIR – HEURE DE FERMETURE DE LA CUISINE"
+        },
+        {
+          "box": {
+            "height": 0.013081395489742298,
+            "width": 0.08401638974425613,
+            "x": 0.23565574015421853,
+            "y": 0.802325581272986
+          },
+          "original": "TUES - FRI",
+          "role": "other",
+          "translated": "MAR – VEN"
+        },
+        {
+          "box": {
+            "height": 0.019421320555322197,
+            "width": 0.14124378764928458,
+            "x": 0.35349464522834756,
+            "y": 0.803513256368927
+          },
+          "original": "11:00 AM - 9:00 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013341804320203265,
+            "width": 0.05737704615439143,
+            "x": 0.5655737715266294,
+            "y": 0.8138500637761403
+          },
+          "original": "8:15 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.011627906159494272,
+            "width": 0.03483606495737601,
+            "x": 0.28278688598954965,
+            "y": 0.8226744189406017
+          },
+          "original": "SAT",
+          "role": "other",
+          "translated": "SAMEDI"
+        },
+        {
+          "box": {
+            "height": 0.02050962048231264,
+            "width": 0.1432905162961679,
+            "x": 0.3513790086410493,
+            "y": 0.8203591280841646
+          },
+          "original": "11:30 AM - 9:00 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.01615472003495677,
+            "width": 0.062096790600848495,
+            "x": 0.7444702447339776,
+            "y": 0.8219217673575067
+          },
+          "original": "8:45 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.014534883608206095,
+            "width": 0.05737704615439143,
+            "x": 0.5655737726195256,
+            "y": 0.8313953490752573
+          },
+          "original": "8:15 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013081395489742409,
+            "width": 0.03688524444470698,
+            "x": 0.2766393446628924,
+            "y": 0.8401162788685008
+          },
+          "original": "SUN",
+          "role": "other",
+          "translated": "DIMANCHE"
+        },
+        {
+          "box": {
+            "height": 0.019203935523802618,
+            "width": 0.14519711292772736,
+            "x": 0.34943170466031914,
+            "y": 0.839069766602102
+          },
+          "original": "11:30 AM - 8:00PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.014752814548594229,
+            "width": 0.05942622905990991,
+            "x": 0.7459016400636242,
+            "y": 0.8398983481372917
+          },
+          "original": "8:45 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.014612452350698857,
+            "width": 0.05942622905990991,
+            "x": 0.561475409317381,
+            "y": 0.8487928841759838
+          },
+          "original": "7:15 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.014612452350698857,
+            "width": 0.06147540512905325,
+            "x": 0.7438524620358832,
+            "y": 0.8589580684866884
+          },
+          "original": "7:45 PM",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.03451234170412021,
+            "width": 0.48133642271855404,
+            "x": 0.24907525535770758,
+            "y": 0.8767582908099654
+          },
+          "original": "We requestyou to be courteous of how long you dine to respect others and their",
+          "role": "other",
+          "translated": "Nous vous demandons de respecter la durée du repas pour permettre à tous de profiter de leur réservation."
+        },
+        {
+          "box": {
+            "height": 0.03227234613789387,
+            "width": 0.46085945594268035,
+            "x": 0.2573564293068383,
+            "y": 0.8905416791042411
+          },
+          "original": "reservation times. Your server will advise you of when the next reservation is.",
+          "role": "other",
+          "translated": "Votre serveur vous indiquera si une réservation suivante est prévue."
+        },
+        {
+          "box": {
+            "height": 0.03958730079621797,
+            "width": 0.5159037053371416,
+            "x": 0.22678851403627848,
+            "y": 0.9100691592789296
+          },
+          "original": "Reservations will be held for 5 minutes and all members must be present to be seated.",
+          "role": "other",
+          "translated": "Votre réservation sera maintenue 5 minutes, tous les convives doivent être présents pour être installés."
+        },
+        {
+          "box": {
+            "height": 0.0382168441442855,
+            "width": 0.4961565352682572,
+            "x": 0.23239520967889793,
+            "y": 0.9612083520264004
+          },
+          "original": "425.392.4725 | NAANNCURRY.COM | #NNCSEATTLE",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.008720929922566789,
+            "width": 0.01639344273502254,
+            "x": -1.2434187013354858e-10,
+            "y": 0.9869186049515073
+          },
+          "original": "24",
+          "role": "other",
+          "translated": ""
+        },
+        {
+          "box": {
+            "height": 0.013341804320203265,
+            "width": 0.20081965128580725,
+            "x": 0.3340164139062757,
+            "y": 0.9853875473689532
+          },
+          "original": "Caterina Inauiioc.a",
+          "role": "other",
+          "translated": "Caterina Inauiioc.a"
+        }
+      ]
+    }
+  ],
+  "restaurantName": "NAAN N CURRY",
+  "sourceLanguage": "English",
+  "sourceLanguageChinese": "anglais",
+  "targetLanguage": "fr"
+}

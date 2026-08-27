@@ -125,3 +125,18 @@
 
 /* MARK: - PDF */
 "pdf.header" = "요리 대역 · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "메뉴 사진은 OpenAI로 전송됩니다";
+"consent.body" = "메뉴를 인식하고 번역하기 위해 MenuLens는 이 사진을 OpenAI로 보냅니다. 기기에서 나가는 것은 이것뿐이며, 「인식하고 번역」을 누를 때만 전송됩니다.";
+"consent.sent.header" = "OpenAI로 보내는 것";
+"consent.sent.photo" = "당신이 선택한 메뉴 사진";
+"consent.sent.names" = "요리 이름 — 이미지 생성을 요청한 경우에만";
+"consent.kept.header" = "이 기기를 벗어나지 않는 것";
+"consent.kept.body" = "API 키, 번역 기록, 그리고 같이 먹는 사람의 이름과 사진.";
+"consent.retention" = "OpenAI가 요청에 응답하며, 오용 감시를 위해 API 데이터를 짧게 보관합니다. 개발자 서버는 없으며 데이터가 저희를 거치지 않습니다.";
+"consent.policy" = "개인정보 처리방침 보기";
+"consent.agree" = "동의하고 계속";
+"consent.decline" = "나중에";
+"settings.consent" = "메뉴 사진을 OpenAI로 전송";
+"settings.consent.footer" = "새 메뉴를 인식하려면 필요합니다. 끄면 아무것도 전송되지 않으며, 샘플 메뉴와 저장된 번역은 그대로 작동합니다. 다음에 인식할 때 다시 물어봅니다.";

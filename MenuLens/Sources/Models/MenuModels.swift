@@ -53,6 +53,30 @@ struct MenuItemEntry: Codable, Hashable {
     var tags: [String]?
 }
 
+extension MenuItemEntry {
+    /// True when the translation adds nothing to the printed name — which
+    /// happens whenever the menu is already in the reader's language. The
+    /// description still earns its place there ("what IS Tandoori Paneer"),
+    /// so only the name is suppressed.
+    var translationIsRedundant: Bool {
+        MenuItemEntry.sameText(chineseName, originalName)
+    }
+
+    /// Case- and whitespace-insensitive comparison. Menus SHOUT their dish
+    /// names, so "TANDOORI PANEER" and "Tandoori Paneer" are one string.
+    static func sameText(_ a: String?, _ b: String?) -> Bool {
+        guard let a, let b else { return false }
+        return a.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            == b.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    /// "translated / original", collapsed to one when they say the same thing.
+    static func bilingual(translated: String?, original: String?) -> String {
+        if sameText(translated, original) { return original ?? "" }
+        return [translated, original].compactMap { $0 }.joined(separator: " / ")
+    }
+}
+
 /// A titled group of dishes ("Appetizers", "前菜", ...).
 struct MenuSection: Codable, Hashable {
     let originalTitle: String?

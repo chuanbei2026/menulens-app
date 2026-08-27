@@ -125,3 +125,18 @@
 
 /* MARK: - PDF */
 "pdf.header" = "Plats en vis-à-vis · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "Les photos de carte sont envoyées à OpenAI";
+"consent.body" = "Pour lire et traduire une carte, MenuLens envoie la photo à OpenAI. C'est la seule chose qui quitte votre téléphone, et cela n'arrive que lorsque vous touchez Scanner.";
+"consent.sent.header" = "Envoyé à OpenAI";
+"consent.sent.photo" = "La photo de carte que vous choisissez";
+"consent.sent.names" = "Les noms des plats, uniquement si vous demandez des images générées";
+"consent.kept.header" = "Ne quitte jamais ce téléphone";
+"consent.kept.body" = "Votre clé API, votre historique de traductions, ainsi que les noms et photos des personnes à votre table.";
+"consent.retention" = "OpenAI répond à la requête et conserve brièvement les données d'API pour surveiller les abus. Il n'existe aucun serveur du développeur — rien ne passe par nous.";
+"consent.policy" = "Lire la politique de confidentialité";
+"consent.agree" = "Accepter et continuer";
+"consent.decline" = "Pas maintenant";
+"settings.consent" = "Envoyer les photos de carte à OpenAI";
+"settings.consent.footer" = "Nécessaire pour scanner une nouvelle carte. Désactivez-le et rien n'est envoyé ; les cartes d'exemple et vos traductions enregistrées continuent de fonctionner. La question vous sera reposée au prochain scan.";

@@ -20,3 +20,6 @@ xcuserdata/
 
 # Review-only secret, never commit
 docs/review-key.local.md
+
+# EU DSA trader 信息（含住址），never commit
+docs/trader-info.local.md

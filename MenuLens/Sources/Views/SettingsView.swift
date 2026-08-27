@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("flatten_lighting") private var flattenLighting = true
+    @AppStorage("openai_consent_granted") private var aiConsentGranted = false
     /// The language picker writes through `Localization`, so every screen in
     /// the app follows the choice immediately — see Localization.swift.
     @ObservedObject private var loc = Localization.shared
@@ -53,6 +54,15 @@ struct SettingsView: View {
                     Text(L("settings.apiKey.header"))
                 } footer: {
                     Text(L("settings.apiKey.footer"))
+                }
+
+                Section {
+                    Toggle(L("settings.consent"), isOn: $aiConsentGranted)
+                    Link(destination: AIConsentView.privacyPolicy) {
+                        Label(L("consent.policy"), systemImage: "hand.raised")
+                    }
+                } footer: {
+                    Text(L("settings.consent.footer"))
                 }
 
                 Section {

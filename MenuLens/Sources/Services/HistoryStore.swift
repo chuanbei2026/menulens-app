@@ -82,13 +82,30 @@ final class HistoryStore: ObservableObject {
     /// Naan n Curry) into the history ONCE, so a fresh install has real
     /// content to explore before entering any API key. Deleting a sample
     /// from history is permanent (we don't re-seed).
+    ///
+    /// The samples are baked per language (`Samples/<lang>/<restaurant>/`)
+    /// and seeded in whatever language the app opened in — which on a fresh
+    /// install is the device language. Shipping only the Chinese set meant
+    /// anyone else, App Review included, opened the one screen that is
+    /// supposed to prove the app works and found an English menu translated
+    /// into Chinese.
+    ///
+    /// Seeded once, in one language, deliberately: switching the app
+    /// language later must not re-translate history, exactly like any scan
+    /// the user made themselves.
     func seedBundledSamplesIfNeeded() {
-        let flag = "bundled_samples_seeded_v4"
+        let flag = "bundled_samples_seeded_v5"
         guard !UserDefaults.standard.bool(forKey: flag) else { return }
         UserDefaults.standard.set(true, forKey: flag)
-        guard let samplesURL = Bundle.main.resourceURL?.appendingPathComponent("Samples"),
-              let entries = try? FileManager.default.contentsOfDirectory(
-                  at: samplesURL, includingPropertiesForKeys: nil)
+        guard let root = Bundle.main.resourceURL?.appendingPathComponent("Samples") else { return }
+        // English is the fallback, not Chinese: it is the base language and
+        // the one a reviewer is most likely to be reading.
+        let candidates = [Loc.language.rawValue, AppLanguage.english.rawValue]
+        guard let samplesURL = candidates
+            .map({ root.appendingPathComponent($0, isDirectory: true) })
+            .first(where: { FileManager.default.fileExists(atPath: $0.path) }),
+            let entries = try? FileManager.default.contentsOfDirectory(
+                at: samplesURL, includingPropertiesForKeys: nil)
         else { return }
         for sample in entries where sample.hasDirectoryPath {
             guard let data = try? Data(contentsOf: sample.appendingPathComponent("scan.json")),

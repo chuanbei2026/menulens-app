@@ -16,6 +16,12 @@ struct ContentView: View {
     @State private var showCamera = false
     @State private var showSettings = false
     @State private var showHistory = false
+    /// Picking a photo sends nothing; only Scan does. So consent is asked
+    /// at the button that transmits, which is also where the user can see
+    /// what they are about to send.
+    @AppStorage("openai_consent_granted") private var aiConsentGranted = false
+    @State private var showAIConsent =
+        ProcessInfo.processInfo.arguments.contains("-showConsent")
 
     var body: some View {
         NavigationStack {
@@ -53,6 +59,12 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .sheet(isPresented: $showAIConsent) {
+                AIConsentView {
+                    aiConsentGranted = true
+                    Task { await viewModel.analyze() }
+                }
+            }
             .onChange(of: showSettings) {
                 if !showSettings { hasAPIKey = !KeychainStore.loadAPIKey().isEmpty }
             }
@@ -74,6 +86,7 @@ struct ContentView: View {
             //   -apiKey <key>     store the key in the Keychain
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
+            //   -showConsent      open the third-party AI consent sheet
             .onAppear {
                 let args = CommandLine.arguments
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
@@ -341,7 +354,11 @@ struct ContentView: View {
             .padding(.horizontal)
 
             Button {
-                Task { await viewModel.analyze() }
+                if aiConsentGranted {
+                    Task { await viewModel.analyze() }
+                } else {
+                    showAIConsent = true
+                }
             } label: {
                 Label(
                     viewModel.pickedImages.count > 1

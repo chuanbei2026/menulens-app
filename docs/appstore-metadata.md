@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 |---|---|
-| App 名称 (App Store) | MenuLens - 口袋菜单 |
-| 副标题 (30 字符) | 拍菜单，秒变中文，还能点菜 |
+| App 名称 (App Store) | ⚠️ **待定** —— `MenuLens` 与 `口袋菜单` 都已被占用，见 `appstore-release-plan.md` 的 🔴-0 |
+| 副标题 (30 字符) | 拍菜单，秒变母语，还能点菜 |
 | Bundle ID | ai.xiangyang.MenuLens |
 | 类别 | 主：旅行 Travel；次：美食佳饮 Food & Drink |
 | 价格 | 免费 |
@@ -87,12 +87,24 @@ tracking — bring your own OpenAI API key (in-app guide; a menu costs
 > the OpenAI API directly from the device; users supply their own API key
 > (Settings → OpenAI API Key). No developer server is involved.
 >
+> Before the first photo is ever sent, the app shows a consent sheet naming
+> OpenAI, listing exactly what is sent and what stays on the device, and
+> offering a working "Not now" (guideline 5.1.2(i)). The permission can be
+> withdrawn at any time in Settings.
+>
 > FOR REVIEW: the app is fully functional WITHOUT any API key — tap the
 > clock icon (top-left) on the home screen to open History, which contains
 > two complete pre-translated sample restaurants (La Mar, Naan n Curry)
 > demonstrating every feature: zoomable in-place translated canvas, dish
 > list with search and thumbnails, group ordering with member tags, order
-> annotation, and PDF export.
+> annotation, and PDF export. The samples are bundled in all six app
+> languages and seeded in the language of the device, so they appear in
+> your own language.
+>
+> MenuLens is free. There is no paid tier, no in-app purchase, and no
+> content sold by the developer. The OpenAI API key is the user's own
+> account with a third party — it unlocks no developer-provided content,
+> and the developer receives no payment of any kind.
 >
 > Optionally, this demo API key can be used to test live recognition:
 > [提审时从 docs/review-key.local.md（本地文件，不入库）复制真实测试 Key 粘贴到这里]
@@ -104,7 +116,8 @@ tracking — bring your own OpenAI API key (in-app guide; a menu costs
 > 内置示例语言、PrivacyInfo.xcprivacy）不在下面这个列表里。
 
 - [ ] Apple Developer Program 注册通过（$99/年，个人）
-- [ ] App Store Connect 创建 App（名称 MenuLens - 口袋菜单，Bundle ID ai.xiangyang.MenuLens）
+- [ ] **先定新名字**（`MenuLens` / `口袋菜单` 均已被占用，见 release plan 🔴-0）
+- [ ] App Store Connect 创建 App（Bundle ID ai.xiangyang.MenuLens —— 这个不用改）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
 - [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）

@@ -87,8 +87,9 @@ struct MenuPDFRenderer {
             }
 
             for (sectionIndex, section) in document.sections.enumerated() {
-                let sectionTitle = [section.chineseTitle, section.originalTitle]
-                    .compactMap { $0 }.joined(separator: " / ")
+                let sectionTitle = MenuItemEntry.bilingual(
+                    translated: section.chineseTitle, original: section.originalTitle
+                )
 
                 if !sectionTitle.isEmpty {
                     if y + 60 > page.height - margin { newPage() }
@@ -135,9 +136,12 @@ struct MenuPDFRenderer {
         if let price = item.price { title += "   \(price)" }
         y += TextDraw.text(title, font: .boldSystemFont(ofSize: 24), color: .black,
                            at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun) + 6
-        y += TextDraw.text(item.chineseName, font: .systemFont(ofSize: 20, weight: .medium),
-                           color: UIColor(red: 0.72, green: 0.23, blue: 0.11, alpha: 1),
-                           at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun) + 8
+        // Same-language menus would otherwise print the dish name twice.
+        if !item.translationIsRedundant {
+            y += TextDraw.text(item.chineseName, font: .systemFont(ofSize: 20, weight: .medium),
+                               color: UIColor(red: 0.72, green: 0.23, blue: 0.11, alpha: 1),
+                               at: CGPoint(x: origin.x, y: y), maxWidth: maxWidth, dryRun: dryRun) + 8
+        }
 
         if let desc = item.originalDescription {
             y += TextDraw.text(desc, font: .italicSystemFont(ofSize: 15), color: .darkGray,

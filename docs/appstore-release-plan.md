@@ -1,6 +1,6 @@
 # 上架路线图与阻碍分析 — MenuLens
 
-> 写于 2026-08-26。已有 Apple Developer Program 会员（个人，$99/年）。
+> 写于 2026-08-26，更新 2026-08-27。已有 Apple Developer Program 会员（个人，$99/年）。
 > 与 `appstore-metadata.md` 配套：那份是**提交时要粘贴的素材**，这份是**顺序、
 > 阻碍和判断**。两份里的 checklist 以这份为准 —— 调研后发现原 checklist 有
 > 两处结论已经过期/写错了（见 🔴-2 和 🔴-3）。
@@ -9,9 +9,13 @@
 
 ## 0. 一句话结论
 
-技术上离上架很近（签名、截图、隐私政策、示例数据都已备好），
-**真正的阻碍不在打包，而在 2025 年 11 月 Apple 新加的第三方 AI 数据共享规则**，
-以及一条我们自己写错了的隐私声明。这两条不修，第一次提审基本会被拒。
+**2026-08-27 更新：原来那四条「会被拒」的问题已经全部修完（见下面各条的 ✅），
+但查名字时发现了一条更早、更硬的阻碍 —— 「MenuLens」这个名字在 App Store 上
+已经被至少五个开发者占用，其中一个就是同类目的直接竞品。名字不换，连 App
+Store Connect 那一步都过不去。**
+
+代码侧现在是干净的：同意屏、隐私清单、六语言示例都已就位。剩下的是你的两个决定
+（新名字、以及 trader 信息里的电话/邮箱）。
 
 ---
 
@@ -29,8 +33,11 @@
 | 13" iPad 截图 | ✅ 2064×2752 | `docs/screenshots/ipad/` |
 | 六语言界面 | ✅ 刚做完（系统语言 = 翻译目标语言） | `Sources/Localization/` |
 | 提审用低额度 Key | ✅ 已备 | `docs/review-key.local.md`（本地，不入库） |
-| **PrivacyInfo.xcprivacy** | ❌ 不存在 | — |
-| **第三方 AI 同意屏** | ❌ 不存在 | — |
+| PrivacyInfo.xcprivacy | ✅ 已加（UserDefaults `CA92.1`） | `MenuLens/Resources/PrivacyInfo.xcprivacy` |
+| 第三方 AI 同意屏 | ✅ 已加，可在设置页撤回 | `Sources/Views/AIConsentView.swift` |
+| 六语言内置示例 | ✅ 6 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
+| **App 名称** | ❌ `MenuLens` / `口袋菜单` 均被占用 → 见 🔴-0 | 待定 |
+| **EU trader 电话/邮箱** | ❌ 待补（必填且会公开） | App Store Connect |
 
 ---
 
@@ -41,6 +48,46 @@
 
 ### 🔴 会被拒，必须先修
 
+#### 🔴-0 「MenuLens」这个名字已经被占用 —— 这是现在唯一真正卡住的事
+
+用 Apple 自己的 iTunes lookup API 查的（网页搜索给的 id 是假的，已排除）：
+
+| 开发者 | 名字 | 类目 | 备注 |
+|---|---|---|---|
+| **Naoki Takahashi** | 美区叫 `FoodTranslator`，但**中国区/德国区/日本区就叫 `MenuLens`** | **旅行 Travel** | ⚠️ 同名 + 同类目 + 同功能（菜单翻译），2026-07 还在更新 |
+| Streamlined Studios | `MenuLens: AI Calorie Scanner` / 中国区 `MenuLens: AI 菜单扫描器` | 美食佳饮 | |
+| Juan Ballon | `MenuLens - AI Calorie Counter` | 健康健美 | |
+| ALIGHT TEKNOLOJI | `Menu Lens: Diet & Healthy Food` | 工具 | |
+| kwan ho baek | `Menu Lens` | 效率 | |
+
+两个后果：
+
+1. **App Store Connect 不会让你占用已被使用的名字** —— `MenuLens` 直接不可用，
+   `MenuLens - 口袋菜单` 也极可能被判定为混淆近似而驳回。
+2. 更麻烦的是第一行那个：**同名、同为旅行类、同样做菜单翻译**。即使名字侥幸通过，
+   也可能招来 **4.1 Copycats** 或 **5.2.1** 的商标投诉。
+
+**顺带：中文名「口袋菜单」在中国区也被占了** ——
+`口袋菜单 - 最爱吃的都放在口袋`（Kai Chi Tsao）。所以中英文名都得换。
+
+改名的影响范围（比想象中小，因为 Bundle ID 不用动）：
+
+| 要改 | 不用改 |
+|---|---|
+| App Store 名称 + 副标题 | **Bundle ID `ai.xiangyang.MenuLens`**（永不对用户可见） |
+| `project.yml` 的 `CFBundleDisplayName` | 代码里的类名、target 名 |
+| 六份 `Localizable.strings` 的 `app.name` | 签名、证书、Team |
+| `InfoPlist.strings` 的 `CFBundleDisplayName` | 截图（名字只出现在导航栏，会随 `app.name` 自动变） |
+| README / docs / 隐私政策标题 | |
+
+已经跨 us/cn/de/jp 四个商店筛过、**四个商店都没有同名或同前缀**的候选：
+`MenuPaper`、`PaperMenu`、`MenuMirror`、`MenuPlate`、`MenuTwin`、`Menuscope`。
+中文候选（cn/tw/hk 三区都干净）：`菜单镜`、`菜单原样`、`看懂菜单`、`同款菜单`、
+`原版菜单`、`菜单照相馆`。
+
+> ⚠️ iTunes 搜不到 ≠ Apple 一定放行：还有「已预留但未上架」的名字，以及商标是
+> 另一套体系。定下来之后建议自己在 USPTO 和 EUIPO 各查一次。
+
 #### 🔴-1 Guideline 5.1.2(i)：第三方 AI 数据共享，必须**事前**取得明示同意
 
 这是 Apple **2025-11-13** 才加进指南的条款，第一次把「第三方 AI」列成受管类别。
@@ -50,7 +97,6 @@
 > **including with third-party AI**, and obtain explicit permission before doing so.
 
 MenuLens 把用户拍的菜单照片直接发给 `api.openai.com`，正中这一条。
-目前代码里**没有任何同意环节** —— 填了 Key 就直接开始发照片。
 
 要满足这条，业界目前的做法（也是 Apple 审核实际在查的三件事对齐）：
 
@@ -60,10 +106,17 @@ MenuLens 把用户拍的菜单照片直接发给 `api.openai.com`，正中这一
    内置示例菜单不需要联网，可以「只看示例」）；
 3. **隐私政策、同意屏、二进制实际发出的数据**三者必须说同一件事。
 
-> 落地建议：把同意屏挂在**首次点「识别并翻译」**时（不是启动时），
-> 用户在这一刻最能理解为什么要发照片。同意状态存 `UserDefaults`，
-> 设置页给一个可撤回的开关（新规要求「可事后撤回」）。
-> 六种语言的文案要一起加 —— 现在加新文案的流程见 README 的 Language 一节。
+> ✅ **2026-08-27 已实现**：`Sources/Views/AIConsentView.swift`。
+>
+> - 挂在**首次点「识别并翻译」**时，不是启动时 —— 用户在这一刻才理解为什么要发照片，
+>   而且选照片本身不发送任何东西，只有这个按钮发送。
+> - 点名 OpenAI，分两栏列出「会发出去的」和「永远不离开这台手机的」，
+>   写明留存与「没有开发者服务器」，附隐私政策链接。
+> - 「暂不」是真退路：示例菜单和已存翻译全在本地，拒绝后 App 完整可用。
+> - 设置页有可随时关闭的开关（新规要求可事后撤回）。
+> - 许可检查**下沉到了 `AnalysisViewModel`**（`analyze()` 与配图生成各一道），
+>   而不是只挡在按钮上 —— 从历史记录打开旧扫描会触发补配图，那条路径同样会发请求。
+> - 六种语言文案齐备，同意屏本身也跟随 App 语言。
 
 #### 🔴-2 隐私营养标签不能填「不收集数据」
 
@@ -88,9 +141,16 @@ OpenAI 是我们集成的第三方，且 OpenAI 对 API 数据有约 30 天的�
 
 其余（历史记录、成员姓名头像、Key）都不出设备，不申报。
 
-顺带把隐私政策开头那句「不收集、不存储、不出售你的任何数据」调一下措辞 ——
-改成「我们没有服务器，你的数据不经过我们；菜单照片只发给 OpenAI 处理」更准确，
-并补一句 OpenAI 的留存期。三处口径必须一致，Apple 会交叉比对。
+顺带隐私政策开头那句「不收集、不存储、不出售你的任何数据」措辞也不准确 ——
+照片确实离开了设备。
+
+> ✅ **2026-08-27 已全部改完，三处口径现在一致**：
+>
+> - `appstore-metadata.md` 的营养标签结论已改正为上表；
+> - `PrivacyInfo.xcprivacy` 的 `NSPrivacyCollectedDataTypes` 与上表逐字对应；
+> - `docs/privacy-policy.html` 的总结句改成「除了你主动送去翻译的菜单照片之外，
+>   没有任何数据离开你的手机」，并补上了同意流程、可撤回、以及 OpenAI 的
+>   短期留存（中英文两版都改了）。
 
 #### 🔴-3 内置示例菜单全是中文，英文审核员看不出这个 App 在干什么
 
@@ -118,8 +178,32 @@ Samples/naan-n-curry/scan.json  targetLanguage = zh-Hans   源语言 = 英语
 | B | 按语言分目录 `Samples/<lang>/`，每种语言烤一套 | 6× API 成本 + 改 `HistoryStore.seedBundledSamplesIfNeeded` | 最完整，但对首次上架过度 |
 | C | 不动示例，Review Notes 里说明并附 demo Key | 0 | ⚠️ 赌审核员愿意用 Key 实测。不建议单独用 |
 
-> 我的建议：**A + C**。用一份日文或法文菜单烤成英文示例（英文是基准语言，
-> 也是审核员的默认语言），中文那两份保留给中文用户。Review Notes 里同时给 demo Key 兜底。
+> ✅ **2026-08-27 已修，直接做了方案 B（全六种语言）**：
+>
+> - 新增 `tools/retarget_sample.py`：**不重跑整条流水线**（重跑会重排
+>   `p<页>_s<节>_i<项>` 的 dishKey，把已烤好的 71 张配图全指错菜），
+>   只从 `original*` 字段重译文案字段，几何、行号、dishKey 全部原封不动，
+>   配图直接沿用。
+> - 示例改成按语言分目录 `Samples/<lang>/<餐厅>/`，`HistoryStore` 在首次启动时
+>   按当时的 App 语言 seed，**回落是英文而不是中文**。seed 标志位升到 `v5`。
+> - 六种语言 × 2 家餐厅全部烤好并抽查过。
+>
+> 过程中修掉两个真问题：
+>
+> 1. 模型会**把长列表的尾巴丢掉**（138 行的菜单漏了最后 5 行，而 249 行的那份是
+>    完整的 —— 所以不是上下文限制，重试也只是重新掷骰子）。加了**补漏回合**：
+>    每轮只要还缺 id 就只针对缺的再问一次。
+> 2. 模型把价格译进了菜名行（`'Classic Fish Cebiche 31'`），而已上线的中文数据是
+>    `'Clásico* 31'` → `'经典酸橘鱼'`（**不含价格**）—— 画布把译名画在菜名 strip 上、
+>    价格由 `price` 字段单独渲染，烤进价格会让它在画面上出现两次。
+>    改成**本地确定性推导**：`dish_name` / `section_title` 行的译文直接复用该菜/该节的
+>    译名，按原文前缀匹配。在中文基线上验证过 **93 条全中、零值不一致**，
+>    这两类行现在根本不发给模型（也更省钱）。
+>
+> 顺带修掉一个只在「源语言 == 目标语言」时出现的显示问题：
+> `Small Plates / SMALL PLATES`、`TANDOORI PANEER` / `Tandoori Paneer` 同串印两遍。
+> 这恰好是英文审核员看英文示例时的场景。译名与原文相同时不再重复渲染
+> （`MenuItemEntry.translationIsRedundant`），列表和 PDF 附录页都已处理。
 
 #### 🔴-4 缺 `PrivacyInfo.xcprivacy`
 
@@ -135,6 +219,8 @@ App 自身用了 required-reason API 就要申报。我扫过整个代码库：
 `CA92.1`，加上 `NSPrivacyTracking = false`、`NSPrivacyTrackingDomains = []`，
 以及和营养标签一致的 `NSPrivacyCollectedDataTypes`（照片 / App Functionality /
 不关联身份 / 不追踪）。没有第三方 SDK，所以不涉及 SDK 签名清单那一摊事。
+
+> ✅ **2026-08-27 已修**：`MenuLens/Resources/PrivacyInfo.xcprivacy`，已确认进包。
 
 ---
 
@@ -182,11 +268,9 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 不能任意访问网络内容，**4+ 应该仍然拿得到**，但问卷要按实际情况老实答
 （有 AI 生成内容、无用户间交流、无开放式对话）。
 
-#### 🟡-4 名称与商标
+#### 🟡-4 名称与商标 → **已升级为 🔴-0，见上**
 
-"MenuLens" 要先在 App Store 搜一遍有没有重名/近名，以及有没有人注册了商标。
-名称被占用是 App Store Connect 里最常见的「卡在第一步」。
-`MenuLens - 口袋菜单` 共 15 字符，在 30 字符上限内，没问题。
+查过了，撞了。详见 🔴-0。
 
 ---
 
@@ -200,13 +284,12 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 对个人开发者的现实影响：**如果申报为 trader，Apple 会把你的地址和电话公开显示
 在欧盟 App Store 商品页上。** 只能填 P.O. Box 之类，不能留空。
 
-两条路：
-
-| 选择 | 后果 |
-|---|---|
-| 申报 trader + 提供可公开的地址/电话 | 欧盟可下载。建议用 P.O. Box 或工作地址，别用家庭住址 |
-| 申报 non-trader（爱好者、无商业化意图） | 定义上要求你**不是**为营利而做。免费无 IAP 的 App 说得通，但这是你自己的法律判断 |
-| 直接不在欧盟发行 | 上架时把欧盟国家全部取消勾选。最省事，代价是丢掉欧洲用户（对一个旅行 App 来说很痛） |
+> ✅ **已决定（2026-08-27）：申报 trader，欧盟正常发行。**
+> 地址已确定，但**刻意不写进 repo**（public GitHub，写进工作区就有手滑提交的风险）
+> —— 提审时直接敲进 App Store Connect。字段清单和验证方式见
+> `docs/trader-info.local.md`（gitignore，不入库）。
+>
+> **还缺**：trader 申报的**电话**和**邮箱**同样必填、同样会公开显示。
 
 #### 🟢-2 其余机械步骤
 
@@ -220,21 +303,26 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 
 ---
 
-## 3. 建议的执行顺序
+## 3. 剩下要做的
+
+代码侧已经做完了。剩下全是需要你决定的事：
 
 ```
-① 🔴-4 PrivacyInfo.xcprivacy          （最小，半小时）
-② 🔴-2 隐私标签 + 隐私政策措辞对齐    （改文档，不改代码）
-③ 🔴-1 第三方 AI 同意屏 + 可撤回开关  （要写代码 + 6 语言文案）
-④ 🔴-3 重烤一份英文目标语言的示例菜单 （要花 API 钱，需要你决定用哪份菜单）
-⑤ 🟡-4 查名称/商标                    （5 分钟，但要先做，会影响 ②③④ 白做）
-⑥ 🟢-1 决定欧盟策略                   （你的个人隐私取舍，我不能替你定）
-⑦ 打包 → TestFlight → 提审
+① 定新名字（中英文各一个）        ← 现在唯一的硬阻碍，其他都在等它
+② 把新名字替换进 6 份 app.name / InfoPlist.strings / project.yml / docs
+③ 补 trader 的电话 + 邮箱
+④ 在 USPTO / EUIPO 各查一次新名字的商标
+⑤ 打包 → TestFlight（六种语言各走一遍）→ 提审
 ```
 
-其中 ⑤ 建议**最先做**：名字被占用的话，元数据和截图里的名称都要重做。
+已完成（2026-08-27）：
 
----
+- ✅ 🔴-1 第三方 AI 同意屏 + 设置页可撤回开关 + 六语言文案
+- ✅ 🔴-2 隐私标签结论改正，`PrivacyInfo.xcprivacy` 与隐私政策三处口径对齐
+- ✅ 🔴-3 六种语言 × 2 家餐厅的示例全部烤好，seeding 按语言、回落英文
+- ✅ 🔴-4 `PrivacyInfo.xcprivacy`
+- ✅ 🟢-1 EU trader 决定：申报，欧盟发行
+- ✅ 源语言 == 目标语言时的重复渲染
 
 ## 4. 参考链接
 
