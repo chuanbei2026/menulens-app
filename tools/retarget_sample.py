@@ -53,6 +53,7 @@ LANGUAGES = {
     "ko": "Korean",
     "fr": "French",
     "es": "Spanish",
+    "hi": "Hindi",
 }
 
 

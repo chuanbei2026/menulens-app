@@ -27,7 +27,7 @@
 【多人点单】给同桌的每个人建档（可传头像），谁点的菜一目了然。确认后一键
 把所点菜品标注回原菜单——服务员对着屏幕就能下单，上菜时按名字对号入座。
 
-【六种语言】中文（简体）、English、日本語、한국어、Français、Español。
+【七种语言】中文（简体）、English、日本語、한국어、Français、Español、हिन्दी。
 一个开关同时切换界面语言和翻译目标语言，全新安装自动跟随系统语言。
 菜单原文语言自动识别，无需设置。
 
@@ -43,15 +43,15 @@ Point your camera at any foreign menu — MenuMirror translates it in place,
 preserving the original layout. Dish names stay bilingual so you can order
 by pointing. Auto-straightens hand-held photos, handles multi-page menus,
 generates dish thumbnails, tracks who ordered what for group dining, and
-annotates the order back onto the menu for your server. Six target
-languages — one switch sets both the interface and the translation target,
+annotates the order back onto the menu for your server.
+Seven languages — one switch sets both the interface and the translation target,
 and a fresh install follows your system language. No server, no account, no
 tracking — bring your own OpenAI API key (in-app guide; a menu costs
 ~$0.05–0.25). Two full sample restaurants included, no setup needed to try.
 
 ## 关键词 (100 字符)
 
-菜单,翻译,旅行,点菜,menu,translator,travel,日本,韩国,restaurant,菜單,OCR
+菜单,翻译,旅行,点菜,menu,translator,travel,印度,日本,restaurant,菜單,OCR,hindi
 
 ## URL
 
@@ -125,7 +125,7 @@ tracking — bring your own OpenAI API key (in-app guide; a menu costs
 - [ ] Xcode：Signing 选中付费 Team → Product → Archive → Distribute → App Store Connect
 - [ ] 上传 6.9 英寸 iPhone 截图（docs/screenshots/，1320×2868，已备好）
 - [ ] 上传 13 英寸 iPad 截图（docs/screenshots/ipad/，2064×2752，已备好）
-- [ ] TestFlight 内测一轮再提正式审核（六种语言各走一遍，看文案溢出）
+- [ ] TestFlight 内测一轮再提正式审核（七种语言各走一遍，看文案溢出）
 - [ ] 申报 EU DSA trader 状态，或取消勾选欧盟国家（不申报会被移除，见 release plan 🟢-1）
 - [ ] 回答新版年龄分级问卷（2025-07 改版，专门问 AI 功能）
 - [x] 创建低限额测试 Key（已存 docs/review-key.local.md，本地文件），过审后作废

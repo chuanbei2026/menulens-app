@@ -1,0 +1,142 @@
+"app.name" = "MenuMirror";
+
+/* MARK: - Shared */
+"common.cancel" = "रद्द करें";
+"common.save" = "सेव करें";
+"common.add" = "जोड़ें";
+"common.close" = "बंद करें";
+"common.unknown" = "अज्ञात";
+"list.separator" = ", ";
+"page.number" = "पेज %d";
+
+/* MARK: - First run */
+"onboarding.title" = "नया मेन्यू स्कैन करने के लिए OpenAI की चाबी जोड़ें";
+"onboarding.body" = "चाबी इस फ़ोन से बाहर नहीं जाती। तब तक आप ऐप में मौजूद दो असली रेस्टोरेंट मेन्यू देख सकते हैं।";
+"onboarding.enterKey" = "चाबी जोड़ें";
+"onboarding.viewSamples" = "नमूने देखें";
+
+/* MARK: - Home */
+"home.headline" = "मेन्यू की फ़ोटो लें, वही लेआउट अपनी भाषा में पाएँ";
+"home.subheadline" = "कई पेज · व्यंजनों की तस्वीरें · कोई भी भाषा · फ़ोन में सेव";
+"home.capture" = "कैमरा";
+"home.captureMore" = "और एक पेज";
+"home.library" = "फ़ोटो";
+"home.images.title" = "जिन व्यंजनों की तस्वीर नहीं है, उनके लिए तस्वीर बनाएँ";
+"home.images.note" = "AI से बनी, हर व्यंजन लगभग $0.003, थोड़ा धीमा; इसी स्कैन पर लागू";
+"home.analyze" = "स्कैन और अनुवाद";
+"home.analyze.pages" = "स्कैन और अनुवाद (%d पेज)";
+"home.samples" = "ऐप में मौजूद नमूना मेन्यू देखें";
+
+/* MARK: - Settings */
+"settings.title" = "सेटिंग";
+"settings.language" = "भाषा";
+"settings.language.footer" = "यह ऐप की भाषा और मेन्यू के अनुवाद की भाषा, दोनों तय करता है। मेन्यू अपनी भाषा में किस भाषा में है, वह अपने आप पहचाना जाता है।";
+"settings.apiKey.header" = "OpenAI API चाबी";
+"settings.apiKey.help" = "OpenAI API चाबी कैसे मिलेगी?";
+"settings.apiKey.footer" = "ऊपर दिए लिंक पर OpenAI के प्लेटफ़ॉर्म पर खाता बनाएँ, बैलेंस जोड़ें, फिर एक चाबी बनाकर यहाँ पेस्ट करें। चाबी सिर्फ़ इस फ़ोन के सिस्टम कीचेन में रहती है और सिर्फ़ सीधे OpenAI को कॉल करने के लिए इस्तेमाल होती है — यह कहीं अपलोड नहीं होती। इस ऐप का अपना कोई सर्वर नहीं है।";
+"settings.model" = "मॉडल";
+"settings.model.footer" = "घने छपे एक पेज (148 लाइनें) पर मापा गया: gpt-4.1 लगभग 45 सेकंड / $0.03 (सुझाया गया, अनुवाद के साथ प्रगति दिखती है) · gpt-5-mini लगभग 115 सेकंड / $0.01 (सस्ता, नाम ज़्यादा सोच-समझकर, लेकिन इंतज़ार लंबा) · gpt-5 सबसे सटीक और सबसे धीमा। व्यंजनों की तस्वीरों का शुल्क अलग है, कोलाज मोड में हर एक लगभग $0.003।";
+"settings.party.header" = "साथ खाने वाले";
+"settings.party.footer" = "ऑर्डर करते समय आप निशान लगा सकते हैं कि कौन सा व्यंजन किसने माँगा, ताकि खाना सही व्यक्ति तक पहुँचे। किसी की परहेज़ सेट करने पर सारांश उसके हर व्यंजन की जाँच करता है और साफ़ चेतावनी देता है। तस्वीर लगाने के लिए अवतार दबाएँ, हटाने के लिए ✕।";
+"settings.member.name" = "नाम";
+"settings.member.avoid" = "परहेज़";
+"settings.member.addPlaceholder" = "किसी को जोड़ें…";
+"settings.flatten" = "पूरे पेज की रोशनी एक जैसी करें (सुझाया गया)";
+"settings.flatten.footer" = "हाथ से ली गई फ़ोटो की परछाइयाँ और चमक हटा देता है, जिससे काग़ज़ साफ़ और एक-सा दिखता है और अनुवाद असली छपाई में घुल-मिल जाता है। गहरे रंग के मेन्यू अपने आप छोड़ दिए जाते हैं।";
+"settings.grid" = "कोलाज मोड (सस्ता)";
+"settings.grid.footer" = "तस्वीरें बनानी हैं या नहीं, यह हर स्कैन से पहले होम स्क्रीन पर चुना जाता है। कोलाज मोड चार व्यंजनों की एक 2×2 तस्वीर बनाकर काटता है, हर व्यंजन लगभग $0.003 (एक-एक करके लगभग $0.011, गुणवत्ता ज़रा बेहतर)। मेन्यू पर छपी असली तस्वीरें हमेशा पहले इस्तेमाल होती हैं।";
+
+/* MARK: - Scan progress */
+"progress.note" = "लेआउट बनते ही आप पढ़ सकते हैं; व्यंजनों की तस्वीरें पीछे भरती रहती हैं";
+"progress.stage.rectify" = "फ़ोटो सीधी की जा रही है";
+"progress.stage.translate" = "पाठ का अनुवाद";
+"progress.stage.layout" = "पेज का लेआउट";
+"progress.stage.images" = "व्यंजनों की तस्वीरें";
+"progress.pages" = "%d पेज";
+"progress.pages.fraction" = "%1$d/%2$d पेज";
+"progress.lines.fraction" = "%1$d/%2$d लाइनें";
+"progress.reading" = "पाठ पढ़ा जा रहा है…";
+"progress.waitingModel" = "%d लाइनें पढ़ीं, मॉडल का इंतज़ार…";
+"progress.linesElapsed" = "%1$d लाइनें अनुवाद के लिए · %2$d सेकंड बीते";
+"progress.waitRectify" = "फ़ोटो सीधी होने का इंतज़ार";
+"progress.waitTranslate" = "अनुवाद पूरा होने का इंतज़ार";
+"progress.layoutRunning" = "लेआउट बन रहा है…";
+"progress.imagesOff" = "सेटिंग में बंद है";
+"progress.menuHasPhotos" = "मेन्यू में तस्वीरें पहले से हैं";
+"progress.images" = "%d तस्वीरें";
+"progress.images.fraction" = "%1$d/%2$d तस्वीरें";
+
+/* MARK: - Result */
+"result.generatingImages" = "व्यंजनों की तस्वीरें बन रही हैं";
+"result.selected" = "%d चुने गए";
+"result.summary" = "सारांश";
+"result.tab.canvas" = "मेन्यू";
+"result.tab.list" = "सूची";
+"result.home" = "होम पर लौटें";
+"result.exportPDF" = "PDF निकालें";
+"canvas.showTranslation" = "अनुवाद";
+"canvas.showOriginal" = "मूल";
+"canvas.drawing" = "मेन्यू बनाया जा रहा है…";
+"share.menu" = "मेन्यू";
+"list.searchPlaceholder" = "व्यंजन खोजें (अनुवाद या मूल)";
+"chips.forWhom" = "किसके लिए:";
+"chips.addMember" = "किसी को जोड़ें";
+"chips.addMemberNote" = "साथ खाने वालों को सेटिंग में भी संभाला जा सकता है।";
+
+/* MARK: - Order summary */
+"summary.title" = "आपका ऑर्डर";
+"summary.conflicts" = "परहेज़ से टकराव";
+"summary.avoidsButOrdered" = "लेकिन «%1$@» %2$@ ऑर्डर किया";
+"summary.count" = "%d व्यंजन";
+"summary.total" = "कुल %@";
+"summary.continue" = "ऑर्डर जारी रखें";
+"summary.annotate" = "मेन्यू पर निशान लगाकर वेटर को दिखाएँ";
+
+/* MARK: - History */
+"history.title" = "इतिहास";
+"history.empty.title" = "अभी कुछ सेव नहीं है";
+"history.empty.body" = "आपके स्कैन किए मेन्यू यहाँ अपने आप सेव होते हैं, ताकि उसी रेस्टोरेंट में दूसरी बार जाने पर कुछ स्कैन करने की ज़रूरत न पड़े।";
+"history.untitled" = "बिना नाम का मेन्यू";
+"history.meta" = "%1$@ · %2$d व्यंजन · %3$d पेज";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "वीगन";
+"diet.vegetarian" = "वेज";
+"diet.glutenFree" = "ग्लूटेन";
+"diet.pork" = "पोर्क";
+"diet.chicken" = "चिकन";
+"diet.beef" = "बीफ़";
+"diet.lamb" = "मटन";
+"diet.seafood" = "सीफ़ूड";
+"diet.avoid.gluten" = "ग्लूटेन से परहेज़";
+"diet.avoid" = "%@ नहीं खाते";
+
+"party.me" = "मैं";
+
+/* MARK: - Errors */
+"error.encodeImages" = "चुनी गई फ़ोटो को एनकोड नहीं किया जा सका।";
+"error.recognizeFailed" = "स्कैन नहीं हो सका। कृपया दोबारा कोशिश करें।";
+"notice.partialPages" = "%1$d पेज स्कैन नहीं हो सके; बाकी %2$d रख लिए गए। उन पेजों को दोबारा स्कैन किया जा सकता है।";
+"error.missingKey" = "अभी कोई OpenAI API चाबी नहीं है — पहले सेटिंग में जोड़ें।";
+"error.http" = "OpenAI अनुरोध विफल (HTTP %1$d): %2$@";
+"error.emptyResponse" = "OpenAI ने खाली नतीजा भेजा।";
+"error.refusal" = "मॉडल ने यह अनुरोध अस्वीकार कर दिया: %@";
+"error.badLineIndex" = "मॉडल ने ग़लत लाइन नंबर भेजा।";
+
+/* MARK: - PDF */
+"pdf.header" = "व्यंजन सूची · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "मेन्यू की फ़ोटो OpenAI को भेजी जाती है";
+"consent.body" = "मेन्यू पढ़ने और अनुवाद करने के लिए MenuMirror फ़ोटो OpenAI को भेजता है। आपके फ़ोन से बाहर सिर्फ़ यही जाता है, और वह भी तभी जब आप स्कैन दबाते हैं।";
+"consent.sent.header" = "OpenAI को भेजा जाता है";
+"consent.sent.photo" = "आपकी चुनी हुई मेन्यू की फ़ोटो";
+"consent.sent.names" = "व्यंजनों के नाम — सिर्फ़ तब जब आप तस्वीरें बनवाना चाहें";
+"consent.kept.header" = "इस फ़ोन से बाहर कभी नहीं जाता";
+"consent.kept.body" = "आपकी API चाबी, आपका अनुवाद इतिहास, और साथ खाने वालों के नाम व तस्वीरें।";
+"consent.retention" = "OpenAI अनुरोध का जवाब देता है और दुरुपयोग की निगरानी के लिए API डेटा थोड़े समय रखता है। डेवलपर का कोई सर्वर नहीं है — कुछ भी हमारे रास्ते नहीं जाता।";
+"consent.policy" = "निजता नीति पढ़ें";
+"consent.agree" = "सहमत हूँ, आगे बढ़ें";
+"consent.decline" = "अभी नहीं";
+"settings.consent" = "मेन्यू की फ़ोटो OpenAI को भेजें";
+"settings.consent.footer" = "नया मेन्यू स्कैन करने के लिए ज़रूरी है। बंद करने पर कुछ भी नहीं भेजा जाता; नमूना मेन्यू और सेव किए अनुवाद चलते रहते हैं। अगली बार स्कैन करते समय फिर पूछा जाएगा।";

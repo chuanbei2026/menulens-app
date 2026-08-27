@@ -27,6 +27,11 @@ targets:
         # Marketing name. The Xcode project, target, paths and bundle id
         # deliberately keep the old name — none of them is user-visible.
         CFBundleDisplayName: MenuMirror
+        # Driven by the build settings below, NOT hardcoded — the generated
+        # Info.plist used to carry a literal 1.0/1, which meant
+        # MARKETING_VERSION was dead and bumping it shipped nothing.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         NSCameraUsageDescription: Used to photograph a restaurant menu so it can be read and translated.
@@ -40,6 +45,7 @@ targets:
           - ko
           - fr
           - es
+          - hi
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         # iPad must support all orientations (multitasking requirement).
@@ -53,9 +59,13 @@ targets:
         SWIFT_VERSION: "5.10"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
-        # Personal Team (向阳 史). Baked in so regenerated projects never ask
-        # for the team again; teammates should override with their own.
+        # Baked in so regenerated projects never ask for the team again;
+        # teammates should override with their own. NOTE: as of 2026-08-27 the
+        # local signing assets for this team are still free-tier (7-day
+        # provisioning profiles, no Apple Distribution certificate), so an
+        # App Store archive will fail until Xcode is signed in to the paid
+        # membership and issues a distribution certificate.
         DEVELOPMENT_TEAM: LNP5ER743F
         GENERATE_INFOPLIST_FILE: false
         CURRENT_PROJECT_VERSION: 1
-        MARKETING_VERSION: 0.1.0
+        MARKETING_VERSION: "1.0"

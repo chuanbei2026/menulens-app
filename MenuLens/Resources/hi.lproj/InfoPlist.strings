@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "MenuMirror";
+"NSCameraUsageDescription" = "रेस्टोरेंट के मेन्यू की फ़ोटो लेने के लिए, ताकि उसे पढ़ा और अनुवाद किया जा सके।";
+"NSPhotoLibraryUsageDescription" = "आपकी गैलरी से मेन्यू की फ़ोटो चुनने के लिए, ताकि उसे पढ़ा और अनुवाद किया जा सके।";

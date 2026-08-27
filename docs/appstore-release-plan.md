@@ -26,20 +26,23 @@ Store Connect 那一步都过不去。**
 | Bundle ID `ai.xiangyang.MenuLens` | 待在 App Store Connect 注册 | `project.yml` |
 | 签名 Team `LNP5ER743F` | 已写死在 `project.yml`（需确认已是**付费**个人 Team，不是 Personal Team） | `project.yml` |
 | Xcode / SDK | ✅ Xcode 26.6，满足 2026-04-28 起「必须 iOS 26 SDK」的硬要求 | 本机 |
+| 版本号 | ✅ `1.0 (1)`，已由 `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` 驱动 | `project.yml` |
+| Release 构建 / Archive | ✅ 都通过（arm64，`MinimumOSVersion 17.0`） | — |
 | 出口合规 | ✅ `ITSAppUsesNonExemptEncryption = false`（只用标准 HTTPS） | `Info.plist` |
 | 隐私政策 URL | ✅ 已上线（GitHub Pages） | `docs/privacy-policy.html` |
 | 技术支持 URL | ✅ GitHub repo | — |
 | 6.9" iPhone 截图 | ✅ 1320×2868 | `docs/screenshots/` |
 | 13" iPad 截图 | ✅ 2064×2752 | `docs/screenshots/ipad/` |
-| 六语言界面 | ✅ 刚做完（系统语言 = 翻译目标语言） | `Sources/Localization/` |
+| 七语言界面 | ✅ 系统语言 = 翻译目标语言（+ Hindi） | `Sources/Localization/` |
 | 提审用低额度 Key | ✅ 已备 | `docs/review-key.local.md`（本地，不入库） |
 | PrivacyInfo.xcprivacy | ✅ 已加（UserDefaults `CA92.1`） | `MenuLens/Resources/PrivacyInfo.xcprivacy` |
 | 第三方 AI 同意屏 | ✅ 已加，可在设置页撤回 | `Sources/Views/AIConsentView.swift` |
-| 六语言内置示例 | ✅ 6 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
+| 七语言内置示例 | ✅ 7 语言 × 2 餐厅，按语言 seed | `MenuLens/Resources/Samples/<lang>/` |
 | App 名称 | ✅ **MenuMirror** / **镜中菜单**，已全局替换 | 见 🔴-0 |
 | EU trader 三项 | ✅ 地址 / 电话已定（值不入库）；邮箱统一用 Gmail | `docs/trader-info.local.md` |
 | 联系邮箱口径 | ✅ 隐私政策 + DSA + 支持联系统一为同一个 Gmail | `docs/privacy-policy.html` |
-| **MenuMirror 商标查询** | ❌ 待你在 USPTO / EUIPO 各查一次 | — |
+| 签名 Team | ⚠️ `LNP5ER743F`，但本机签名资产仍是免费层（见 🟢-2） | `project.yml` |
+| **MenuMirror 商标查询** | ❌ 只能你在浏览器里手查（两个库都挡自动访问） | — |
 
 ---
 
@@ -303,9 +306,75 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 >
 > **还缺**：trader 申报的**电话**和**邮箱**同样必填、同样会公开显示。
 
-#### 🟢-2 其余机械步骤
+#### 🟢-2 签名：Archive 能过，**导出到 App Store 过不去**
 
-1. 确认 `DEVELOPMENT_TEAM` 已指向付费 Team（Xcode → Settings → Accounts）
+Team ID 是 `LNP5ER743F`（已确认，保持不变）。但 2026-08-27 查本机签名资产，
+三项证据都指向「这个 team 在本机的凭证仍是免费层」：
+
+| 证据 | 实测 | 含义 |
+|---|---|---|
+| `security find-identity -v -p codesigning` | `Apple Distribution` **0 张**，只有 1 张 `Apple Development` | Archive → App Store **必须**要 Distribution 证书 |
+| 描述文件有效期 | `2026-08-27`、`2026-09-02`（签发于 8/20、8/26）→ **7 天** | 7 天是免费 Team 的特征；付费是 1 年 |
+| `com.apple.dt.Xcode.plist` 的 `IDEProvisioningTeams` | **不存在** | Xcode GUI 里从没登录过开发者账号 |
+
+（证书 `OU=LNP5ER743F`、`O=向阳 史` 确认了 team 归属。注意 CN 里那串
+`K72C3N5JXB` **不是** Team ID，是证书自己的编号。）
+
+**实测到底哪一步断（2026-08-27 跑过真实命令）**：
+
+| 步骤 | 结果 |
+|---|---|
+| Release 配置构建 | ✅ `BUILD SUCCEEDED` |
+| `xcodebuild archive` | ✅ `ARCHIVE SUCCEEDED` —— 用开发证书签的，能过 |
+| `xcodebuild -exportArchive`（`method: app-store-connect`, `teamID: LNP5ER743F`） | ❌ `error: exportArchive No profiles for 'ai.xiangyang.MenuLens' were found` |
+
+所以 Archive 不是关卡，**导出/上传**才是：这个 bundle id 在这个 team 下
+没有 App Store 类型的描述文件，而免费 Team 也签发不出来。
+
+可复现的命令（archive 大约 1 分钟）：
+
+```bash
+xcodebuild -project MenuLens.xcodeproj -scheme MenuLens -configuration Release \
+  -destination 'generic/platform=iOS' -archivePath /tmp/MenuMirror.xcarchive archive
+
+# ExportOptions.plist: method=app-store-connect, teamID=LNP5ER743F, signingStyle=automatic
+xcodebuild -exportArchive -archivePath /tmp/MenuMirror.xcarchive \
+  -exportOptionsPlist /tmp/ExportOptions.plist -exportPath /tmp/export
+```
+
+**要做的**：
+
+1. App Store Connect 里用付费会员注册 Bundle ID `ai.xiangyang.MenuLens`；
+2. Xcode → Settings (⌘,) → Accounts → 登录付费会员的 Apple ID；
+3. 在 Signing & Capabilities 选中该 Team，让 Xcode 签发
+   Apple Distribution 证书 + App Store 描述文件。
+
+**验证成功的判据**（两条都要满足）：
+
+- `security find-identity -v -p codesigning` 出现一行 `Apple Distribution: ...`
+- 上面那条 `-exportArchive` 命令跑出 `** EXPORT SUCCEEDED **`
+
+#### 🟢-3 商标查询只能手动
+
+两个库都挡自动访问（Justia 403、USPTO 公开 API 404），而且都是需要浏览器的
+JS 应用。网页搜索没有搜到任何叫 MenuMirror 的产品或商标 —— 这是**弱正面信号，
+不是清权检索**。
+
+请自己各查一次（第 9 类「软件」和第 42 类「SaaS」）：
+
+USPTO
+https://tmsearch.uspto.gov
+
+EUIPO
+https://euipo.europa.eu/eSearch
+
+> App Store 的**名称可用性**我已经用 Apple 自己的 API 查过了，那个是权威的：
+> `MenuMirror` 在 us/cn/de/jp/fr/es 六区、`镜中菜单` 在 cn/tw/hk 三区均无撞名。
+> 商标是另一套体系，两者不能互相替代。
+
+#### 🟢-4 其余机械步骤
+
+1. 见 🟢-2（签名）
 2. App Store Connect → 注册 Bundle ID `ai.xiangyang.MenuLens`
 3. 创建 App 记录（名称、副标题、类别：旅行 / 美食佳饮、免费）
 4. `xcodegen generate` → Product → Archive → Distribute → App Store Connect
@@ -318,8 +387,8 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 ## 3. 剩下要做的
 
 ```
-① 在 USPTO / EUIPO 各查一次 MenuMirror 的商标
-② 确认 DEVELOPMENT_TEAM LNP5ER743F 已是付费 Team（不是 Personal Team）
+① 在 USPTO / EUIPO 各查一次 MenuMirror 的商标（只能浏览器手查，见 🟢-3）
+② 在 Xcode 里登录付费会员，让它签发 Apple Distribution 证书（见 🟢-2）
 ③ App Store Connect：注册 Bundle ID、创建 App、按 locale 填名称
 ④ 填 EU DSA trader 三项（地址/电话的值在 App Store Connect 里手敲，不入库）
 ⑤ 元数据照抄 appstore-metadata.md（隐私标签用改正后的那张表）
@@ -336,6 +405,10 @@ Apple 2025-07 换了分级体系（新增 13+/16+/18+，删掉 12+/17+），
 - ✅ 🟢-1 EU trader：申报，欧盟发行，三项齐
 - ✅ 联系邮箱全局统一为 Gmail（qq 邮箱对境外发件方投递不可靠）
 - ✅ 源语言 == 目标语言时的重复渲染
+- ✅ 新增 Hindi（हिन्दी）：117 键文案 + 2 家餐厅示例 + `CFBundleLocalizations`
+- ✅ 版本号从写死的 `1.0/1` 改为由 build settings 驱动（原来 `MARKETING_VERSION`
+  是死的，改它不影响出包），并定为首发的 `1.0 (1)`
+- ✅ 跑通 Release 构建与 Archive，并定位到确切的卡点是导出而非归档（见 🟢-2）
 
 ## 4. 参考链接
 

@@ -14,6 +14,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     case korean = "ko"
     case french = "fr"
     case spanish = "es"
+    case hindi = "hi"
 
     var id: String { rawValue }
 
@@ -28,17 +29,21 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .korean: return "한국어"
         case .french: return "Français"
         case .spanish: return "Español"
+        case .hindi: return "हिन्दी"
         }
     }
 
     var locale: Locale { Locale(identifier: rawValue) }
 
     /// Gluten-free matters to English/French/Spanish-speaking diners; East-Asian
-    /// audiences don't look for it, so their lists omit the GF mark.
+    /// audiences don't look for it, so their lists omit the GF mark. Hindi
+    /// readers are the same: the dietary question that actually decides an
+    /// order there is vegetarian, and which meat — both of which are always
+    /// shown, via the veg badges and the per-meat tags.
     var showsGlutenFree: Bool {
         switch self {
         case .english, .french, .spanish: return true
-        case .simplifiedChinese, .japanese, .korean: return false
+        case .simplifiedChinese, .japanese, .korean, .hindi: return false
         }
     }
 
@@ -51,6 +56,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .korean: return "Korean"
         case .french: return "French"
         case .spanish: return "Spanish"
+        case .hindi: return "Hindi"
         }
     }
 
@@ -74,6 +80,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
             case "ko": return .korean
             case "fr": return .french
             case "es": return .spanish
+            case "hi": return .hindi
             default: continue
             }
         }
