@@ -3,10 +3,14 @@
 *.xcworkspace
 MenuLens/Info.plist
 
-# Build artifacts
+# Build artifacts. `build/` alone was not enough: xcodebuild was pointed at
+# build-device/ and build-release/ too, and their ModuleCache .pcm files are
+# tens of MB each — 190 MB of compiler cache had been committed before this
+# was noticed.
 DerivedData/
-build/
+build*/
 *.ipa
+*.xcarchive/
 *.dSYM.zip
 
 # User state

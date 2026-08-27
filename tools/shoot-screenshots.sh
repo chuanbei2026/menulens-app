@@ -22,7 +22,7 @@ for LANG in "$@"; do
   xcrun simctl install "$DEV" "$APP" >/dev/null 2>&1
 
   # 01 home — a key is set so the onboarding card is gone and the controls live
-  run -target_language "$LANG" -apiKey sk-screenshot-placeholder
+  run -target_language "$LANG" -apiKey not-a-real-key-screenshots-only
   sleep 7; shot "$OUT/01_home.png"
 
   # 02 canvas — the in-place translated menu, order marked for two diners
