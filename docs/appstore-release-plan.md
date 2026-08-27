@@ -31,8 +31,9 @@ Store Connect 那一步都过不去。**
 | 出口合规 | ✅ `ITSAppUsesNonExemptEncryption = false`（只用标准 HTTPS） | `Info.plist` |
 | 隐私政策 URL | ✅ 已上线（GitHub Pages） | `docs/privacy-policy.html` |
 | 技术支持 URL | ✅ GitHub repo | — |
-| 6.9" iPhone 截图 | ✅ 1320×2868 | `docs/screenshots/` |
-| 13" iPad 截图 | ✅ 2064×2752 | `docs/screenshots/ipad/` |
+| 6.9" iPhone 截图 | ✅ 1320×2868，4 语言 × 4 张（已重拍） | `docs/screenshots/iphone-6.9/` |
+| 13" iPad 截图 | ✅ 2064×2752，4 语言 × 3 张（已重拍） | `docs/screenshots/ipad-13/` |
+| App Store 签名 / 打包 | ✅ 已产出可上传的 `.ipa`（见 🟢-2） | — |
 | 七语言界面 | ✅ 系统语言 = 翻译目标语言（+ Hindi） | `Sources/Localization/` |
 | 提审用低额度 Key | ✅ 已备 | `docs/review-key.local.md`（本地，不入库） |
 | PrivacyInfo.xcprivacy | ✅ 已加（UserDefaults `CA92.1`） | `MenuLens/Resources/PrivacyInfo.xcprivacy` |
@@ -320,7 +321,22 @@ Team ID 是 `LNP5ER743F`（已确认，保持不变）。但 2026-08-27 查本�
 （证书 `OU=LNP5ER743F`、`O=向阳 史` 确认了 team 归属。注意 CN 里那串
 `K72C3N5JXB` **不是** Team ID，是证书自己的编号。）
 
-**实测到底哪一步断（2026-08-27 跑过真实命令）**：
+> ✅ **2026-08-27 已解决。** Team `LNP5ER743F` **是**付费 team —— 我原先从
+> 「7 天描述文件 + 0 张 Distribution 证书」推断它是免费的，那个推断是错的，
+> 那只是本机的过期缓存状态。加上
+> `Apple Distribution: Xiangyang Shi (LNP5ER743F)` 证书后，
+> `-allowProvisioningUpdates` 让 xcodebuild 自己建出了
+> `iOS Team Store Provisioning Profile`，导出成功：
+>
+> ```
+> ** EXPORT SUCCEEDED **   MenuLens.ipa  47 MB
+> ```
+>
+> IPA 自检：Apple Distribution 签名 · App Store 类型描述文件（无设备列表）·
+> `get-task-allow: False` · MenuMirror 1.0 (1) · MinimumOSVersion 17.0 ·
+> 七套 lproj 与示例 · PrivacyInfo.xcprivacy 在。**这就是能上传的包。**
+
+**当时实测的断点记录（留档）**：
 
 | 步骤 | 结果 |
 |---|---|
@@ -387,13 +403,17 @@ https://euipo.europa.eu/eSearch
 ## 3. 剩下要做的
 
 ```
-① 在 USPTO / EUIPO 各查一次 MenuMirror 的商标（只能浏览器手查，见 🟢-3）
-② 在 Xcode 里登录付费会员，让它签发 Apple Distribution 证书（见 🟢-2）
-③ App Store Connect：注册 Bundle ID、创建 App、按 locale 填名称
-④ 填 EU DSA trader 三项（地址/电话的值在 App Store Connect 里手敲，不入库）
-⑤ 元数据照抄 appstore-metadata.md（隐私标签用改正后的那张表）
-⑥ 打包 → TestFlight（六种语言各走一遍，看文案溢出）→ 提审
+① App Store Connect：创建 App 记录，主语言英文，按 locale 填名称
+   （MenuMirror / 镜中菜单），Bundle ID 选 ai.xiangyang.MenuLens
+② 填 EU DSA trader 三项（地址/电话手敲，不入库）
+③ 元数据照抄 appstore-metadata.md（隐私标签用改正后那张表）
+④ 上传截图：`docs/screenshots/iphone-6.9/` 与 `ipad-13/` 下四套，按 locale
+⑤ 上传 .ipa（Xcode Organizer → Distribute，或 Transporter）
+⑥ TestFlight 走一轮（七种语言各点一遍看文案溢出）→ 提审
+⑦ EUIPO 商标查询（USPTO 你已查过无结果，见 🟢-3）
 ```
+
+打包这一步已经验证可行，命令在 🟢-2。
 
 已完成（2026-08-27）：
 
@@ -408,7 +428,11 @@ https://euipo.europa.eu/eSearch
 - ✅ 新增 Hindi（हिन्दी）：117 键文案 + 2 家餐厅示例 + `CFBundleLocalizations`
 - ✅ 版本号从写死的 `1.0/1` 改为由 build settings 驱动（原来 `MARKETING_VERSION`
   是死的，改它不影响出包），并定为首发的 `1.0 (1)`
-- ✅ 跑通 Release 构建与 Archive，并定位到确切的卡点是导出而非归档（见 🟢-2）
+- ✅ 跑通 Release 构建 → Archive → **Export 成功，产出可上传的 App Store `.ipa`**
+- ✅ 截图全部重拍：4 语言 × iPhone 6.9"(4 张) + iPad 13"(3 张)，尺寸逐张核对
+- ✅ 画布渲染器补上「译名与原文相同则不重复渲染」（之前只做了列表和 PDF）
+- ✅ `-demoCart` 的同行成员名字改为随语言变（原来硬编码「小明」，
+  会出现在英/法/韩的商品页截图里）
 
 ## 4. 参考链接
 
