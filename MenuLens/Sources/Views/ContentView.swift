@@ -14,7 +14,8 @@ struct ContentView: View {
     /// stay inert until one is entered.
     @State private var hasAPIKey = !KeychainStore.loadAPIKey().isEmpty
     @State private var showCamera = false
-    @State private var showSettings = false
+    @State private var showSettings =
+        ProcessInfo.processInfo.arguments.contains("-showSettings")
     @State private var showHistory = false
     /// Picking a photo sends nothing; only Scan does. So consent is asked
     /// at the button that transmits, which is also where the user can see
@@ -87,6 +88,8 @@ struct ContentView: View {
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
+            //   -showSettings     open Settings (longest strings live in its footers,
+            //                     so this is the screen text overflow shows up on)
             .onAppear {
                 let args = CommandLine.arguments
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
