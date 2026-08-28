@@ -456,3 +456,97 @@ https://developer.apple.com/news/upcoming-requirements/
 
 BYOK 被 3.1.1 拒的论坛案例
 https://developer.apple.com/forums/thread/763884
+
+---
+
+## 12. 实战踩坑记录（2026-08-27 首次提交当天）
+
+这些都**不在任何 Apple 文档里**，只能靠撞。按「本地全绿 ≠ Apple 收」归类。
+
+### 12.1 名称可用性：ASC 是唯一裁判
+
+iTunes Search API **只能看到已上架的 App**，看不到「已预留但未发布」的名字
+（ASC 为预留名保留最长一年）。
+
+实测：`MenuMirror` 在 us/cn/de/jp/fr/es 六区全绿，到 ASC 直接被拦。
+前后烧掉三个名字（`MenuLens` / `口袋菜单` / `MenuMirror`）。
+
+> **正确顺序：先去 ASC 占名，再改代码。** 反过来的话，App 名字出现在导航栏里，
+> 28 张截图全要重拍。
+
+### 12.2 图标 alpha 通道：只有 Apple 的校验器会拒
+
+`error 90717 — The large app icon can't be transparent or contain an alpha channel`
+
+| 环节 | 会发现吗 |
+|---|---|
+| Xcode 构建 / 模拟器运行 | ❌ |
+| `xcodebuild archive` | ❌ |
+| `xcodebuild -exportArchive` | ❌ |
+| **`altool --validate-app`** | ✅ 唯一 |
+
+所以**先 validate 再 upload**。直接 upload 要先传完 47 MB，再等 Apple 异步退回。
+
+修复工具：`tools/strip-icon-alpha.swift`（把透明像素填成「向内最近的不透明像素」，
+背景是渐变时平填单色会在角上留缝）。设计师重新导出图标很可能再次引入 alpha。
+
+### 12.3 Xcode 26 不再自带 iTMSTransporter
+
+`altool --upload-app` / `--validate-app` 会报
+`The file "Defaults.properties" couldn't be opened.`
+而 `xcrun iTMSTransporter -version` 会明说去 Mac App Store 装 Transporter.app。
+
+- 装了 Transporter.app 之后 altool 恢复可用
+- **Xcode Organizer 的上传是自带实现，不依赖它**
+
+### 12.4 `-allowProvisioningUpdates` 会挂，而且有副作用
+
+- **会挂**：第一次成功后再跑，它去连 Apple 门户，实测 10 分钟零输出。描述文件已缓存后
+  **去掉这个 flag，1 分钟出包**
+- **副作用**：它会**静默新建一张云托管 Distribution 证书**。本项目已交付 IPA 的
+  描述文件里就有两张 Apple Distribution 证书（08:16:47 用户手工签发的、
+  08:22:24 导出时自动新建的），序列号不同，实际签名用的是本机有私钥的那张
+
+### 12.5 `/v1/certificates` 不列举云托管证书 ⚠️
+
+与 lumaverse-68（Album Compact）交叉验证得出，两边各持一半证据：
+
+| 证据源 | 结果 |
+|---|---|
+| ASC API `/v1/certificates?limit=200` | 共 3 张，`DISTRIBUTION` **只有 1 张** |
+| 已交付 IPA 的 `embedded.mobileprovision` | Apple Distribution **2 张**，晚的那张 API 里缺席 |
+
+`DISTRIBUTION_MANAGED` 甚至不是合法的过滤值（400 `PARAMETER_ERROR.INVALID`）——
+**这个 API 根本不建模云托管证书**。
+
+> ⇒ **用 API 判断「账号有没有云证书」是不成立的判据。** 要看只能去开发者门户网页。
+
+顺带：ASC **API key 认证走不通云签名**（会得到
+`403 You haven't been given access to cloud-managed distribution certificates`，
+且与角色无关 —— 该账号 `roles=[ACCOUNT_HOLDER, ADMIN]`、`provisioningAllowed=true`）。
+Xcode 账号会话可以。所以要 headless 出包，**用现有证书 + 自建描述文件 +
+`signingStyle=manual`**，别依赖自动签名。
+
+### 12.6 别吊销 `F31CF015…`
+
+它是**本机唯一有私钥的** Distribution 证书。吊销它，这台机器就再也签不出
+App Store 包（已上传的不受影响，但被拒后重出包要重新签发证书）。
+
+### 12.7 文档里查不到的必填字段
+
+只有真去填表才知道，本项目漏了三次：
+
+- **Copyright** —— 格式「年份 + 权利人」，`2026 Xiangyang Shi`，**不加 © 符号**
+- **App Review 联系人** —— 名 / 姓 / 电话 / 邮箱四项
+- **Content Rights** —— *Does your app contain, show, or access third-party content?*
+
+另外：现行年龄分级问卷（七步）里**没有** AI 相关的题。
+
+### 12.8 Support URL 别指向 GitHub README
+
+README 是开发者向的（`xcodegen generate`、bbox 坐标、怎么加语言）。
+用户从 App Store 点 Support 进来看到构建指南，且实现细节被公开在商品页上。
+已建 `docs/support.html`（中英双语，含联系邮箱、费用、"不填 Key 也能用"、排障）。
+
+它还有个附带价值：**审核员点 Support 时，开头就写着「没有服务器」「不填 Key
+也能完整体验」** —— 正是 2.1 和 4.2 需要他理解的两件事。
