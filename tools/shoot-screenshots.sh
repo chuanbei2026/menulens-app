@@ -12,6 +12,18 @@ DEV="$1"; OUTROOT="$2"; APP="$3"; shift 3
 VIEWS_IPAD="${IPAD:-0}"
 BID=ai.xiangyang.MenuLens
 
+# Set the status bar explicitly rather than trusting whatever the device
+# happens to carry — it is device-level state another session can change.
+#
+# batteryState MUST be `discharging`, not `charged`: `charged` draws the green
+# battery WITH a lightning bolt, i.e. a phone that is plugged in, which is not
+# what a marketing screenshot should show. 9:41 is Apple's own convention,
+# from the original iPhone keynote.
+xcrun simctl status_bar "$DEV" override \
+  --time "9:41" \
+  --batteryState discharging --batteryLevel 100 \
+  --cellularBars 4 --wifiBars 3 >/dev/null 2>&1
+
 shot() { xcrun simctl io "$DEV" screenshot "$1" >/dev/null 2>&1; }
 run()  { xcrun simctl terminate "$DEV" $BID >/dev/null 2>&1; xcrun simctl launch "$DEV" $BID "$@" >/dev/null 2>&1; }
 

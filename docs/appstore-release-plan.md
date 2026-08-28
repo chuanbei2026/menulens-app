@@ -542,7 +542,56 @@ App Store 包（已上传的不受影响，但被拒后重出包要重新签发�
 
 另外：现行年龄分级问卷（七步）里**没有** AI 相关的题。
 
-### 12.8 Support URL 别指向 GitHub README
+### 12.8 截图状态栏：`--batteryState charged` 会画出充电图标
+
+`simctl status_bar override --batteryState charged --batteryLevel 100`
+画出来的是**绿色带闪电**的电池，也就是「正在充电的手机」—— 上架截图要的是
+平常的满格。正确写法：
+
+```
+--batteryState discharging --batteryLevel 100
+```
+
+首批 28 张已上传的截图全都带着充电图标（由 Album Sweeper 那条线交叉发现）。
+`9:41` 是 Apple 从 2007 年初代 iPhone 发布会沿用的惯例时间，值得照用。
+
+⚠️ `status_bar override` 是**设备级**状态，同一台模拟器上另一个进程改了会影响你。
+所以要在脚本里**显式设置**，不要依赖设备上碰巧有谁设过什么 ——
+`tools/shoot-screenshots.sh` 现在自己设。
+
+### 12.9 多个 agent 共用模拟器会互相清沙盒
+
+同机另一个 session 的截图脚本每轮开头 `simctl erase`，会把同一台设备上
+所有 app 的沙盒清掉；`status_bar override` 也会被重置。症状和「自己的代码有 bug」
+难以区分。
+
+解法是**给项目建专属设备**而不是协商共用：
+
+```bash
+xcrun simctl create fm-iphone-69 "iPhone 17 Pro Max" <runtime>
+xcrun simctl create fm-ipad-13   "iPad Pro 13-inch (M5)" <runtime>
+```
+
+### 12.10 为真实用户加的守卫会静默杀掉验证脚本
+
+`analyze()` 里为 5.1.2(i) 加的 `guard aiConsentGranted else { return }`
+让 `-analyzeSample` / `-analyzeFiles` 全部变成静默 no-op —— 不抛错、不改状态，
+症状和「环境被别人搞坏了」一模一样。加了显式的 `-grantConsent`。
+
+**教训**：给生产路径加门之后，检查一遍所有自动化入口是不是也被挡住了。
+
+### 12.11 产物「看着合理」不是通过条件
+
+同一天两边各撞一次：
+
+| | 症状 | 靠什么发现 |
+|---|---|---|
+| 本项目 | 模型漏译菜单尾部 5 行 | 输出仍是合法 JSON、画面正常 —— 靠逐 id 计数 |
+| Album Sweeper | 相册被污染成 3 份（79→243 张） | 分类截图完全合理 —— 靠「243 对不上 79」 |
+
+**判据：拿输入应该产生的数字去断言输出，而不是看输出像不像话。**
+
+### 12.12 Support URL 别指向 GitHub README
 
 README 是开发者向的（`xcodegen generate`、bbox 坐标、怎么加语言）。
 用户从 App Store 点 Support 进来看到构建指南，且实现细节被公开在商品页上。
