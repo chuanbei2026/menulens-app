@@ -135,18 +135,28 @@ menu,translate,travel,restaurant,food,order,japan,korea,india,scan,ocr,dish,came
 
 - [x] Apple Developer Program 注册通过（$99/年，个人，Team LNP5ER743F）
 - [x] 定新名字：**ForeignMenu** / **外乡人的菜单**（跨 6 个商店筛过无撞名）
-- [ ] 在 USPTO 与 EUIPO 各查一次 ForeignMenu 的商标
+- [~] USPTO 已查无结果；EUIPO 未查（描述性词组，注册价值低，非阻塞）
 - [x] App Store Connect 创建 App（Bundle ID ai.xiangyang.MenuLens —— 这个不用改）
-- [ ] 填 EU DSA trader 三项（地址 / 电话 / 邮箱，均会公开显示）
+- [x] 填 EU DSA trader 三项（地址 / 电话 / 邮箱，均会公开显示）
 - [x] repo 已推 GitHub（public）并已开 Pages，隐私政策 URL 生效
 - [x] 签名 + 打包 + 交付：`Apple Distribution` 证书 + App Store 描述文件，
       经 Transporter 交付 `1.0 (1)`（2026-08-27）
       —— 注意 Xcode 26 不再自带 iTMSTransporter，`altool` 的上传路径需要
       先装 Transporter.app；Xcode Organizer 的上传是自带实现，不受影响
-- [ ] 上传 6.9 英寸 iPhone 截图（`docs/screenshots/iphone-6.9/<lang>/`，1320×2868 ✅ 已重拍）
-- [ ] 上传 13 英寸 iPad 截图（`docs/screenshots/ipad-13/<lang>/`，2064×2752 ✅ 已重拍）
+- [x] 上传 6.9 英寸 iPhone 截图（`docs/screenshots/iphone-6.9/<lang>/`，1320×2868 ✅ 已重拍）
+- [x] 上传 13 英寸 iPad 截图（`docs/screenshots/ipad-13/<lang>/`，2064×2752 ✅ 已重拍）
       —— en / zh-Hans / fr / ko 四套，按 locale 分别上传；未拍的语言回落主语言
-- [ ] TestFlight 内测一轮再提正式审核（七种语言各走一遍，看文案溢出）
-- [ ] 申报 EU DSA trader 状态，或取消勾选欧盟国家（不申报会被移除，见 release plan 🟢-1）
-- [ ] 回答新版年龄分级问卷（2025-07 改版，专门问 AI 功能）
+- [x] 已提交审核（2026-08-27）
+- [x] 申报 EU DSA trader 状态（欧盟正常发行）
+- [x] 年龄分级问卷（七步，结果 4+；**没有** AI 相关的题）
 - [x] 创建低限额测试 Key（已存 docs/review-key.local.md，本地文件），过审后作废
+
+## 状态
+
+**2026-08-27 已提交审核**（版本 1.0，构建 1.0 (1)）。等 Apple 邮件。
+
+过审后要做的：
+
+- [ ] 去 https://platform.openai.com/api-keys **作废审核用的测试 Key**
+- [ ] 确认欧盟商品页上 trader 三项显示正常
+- [ ] 考虑补 fr / ko 两个语言的本地化（截图已拍好，在 `docs/screenshots/*/fr|ko/`）
