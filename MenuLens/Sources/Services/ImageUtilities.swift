@@ -48,3 +48,9 @@ extension UIImage {
         return UIImage(cgImage: cropped)
     }
 }
+
+
+extension String {
+    /// "" is not a value — it's a missing value that decoded into a String.
+    var nilIfEmpty: String? { isEmpty ? nil : self }
+}

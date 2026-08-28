@@ -493,6 +493,9 @@ private struct DishListView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @Binding var scrollTarget: String?
     @ObservedObject private var loc = Localization.shared
+    /// Observed so recommendations re-filter the moment someone's
+    /// restrictions change in Settings.
+    @ObservedObject private var party = PartyStore.shared
     @State private var searchText = ""
 
     private struct Row: Identifiable {
@@ -507,9 +510,80 @@ private struct DishListView: View {
         let rows: [Row]
     }
 
+    private struct Recommendation: Identifiable {
+        let id: String // dish key
+        let item: MenuItemEntry
+        let reason: String
+        let pageIndex: Int
+    }
+
+    /// Dishes the model singled out, minus anything someone at the table
+    /// can't eat. Recommending a dish and then flagging it as a clash two
+    /// screens later would be worse than not recommending it at all.
+    ///
+    /// The filter runs here, at render time, rather than at scan time:
+    /// restrictions change after a scan is saved, and a recommendation baked
+    /// into the file would go stale.
+    private var recommendations: [Recommendation] {
+        guard let scan = viewModel.scan else { return [] }
+        let avoided = Set(party.members.flatMap(\.avoidedTags))
+        var result: [Recommendation] = []
+        for (p, page) in scan.pages.enumerated() {
+            for (s, section) in page.sections.enumerated() {
+                for (i, item) in section.items.enumerated() {
+                    guard let reason = item.recommendation else { continue }
+                    guard DietTag.tags(for: item).isDisjoint(with: avoided) else { continue }
+                    result.append(Recommendation(
+                        id: MenuScan.dishKey(page: p, section: s, item: i),
+                        item: item, reason: reason, pageIndex: p
+                    ))
+                }
+            }
+        }
+        return result
+    }
+
+    /// True when the scan HAS recommendations but every one of them clashes
+    /// with someone's restrictions — worth saying out loud, otherwise the
+    /// section just silently disappears and looks broken.
+    private var allRecommendationsFiltered: Bool {
+        guard let scan = viewModel.scan else { return false }
+        let any = scan.pages.contains { page in
+            page.sections.contains { $0.items.contains { $0.recommendation != nil } }
+        }
+        return any && recommendations.isEmpty
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             List {
+                if searchText.isEmpty {
+                    if !recommendations.isEmpty {
+                        Section {
+                            ForEach(recommendations) { rec in
+                                Button {
+                                    withAnimation { proxy.scrollTo(rec.id, anchor: .center) }
+                                } label: {
+                                    RecommendationRow(
+                                        recommendation: rec.item,
+                                        reason: rec.reason,
+                                        photo: photo(dishKey: rec.id, pageIndex: rec.pageIndex)
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        } header: {
+                            Label(L("list.recommended"), systemImage: "hand.thumbsup.fill")
+                                .foregroundStyle(.orange)
+                        }
+                    } else if allRecommendationsFiltered {
+                        Section {
+                            Text(L("list.recommended.allFiltered"))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
                 ForEach(groups) { group in
                     Section {
                         ForEach(group.rows) { row in
@@ -577,10 +651,30 @@ private struct DishListView: View {
     }
 
     private func photo(for row: Row) -> UIImage? {
-        if let box = row.item.photoBBox, row.pageIndex < viewModel.scanImages.count {
-            return viewModel.scanImages[row.pageIndex].crop(normalized: box)
+        photo(dishKey: row.id, pageIndex: row.pageIndex, box: row.item.photoBBox)
+    }
+
+    /// Printed photo cropped from the page when the menu has one, else the
+    /// generated thumbnail. Shared by the list rows and the recommendations.
+    private func photo(dishKey: String, pageIndex: Int, box: NormalizedRect? = nil) -> UIImage? {
+        let printed = box ?? dishItem(dishKey)?.photoBBox
+        if let printed, pageIndex < viewModel.scanImages.count {
+            return viewModel.scanImages[pageIndex].crop(normalized: printed)
         }
-        return viewModel.generatedImages[row.id]
+        return viewModel.generatedImages[dishKey]
+    }
+
+    private func dishItem(_ key: String) -> MenuItemEntry? {
+        guard let scan = viewModel.scan else { return nil }
+        for (p, page) in scan.pages.enumerated() {
+            for (s, section) in page.sections.enumerated() {
+                for (i, item) in section.items.enumerated()
+                where MenuScan.dishKey(page: p, section: s, item: i) == key {
+                    return item
+                }
+            }
+        }
+        return nil
     }
 
     private var groups: [SectionGroup] {
@@ -678,6 +772,54 @@ private struct DishRow: View {
                         .foregroundStyle(.secondary)
                 }
             }
+        }
+        .padding(.vertical, 3)
+    }
+}
+
+/// One recommended dish: why it's worth ordering, above the usual name and
+/// price. Tapping it scrolls to that dish in the list, where the stepper
+/// lives — no second way to order the same thing.
+private struct RecommendationRow: View {
+    let recommendation: MenuItemEntry
+    let reason: String
+    let photo: UIImage?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            if let photo {
+                Image(uiImage: photo)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 56, height: 56)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(recommendation.originalName)
+                        .font(.subheadline.weight(.semibold))
+                    if let price = recommendation.price {
+                        Text(price)
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                if !recommendation.translationIsRedundant {
+                    Text(recommendation.chineseName)
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                }
+                // The reason is the whole point of the section, so it gets
+                // the body weight and the name gets subheadline.
+                Text(reason)
+                    .font(.footnote)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 3)
     }

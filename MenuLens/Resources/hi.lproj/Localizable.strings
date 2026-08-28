@@ -145,3 +145,7 @@
 "history.rename" = "नाम बदलें";
 "history.rename.placeholder" = "रेस्टोरेंट का नाम";
 "history.rename.prompt" = "खाली छोड़ने पर «बिना नाम का मेन्यू» पर लौट आएगा।";
+
+/* MARK: - Recommendations */
+"list.recommended" = "ये मंगाएँ";
+"list.recommended.allFiltered" = "जो व्यंजन हम सुझाते, वे साथ खाने वालों के परहेज़ से टकराते हैं, इसलिए नहीं दिखाए गए।";

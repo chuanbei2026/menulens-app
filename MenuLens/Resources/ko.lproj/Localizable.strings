@@ -145,3 +145,7 @@
 "history.rename" = "이름 변경";
 "history.rename.placeholder" = "식당 이름";
 "history.rename.prompt" = "비워 두면 「이름 없는 메뉴」로 돌아갑니다.";
+
+/* MARK: - Recommendations */
+"list.recommended" = "추천";
+"list.recommended.allFiltered" = "추천하려던 요리가 같이 먹는 분이 못 먹는 재료와 겹쳐서 표시하지 않았습니다.";

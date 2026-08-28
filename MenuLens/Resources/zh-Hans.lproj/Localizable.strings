@@ -145,3 +145,7 @@
 "history.rename" = "重命名";
 "history.rename.placeholder" = "餐厅名字";
 "history.rename.prompt" = "留空则恢复为「未命名菜单」。";
+
+/* MARK: - Recommendations */
+"list.recommended" = "值得点";
+"list.recommended.allFiltered" = "本来想推荐的菜和同行成员的忌口冲突，所以没有显示。";

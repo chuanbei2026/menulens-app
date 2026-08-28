@@ -51,6 +51,11 @@ struct MenuItemEntry: Codable, Hashable {
     /// culinary common sense). Allowed values: vegan, vegetarian,
     /// gluten_free, contains_lamb, contains_seafood.
     var tags: [String]?
+    /// One short sentence, in the scan's target language, on why this dish is
+    /// worth ordering. nil on every dish the model didn't single out — and on
+    /// every scan made before recommendations existed, which is why it is
+    /// optional rather than defaulted.
+    var recommendation: String?
 }
 
 extension MenuItemEntry {

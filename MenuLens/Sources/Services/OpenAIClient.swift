@@ -36,7 +36,7 @@ struct OpenAIClient {
 
     private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v16"
+    private static let promptVersion = "v18"
 
     private var systemPrompt: String {
         """
@@ -72,6 +72,22 @@ struct OpenAIClient {
         else null.
         4. Also report the menu's language, that language's name written in \
         \(targetLanguage), and the restaurant name (null if not printed).
+        5. Pick the 2-3 dishes a first-time visitor should actually order, and \
+        set `recommended` on exactly those. For each write `recommendReason`: ONE \
+        short sentence in \(targetLanguage) that states a CHECKABLE FACT about the \
+        dish — not an opinion about it. Allowed kinds of fact, in order of \
+        preference: what the menu itself says about it (signature, house speciality, \
+        award, "our" dish); which cuisine or region it is the defining dish of; a \
+        specific ingredient or technique on this menu that is unusual; how much food \
+        it is for the price relative to the other prices on this page.
+           A reader must be able to disagree with the sentence only by checking the \
+        menu, never by having different taste. So "the dish this Peruvian kitchen is \
+        named for" is a fact; "delicious", "very popular", "a must-try", "highly \
+        recommended", "customer favourite" are opinions and are forbidden — you have \
+        no data on popularity. Do not restate the description.
+           If nothing on the page stands out on those grounds, recommend NOTHING \
+        rather than filling the quota. Every other dish gets recommended = false and \
+        recommendReason = "".
         """
     }
 
@@ -122,11 +138,17 @@ struct OpenAIClient {
                     ],
                 ],
                 "photoBBox": ["anyOf": [normalizedRect, ["type": "null"]]],
+                // strict json_schema requires every property to be listed in
+                // `required`, so a dish that is NOT recommended carries
+                // false + "" rather than omitting these.
+                "recommended": ["type": "boolean"],
+                "recommendReason": ["type": "string"],
             ],
             "required": [
                 "originalName", "translatedName", "nameLine", "descriptionLines",
                 "translatedDescription", "price", "sectionOriginal", "sectionTranslated",
                 "sectionTitleLine", "tags", "photoBBox",
+                "recommended", "recommendReason",
             ],
         ]
         return [
@@ -163,6 +185,9 @@ struct OpenAIClient {
         let sectionTitleLine: Int
         let tags: [String]
         let photoBBox: NormalizedRect?
+        /// Optional: a response cached before v17 has neither field.
+        let recommended: Bool?
+        let recommendReason: String?
     }
 
     private struct WireResponse: Decodable {
@@ -434,7 +459,13 @@ struct OpenAIClient {
                 photoBBox: dish.photoBBox,
                 descriptionBBox: hull,
                 descriptionLines: descBoxes.isEmpty ? nil : descBoxes,
-                tags: dish.tags.isEmpty ? nil : dish.tags
+                tags: dish.tags.isEmpty ? nil : dish.tags,
+                // A reason without the flag, or a flag without a reason, is
+                // half a recommendation — neither renders.
+                recommendation: (dish.recommended == true)
+                    ? dish.recommendReason?.trimmingCharacters(in: .whitespacesAndNewlines)
+                        .nilIfEmpty
+                    : nil
             )
 
             let key = dish.sectionOriginal ?? dish.sectionTranslated ?? "line\(dish.sectionTitleLine)"

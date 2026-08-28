@@ -153,3 +153,7 @@
 "history.rename" = "Rename";
 "history.rename.placeholder" = "Restaurant name";
 "history.rename.prompt" = "Leave it empty to go back to the untitled label.";
+
+/* MARK: - Recommendations */
+"list.recommended" = "Worth ordering";
+"list.recommended.allFiltered" = "The dishes we'd have suggested clash with someone's restrictions, so they're not shown.";

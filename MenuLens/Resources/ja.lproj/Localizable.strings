@@ -145,3 +145,7 @@
 "history.rename" = "名前を変更";
 "history.rename.placeholder" = "店名";
 "history.rename.prompt" = "空欄にすると「名称未設定のメニュー」に戻ります。";
+
+/* MARK: - Recommendations */
+"list.recommended" = "おすすめ";
+"list.recommended.allFiltered" = "おすすめしたい料理が同席する方の苦手な食材と重なるため、表示していません。";

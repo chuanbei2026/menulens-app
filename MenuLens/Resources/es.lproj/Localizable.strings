@@ -145,3 +145,7 @@
 "history.rename" = "Renombrar";
 "history.rename.placeholder" = "Nombre del restaurante";
 "history.rename.prompt" = "Déjalo vacío para volver a la etiqueta sin nombre.";
+
+/* MARK: - Recommendations */
+"list.recommended" = "Vale la pena pedir";
+"list.recommended.allFiltered" = "Los platos que habríamos sugerido chocan con las restricciones de alguien, así que no se muestran.";

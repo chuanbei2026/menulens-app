@@ -90,6 +90,9 @@ struct ContentView: View {
             //   -showConsent      open the third-party AI consent sheet
             //   -showSettings     open Settings (longest strings live in its footers,
             //                     so this is the screen text overflow shows up on)
+            //   -grantConsent     grant the third-party-AI consent; REQUIRED
+            //                     alongside -analyzeSample / -analyzeFiles,
+            //                     which analyze() otherwise refuses to run
             .onAppear {
                 let args = CommandLine.arguments
                 if args.contains("-loadSample") || args.contains("-autoPDF") {
@@ -112,6 +115,14 @@ struct ContentView: View {
                 if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
                     KeychainStore.saveAPIKey(args[idx + 1])
                     hasAPIKey = true
+                }
+                // analyze() refuses to run without consent (guideline
+                // 5.1.2(i)), which silently turned every -analyzeSample /
+                // -analyzeFiles run into a no-op. Automation grants it
+                // explicitly rather than -apiKey implying it: the whole point
+                // of the gate is that a key and permission are separate.
+                if args.contains("-grantConsent") {
+                    aiConsentGranted = true
                 }
                 // Keychain items outlive an app uninstall, so first-run
                 // onboarding needs an explicit way to reproduce.

@@ -145,3 +145,7 @@
 "history.rename" = "Renommer";
 "history.rename.placeholder" = "Nom du restaurant";
 "history.rename.prompt" = "Laissez vide pour revenir au libellé sans nom.";
+
+/* MARK: - Recommendations */
+"list.recommended" = "À commander";
+"list.recommended.allFiltered" = "Les plats que nous aurions suggérés entrent en conflit avec les restrictions de quelqu'un, ils ne sont donc pas affichés.";
