@@ -140,3 +140,8 @@
 "consent.decline" = "अभी नहीं";
 "settings.consent" = "मेन्यू की फ़ोटो OpenAI को भेजें";
 "settings.consent.footer" = "नया मेन्यू स्कैन करने के लिए ज़रूरी है। बंद करने पर कुछ भी नहीं भेजा जाता; नमूना मेन्यू और सेव किए अनुवाद चलते रहते हैं। अगली बार स्कैन करते समय फिर पूछा जाएगा।";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "नाम बदलें";
+"history.rename.placeholder" = "रेस्टोरेंट का नाम";
+"history.rename.prompt" = "खाली छोड़ने पर «बिना नाम का मेन्यू» पर लौट आएगा।";

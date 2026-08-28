@@ -140,3 +140,8 @@
 "consent.decline" = "暂不";
 "settings.consent" = "把菜单照片发送给 OpenAI";
 "settings.consent.footer" = "识别新菜单必须开启。关掉后什么都不会被发送，示例菜单和已保存的翻译照常可用。下次识别时会再问你一次。";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "重命名";
+"history.rename.placeholder" = "餐厅名字";
+"history.rename.prompt" = "留空则恢复为「未命名菜单」。";

@@ -64,6 +64,26 @@ final class HistoryStore: ObservableObject {
         refresh()
     }
 
+    /// Rename a saved scan. Only scan.json is rewritten — the page images
+    /// and the generated thumbnails are untouched, so this stays cheap on a
+    /// scan with dozens of dish photos.
+    ///
+    /// An empty name stores nil rather than "", so the list falls back to
+    /// the localized "untitled" label instead of showing a blank row.
+    @discardableResult
+    func rename(_ scan: MenuScan, to name: String) -> MenuScan {
+        var renamed = scan
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        renamed.restaurantName = trimmed.isEmpty ? nil : trimmed
+        let file = directory(for: scan.id).appendingPathComponent("scan.json")
+        guard FileManager.default.fileExists(atPath: file.path),
+              let data = try? encoder.encode(renamed)
+        else { return scan }
+        try? data.write(to: file)
+        refresh()
+        return renamed
+    }
+
     /// Load the photographed pages for a saved scan, in page order.
     /// Missing files yield a shorter array; consumers must index defensively.
     func loadImages(for scan: MenuScan) -> [UIImage] {

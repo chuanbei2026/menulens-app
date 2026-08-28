@@ -140,3 +140,8 @@
 "consent.decline" = "Ahora no";
 "settings.consent" = "Enviar fotos de la carta a OpenAI";
 "settings.consent.footer" = "Necesario para escanear una carta nueva. Si lo desactivas no se envía nada; las cartas de ejemplo y tus traducciones guardadas siguen funcionando. Se te preguntará de nuevo la próxima vez que escanees.";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "Renombrar";
+"history.rename.placeholder" = "Nombre del restaurante";
+"history.rename.prompt" = "Déjalo vacío para volver a la etiqueta sin nombre.";

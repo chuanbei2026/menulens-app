@@ -140,3 +140,8 @@
 "consent.decline" = "Pas maintenant";
 "settings.consent" = "Envoyer les photos de carte à OpenAI";
 "settings.consent.footer" = "Nécessaire pour scanner une nouvelle carte. Désactivez-le et rien n'est envoyé ; les cartes d'exemple et vos traductions enregistrées continuent de fonctionner. La question vous sera reposée au prochain scan.";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "Renommer";
+"history.rename.placeholder" = "Nom du restaurant";
+"history.rename.prompt" = "Laissez vide pour revenir au libellé sans nom.";

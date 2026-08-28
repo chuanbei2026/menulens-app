@@ -140,3 +140,8 @@
 "consent.decline" = "今はしない";
 "settings.consent" = "メニューの写真を OpenAI に送信";
 "settings.consent.footer" = "新しいメニューの読み取りに必要です。オフにすると何も送信されず、サンプルメニューと保存済みの翻訳はそのまま使えます。次に読み取るときに再度確認します。";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "名前を変更";
+"history.rename.placeholder" = "店名";
+"history.rename.prompt" = "空欄にすると「名称未設定のメニュー」に戻ります。";

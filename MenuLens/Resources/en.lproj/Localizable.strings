@@ -148,3 +148,8 @@
 "consent.decline" = "Not now";
 "settings.consent" = "Send menu photos to OpenAI";
 "settings.consent.footer" = "Required to scan a new menu. Turn it off and nothing is sent; the sample menus and your saved translations keep working. You'll be asked again next time you scan.";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "Rename";
+"history.rename.placeholder" = "Restaurant name";
+"history.rename.prompt" = "Leave it empty to go back to the untitled label.";

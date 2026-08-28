@@ -121,7 +121,10 @@ struct MenuDocument: Codable, Hashable {
 struct MenuScan: Codable, Hashable, Identifiable {
     let id: UUID
     let createdAt: Date
-    let restaurantName: String?
+    /// Editable: the model often can't find a name on the page, and an
+    /// untitled scan is hard to pick out of a list months later. Renaming
+    /// rewrites scan.json in place — see HistoryStore.rename.
+    var restaurantName: String?
     let sourceLanguage: String
     let sourceLanguageChinese: String
     /// One document per photographed page, in page order.
