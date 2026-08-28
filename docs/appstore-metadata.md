@@ -11,7 +11,9 @@
 | Bundle ID | ai.xiangyang.MenuLens |
 | 类别 | 主：旅行 Travel；次：美食佳饮 Food & Drink |
 | 价格 | 免费 |
-| 年龄分级 | 4+ |
+| 年龄分级 | 4+（实测七步问卷：172 国 4+ / 巴西 AL / 韩国 ALL / 越南 00+） |
+| Copyright | `2026 Xiangyang Shi` —— 无 © 符号，署名用 Team 证书上的拼法 |
+| Content Rights | **Yes**（内置示例是真实餐厅菜单，含店名与 logo）—— 后续权利追问见 release plan |
 
 ## 描述（中文）
 

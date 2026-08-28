@@ -2,6 +2,10 @@
 
 写于 2026-08-27。给接手在 App Store Connect 网页上填表的 agent。
 
+> ⚠️ **这份交接单是边填边修的。** 实际在 ASC 上填表已经暴露出三个本单最初漏掉的
+> 必填项：Copyright（3.3）、App Review 联系人（6.8）、Content Rights（6.9 + 第 11 节）。
+> 如果你又遇到本单没提的必填字段，**照实报回交接人**，不要自行编值。
+>
 > **如果你没有这台 Mac 的文件访问权限**：截图全部已提交到本仓库，可以直接从
 > GitHub 取，路径见第 6.6 节。原始文件可用
 > `https://raw.githubusercontent.com/chuanbei2026/menulens-app/main/<路径>` 下载。
@@ -81,12 +85,23 @@ appstoreconnect.apple.com → Apps → ForeignMenu
 
 副标题上限 30 字符，两个都在限内。
 
-### 3.3 类别
+### 3.3 Copyright（提交必填）
+
+```
+2026 Xiangyang Shi
+```
+
+- 年份 = 取得权利的年份。项目首个 commit 是 2026-08-18
+- 署名 = 付费 Team 证书主体 `O=Xiangyang Shi`，与 App Store 显示的卖家名一致
+- ⚠️ **不要加 `©` 符号** —— Apple 自己会加，重复会显示成 `© © 2026`
+- ⚠️ 填的是**权利人**，不是 App 名；也不要填 URL（Apple 明确禁止）
+
+### 3.4 类别
 
 - Primary Category: **Travel**
 - Secondary Category: **Food & Drink**
 
-### 3.4 隐私政策 URL
+### 3.5 隐私政策 URL
 
 ```
 https://chuanbei2026.github.io/menulens-app/privacy-policy.html
@@ -94,7 +109,7 @@ https://chuanbei2026.github.io/menulens-app/privacy-policy.html
 
 （两种语言都填同一个）
 
-### 3.5 年龄分级（Age Rating → Edit）
+### 3.6 年龄分级（Age Rating → Edit）
 
 走 2025 年改版后的新问卷。按实际情况答：
 
@@ -357,6 +372,9 @@ Apple 的验证：邮箱和电话走双重验证收码；地址需要上传证�
 
 - [ ] App Information 里 English 和简体中文**两套**名称/副标题都填了
 - [ ] 类别 Travel / Food & Drink
+- [ ] **Copyright** = `2026 Xiangyang Shi`（无 © 符号）
+- [ ] **Content Rights** 已答（Yes —— 见第 11 节）
+- [ ] **App Review 联系人**四项都填了（名/姓/电话/邮箱）
 - [ ] 隐私政策 URL 已填
 - [ ] 年龄分级问卷已答完，结果 4+
 - [ ] App Privacy **只**勾了 `Photos or Videos`，且**不是** "Data Not Collected"
