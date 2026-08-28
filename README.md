@@ -1,5 +1,12 @@
 # ForeignMenu · 外乡人的菜单
 
+> **用户支持**：<https://chuanbei2026.github.io/menulens-app/support.html>
+> · 联系 <chuanbei666@gmail.com>
+> · [隐私政策](https://chuanbei2026.github.io/menulens-app/privacy-policy.html)
+>
+> 下面是**开发文档**（构建、架构、加语言）。如果你是从 App Store 过来找帮助的，
+> 请看上面那个支持页 —— 这里讲的是怎么编译它。
+
 拍下外语菜单（**支持多页**），得到一份**同版式、可缩放**的对照 PDF：
 
 - 📷 **输入**：菜单照片，一页或多页（连拍或相册多选，最多 8 页）
