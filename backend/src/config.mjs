@@ -17,10 +17,10 @@ export const config = {
   allowSandboxPurchases: (process.env.ALLOW_SANDBOX_PURCHASES ?? "1") === "1",
   sessionDays: 30,
 
-  // Credits. Granted credits never expire: 200 at signup, +100 in every month the user actually uses
-  // the service (the signup month counts, so a new account starts with 300).
-  monthlyGrant: Number(process.env.MONTHLY_GRANT ?? 100),
-  signupBonus: Number(process.env.SIGNUP_BONUS ?? 200),
+  // Credits. 300 free at signup and no monthly grant (unlike DateSeries); after that users buy credits
+  // in the app (purchase.mjs). Credits never expire.
+  monthlyGrant: Number(process.env.MONTHLY_GRANT ?? 0),
+  signupBonus: Number(process.env.SIGNUP_BONUS ?? 300),
   // What one credit buys at OpenAI list price (same basis as DateSeries: US$0.005). Every request is
   // charged its real cost, rounded up to the next 0.1 credit, at least 0.1. One menu page on gpt-4.1
   // is ~US$0.025–0.05 (5–10 credits; a dense page measured 5); a 2×2 collage of dish pictures on

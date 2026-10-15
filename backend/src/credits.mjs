@@ -319,7 +319,7 @@ export class CreditStore {
         await this.ddb.send(new PutCommand({ TableName: this.accountsTable, Item: item, ConditionExpression: "attribute_not_exists(userId)" }));
         if (reopened) return { kind: "reopen", item };
         await this.ledger(userId, { type: "signup", giftTenths: toTenths(this.signupBonus), paidTenths: 0, ref: period });
-        await this.ledger(userId, { type: "monthly_grant", giftTenths: toTenths(this.monthlyGrant), paidTenths: 0, ref: period });
+        if (this.monthlyGrant > 0) await this.ledger(userId, { type: "monthly_grant", giftTenths: toTenths(this.monthlyGrant), paidTenths: 0, ref: period });
         return { kind: "signup", item };
       } catch (e) {
         if (!isConditionFailure(e)) throw e;
@@ -329,6 +329,8 @@ export class CreditStore {
     // The per-user override is whole credits and DynamoDB can't multiply, so the grant is computed
     // here and the write is conditional on the override not having changed since the read.
     const grant = toTenths(item.monthlyGrant ?? this.monthlyGrant);
+    // No monthly grant (ForeignMenu: 300 at signup, then purchases): nothing to write, ever.
+    if (grant === 0) return { kind: null, item };
     const sameOverride = item.monthlyGrant === undefined ? "attribute_not_exists(monthlyGrant)" : "monthlyGrant = :override";
     try {
       const { Attributes: a } = await this.ddb.send(new UpdateCommand({

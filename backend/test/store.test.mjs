@@ -190,3 +190,18 @@ test("deleting an account removes the balance and daily rows", async () => {
   assert.equal((await store.grantIfDue("del", now)).kind, "reopen");
   assert.equal(account(ddb, "del").giftTenths, 0);
 });
+
+test("ForeignMenu: 300 at signup and no monthly grant — no zero entries, no writes in later months", async () => {
+  const ddb = new FakeDDB();
+  const store = new CreditStore(ddb, { ...config, monthlyGrant: 0, signupBonus: 300 });
+  const { kind } = await store.grantIfDue("f", now);
+  assert.equal(kind, "signup");
+  assert.equal(account(ddb, "f").giftTenths, 3000);
+  assert.deepEqual(ledger(ddb, "f").map((e) => e.type), ["signup"]);
+  // Next month: nothing is granted and nothing is written.
+  const next = new Date(now.getTime() + 40 * 86400 * 1000);
+  const writes = ddb.calls.length;
+  assert.equal((await store.grantIfDue("f", next)).kind, null);
+  assert.equal(ddb.calls.filter((c, i) => i >= writes && c.kind !== "Get").length, 0);
+  assert.equal(account(ddb, "f").giftTenths, 3000);
+});

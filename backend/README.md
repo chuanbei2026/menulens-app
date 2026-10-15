@@ -2,7 +2,7 @@
 
 One Lambda (Node.js, Function URL in `RESPONSE_STREAM` mode) so the app no longer needs the user's own
 OpenAI key: Sign in with Apple → our session token → per-user credits → relay to OpenAI with our key.
-Same design as the DateSeries backend, with its own tables, secret and credits.
+Same design as the DateSeries backend, with its own tables, secrets and credits.
 
 ```
 App ──POST /auth/apple {identityToken}──► verify Apple JWT ──► 30-day session token (HS256)
@@ -21,13 +21,12 @@ App ──POST /image {prompt} ──────────────► res
 
 ## Credits
 
-- **Free:** 200 at signup + 100 in every calendar month (America/Vancouver) with real use, so a new
-  account starts at **300**. Idle months get nothing; nothing expires.
+- **Free:** 300 at signup, no monthly grant (unlike DateSeries); after that users buy credits. Nothing expires.
 - **Price:** every call is charged its OpenAI list cost at **US$0.005 a credit**, rounded up to 0.1 credit
   (at least 0.1). A menu page on gpt-4.1 is ~5–10 credits; a low-quality 2×2 collage of dish pictures (gpt-image-1-mini) ~0.5.
 - Stored in tenths; the API returns whole credits. Out of credits → **402** `{reason: "credits", totalCredits, needed}`.
-- Purchases (`POST /purchase`, StoreKit 2 JWS) are wired for products `ai.xiangyang.MenuLens.credits.{100,500,2000}`
-  (+10%), once they exist in App Store Connect.
+- Purchases (`POST /purchase`, StoreKit 2 JWS): `ai.xiangyang.MenuLens.credits.{100,500,2000}` at US$0.99 / 4.99 / 19.99
+  give 110 / 550 / 2200 (+10%), the same packs as DateSeries — ~35% margin after Apple's 15%.
 
 The server picks what reaches OpenAI: the model must be one of `MODELS` in `src/pricing.mjs`
 (default `gpt-4.1`), output is capped, images are pinned to gpt-image-1-mini 1024² low-quality jpeg.
