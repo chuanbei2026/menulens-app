@@ -36,8 +36,10 @@
       OpenAI 会短期保留 API 数据用于滥用监控，其处理遵循
       <a href="https://openai.com/policies/api-data-usage-policies">API 数据使用政策</a>
       （API 提交的数据默认不用于训练模型）。</li>
-  <li><strong>服务器保存的内容</strong>：匿名账号 ID、点数余额、赠送和购买记录（Apple 的交易编号和所买的点数包），以及每次请求的用量统计
-      （请求大小、token 数、花费的点数、时间）。仅用于计费和维持服务运行。</li>
+  <li><strong>服务器保存的内容</strong>：匿名账号 ID、点数余额、赠送记录、购买记录（Apple 的交易编号、所买的点数包、
+      Apple 告诉我们的价格、币种和所在的 App Store 地区），以及每次请求的用量统计
+      （请求大小、token 数、花费的点数、时间）。仅用于计费、处理售后和维持服务运行。
+      删除账号后，余额和用量统计会被删除；购买记录作为交易凭证保留，不再与任何账号资料关联使用。</li>
   <li><strong>翻译结果与历史记录</strong>：全部保存在你设备本地的应用沙盒中。删除记录或卸载应用即彻底清除。</li>
   <li><strong>同行成员姓名与头像</strong>：仅保存在设备本地，用于点菜标记，绝不上传。</li>
   <li><strong>相机与相册权限</strong>：仅在你主动拍摄或选择菜单照片时使用。</li>
@@ -79,9 +81,11 @@
       for abuse monitoring, under its
       <a href="https://openai.com/policies/api-data-usage-policies">API data usage policies</a>
       (API data is not used for model training by default).</li>
-  <li><strong>What our server keeps</strong>: the anonymous account id, your credit balance, free grants and purchases (Apple's transaction id and the pack bought),
+  <li><strong>What our server keeps</strong>: the anonymous account id, your credit balance, free grants, purchases
+      (Apple's transaction id, the pack bought, and the price, currency and App Store region Apple reports),
       and per-request usage counts (request size, token counts, credits charged, time) — only for
-      billing and keeping the service running.</li>
+      billing, purchase support and keeping the service running. Deleting your account removes the
+      balance and usage counts; purchase records are kept as transaction records.</li>
   <li><strong>Translations and history</strong> live entirely in the app's local sandbox.
       Deleting a record or the app removes them completely.</li>
   <li><strong>Party member names and avatars</strong> stay on the device only.</li>
