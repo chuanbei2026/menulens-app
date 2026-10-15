@@ -27,3 +27,6 @@ docs/review-key.local.md
 
 # EU DSA trader 信息（含住址），never commit
 docs/trader-info.local.md
+
+# Backend dependencies (npm install)
+node_modules/
