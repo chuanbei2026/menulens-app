@@ -162,3 +162,10 @@
 "error.outOfCredits" = "No hay créditos suficientes: hacen falta unos %1$d y tu saldo es %2$d. Llegan 100 más el próximo mes que uses la app.";
 "error.signInFailed" = "No se pudo iniciar sesión: %@";
 "notice.imagesStopped" = "Se detuvieron las imágenes de platos: %@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "Hoy";
+"credits.last30" = "Últimos 30 días";
+"credits.chart.balance" = "Saldo";
+"credits.chart.spent" = "Uso diario";
+"credits.chart.empty" = "Aún no hay historial";

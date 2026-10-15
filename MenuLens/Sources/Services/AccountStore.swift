@@ -10,6 +10,8 @@ final class AccountStore: ObservableObject {
     @Published private(set) var sessionToken = KeychainStore.loadSessionToken()
     /// Whole credits; nil until the server has answered once.
     @Published private(set) var credits: Int?
+    /// The last 30 days, oldest first (the server's billing time zone).
+    @Published private(set) var usage: [UsageDay] = []
     /// Why the user is signed out, or what last went wrong with the account.
     @Published var message: String?
     @Published private(set) var isBusy = false
@@ -50,19 +52,47 @@ final class AccountStore: ObservableObject {
         message = nil
     }
 
+    /// One day of the credit history: what was used and added, and the
+    /// balance at the end of the day (all whole credits).
+    struct UsageDay: Identifiable, Equatable {
+        let date: Date
+        let spent: Int
+        let added: Int
+        let balance: Int
+        var id: Date { date }
+    }
+
+    /// The balance and the 30-day history in one call (`GET /usage`).
     func refreshCredits() async {
         guard isSignedIn else { return }
-        let request = Backend.request("credits", token: sessionToken)
+        let request = Backend.request("usage", token: sessionToken)
         guard let reply = try? await Backend.send(request),
-              let total = reply["totalCredits"] as? NSNumber
+              let balance = reply["balance"] as? [String: Any],
+              let total = balance["totalCredits"] as? NSNumber
         else { return }
         credits = total.intValue
+        let days = reply["days"] as? [[String: Any]] ?? []
+        usage = days.compactMap { day in
+            guard let key = day["date"] as? String, let date = Self.dayFormatter.date(from: key) else { return nil }
+            func whole(_ field: String) -> Int { (day[field] as? NSNumber)?.intValue ?? 0 }
+            return UsageDay(date: date, spent: whole("spent"), added: whole("added"), balance: whole("balance"))
+        }
     }
+
+    /// "2026-10-15" → local midnight, for the chart's day axis.
+    private static let dayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .gregorian)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
 
     func signOut() {
         KeychainStore.saveSessionToken("")
         sessionToken = ""
         credits = nil
+        usage = []
     }
 
     /// The server no longer accepts the session (it expires after 30 days).

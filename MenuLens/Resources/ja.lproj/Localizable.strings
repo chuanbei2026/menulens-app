@@ -162,3 +162,10 @@
 "error.outOfCredits" = "クレジットが足りません：今回は約 %1$d 必要で、残高は %2$d です。次に使う月にさらに 100 が付きます。";
 "error.signInFailed" = "サインインに失敗しました：%@";
 "notice.imagesStopped" = "料理画像の生成を停止しました：%@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "今日";
+"credits.last30" = "過去30日";
+"credits.chart.balance" = "残高";
+"credits.chart.spent" = "日ごとの利用";
+"credits.chart.empty" = "まだ記録がありません";

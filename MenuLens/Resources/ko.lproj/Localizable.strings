@@ -162,3 +162,10 @@
 "error.outOfCredits" = "크레딧이 부족합니다: 이번에 약 %1$d이 필요하고 잔액은 %2$d입니다. 다음에 사용하는 달에 100이 더 들어옵니다.";
 "error.signInFailed" = "로그인 실패: %@";
 "notice.imagesStopped" = "요리 이미지 생성이 중단되었습니다: %@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "오늘";
+"credits.last30" = "최근 30일";
+"credits.chart.balance" = "잔액";
+"credits.chart.spent" = "일별 사용량";
+"credits.chart.empty" = "아직 기록이 없어요";

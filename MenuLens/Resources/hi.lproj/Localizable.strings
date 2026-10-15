@@ -162,3 +162,10 @@
 "error.outOfCredits" = "क्रेडिट कम हैं: इसके लिए लगभग %1$d चाहिए और आपका बैलेंस %2$d है। अगले जिस महीने आप ऐप इस्तेमाल करेंगे, 100 और मिलेंगे।";
 "error.signInFailed" = "साइन इन नहीं हो पाया: %@";
 "notice.imagesStopped" = "व्यंजनों की तस्वीरें बनना रुक गया: %@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "आज";
+"credits.last30" = "पिछले 30 दिन";
+"credits.chart.balance" = "बैलेंस";
+"credits.chart.spent" = "रोज़ का उपयोग";
+"credits.chart.empty" = "अभी कोई इतिहास नहीं";

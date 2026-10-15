@@ -162,3 +162,10 @@
 "error.outOfCredits" = "点数不够：这次大约需要 %1$d 点，余额 %2$d 点。下个月使用时会再送 100 点。";
 "error.signInFailed" = "登录失败：%@";
 "notice.imagesStopped" = "配图已停止：%@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "今天";
+"credits.last30" = "近 30 天";
+"credits.chart.balance" = "余额";
+"credits.chart.spent" = "每日用量";
+"credits.chart.empty" = "暂无记录";

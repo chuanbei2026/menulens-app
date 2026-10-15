@@ -166,14 +166,8 @@ struct SettingsView: View {
     private var accountSection: some View {
         Section {
             if account.isSignedIn {
-                LabeledContent(L("settings.account.balance")) {
-                    if let credits = account.credits {
-                        Text(L("settings.account.credits", credits))
-                            .monospacedDigit()
-                    } else {
-                        ProgressView()
-                    }
-                }
+                CreditsCard(account: account)
+                    .padding(.vertical, 4)
                 Button(L("settings.account.signOut")) { account.signOut() }
                 Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }
                     .disabled(account.isBusy)

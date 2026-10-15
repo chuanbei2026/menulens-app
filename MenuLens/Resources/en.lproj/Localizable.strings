@@ -170,3 +170,10 @@
 "error.outOfCredits" = "Not enough credits: this needs about %1$d and your balance is %2$d. 100 more arrive in the next month you use the app.";
 "error.signInFailed" = "Sign in failed: %@";
 "notice.imagesStopped" = "Dish photos stopped: %@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "Today";
+"credits.last30" = "Last 30 days";
+"credits.chart.balance" = "Balance";
+"credits.chart.spent" = "Daily use";
+"credits.chart.empty" = "No history yet";

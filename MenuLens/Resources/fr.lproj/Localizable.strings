@@ -162,3 +162,10 @@
 "error.outOfCredits" = "Crédits insuffisants : il en faut environ %1$d et votre solde est de %2$d. 100 de plus arrivent le prochain mois où vous utilisez l'app.";
 "error.signInFailed" = "Échec de la connexion : %@";
 "notice.imagesStopped" = "Images de plats interrompues : %@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "Aujourd’hui";
+"credits.last30" = "30 derniers jours";
+"credits.chart.balance" = "Solde";
+"credits.chart.spent" = "Utilisation par jour";
+"credits.chart.empty" = "Pas encore d’historique";
