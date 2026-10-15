@@ -12,11 +12,11 @@ export class RequestError extends Error {}
  * Builds the upstream Chat Completions body from what the app sent. Only known fields pass;
  * stream + usage are forced on. Returns { body, model, inputTokens, images }.
  */
-export function menuRequest(raw, { maxOutputTokens, maxImages }) {
+export function menuRequest(raw, { maxOutputTokens, maxImages, defaultModel }) {
   if (!raw || !Array.isArray(raw.messages) || raw.messages.length === 0 || raw.messages.length > 20) {
     throw new RequestError("messages must be a non-empty array");
   }
-  const model = chatModel(raw.model);
+  const model = chatModel(raw.model, defaultModel);
   let text = "";
   let images = 0;
   let imageTokens = 0;

@@ -34,6 +34,8 @@ export const config = {
   // The server decides the model and caps the output (cost control); the app may pick from MODELS.
   defaultModel: process.env.OPENAI_MODEL ?? "gpt-4.1",
   maxOutputTokens: 32000,
+  // Bedrock's Converse caps differ per model; Mistral Large 3 wrote ~10k for a dense page.
+  maxBedrockOutputTokens: 16000,
   // Reserved up front for a menu page before the real usage is known (an overrun is taken afterwards).
   expectedOutputTokens: 8000,
   maxRequestBytes: 6_000_000, // the Lambda URL's own limit

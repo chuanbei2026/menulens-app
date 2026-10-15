@@ -10,6 +10,10 @@
 //   POST /menu         (Bearer) Chat Completions body (messages, response_format, model?, temperature?,
 //                      reasoning_effort?) → the OpenAI SSE stream, unchanged
 //   POST /image        (Bearer) { prompt }      → the OpenAI Images JSON ({ data: [{ b64_json }] })
+//   GET  /models?storefront=HKG                 → { default, images, models: [{ id, name, provider }] }
+//                      what this storefront may use (regions.mjs); no sign-in needed
+//   The app sends its App Store storefront (StoreKit, alpha-3) as `X-Storefront` on /menu and /image:
+//   a model the storefront may not use answers 403 { reason: "region", models }.
 //
 // Credits are charged to 0.1 internally; every amount the API returns is a whole number (balances
 // floored). Out of credits: 402 { error, reason: "credits", totalCredits, needed }.
@@ -24,6 +28,8 @@ import { accountToken, creditableTransaction, PurchaseError, verifyAppleJWS } fr
 import { instrument, newScope, requestScope, summarize } from "./ddbstats.mjs";
 import { logEvent, logRequest } from "./log.mjs";
 import { chatCostUsd, EXPECTED_IMAGE_OUTPUT_TOKENS, imageCostUsd, tenthsForUsd } from "./pricing.mjs";
+import { catalogFor, normalizeStorefront, providerAllowed } from "./regions.mjs";
+import { relayBedrockMenu } from "./bedrock.mjs";
 import { generateImage, imageRequest, menuRequest, relayMenu, RequestError, upstreamMessage } from "./relay.mjs";
 
 const ddb = instrument(DynamoDBDocumentClient.from(new DynamoDBClient({})));
@@ -192,18 +198,30 @@ function upstreamStatus(status) {
 
 // --- Model calls ---------------------------------------------------------------------------
 
+function storefrontOf(event) {
+  return normalizeStorefront(event.headers?.["x-storefront"] ?? event.queryStringParameters?.storefront);
+}
+
+
 async function menu(event, stream, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
   if ((event.body?.length ?? 0) > config.maxRequestBytes) throw new HttpError(413, "request too large");
+  const storefront = storefrontOf(event);
+  const catalog = catalogFor(storefront);
+  if (!catalog.default) throw new HttpError(403, "not available in this region", { reason: "region", models: [] });
   let req;
   try {
-    req = menuRequest(readBody(event), { maxOutputTokens: config.maxOutputTokens, maxImages: config.maxImagesPerRequest });
+    req = menuRequest(readBody(event), { maxOutputTokens: config.maxOutputTokens, maxImages: config.maxImagesPerRequest,
+      defaultModel: catalog.default });
   } catch (e) {
     if (e instanceof RequestError) throw new HttpError(400, e.message);
     throw e;
   }
-  Object.assign(ctx, { model: req.model.id, images: req.images, inputChars: req.textChars }); // sizes only
+  Object.assign(ctx, { model: req.model.id, images: req.images, inputChars: req.textChars, storefront }); // sizes only
+  if (!providerAllowed(req.model.provider, storefront)) {
+    throw new HttpError(403, "model not available in this region", { reason: "region", models: catalog.models.map((m) => m.id) });
+  }
   const account = await grant(userId, ctx);
   const ref = randomUUID();
   const worst = tenthsForUsd(chatCostUsd(req.model, { input: req.inputTokens, output: config.expectedOutputTokens }));
@@ -223,7 +241,9 @@ async function menu(event, stream, ctx) {
   };
   let result;
   try {
-    result = await relayMenu({ apiKey: await secretKey(config.openAISecretId), body: req.body, write, onStart });
+    result = req.model.provider === "bedrock"
+      ? await relayBedrockMenu({ modelId: req.model.upstream, body: req.body, maxOutputTokens: config.maxBedrockOutputTokens, write, onStart })
+      : await relayMenu({ apiKey: await secretKey(config.openAISecretId), body: req.body, write, onStart });
   } catch (e) {
     await store.settle(userId, split, 0, ref);
     ctx.creditsCharged = 0;
@@ -269,6 +289,9 @@ async function image(event, ctx) {
     if (e instanceof RequestError) throw new HttpError(400, e.message);
     throw e;
   }
+  const storefront = storefrontOf(event);
+  ctx.storefront = storefront;
+  if (!providerAllowed("openai", storefront)) throw new HttpError(403, "dish pictures are not available in this region", { reason: "region" });
   ctx.model = req.body.model;
   ctx.inputChars = req.body.prompt.length;
   const account = await grant(userId, ctx);
@@ -326,6 +349,7 @@ async function handle(event, stream, context) {
     if (method === "DELETE" && path === "/account") return sendJSON(stream, 200, await deleteAccount(event, ctx), ctx);
     if (method === "POST" && path === "/menu") return await menu(event, stream, ctx);
     if (method === "POST" && path === "/image") return sendJSON(stream, 200, await image(event, ctx), ctx);
+    if (method === "GET" && path === "/models") return sendJSON(stream, 200, catalogFor(storefrontOf(event)), ctx);
     ctx.route = "unknown"; // don't let random paths explode the metric dimension
     return sendJSON(stream, 404, { error: "not found" }, ctx);
   } catch (e) {
