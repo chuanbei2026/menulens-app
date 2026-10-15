@@ -490,6 +490,19 @@ export class CreditStore {
     return { credited: true, credits };
   }
 
+  /** Keeps the Sign in with Apple refresh token on the account (for revocation on deletion). */
+  async setAppleRefreshToken(userId, token) {
+    await this.ddb.send(new UpdateCommand({
+      TableName: this.accountsTable, Key: { userId },
+      UpdateExpression: "SET appleRefreshToken = :t", ConditionExpression: "attribute_exists(userId)",
+      ExpressionAttributeValues: { ":t": token },
+    }));
+  }
+
+  async appleRefreshToken(userId) {
+    return (await this.read(userId))?.appleRefreshToken ?? null;
+  }
+
   /** Accounts-table key remembering that a user deleted their account (hashed: no user id kept). */
   static tombstoneKey(userId) {
     return `deleted#${createHash("sha256").update(userId).digest("hex")}`;

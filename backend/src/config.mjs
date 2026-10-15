@@ -8,6 +8,8 @@ export const config = {
   // The OpenAI key: a secret holding either {"key": "sk-…"} or the bare key.
   openAISecretId: process.env.OPENAI_SECRET_ID ?? "AwsLambdaKey/foreign-menu",
   sessionSecretArn: process.env.SESSION_SECRET_ARN,
+  // Sign in with Apple key for revoking tokens on account deletion: {"teamId","keyId","privateKey"}.
+  siwaSecretId: process.env.SIWA_SECRET_ID ?? "foreignmenu/siwa-key",
 
   // Sign in with Apple: the identity token's audience is the app's bundle id.
   appleAudience: (process.env.APPLE_AUDIENCE ?? "ai.xiangyang.MenuLens").split(","),

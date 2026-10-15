@@ -30,6 +30,7 @@ import { logEvent, logRequest } from "./log.mjs";
 import { chatCostUsd, EXPECTED_IMAGE_OUTPUT_TOKENS, imageCostUsd, tenthsForUsd } from "./pricing.mjs";
 import { catalogFor, normalizeStorefront, providerAllowed } from "./regions.mjs";
 import { relayBedrockMenu } from "./bedrock.mjs";
+import { exchangeCode, revokeToken } from "./appleRevoke.mjs";
 import { generateImage, imageRequest, menuRequest, relayMenu, RequestError, upstreamMessage } from "./relay.mjs";
 
 const ddb = instrument(DynamoDBDocumentClient.from(new DynamoDBClient({})));
@@ -89,8 +90,20 @@ async function grant(userId, ctx) {
   return item;
 }
 
+/** The Sign in with Apple key for token revocation, or null while it isn't set up. */
+let siwaCache = { at: 0, key: null };
+async function siwaKey() {
+  // Re-checked every 10 minutes, so adding the secret later needs no deploy and a missing one costs
+  // no Secrets Manager call per sign-in.
+  if (Date.now() - siwaCache.at < 600_000) return siwaCache.key;
+  let key = null;
+  try { key = JSON.parse(await secretString(config.siwaSecretId)); } catch { /* not set up yet */ }
+  siwaCache = { at: Date.now(), key };
+  return key;
+}
+
 async function signInWithApple(event, ctx) {
-  const { identityToken } = readBody(event);
+  const { identityToken, authorizationCode } = readBody(event);
   let claims;
   try {
     claims = await verifyAppleIdentityToken(identityToken, { audience: config.appleAudience });
@@ -101,6 +114,20 @@ async function signInWithApple(event, ctx) {
   const userId = `apple:${claims.sub}`;
   ctx.userId = userId;
   await grant(userId, ctx); // signing in counts as using the service: opens the account / this month's grant
+  // Keep a refresh token so deleting the account can revoke the Apple authorization. Best effort: a
+  // failure here never blocks signing in.
+  if (typeof authorizationCode === "string" && authorizationCode) {
+    const key = await siwaKey();
+    if (key) {
+      try {
+        const refresh = await exchangeCode(authorizationCode, key, config.appleAudience[0]);
+        if (refresh) await store.setAppleRefreshToken(userId, refresh);
+        ctx.appleToken = refresh ? "stored" : "none";
+      } catch (e) {
+        logEvent("WARN", "apple code exchange failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
+      }
+    }
+  }
   const session = issueSessionToken(userId, await secretKey(config.sessionSecretArn), { days: config.sessionDays });
   return { ...session, userId };
 }
@@ -108,6 +135,17 @@ async function signInWithApple(event, ctx) {
 async function deleteAccount(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
+  // Revoke the Apple authorization first (guideline 5.1.1(v)); the account goes either way.
+  const token = await store.appleRefreshToken(userId);
+  const key = token ? await siwaKey() : null;
+  if (token && key) {
+    try {
+      await revokeToken(token, key, config.appleAudience[0]);
+      ctx.appleRevoked = true;
+    } catch (e) {
+      logEvent("WARN", "apple token revoke failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
+    }
+  }
   await store.deleteAccount(userId);
   logEvent("INFO", "account deleted", { requestId: ctx.requestId, userId });
   return { deleted: true };

@@ -79,7 +79,8 @@ aws iam put-role-policy --role-name "${ROLE_NAME}" --policy-name runtime --polic
   "Resource":"arn:aws:logs:${REGION}:${ACCOUNT_ID}:log-group:/aws/lambda/${NAME}:*"},
  {"Effect":"Allow","Action":["dynamodb:GetItem","dynamodb:PutItem","dynamodb:UpdateItem","dynamodb:Query","dynamodb:DeleteItem"],
   "Resource":[${TABLES_JSON}]},
- {"Effect":"Allow","Action":"secretsmanager:GetSecretValue","Resource":["${OPENAI_SECRET_ARN}","${SESSION_SECRET_ARN}"]},
+ {"Effect":"Allow","Action":"secretsmanager:GetSecretValue","Resource":["${OPENAI_SECRET_ARN}","${SESSION_SECRET_ARN}",
+  "arn:aws:secretsmanager:${REGION}:${ACCOUNT_ID}:secret:foreignmenu/siwa-key-*"]},
  {"Effect":"Allow","Action":["bedrock:InvokeModel","bedrock:InvokeModelWithResponseStream"],
   "Resource":["arn:aws:bedrock:*::foundation-model/*","arn:aws:bedrock:${REGION}:${ACCOUNT_ID}:inference-profile/*"]}]}
 EOF
