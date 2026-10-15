@@ -1,5 +1,127 @@
 # App Store 提审资料包 — ForeignMenu · 外乡人的菜单
 
+> **2026-10-15：下一版（1.1）改为自建后端 + Apple 登录 + 点数。** 提交 1.1 时用紧接着的「1.1 提审资料」，
+> 它替代下面 1.0 的描述、隐私标签和审核备注（1.0 那几段保留作历史，内容已经不成立：
+> 「没有服务器、没有账号、需要自己的 OpenAI API Key」）。
+
+## 1.1 提审资料（自建后端版）
+
+### 这一版变了什么（给填表的人看）
+
+| | 1.0（线上） | 1.1 |
+|---|---|---|
+| 怎么用 AI | 用户自己填 OpenAI API Key | **Apple 登录**，用我们的服务器，按点数扣费 |
+| 免费额度 | — | 新账号 **300 点**，只送一次 |
+| 内购 | 无 | 3 个消耗型：$0.99 = 100 点、$4.99 = 500 点、$19.99 = 2000 点，**没有赠送** |
+| 兑换码 | 无 | 有（设置 → 账号 → 兑换码） |
+| 多页菜单 | 全部翻完才能看 | 翻好一页先看一页 |
+| 识别模型 | 用户选 OpenAI 模型 | 默认 GPT-4.1，可选；OpenAI 不支持的地区只给 Mistral Large 3（经 AWS Bedrock），且不生成配图 |
+| 上架地区 | 全部 | 去掉中国大陆、香港、澳门、俄罗斯、白俄罗斯、委内瑞拉、科索沃、安圭拉、英属维尔京群岛、蒙特塞拉特、特克斯和凯科斯群岛 |
+
+版本号：project.yml 里的 `MARKETING_VERSION` 改成 `1.1`（构建号从 2 起）。
+
+### 宣传文本（Promotional Text，170 字符上限，随时可改不用审核）
+
+- zh-Hans：`拍一张外语菜单，原版式变成母语菜单。新账号送 300 点，不用再申请 OpenAI key。`
+- en：`Snap a foreign menu and read it in your language, laid out like the original. New accounts get 300 free credits — no OpenAI key needed.`
+
+### 描述（中文）
+
+出国吃饭看不懂菜单？拍一张，外乡人的菜单把整份菜单原版式翻译成你的语言。
+
+【原版式翻译】不是干巴巴的文字列表——译文直接写在菜单原来的位置上，版式、字号、行距都保留，像拿到了一份母语版菜单。菜名保留原文对照，点菜时直接指给服务员看。
+
+【翻好一页先看一页】多页菜单不用等全部翻完，第一页好了就能先看。
+
+【自动矫正】手持拍摄的倾斜、透视、模糊照片自动拉正、锐化，一次最多 8 页。
+
+【看图点菜】菜单上没有配图？AI 为每道菜生成参考小图（标注为 AI 生成）。列表模式支持搜索、素食 / 海鲜 / 猪肉 / 牛肉 / 羊肉标识，还会挑出两三道值得点的菜，并说明理由。
+
+【多人点单】给同桌的每个人建档（可传头像），标出各自不吃的东西，谁点的菜一目了然。确认后一键把所点菜品标注回原菜单——服务员对着屏幕就能下单。
+
+【七种语言】中文（简体）、English、日本語、한국어、Français、Español、हिन्दी。一个开关同时切换界面语言和翻译目标语言，全新安装自动跟随系统语言。菜单原文语言自动识别。
+
+【点数】用 Apple 账号登录即可使用，新账号送 300 点。识别一页菜单约 5–10 点，一张配图（4 道菜）约 0.5 点，按实际用量扣，点数不过期。用完可以在应用内购买。
+
+【隐私】我们不要你的姓名和邮箱。菜单照片和文字只在识别时经过我们的服务器转给 AI，不保存；翻译记录、同行成员和头像只保存在手机上。可以随时在应用内删除账号。
+
+内置两家真实餐厅的完整示例，不登录也能体验全部功能。
+
+### Description (English)
+
+Can't read the menu? Snap it, and ForeignMenu translates the whole thing in place, keeping the original layout — like being handed a menu in your own language. Dish names stay bilingual, so you can order by pointing.
+
+• Pages as they're ready: multi-page menus show each page as soon as it's translated.
+• Auto-straightens tilted, hand-held photos; up to 8 pages at once.
+• Dish pictures: dishes without a photo get an AI-generated thumbnail (marked as AI). The dish list has search, vegetarian / seafood / pork / beef / lamb tags, and two or three picks worth ordering, with the reason.
+• Group dining: add everyone at the table, mark what each person doesn't eat, see who ordered what, and annotate the order back onto the menu for your server.
+• Seven languages — one switch sets both the interface and the translation language; a fresh install follows your system language.
+• Credits: sign in with Apple and get 300 free credits. A menu page takes about 5–10, a dish picture (four dishes) about 0.5, charged by actual use; credits never expire and more can be bought in the app.
+• Privacy: no name or email asked. Menu photos and text pass through our server to the AI only while they're read and are not stored; your history, people and photos stay on your phone. Delete your account any time in the app.
+
+Two full sample restaurants are included — try every feature without signing in.
+
+### 关键词（不变）
+
+沿用下面 1.0 的两套关键词（不重复名称和副标题里的词）。
+
+### App 隐私（营养标签）· 1.1
+
+| 数据类型 | 收集 | 关联身份 | 用途 | 说明 |
+|---|---|---|---|---|
+| Identifiers → **User ID** | ✅ | Linked to You | App Functionality | Apple 登录给的匿名账号 ID（不要姓名和邮箱） |
+| Purchases → **Purchase History** | ✅ | Linked to You | App Functionality | 交易号和点数包，用来到账、防止重复到账 |
+| Usage Data → **Product Interaction** | ✅ | Linked to You | App Functionality | 点数余额、每天的用量（次数、token 数），不含菜单内容 |
+| User Content → **Photos or Videos**、**Other User Content** | ⚠️ 按 Apple 定义判断 | Not Linked | App Functionality | 照片和识别出的文字经我们的服务器实时转给 AI（OpenAI 或 AWS Bedrock），我们不保存；OpenAI 对 API 数据有约 30 天滥用监控留存——1.0 时据此申报过「收集」，1.1 继续申报更稳妥 |
+| Tracking | ❌ | | | 不用于追踪，没有第三方 SDK |
+
+营养标签、App 内同意屏、隐私政策（docs/privacy-policy.html，已改成新口径）三处必须一致。
+
+### 审核备注（Review Notes）· 1.1
+
+> ForeignMenu translates restaurant menus photographed by the user. Since this version there is no API
+> key: the user signs in with Apple (start screen, or Settings → Account) and new accounts get 300 free
+> credits. Our own server forwards the photo and its OCR text to an AI model (OpenAI; AWS Bedrock in
+> regions OpenAI doesn't serve) and stores neither.
+>
+> Before the first photo is sent, a consent sheet names who receives what and offers a working
+> "Not now" (guideline 5.1.2(i)); it can be withdrawn in Settings.
+>
+> To test: sign in with Apple, take or pick a menu photo, tap Scan. Credits can be bought in
+> Settings → Account → Buy credits (three consumable packs; sandbox purchases work). Account deletion:
+> Settings → Account → Delete account. Without signing in, the History screen (clock icon, top left)
+> has two complete pre-translated sample restaurants showing every feature.
+
+### 更新说明（What's New）· 1.1
+
+- zh-Hans：不用再自己申请 OpenAI key 了。用 Apple 账号登录就能识别菜单，新账号送 300 点；多页菜单翻好一页就能先看一页。
+- en：No more OpenAI key. Sign in with Apple and start scanning — new accounts get 300 free credits, and multi-page menus show each page as soon as it's ready.
+
+### 内购（附加到 1.1 一起提交）
+
+| Product ID | Reference Name | 价格 | 显示名称（中 / 英） | 描述（中 / 英） |
+|---|---|---|---|---|
+| ai.xiangyang.MenuLens.credits.100 | 100 credits | US$0.99 | 100 点 / 100 Credits | 识别菜单和生成配图用的点数 / Credits for menu scans and dish pictures |
+| ai.xiangyang.MenuLens.credits.500 | 500 credits | US$4.99 | 500 点 / 500 Credits | 同上 |
+| ai.xiangyang.MenuLens.credits.2000 | 2000 credits | US$19.99 | 2000 点 / 2000 Credits | 同上 |
+
+每个商品要一张商店页面截图。名称和描述里不出现赠送 / bonus。
+
+### 1.1 提审前 checklist
+
+- [ ] App ID 已开 Sign in with Apple（Xcode 自动开通，browser agent 确认）
+- [ ] Sign in with Apple 撤销用的 .p8 key 建好，后端接上「删除账号时撤销 Apple 授权」
+- [ ] 3 个内购建好（草稿），截图已传
+- [ ] 上架地区按上表去掉
+- [ ] 真机用 Sandbox 账号买一次，确认到账
+- [ ] 推送 menulens 仓库（隐私政策和支持页随 GitHub Pages 生效）——**和提交 1.1 同一天**，免得线上 1.0 和隐私政策对不上
+- [ ] 截图重拍：首页登录卡片、边扫边看、设置里的积分卡片
+- [ ] 作废 1.0 审核用的测试 OpenAI key
+
+---
+
+## 1.0 提审资料（2026-08，已提交；以下为历史记录）
+
 ## 基本信息
 
 | 字段 | 值 |
