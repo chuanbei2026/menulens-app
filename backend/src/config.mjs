@@ -5,6 +5,7 @@ export const config = {
   ledgerTable: process.env.LEDGER_TABLE ?? "foreignmenu-ledger",
   promoTable: process.env.PROMO_TABLE ?? "foreignmenu-promo",
   dailyTable: process.env.DAILY_TABLE ?? "foreignmenu-usage-daily",
+  purchasesTable: process.env.PURCHASES_TABLE ?? "foreignmenu-purchases",
   // The OpenAI key: a secret holding either {"key": "sk-…"} or the bare key.
   openAISecretId: process.env.OPENAI_SECRET_ID ?? "AwsLambdaKey/foreign-menu",
   sessionSecretArn: process.env.SESSION_SECRET_ARN,

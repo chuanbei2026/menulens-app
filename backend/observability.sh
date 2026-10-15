@@ -69,6 +69,16 @@ widgets += [
            [metric("DdbCalls", "Average", "POST /menu", "/menu calls per request"), metric("DdbMs", "Average", "POST /menu", "/menu DynamoDB ms"),
             metric("DdbConditionalFailures", label="conditional failures"), metric("DdbErrors", label="DynamoDB errors")], 12, 40),
 ]
+# Revenue: the "purchase" lines (price in the customer's currency, before Apple's commission).
+buys = 'filter msg = "purchase" and credited = 1'
+widgets += [
+    logs("收入（Apple 抽成前）· 按币种和环境", f"{buys} | stats count(*) as purchases, sum(price) as gross, sum(credits) as credits"
+         " by currency, environment | sort environment, gross desc", 0, 46, 12, 5),
+    logs("每天购买次数（正式环境）", f'{buys} and environment = "Production" | stats count(*) as purchases by bin(1d)', 12, 46, 12, 5, view="bar"),
+    logs("按商品和地区", f"{buys} | stats count(*) as purchases, sum(price) as gross by productId, storefront, currency | sort purchases desc",
+         0, 51, 12, 6),
+    logs("被拒的购买（查「付了钱没到账」）", 'filter msg = "purchase rejected" | stats count(*) as n by reason', 12, 51, 12, 6),
+]
 print(json.dumps({"start": "-P7D", "widgets": widgets}))
 PY
 )"
@@ -92,6 +102,8 @@ save_query "ForeignMenu/cost and credits (pick a time range)" \
   'filter msg = "request" and costUsd > 0 | stats sum(costUsd) as usd, sum(creditsCharged) as credits, count(*) as calls, count_distinct(userId) as users by route, model'
 save_query "ForeignMenu/menu latency percentiles" \
   'filter msg = "request" and route = "POST /menu" and status = 200 | stats count(*) as n, pct(ttfbMs, 50) as ttfbP50, pct(ms, 50) as p50, pct(ms, 90) as p90 by bin(1h)'
+save_query "ForeignMenu/purchases" \
+  'filter msg = "purchase" or msg = "purchase rejected" | fields @timestamp, msg, userId, productId, credits, credited, price, currency, storefront, environment, reason | sort @timestamp desc | limit 200'
 save_query "ForeignMenu/out of credits (402)" \
   'filter msg = "request" and status = 402 | stats count(*) as refusals by userId | sort refusals desc'
 

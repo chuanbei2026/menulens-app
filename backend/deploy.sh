@@ -5,7 +5,8 @@
 #
 # Creates (if missing) / updates:
 #   DynamoDB  foreignmenu-accounts (PK userId), foreignmenu-ledger (PK userId, SK at),
-#             foreignmenu-promo (PK code, SK sk), foreignmenu-usage-daily (PK userId, SK day) — on-demand
+#             foreignmenu-promo (PK code, SK sk), foreignmenu-usage-daily (PK userId, SK day),
+#             foreignmenu-purchases (PK userId, SK "<time>#<transactionId>") — on-demand
 #   Secret    foreignmenu/session-key {"key": <random>} — signs our 30-day session tokens
 #   IAM role  foreignmenu-api-role (with the ClaudeWorkloadBoundary permissions boundary)
 #   Lambda    foreignmenu-api (Node.js) + Function URL in RESPONSE_STREAM mode
@@ -18,6 +19,7 @@ ACCOUNTS_TABLE="foreignmenu-accounts"
 LEDGER_TABLE="foreignmenu-ledger"
 PROMO_TABLE="foreignmenu-promo"
 DAILY_TABLE="foreignmenu-usage-daily"
+PURCHASES_TABLE="foreignmenu-purchases"
 SESSION_SECRET_NAME="foreignmenu/session-key"
 OPENAI_SECRET_ID="AwsLambdaKey/foreign-menu"
 RUNTIME="${RUNTIME:-nodejs22.x}"
@@ -42,12 +44,19 @@ make_table "${PROMO_TABLE}" "AttributeName=code,AttributeType=S AttributeName=sk
   "AttributeName=code,KeyType=HASH AttributeName=sk,KeyType=RANGE"
 make_table "${DAILY_TABLE}" "AttributeName=userId,AttributeType=S AttributeName=day,AttributeType=S" \
   "AttributeName=userId,KeyType=HASH AttributeName=day,KeyType=RANGE"
+# Every purchase attempt per user (src/purchaseRecords.mjs); kept when an account is deleted.
+make_table "${PURCHASES_TABLE}" "AttributeName=userId,AttributeType=S AttributeName=sk,AttributeType=S" \
+  "AttributeName=userId,KeyType=HASH AttributeName=sk,KeyType=RANGE"
 TABLE_ARNS=()
-for t in "${ACCOUNTS_TABLE}" "${LEDGER_TABLE}" "${PROMO_TABLE}" "${DAILY_TABLE}"; do
+for t in "${ACCOUNTS_TABLE}" "${LEDGER_TABLE}" "${PROMO_TABLE}" "${DAILY_TABLE}" "${PURCHASES_TABLE}"; do
   aws dynamodb wait table-exists --table-name "${t}"
   # Balances are money-like: point-in-time recovery and deletion protection.
-  aws dynamodb update-continuous-backups --table-name "${t}" \
-    --point-in-time-recovery-specification PointInTimeRecoveryEnabled=true >/dev/null
+  # A brand-new table is still setting up backups for a minute: retry.
+  for i in 1 2 3 4 5 6; do
+    aws dynamodb update-continuous-backups --table-name "${t}" \
+      --point-in-time-recovery-specification PointInTimeRecoveryEnabled=true >/dev/null 2>&1 && break
+    sleep 10
+  done
   if [[ "$(aws dynamodb describe-table --table-name "${t}" --query Table.DeletionProtectionEnabled --output text)" != "True" ]]; then
     aws dynamodb update-table --table-name "${t}" --deletion-protection-enabled >/dev/null
     aws dynamodb wait table-exists --table-name "${t}"
@@ -96,7 +105,7 @@ echo "== Lambda code"
 BUILD="$(mktemp -d)"
 cp "${HERE}"/src/*.mjs "${BUILD}/"
 (cd "${BUILD}" && zip -qr function.zip ./*.mjs)
-ENV="Variables={ACCOUNTS_TABLE=${ACCOUNTS_TABLE},LEDGER_TABLE=${LEDGER_TABLE},PROMO_TABLE=${PROMO_TABLE},DAILY_TABLE=${DAILY_TABLE},OPENAI_SECRET_ID=${OPENAI_SECRET_ARN},SESSION_SECRET_ARN=${SESSION_SECRET_ARN}}"
+ENV="Variables={ACCOUNTS_TABLE=${ACCOUNTS_TABLE},LEDGER_TABLE=${LEDGER_TABLE},PROMO_TABLE=${PROMO_TABLE},DAILY_TABLE=${DAILY_TABLE},PURCHASES_TABLE=${PURCHASES_TABLE},OPENAI_SECRET_ID=${OPENAI_SECRET_ARN},SESSION_SECRET_ARN=${SESSION_SECRET_ARN}}"
 # A dense menu page on a reasoning model can take minutes; the app waits up to 7.
 if aws lambda get-function --function-name "${NAME}" >/dev/null 2>&1; then
   aws lambda update-function-code --function-name "${NAME}" --zip-file "fileb://${BUILD}/function.zip" >/dev/null

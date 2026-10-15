@@ -147,6 +147,7 @@ export class FakeDDB {
         const Items = [...this.table(input.TableName).values()]
           .filter((it) => it.userId === userId && (since === undefined || it.day >= since))
           .map((it) => structuredClone(it));
+        if (input.ScanIndexForward === false) Items.sort((a, b) => String(b.sk ?? b.at ?? b.day).localeCompare(String(a.sk ?? a.at ?? a.day)));
         return { Items };
       }
       case "TransactWrite": {
@@ -178,6 +179,6 @@ export class FakeDDB {
 const KEYS = { promo: ["code", "sk"], ledger: ["userId", "at"], daily: ["userId", "day"] };
 function keyFor(table, item) {
   const names = table.includes("promo") ? KEYS.promo : table.includes("ledger") ? KEYS.ledger
-    : table.includes("daily") ? KEYS.daily : ["userId"];
+    : table.includes("daily") ? KEYS.daily : table.includes("purchases") ? ["userId", "sk"] : ["userId"];
   return Object.fromEntries(names.map((k) => [k, item[k]]));
 }

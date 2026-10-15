@@ -31,11 +31,13 @@ import { chatCostUsd, EXPECTED_IMAGE_OUTPUT_TOKENS, imageCostUsd, tenthsForUsd }
 import { catalogFor, normalizeStorefront, providerAllowed } from "./regions.mjs";
 import { relayBedrockMenu } from "./bedrock.mjs";
 import { exchangeCode, revokeToken } from "./appleRevoke.mjs";
+import { PurchaseRecords, transactionFacts } from "./purchaseRecords.mjs";
 import { generateImage, imageRequest, menuRequest, relayMenu, RequestError, upstreamMessage } from "./relay.mjs";
 
 const ddb = instrument(DynamoDBDocumentClient.from(new DynamoDBClient({})));
 const secrets = new SecretsManagerClient({});
 const store = new CreditStore(ddb, config);
+const purchases = new PurchaseRecords(ddb, config.purchasesTable);
 
 // Secrets are read once per container and reused while it stays warm.
 const secretCache = new Map();
@@ -175,19 +177,26 @@ async function purchase(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
   const { jws } = readBody(event);
+  let payload = null;
   try {
-    const payload = verifyAppleJWS(jws);
+    payload = verifyAppleJWS(jws);
     const tx = creditableTransaction(payload, { userId, bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases });
     await grant(userId, ctx);
     const result = await store.creditPurchase(userId, tx);
+    const facts = transactionFacts(payload);
+    await purchases.record(userId, { ...facts, credits: result.credits, bonus: result.bonus ?? 0,
+      status: result.credited ? "credited" : "duplicate" });
     logEvent("INFO", "purchase", { requestId: ctx.requestId, userId, productId: tx.productId, environment: tx.environment,
-      credits: tx.credits, credited: result.credited });
+      credits: result.credits, credited: result.credited, price: facts.price, currency: facts.currency, storefront: facts.storefront });
     return { ...result, productId: tx.productId, ...publicBalance(await store.balance(userId)) };
   } catch (e) {
-    if (e instanceof PurchaseError) {
-      logEvent("WARN", "purchase rejected", { requestId: ctx.requestId, userId, reason: e.reason });
-      throw new HttpError(400, e.reason, { reason: e.reason });
+    const reason = e instanceof PurchaseError ? e.reason : e instanceof PurchaseConflict ? "conflict" : null;
+    if (reason) {
+      // Rejected attempts are kept too: they explain "I paid but got nothing" tickets.
+      await purchases.record(userId, { ...transactionFacts(payload), status: "rejected", reason });
+      logEvent("WARN", "purchase rejected", { requestId: ctx.requestId, userId, reason });
     }
+    if (e instanceof PurchaseError) throw new HttpError(400, e.reason, { reason: e.reason });
     if (e instanceof PurchaseConflict) throw new HttpError(409, "purchase belongs to another account", { reason: "conflict" });
     throw e;
   }
