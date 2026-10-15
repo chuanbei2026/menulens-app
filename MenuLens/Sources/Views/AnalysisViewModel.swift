@@ -72,17 +72,17 @@ final class AnalysisViewModel: ObservableObject {
 
     let party = PartyStore.shared
 
-    /// Model id is a plain preference; the API key lives in the Keychain.
+    /// Model id is a plain preference; the server honours the four in Settings.
     @AppStorage("openai_model") var model = "gpt-4.1"
     /// The app language, which is also what the menu gets translated into.
     /// Same defaults key `Loc` reads — see Localization.swift.
     @AppStorage("target_language") var targetLanguageCode = AppLanguage.deviceDefault.rawValue
     /// Generate AI thumbnails for dishes that have no printed photo.
     @AppStorage("generate_dish_images") var generateDishImages = true
-    /// Permission to send anything to OpenAI at all (guideline 5.1.2(i)).
-    /// Checked here, not only at the button, because opening a saved scan
-    /// can also start thumbnail generation — see AIConsentView.
-    @AppStorage("openai_consent_granted") var aiConsentGranted = false
+    /// Permission to send anything to our server / OpenAI at all (guideline
+    /// 5.1.2(i)). Checked here, not only at the button, because opening a
+    /// saved scan can also start thumbnail generation — see AIConsentView.
+    @AppStorage(AIConsentView.grantedKey) var aiConsentGranted = false
 
     /// Generate thumbnails 4-at-a-time in one 2x2 collage image, then slice —
     /// ~4x cheaper per dish than one request per dish.
@@ -136,8 +136,9 @@ final class AnalysisViewModel: ObservableObject {
         }
         pipeline?.translateStartedAt = Date()
         let target = AppLanguage.from(code: targetLanguageCode)
+        let account = AccountStore.shared
         let client = OpenAIClient(
-            apiKey: KeychainStore.loadAPIKey(),
+            sessionToken: account.sessionToken,
             model: model,
             targetLanguage: target.promptName
         )
@@ -190,6 +191,8 @@ final class AnalysisViewModel: ObservableObject {
         for (index, page) in pages.enumerated() {
             if let page { results.append((page, images[index])) }
         }
+        // Every page was charged (or refused); show the new balance.
+        Task { await account.refreshCredits() }
         guard !results.isEmpty else {
             pipeline = nil
             phase = .failed(lastError?.localizedDescription ?? L("error.recognizeFailed"))
@@ -381,7 +384,7 @@ final class AnalysisViewModel: ObservableObject {
     /// re-rendered once at the end.
     private func startImageGenerationIfNeeded() {
         guard generateDishImages, aiConsentGranted, let scan,
-              !KeychainStore.loadAPIKey().isEmpty
+              AccountStore.shared.isSignedIn
         else {
             pipeline?.imagesTotal = 0
             return
@@ -424,7 +427,7 @@ final class AnalysisViewModel: ObservableObject {
             jobs = dishes.map { .single(key: $0.key, spec: $0.spec) }
         }
 
-        let client = ImageGenClient(apiKey: KeychainStore.loadAPIKey())
+        let client = ImageGenClient(sessionToken: AccountStore.shared.sessionToken)
         let scanID = scan.id
 
         imageGenTask = Task { [weak self] in
@@ -457,17 +460,26 @@ final class AnalysisViewModel: ObservableObject {
                         }
                         self.pipeline?.imagesDone += 1
                     }
-                    addNext(&group)
+                    // Out of credits (or signed out): queue nothing more.
+                    if client.stopReason == nil { addNext(&group) }
                 }
             }
             guard let self, !Task.isCancelled else { return }
+            if let reason = client.stopReason {
+                // Close the progress out at what was actually made.
+                if let done = self.pipeline?.imagesDone { self.pipeline?.imagesTotal = done }
+                self.notice = [self.notice, L("notice.imagesStopped", reason.localizedDescription)]
+                    .compactMap { $0 }
+                    .joined(separator: "\n")
+            }
+            await AccountStore.shared.refreshCredits()
             await self.renderPDFAsync()
         }
     }
 
     #if DEBUG
     /// Load the synthetic demo menu — verifies bbox cropping and PDF export
-    /// in the simulator without an API key.
+    /// in the simulator without signing in.
     func loadSample() {
         let image = SampleData.sampleImage()
         pickedImages = [image]

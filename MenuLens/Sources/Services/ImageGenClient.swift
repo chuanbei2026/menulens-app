@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 
-/// Generates small dish thumbnails with OpenAI's gpt-image-1.
+/// Generates small dish thumbnails with OpenAI's gpt-image-1, through our
+/// backend's /image relay (which pins model, size, quality and format).
 ///
 /// Two modes:
 /// - `generateDishThumbnail`: one dish per request.
@@ -9,8 +10,26 @@ import UIKit
 ///   request, sliced into quadrants afterwards — ~4x cheaper per dish.
 ///
 /// Generation is best-effort decoration: any failure returns nil and must
-/// never fail the scan.
+/// never fail the scan. The one exception is the account: once the server
+/// says the credits ran out (402) or the session ended (401), `stopReason`
+/// is set and every later request returns nil without being sent.
 struct ImageGenClient {
+    /// Shared by every copy of the client handed to concurrent jobs.
+    final class StopFlag: @unchecked Sendable {
+        private let lock = NSLock()
+        private var value: Backend.BackendError?
+
+        var reason: Backend.BackendError? {
+            lock.lock(); defer { lock.unlock() }
+            return value
+        }
+
+        func stop(_ reason: Backend.BackendError) {
+            lock.lock(); defer { lock.unlock() }
+            if value == nil { value = reason }
+        }
+    }
+
     struct DishSpec {
         let name: String
         let chineseName: String
@@ -25,9 +44,11 @@ struct ImageGenClient {
         }
     }
 
-    var apiKey: String
+    var sessionToken: String
+    let stop = StopFlag()
 
-    private static let endpoint = URL(string: "https://api.openai.com/v1/images/generations")!
+    /// Why generation stopped early (out of credits, signed out), if it did.
+    var stopReason: Backend.BackendError? { stop.reason }
 
     // MARK: - Single dish
 
@@ -96,26 +117,14 @@ struct ImageGenClient {
     /// errors with linear backoff — bulk thumbnail batches routinely brush
     /// against gpt-image-1's images-per-minute cap.
     private func requestImage(prompt: String) async -> UIImage? {
-        guard !apiKey.isEmpty else { return nil }
+        guard !sessionToken.isEmpty, stop.reason == nil else { return nil }
 
         // Same prompt → same thumbnail, served from the local cache.
         let cacheKey = ResponseCache.key([Data("img|\(prompt)".utf8)])
         if let cached = ResponseCache.load(cacheKey), let image = UIImage(data: cached) {
             return image
         }
-        let payload: [String: Any] = [
-            "model": "gpt-image-1",
-            "prompt": prompt,
-            "size": "1024x1024",
-            "quality": "low",
-            "n": 1,
-        ]
-
-        var request = URLRequest(url: Self.endpoint)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        var request = Backend.request("image", method: "POST", token: sessionToken, json: ["prompt": prompt])
         request.timeoutInterval = 120
 
         struct Response: Decodable {
@@ -124,9 +133,16 @@ struct ImageGenClient {
         }
 
         for attempt in 0 ..< 4 {
-            guard let (data, response) = try? await URLSession.shared.data(for: request),
+            guard stop.reason == nil,
+                  let (data, response) = try? await URLSession.shared.data(for: request),
                   let http = response as? HTTPURLResponse
             else { return nil }
+
+            // Retrying cannot fix these, and neither can the next dish.
+            if http.statusCode == 401 || http.statusCode == 402 {
+                stop.stop(Backend.failure(status: http.statusCode, body: data))
+                return nil
+            }
 
             if http.statusCode == 429 || (500 ..< 600).contains(http.statusCode) {
                 let seconds = UInt64(attempt + 1) * 10

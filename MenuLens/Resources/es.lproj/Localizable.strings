@@ -10,9 +10,8 @@
 "page.number" = "Página %d";
 
 /* MARK: - First run */
-"onboarding.title" = "Añade una clave de OpenAI para escanear una carta";
-"onboarding.body" = "La clave nunca sale de este teléfono. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
-"onboarding.enterKey" = "Añadir clave";
+"onboarding.title" = "Inicia sesión con Apple para escanear una carta";
+"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 6–12) y 100 más cada mes que uses la app. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
 "onboarding.viewSamples" = "Ver ejemplos";
 
 /* MARK: - Home */
@@ -22,7 +21,7 @@
 "home.captureMore" = "Otra página";
 "home.library" = "Fotos";
 "home.images.title" = "Generar imagen para los platos sin foto";
-"home.images.note" = "Generado por IA, unos 0,003 $ por plato, algo más lento; se aplica a este escaneo";
+"home.images.note" = "Generado por IA, menos de 1 crédito por plato en modo collage, algo más lento; se aplica a este escaneo";
 "home.analyze" = "Escanear y traducir";
 "home.analyze.pages" = "Escanear y traducir (%d páginas)";
 "home.samples" = "Ver las cartas de ejemplo";
@@ -31,11 +30,8 @@
 "settings.title" = "Ajustes";
 "settings.language" = "Idioma";
 "settings.language.footer" = "Define tanto el idioma de la app como el idioma al que se traducen las cartas. El idioma de la carta se detecta automáticamente.";
-"settings.apiKey.header" = "Clave API de OpenAI";
-"settings.apiKey.help" = "¿Cómo consigo una clave API de OpenAI?";
-"settings.apiKey.footer" = "Regístrate en la plataforma de OpenAI del enlace anterior, añade saldo, crea una clave y pégala aquí. La clave se guarda solo en el llavero de este teléfono y se usa únicamente para llamar a OpenAI directamente: nunca se sube a ningún sitio. Esta app no tiene servidor propio.";
 "settings.model" = "Modelo";
-"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / 0,03 $ (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / 0,01 $ (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso y el más lento. Las imágenes de platos se cobran aparte, unos 0,003 $ cada una en modo collage.";
+"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro. Las imágenes de platos se cobran aparte, unos 2–3 créditos por collage de cuatro.";
 "settings.party.header" = "En la mesa";
 "settings.party.footer" = "Al pedir puedes marcar quién ha pedido cada plato, para que llegue a la persona correcta. Si indicas lo que alguien no come, el resumen revisa todos sus platos y avisa de forma bien visible. Toca un avatar para poner una foto y ✕ para quitar a alguien.";
 "settings.member.name" = "Nombre";
@@ -44,7 +40,7 @@
 "settings.flatten" = "Igualar la iluminación (recomendado)";
 "settings.flatten.footer" = "Quita las sombras y los brillos de una foto hecha a mano: el papel queda limpio y uniforme, y el texto traducido se integra con el original. Las cartas oscuras se omiten automáticamente.";
 "settings.grid" = "Modo collage (más barato)";
-"settings.grid.footer" = "Si se generan imágenes o no se marca en la pantalla de inicio, escaneo por escaneo. El modo collage genera cuatro platos en una imagen 2×2 y luego la recorta, unos 0,003 $ por plato (de una en una, unos 0,011 $ y algo mejor). Las fotos impresas en la propia carta siempre tienen prioridad.";
+"settings.grid.footer" = "Si se generan imágenes o no se marca en la pantalla de inicio, escaneo por escaneo. El modo collage genera cuatro platos en una imagen 2×2 y luego la recorta, unos 2–3 créditos por los cuatro (de una en una, unos 2–3 créditos por plato y algo mejor). Las fotos impresas en la propia carta siempre tienen prioridad.";
 
 /* MARK: - Scan progress */
 "progress.note" = "Puedes leerla en cuanto termine la maquetación; las imágenes siguen llegando después";
@@ -117,8 +113,7 @@
 "error.encodeImages" = "No se han podido codificar las fotos seleccionadas.";
 "error.recognizeFailed" = "El escaneo ha fallado. Inténtalo de nuevo.";
 "notice.partialPages" = "No se han podido escanear %1$d páginas; se han conservado las otras %2$d. Puedes volver a escanear esas páginas.";
-"error.missingKey" = "Todavía no hay clave API de OpenAI: añádela en Ajustes.";
-"error.http" = "La petición a OpenAI ha fallado (HTTP %1$d): %2$@";
+"error.http" = "La petición ha fallado (HTTP %1$d): %2$@";
 "error.emptyResponse" = "OpenAI ha devuelto un resultado vacío.";
 "error.refusal" = "El modelo ha rechazado esta petición: %@";
 "error.badLineIndex" = "El modelo ha devuelto un número de línea no válido.";
@@ -127,18 +122,18 @@
 "pdf.header" = "Platos en paralelo · %1$@ → %2$@";
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
-"consent.title" = "Las fotos de la carta se envían a OpenAI";
-"consent.body" = "Para leer y traducir una carta, ForeignMenu envía la foto a OpenAI. Es lo único que sale de tu teléfono, y solo ocurre cuando tocas Escanear.";
-"consent.sent.header" = "Se envía a OpenAI";
-"consent.sent.photo" = "La foto de la carta que elijas";
+"consent.title" = "Las fotos de la carta pasan por nuestro servidor y OpenAI";
+"consent.body" = "Para leer y traducir una carta, ForeignMenu envía la foto a su propio servidor, que la pasa a OpenAI para la traducción. Solo ocurre cuando tocas Escanear.";
+"consent.sent.header" = "Se envía a nuestro servidor y de ahí a OpenAI";
+"consent.sent.photo" = "La foto de la carta que elijas y el texto leído en ella";
 "consent.sent.names" = "Los nombres de los platos, solo si pides imágenes generadas";
 "consent.kept.header" = "Nunca sale de este teléfono";
-"consent.kept.body" = "Tu clave API, tu historial de traducciones y los nombres y fotos de las personas de tu mesa.";
-"consent.retention" = "OpenAI responde a la petición y conserva brevemente los datos de la API para vigilar abusos. No existe ningún servidor del desarrollador: nada pasa por nosotros.";
+"consent.kept.body" = "Tu historial de traducciones y los nombres y fotos de las personas de tu mesa.";
+"consent.retention" = "Nuestro servidor no guarda fotos ni texto de las cartas. Solo conserva un identificador anónimo de Apple, tu saldo de créditos y recuentos de uso. OpenAI conserva brevemente los datos de la API para vigilar abusos.";
 "consent.policy" = "Leer la política de privacidad";
 "consent.agree" = "Aceptar y continuar";
 "consent.decline" = "Ahora no";
-"settings.consent" = "Enviar fotos de la carta a OpenAI";
+"settings.consent" = "Enviar fotos de la carta para traducir";
 "settings.consent.footer" = "Necesario para escanear una carta nueva. Si lo desactivas no se envía nada; las cartas de ejemplo y tus traducciones guardadas siguen funcionando. Se te preguntará de nuevo la próxima vez que escanees.";
 
 /* MARK: - Rename a saved scan */
@@ -149,3 +144,21 @@
 /* MARK: - Recommendations */
 "list.recommended" = "Vale la pena pedir";
 "list.recommended.allFiltered" = "Los platos que habríamos sugerido chocan con las restricciones de alguien, así que no se muestran.";
+
+/* MARK: - Account (Sign in with Apple, credits) */
+"common.done" = "OK";
+"settings.account.header" = "Cuenta";
+"settings.account.balance" = "Saldo";
+"settings.account.credits" = "%d créditos";
+"settings.account.signOut" = "Cerrar sesión";
+"settings.account.delete" = "Eliminar cuenta";
+"settings.account.delete.title" = "¿Eliminar tu cuenta?";
+"settings.account.delete.message" = "Tu cuenta y sus créditos se borran de nuestro servidor y no se pueden recuperar. El historial de este teléfono se queda.";
+"settings.account.delete.confirm" = "Eliminar cuenta";
+"settings.account.footer" = "Empiezas con 300 créditos y recibes 100 más cada mes que uses la app; los créditos no caducan. Una página de carta cuesta unos 6–12 créditos; una imagen de plato o un collage de cuatro, unos 2–3.";
+"settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis y 100 más cada mes que uses la app.";
+"error.signInRequired" = "Inicia sesión con Apple primero (Ajustes → Cuenta) para escanear una carta nueva.";
+"error.sessionExpired" = "Tu sesión ha caducado. Vuelve a iniciar sesión con Apple.";
+"error.outOfCredits" = "No hay créditos suficientes: hacen falta unos %1$d y tu saldo es %2$d. Llegan 100 más el próximo mes que uses la app.";
+"error.signInFailed" = "No se pudo iniciar sesión: %@";
+"notice.imagesStopped" = "Se detuvieron las imágenes de platos: %@";

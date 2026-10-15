@@ -6,12 +6,13 @@ struct SettingsView: View {
     @AppStorage("openai_model") private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("flatten_lighting") private var flattenLighting = true
-    @AppStorage("openai_consent_granted") private var aiConsentGranted = false
+    @AppStorage(AIConsentView.grantedKey) private var aiConsentGranted = false
     /// The language picker writes through `Localization`, so every screen in
     /// the app follows the choice immediately — see Localization.swift.
     @ObservedObject private var loc = Localization.shared
     @ObservedObject private var party = PartyStore.shared
-    @State private var apiKey = KeychainStore.loadAPIKey()
+    @ObservedObject private var account = AccountStore.shared
+    @State private var confirmDelete = false
     @State private var newMemberName = ""
     @State private var avatarTargetID: UUID?
     @State private var avatarPickerItem: PhotosPickerItem?
@@ -27,6 +28,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                accountSection
+
                 Section {
                     Picker(
                         L("settings.language"),
@@ -41,19 +44,6 @@ struct SettingsView: View {
                     }
                 } footer: {
                     Text(L("settings.language.footer"))
-                }
-
-                Section {
-                    SecureField("sk-...", text: $apiKey)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    Link(destination: URL(string: "https://platform.openai.com/api-keys")!) {
-                        Label(L("settings.apiKey.help"), systemImage: "questionmark.circle")
-                    }
-                } header: {
-                    Text(L("settings.apiKey.header"))
-                } footer: {
-                    Text(L("settings.apiKey.footer"))
                 }
 
                 Section {
@@ -162,15 +152,56 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(L("common.save")) {
-                        KeychainStore.saveAPIKey(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L("common.cancel")) { dismiss() }
+                    Button(L("common.done")) { dismiss() }
                 }
             }
+            .task { await account.refreshCredits() }
+        }
+    }
+
+    // MARK: - Account
+
+    /// Signed out: the Apple button and what an account gives you. Signed
+    /// in: the balance, what things cost, sign out and delete.
+    private var accountSection: some View {
+        Section {
+            if account.isSignedIn {
+                LabeledContent(L("settings.account.balance")) {
+                    if let credits = account.credits {
+                        Text(L("settings.account.credits", credits))
+                            .monospacedDigit()
+                    } else {
+                        ProgressView()
+                    }
+                }
+                Button(L("settings.account.signOut")) { account.signOut() }
+                Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }
+                    .disabled(account.isBusy)
+            } else {
+                AppleSignInButton()
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            }
+            if let message = account.message {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+            }
+        } header: {
+            Text(L("settings.account.header"))
+        } footer: {
+            Text(L(account.isSignedIn ? "settings.account.footer" : "settings.account.signedOut.footer"))
+        }
+        .confirmationDialog(
+            L("settings.account.delete.title"),
+            isPresented: $confirmDelete,
+            titleVisibility: .visible
+        ) {
+            Button(L("settings.account.delete.confirm"), role: .destructive) {
+                Task { await account.deleteAccount() }
+            }
+            Button(L("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(L("settings.account.delete.message"))
         }
     }
 }

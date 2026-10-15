@@ -10,9 +10,9 @@ struct ContentView: View {
     /// model reads at analyze time).
     @AppStorage("generate_dish_images") private var generateDishImages = true
     @State private var photosItems: [PhotosPickerItem] = []
-    /// Without a key there is nothing to scan with, so the capture controls
-    /// stay inert until one is entered.
-    @State private var hasAPIKey = !KeychainStore.loadAPIKey().isEmpty
+    /// Signed out there is nothing to scan with, so the capture controls
+    /// stay inert until the user signs in.
+    @ObservedObject private var account = AccountStore.shared
     @State private var showCamera = false
     @State private var showSettings =
         ProcessInfo.processInfo.arguments.contains("-showSettings")
@@ -20,7 +20,7 @@ struct ContentView: View {
     /// Picking a photo sends nothing; only Scan does. So consent is asked
     /// at the button that transmits, which is also where the user can see
     /// what they are about to send.
-    @AppStorage("openai_consent_granted") private var aiConsentGranted = false
+    @AppStorage(AIConsentView.grantedKey) private var aiConsentGranted = false
     @State private var showAIConsent =
         ProcessInfo.processInfo.arguments.contains("-showConsent")
 
@@ -66,9 +66,6 @@ struct ContentView: View {
                     Task { await viewModel.analyze() }
                 }
             }
-            .onChange(of: showSettings) {
-                if !showSettings { hasAPIKey = !KeychainStore.loadAPIKey().isEmpty }
-            }
             .sheet(isPresented: $showHistory) {
                 HistoryView(history: viewModel.history) { scan in
                     viewModel.open(scan)
@@ -84,7 +81,8 @@ struct ContentView: View {
             // Automation hooks for headless simulator verification:
             //   -loadSample       load the demo menu on launch
             //   -autoPDF          also dump the rendered PDF into Documents
-            //   -apiKey <key>     store the key in the Keychain
+            //   -sessionToken <t> store a backend session token (signed in)
+            //   -signOut          forget the session (first-run onboarding)
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
@@ -112,23 +110,23 @@ struct ContentView: View {
                         .appendingPathComponent("sample.pdf")
                     try? data.write(to: url)
                 }
-                if let idx = args.firstIndex(of: "-apiKey"), idx + 1 < args.count {
-                    KeychainStore.saveAPIKey(args[idx + 1])
-                    hasAPIKey = true
+                if let idx = args.firstIndex(of: "-sessionToken"), idx + 1 < args.count {
+                    account.setSession(args[idx + 1])
+                    Task { await account.refreshCredits() }
                 }
                 // analyze() refuses to run without consent (guideline
                 // 5.1.2(i)), which silently turned every -analyzeSample /
                 // -analyzeFiles run into a no-op. Automation grants it
-                // explicitly rather than -apiKey implying it: the whole point
-                // of the gate is that a key and permission are separate.
+                // explicitly rather than -sessionToken implying it: the whole
+                // point of the gate is that an account and permission are
+                // separate.
                 if args.contains("-grantConsent") {
                     aiConsentGranted = true
                 }
                 // Keychain items outlive an app uninstall, so first-run
                 // onboarding needs an explicit way to reproduce.
-                if args.contains("-clearKey") {
-                    KeychainStore.saveAPIKey("")
-                    hasAPIKey = false
+                if args.contains("-signOut") {
+                    account.signOut()
                 }
                 func analyzeAndDump(_ photos: [UIImage]) {
                     Task { @MainActor in
@@ -263,8 +261,8 @@ struct ContentView: View {
             #endif
             .onAppear {
                 viewModel.history.seedBundledSamplesIfNeeded()
-                hasAPIKey = !KeychainStore.loadAPIKey().isEmpty
             }
+            .task { await account.refreshCredits() }
             .onChange(of: photosItems) {
                 let items = photosItems
                 guard !items.isEmpty else { return }
@@ -287,33 +285,31 @@ struct ContentView: View {
 
     private var startScreen: some View {
         VStack(spacing: 16) {
-            if !hasAPIKey {
-                // First run: say what is needed before anything can be
-                // scanned, and offer the sample menus as the way to look
-                // around in the meantime.
+            if !account.isSignedIn {
+                // First run (or a lapsed session): say what is needed before
+                // anything can be scanned, and offer the sample menus as the
+                // way to look around in the meantime.
                 VStack(alignment: .leading, spacing: 8) {
                     Text(L("onboarding.title"))
                         .font(.subheadline.weight(.semibold))
                     Text(L("onboarding.body"))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                    HStack(spacing: 14) {
-                        Button {
-                            showSettings = true
-                        } label: {
-                            Label(L("onboarding.enterKey"), systemImage: "key")
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.small)
-
-                        Button {
-                            showHistory = true
-                        } label: {
-                            Label(L("onboarding.viewSamples"), systemImage: "clock.arrow.circlepath")
-                        }
-                        .controlSize(.small)
+                    if let message = account.message {
+                        Text(message)
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                    }
+                    AppleSignInButton()
+                        .padding(.top, 2)
+                    Button {
+                        showHistory = true
+                    } label: {
+                        Label(L("onboarding.viewSamples"), systemImage: "clock.arrow.circlepath")
                     }
                     .font(.footnote)
+                    .controlSize(.small)
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -357,14 +353,14 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!hasAPIKey)
+                .disabled(!account.isSignedIn)
 
                 PhotosPicker(selection: $photosItems, maxSelectionCount: 8, matching: .images) {
                     Label(L("home.library"), systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!hasAPIKey)
+                .disabled(!account.isSignedIn)
             }
             .padding(.horizontal)
 
@@ -395,10 +391,10 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(viewModel.pickedImages.isEmpty || !hasAPIKey)
+            .disabled(viewModel.pickedImages.isEmpty || !account.isSignedIn)
             .padding(.horizontal)
 
-            if hasAPIKey {
+            if account.isSignedIn {
                 Button(L("home.samples")) {
                     showHistory = true
                 }

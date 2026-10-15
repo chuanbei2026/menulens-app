@@ -7,18 +7,12 @@ import UIKit
 /// index. Geometry lives entirely on our side.
 struct OpenAIClient {
     enum ClientError: LocalizedError {
-        case missingAPIKey
-        case badHTTPStatus(Int, String)
         case emptyResponse
         case refusal(String)
         case badLineIndex
 
         var errorDescription: String? {
             switch self {
-            case .missingAPIKey:
-                return L("error.missingKey")
-            case let .badHTTPStatus(code, body):
-                return L("error.http", code, body)
             case .emptyResponse:
                 return L("error.emptyResponse")
             case let .refusal(reason):
@@ -29,12 +23,12 @@ struct OpenAIClient {
         }
     }
 
-    var apiKey: String
+    /// Our backend session; the server relays the request to OpenAI.
+    var sessionToken: String
     var model: String
     /// Language the menu gets translated into (prompt name, e.g. "Japanese").
     var targetLanguage: String = "Simplified Chinese"
 
-    private static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     /// Bump when the prompt or schema changes so stale cache entries miss.
     private static let promptVersion = "v18"
 
@@ -208,7 +202,7 @@ struct OpenAIClient {
         ocrLines: [OCRService.RecognizedLine],
         onProgress: (@Sendable (Int) -> Void)? = nil
     ) async throws -> MenuDocument {
-        guard !apiKey.isEmpty else { throw ClientError.missingAPIKey }
+        guard !sessionToken.isEmpty else { throw Backend.BackendError.signInRequired }
 
         let inventory = ocrLines.enumerated()
             .map { "\($0.offset): \($0.element.text)" }
@@ -266,10 +260,10 @@ struct OpenAIClient {
             payload["temperature"] = 0.2
         }
 
-        var request = URLRequest(url: Self.endpoint)
-        request.httpMethod = "POST"
+        // /menu takes exactly the Chat Completions body and streams OpenAI's
+        // SSE back unchanged (plus a credits event after [DONE], ignored).
+        var request = Backend.request("menu", method: "POST", token: sessionToken)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         // Reasoning models can spend minutes on a dense page. Streaming keeps
         // the connection busy (so idle timeouts stop firing) and, more
@@ -291,8 +285,8 @@ struct OpenAIClient {
             let (bytes, response) = try await URLSession.shared.bytes(for: request)
             if let http = response as? HTTPURLResponse, !(200 ..< 300).contains(http.statusCode) {
                 var body = ""
-                for try await line in bytes.lines { body += line; if body.count > 500 { break } }
-                throw ClientError.badHTTPStatus(http.statusCode, String(body.prefix(500)))
+                for try await line in bytes.lines { body += line; if body.count > 2000 { break } }
+                throw Backend.failure(status: http.statusCode, body: Data(body.utf8))
             }
             var content = ""
             var refusal = ""

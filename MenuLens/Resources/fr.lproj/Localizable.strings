@@ -10,9 +10,8 @@
 "page.number" = "Page %d";
 
 /* MARK: - First run */
-"onboarding.title" = "Ajoutez une clé OpenAI pour scanner une carte";
-"onboarding.body" = "La clé ne quitte jamais ce téléphone. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
-"onboarding.enterKey" = "Ajouter la clé";
+"onboarding.title" = "Connectez-vous avec Apple pour scanner une carte";
+"onboarding.body" = "Les nouveaux comptes reçoivent 300 crédits offerts (une page de carte en coûte environ 6 à 12), puis 100 de plus chaque mois où vous utilisez l'app. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
 "onboarding.viewSamples" = "Voir les exemples";
 
 /* MARK: - Home */
@@ -22,7 +21,7 @@
 "home.captureMore" = "Autre page";
 "home.library" = "Galerie";
 "home.images.title" = "Générer une image pour les plats sans photo";
-"home.images.note" = "Généré par IA, environ 0,003 $ par plat, un peu plus lent ; s'applique à ce scan";
+"home.images.note" = "Généré par IA, moins d'un crédit par plat en mode mosaïque, un peu plus lent ; s'applique à ce scan";
 "home.analyze" = "Scanner et traduire";
 "home.analyze.pages" = "Scanner et traduire (%d pages)";
 "home.samples" = "Parcourir les cartes d'exemple";
@@ -31,11 +30,8 @@
 "settings.title" = "Réglages";
 "settings.language" = "Langue";
 "settings.language.footer" = "Définit à la fois la langue de l'application et celle dans laquelle les cartes sont traduites. La langue de la carte, elle, est détectée automatiquement.";
-"settings.apiKey.header" = "Clé API OpenAI";
-"settings.apiKey.help" = "Comment obtenir une clé API OpenAI ?";
-"settings.apiKey.footer" = "Créez un compte sur la plateforme OpenAI liée ci-dessus, ajoutez du crédit, puis créez une clé et collez-la ici. La clé est conservée uniquement dans le trousseau de ce téléphone et ne sert qu'à appeler OpenAI directement — elle n'est envoyée nulle part ailleurs. Cette application n'a aucun serveur.";
 "settings.model" = "Modèle";
-"settings.model.footer" = "Mesuré sur une page dense (148 lignes) : gpt-4.1 environ 45 s / 0,03 $ (recommandé, progression affichée pendant la traduction) · gpt-5-mini environ 115 s / 0,01 $ (moins cher, noms mieux traduits, mais plus d'attente) · gpt-5 est le plus précis et le plus lent. Les images de plats sont facturées à part, environ 0,003 $ chacune en mode mosaïque.";
+"settings.model.footer" = "Mesuré sur une page dense (148 lignes) : gpt-4.1 environ 45 s / ~6 crédits (recommandé, progression affichée pendant la traduction) · gpt-5-mini environ 115 s / ~2 crédits (moins cher, noms mieux traduits, mais plus d'attente) · gpt-5 est le plus précis, le plus lent et le plus cher. Les images de plats sont comptées à part, environ 2 à 3 crédits par mosaïque de quatre.";
 "settings.party.header" = "À table";
 "settings.party.footer" = "Pendant la commande, vous pouvez noter qui a demandé quoi, pour que chaque plat arrive à la bonne personne. Indiquez ce que quelqu'un ne mange pas et le récapitulatif vérifie chacun de ses plats et vous alerte clairement. Touchez un avatar pour ajouter une photo, ✕ pour retirer la personne.";
 "settings.member.name" = "Nom";
@@ -44,7 +40,7 @@
 "settings.flatten" = "Uniformiser la lumière (recommandé)";
 "settings.flatten.footer" = "Supprime les ombres et les reflets d'une photo prise à main levée : le papier redevient net et uniforme, et le texte traduit se fond dans l'original. Les cartes sombres sont ignorées automatiquement.";
 "settings.grid" = "Mode mosaïque (économique)";
-"settings.grid.footer" = "La génération d'images se coche sur l'écran d'accueil, scan par scan. Le mode mosaïque génère quatre plats dans une seule image 2×2 puis la découpe, environ 0,003 $ par plat (une par une : environ 0,011 $, légèrement mieux). Les photos imprimées sur la carte sont toujours utilisées en priorité.";
+"settings.grid.footer" = "La génération d'images se coche sur l'écran d'accueil, scan par scan. Le mode mosaïque génère quatre plats dans une seule image 2×2 puis la découpe, environ 2 à 3 crédits pour les quatre (une par une : 2 à 3 crédits par plat, légèrement mieux). Les photos imprimées sur la carte sont toujours utilisées en priorité.";
 
 /* MARK: - Scan progress */
 "progress.note" = "Lisible dès que la mise en page est prête ; les images des plats continuent d'arriver ensuite";
@@ -117,8 +113,7 @@
 "error.encodeImages" = "Impossible d'encoder les photos sélectionnées.";
 "error.recognizeFailed" = "Le scan a échoué. Veuillez réessayer.";
 "notice.partialPages" = "%1$d pages n'ont pas pu être scannées ; les %2$d autres ont été conservées. Vous pouvez rescanner ces pages.";
-"error.missingKey" = "Aucune clé API OpenAI — ajoutez-en une dans les réglages.";
-"error.http" = "Échec de la requête OpenAI (HTTP %1$d) : %2$@";
+"error.http" = "Échec de la requête (HTTP %1$d) : %2$@";
 "error.emptyResponse" = "OpenAI a renvoyé un résultat vide.";
 "error.refusal" = "Le modèle a refusé cette requête : %@";
 "error.badLineIndex" = "Le modèle a renvoyé un numéro de ligne invalide.";
@@ -127,18 +122,18 @@
 "pdf.header" = "Plats en vis-à-vis · %1$@ → %2$@";
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
-"consent.title" = "Les photos de carte sont envoyées à OpenAI";
-"consent.body" = "Pour lire et traduire une carte, ForeignMenu envoie la photo à OpenAI. C'est la seule chose qui quitte votre téléphone, et cela n'arrive que lorsque vous touchez Scanner.";
-"consent.sent.header" = "Envoyé à OpenAI";
-"consent.sent.photo" = "La photo de carte que vous choisissez";
+"consent.title" = "Les photos de carte passent par notre serveur et OpenAI";
+"consent.body" = "Pour lire et traduire une carte, ForeignMenu envoie la photo à son propre serveur, qui la transmet à OpenAI pour la traduction. Cela n'arrive que lorsque vous touchez Scanner.";
+"consent.sent.header" = "Envoyé à notre serveur, puis à OpenAI";
+"consent.sent.photo" = "La photo de carte que vous choisissez et le texte qui y est lu";
 "consent.sent.names" = "Les noms des plats, uniquement si vous demandez des images générées";
 "consent.kept.header" = "Ne quitte jamais ce téléphone";
-"consent.kept.body" = "Votre clé API, votre historique de traductions, ainsi que les noms et photos des personnes à votre table.";
-"consent.retention" = "OpenAI répond à la requête et conserve brièvement les données d'API pour surveiller les abus. Il n'existe aucun serveur du développeur — rien ne passe par nous.";
+"consent.kept.body" = "Votre historique de traductions, ainsi que les noms et photos des personnes à votre table.";
+"consent.retention" = "Notre serveur ne conserve ni les photos ni le texte des cartes. Il ne garde qu'un identifiant Apple anonyme, votre solde de crédits et des compteurs d'utilisation. OpenAI conserve brièvement les données d'API pour surveiller les abus.";
 "consent.policy" = "Lire la politique de confidentialité";
 "consent.agree" = "Accepter et continuer";
 "consent.decline" = "Pas maintenant";
-"settings.consent" = "Envoyer les photos de carte à OpenAI";
+"settings.consent" = "Envoyer les photos de carte pour traduction";
 "settings.consent.footer" = "Nécessaire pour scanner une nouvelle carte. Désactivez-le et rien n'est envoyé ; les cartes d'exemple et vos traductions enregistrées continuent de fonctionner. La question vous sera reposée au prochain scan.";
 
 /* MARK: - Rename a saved scan */
@@ -149,3 +144,21 @@
 /* MARK: - Recommendations */
 "list.recommended" = "À commander";
 "list.recommended.allFiltered" = "Les plats que nous aurions suggérés entrent en conflit avec les restrictions de quelqu'un, ils ne sont donc pas affichés.";
+
+/* MARK: - Account (Sign in with Apple, credits) */
+"common.done" = "OK";
+"settings.account.header" = "Compte";
+"settings.account.balance" = "Solde";
+"settings.account.credits" = "%d crédits";
+"settings.account.signOut" = "Se déconnecter";
+"settings.account.delete" = "Supprimer le compte";
+"settings.account.delete.title" = "Supprimer votre compte ?";
+"settings.account.delete.message" = "Votre compte et ses crédits sont effacés de notre serveur, sans retour possible. L'historique sur ce téléphone est conservé.";
+"settings.account.delete.confirm" = "Supprimer le compte";
+"settings.account.footer" = "Vous démarrez avec 300 crédits et en recevez 100 de plus chaque mois où vous utilisez l'app ; les crédits n'expirent jamais. Une page de carte coûte environ 6 à 12 crédits, une image de plat ou une mosaïque de quatre environ 2 à 3.";
+"settings.account.signedOut.footer" = "Scanner une nouvelle carte nécessite un compte. Seul un identifiant Apple anonyme est utilisé — ni nom, ni e-mail. Les nouveaux comptes reçoivent 300 crédits offerts, puis 100 chaque mois où vous utilisez l'app.";
+"error.signInRequired" = "Connectez-vous d'abord avec Apple (Réglages → Compte) pour scanner une nouvelle carte.";
+"error.sessionExpired" = "Votre connexion a expiré. Reconnectez-vous avec Apple.";
+"error.outOfCredits" = "Crédits insuffisants : il en faut environ %1$d et votre solde est de %2$d. 100 de plus arrivent le prochain mois où vous utilisez l'app.";
+"error.signInFailed" = "Échec de la connexion : %@";
+"notice.imagesStopped" = "Images de plats interrompues : %@";

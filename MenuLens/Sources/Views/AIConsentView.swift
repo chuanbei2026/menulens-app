@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Consent for sending a menu photo to OpenAI, shown before the FIRST such
-/// send and never again once granted.
+/// Consent for sending a menu photo to our server and on to OpenAI, shown
+/// before the FIRST such send and never again once granted.
 ///
 /// Required by App Store Review Guideline 5.1.2(i), which since November
 /// 2025 names third-party AI explicitly: personal data may not be shared
@@ -9,7 +9,8 @@ import SwiftUI
 /// A photo is personal data, so scanning cannot precede this sheet.
 ///
 /// Three things the guideline (and the reviewer) look for, all here:
-///   1. the provider is named — OpenAI, not "our AI partner";
+///   1. the path is named — our server, which forwards to OpenAI, not
+///      "our AI partner";
 ///   2. the data categories are listed, and so is what stays on the device;
 ///   3. declining is real. "Not now" leaves the app fully usable: the
 ///      bundled sample menus and every saved translation are local.
@@ -19,6 +20,12 @@ struct AIConsentView: View {
     let onAgree: () -> Void
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var loc = Localization.shared
+
+    /// Defaults key for the grant. Builds before the backend stored it as
+    /// "openai_consent_granted", for photos going straight to OpenAI; the
+    /// path changed (our server now sits in between), so that old answer
+    /// does not carry over and everyone is asked once more.
+    static let grantedKey = "ai_consent_granted_v2"
 
     /// Kept in step with the privacy policy and the App Privacy answers in
     /// App Store Connect; review cross-checks all three against what the

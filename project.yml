@@ -21,6 +21,13 @@ targets:
       # per-sample subdirectories keep their structure in the app bundle.
       - path: MenuLens/Resources/Samples
         type: folder
+    # Sign in with Apple: the account behind the backend's credits. XcodeGen
+    # writes this file from the properties below.
+    entitlements:
+      path: MenuLens/MenuLens.entitlements
+      properties:
+        com.apple.developer.applesignin:
+          - Default
     info:
       path: MenuLens/Info.plist
       properties:

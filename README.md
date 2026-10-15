@@ -10,7 +10,7 @@
 拍下外语菜单（**支持多页**），得到一份**同版式、可缩放**的对照 PDF：
 
 - 📷 **输入**：菜单照片，一页或多页（连拍或相册多选，最多 8 页）
-- 🧠 **识别**：每页各调一次 OpenAI 视觉模型（默认 `gpt-4.1`，**页间并发**），
+- 🧠 **识别**：每页各调一次 OpenAI 视觉模型（经我们自己的后端转发，见下面 Backend 一节）（默认 `gpt-4.1`，**页间并发**），
   一次请求完成 OCR、版式提取（归一化 bounding box）和整句中文翻译
 - 🖼️ **配图**：菜单本身印有照片的菜直接从原图裁剪；没有照片的菜用
   `gpt-image-1` 自动生成小图（一菜一请求、并发窗口 3、逐张落盘，可在设置里关闭）
@@ -95,7 +95,9 @@ Key files:
 | `MenuLens/Sources/Models/MenuModels.swift` | `MenuDocument` / `MenuSection` / `MenuItemEntry` / `WordGloss` / `NormalizedRect` |
 | `MenuLens/Sources/Services/OpenAIClient.swift` | Chat Completions + strict JSON Schema（模型输出直接 decode 成 `MenuDocument`） |
 | `MenuLens/Sources/Services/ImageUtilities.swift` | EXIF 方向归一、上传压缩、按归一化 bbox 裁剪配图 |
-| `MenuLens/Sources/Services/KeychainStore.swift` | API key 存 Keychain |
+| `MenuLens/Sources/Services/BackendClient.swift` | 后端地址、请求构造、401/402 错误映射 |
+| `MenuLens/Sources/Services/AccountStore.swift` | Apple 登录换 session token、点数余额、退出 / 删除账号 |
+| `MenuLens/Sources/Services/KeychainStore.swift` | session token 存 Keychain |
 | `MenuLens/Sources/PDF/MenuPDFRenderer.swift` | 版式页 + 附录页的 PDF 渲染 |
 | `MenuLens/Sources/Views/` | SwiftUI：主流程、结果页、逐词对照 FlowLayout、设置页、相机 |
 | `MenuLens/Sources/Localization/Localization.swift` | `L("key")` + `AppLanguage`：按 App 内选择加载 `.lproj`，见上面 Language 一节 |
@@ -113,8 +115,19 @@ xcodegen generate        # 生成 MenuLens.xcodeproj（不进 git）
 open MenuLens.xcodeproj
 ```
 
-Xcode 里选一个模拟器或真机运行。首次使用先点右上角 ⚙️ 设置页，填入你的
-OpenAI API key（保存在 Keychain，永不进仓库）。
+Xcode 里选一个模拟器或真机运行。识别新菜单需要先用 Apple 登录（主界面卡片或
+设置页 →「账号」）；不登录也能看内置示例菜单。模拟器里没法真的走 Apple 登录时，
+DEBUG 构建可以用启动参数 `-sessionToken <token>` 直接塞一个 session token
+（`-signOut` 清掉），开发 token 的签发方法见 `backend/README.md`。
+
+## Backend
+
+App 不再用用户自己的 OpenAI key。所有模型调用都走我们自己的后端（`backend/`，
+一个 AWS Lambda）：Sign in with Apple → 我们的 session token → 按点数计费 → 用我们的
+key 转发给 OpenAI。`POST /menu` 接收的就是 App 原来发给 Chat Completions 的请求体并
+原样流回 SSE，`POST /image` 生成配图；余额不足返回 **402**，session 失效返回 **401**。
+新账号 300 点，每个用过的月份 +100。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
+接口、计价和部署见 [`backend/README.md`](backend/README.md)。
 
 ## Notes
 

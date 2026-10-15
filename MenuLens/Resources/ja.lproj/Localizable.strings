@@ -10,9 +10,8 @@
 "page.number" = "%dページ目";
 
 /* MARK: - First run */
-"onboarding.title" = "新しいメニューを読み取るには OpenAI キーが必要です";
-"onboarding.body" = "キーはこの端末から外に出ません。今すぐ、内蔵の実店舗メニュー2件を見てみることもできます。";
-"onboarding.enterKey" = "キーを入力";
+"onboarding.title" = "Apple でサインインすると新しいメニューを読み取れます";
+"onboarding.body" = "新規アカウントには 300 クレジット（メニュー1ページで約 6〜12）、使った月ごとにさらに 100 が付きます。今すぐ、内蔵の実店舗メニュー2件を見てみることもできます。";
 "onboarding.viewSamples" = "サンプルを見る";
 
 /* MARK: - Home */
@@ -22,7 +21,7 @@
 "home.captureMore" = "次のページ";
 "home.library" = "写真";
 "home.images.title" = "写真のない料理に画像を生成";
-"home.images.note" = "AI 生成、1品あたり約 $0.003、やや時間がかかります。今回の読み取りに適用";
+"home.images.note" = "AI 生成、コラージュモードなら1品1クレジット未満、やや時間がかかります。今回の読み取りに適用";
 "home.analyze" = "読み取って翻訳";
 "home.analyze.pages" = "読み取って翻訳（%dページ）";
 "home.samples" = "内蔵のサンプルメニューを見る";
@@ -31,11 +30,8 @@
 "settings.title" = "設定";
 "settings.language" = "言語";
 "settings.language.footer" = "アプリの表示言語と、メニューの翻訳先言語の両方を切り替えます。メニュー自体の言語は自動で判別されます。";
-"settings.apiKey.header" = "OpenAI API キー";
-"settings.apiKey.help" = "OpenAI API キーの取得方法";
-"settings.apiKey.footer" = "上のリンクから OpenAI のプラットフォームに登録し、残高を追加してからキーを作成し、ここに貼り付けてください。キーはこの端末のキーチェーンにのみ保存され、OpenAI を直接呼び出すためだけに使われます。どこにもアップロードされません。このアプリは独自のサーバーを持ちません。";
 "settings.model" = "モデル";
-"settings.model.footer" = "文字の詰まった1ページ（148行）での実測：gpt-4.1 約45秒 / $0.03（おすすめ、翻訳の進捗が見えます）· gpt-5-mini 約115秒 / $0.01（安価で訳語も丁寧ですが待ち時間が長い）· gpt-5 は最も正確で最も遅い。料理画像は別料金、コラージュモードで1品約 $0.003。";
+"settings.model.footer" = "文字の詰まった1ページ（148行）での実測：gpt-4.1 約45秒 / 約6クレジット（おすすめ、翻訳の進捗が見えます）· gpt-5-mini 約115秒 / 約2クレジット（安く訳語も丁寧ですが待ち時間が長い）· gpt-5 は最も正確で、最も遅く、最も高価。料理画像は別で、4品のコラージュ1枚あたり約2〜3クレジット。";
 "settings.party.header" = "同席する人";
 "settings.party.footer" = "注文時に「誰が頼んだか」を記録できるので、料理が来たときに取り違えません。食べられないものを設定すると、注文一覧が全品をチェックしてはっきり警告します。アイコンをタップして写真を設定、✕ で削除します。";
 "settings.member.name" = "名前";
@@ -44,7 +40,7 @@
 "settings.flatten" = "ページ全体の明るさを均一化（推奨）";
 "settings.flatten.footer" = "手持ち撮影の影やテカリを取り除き、紙面がきれいに整うので、訳文が元のデザインに自然に溶け込みます。暗いメニューは自動的にスキップされます。";
 "settings.grid" = "コラージュ節約モード";
-"settings.grid.footer" = "料理画像を生成するかどうかは、ホーム画面で読み取りごとにチェックします。コラージュモードは2×2の1枚をまとめて生成して切り分け、1品約 $0.003（1枚ずつは約 $0.011 で画質はやや上）。メニューに印刷された写真は常に優先されます。";
+"settings.grid.footer" = "料理画像を生成するかどうかは、ホーム画面で読み取りごとにチェックします。コラージュモードは2×2の1枚をまとめて生成して切り分け、4品で約2〜3クレジット（1枚ずつは1品約2〜3クレジットで画質はやや上）。メニューに印刷された写真は常に優先されます。";
 
 /* MARK: - Scan progress */
 "progress.note" = "レイアウトができ次第すぐ読めます。料理画像は裏で埋まっていきます";
@@ -117,8 +113,7 @@
 "error.encodeImages" = "選択した写真を変換できませんでした。";
 "error.recognizeFailed" = "読み取りに失敗しました。もう一度お試しください。";
 "notice.partialPages" = "%1$dページを読み取れませんでしたが、残りの %2$dページは保持しました。そのページだけ読み取り直せます。";
-"error.missingKey" = "OpenAI API キーが未設定です。まず設定画面で入力してください。";
-"error.http" = "OpenAI へのリクエストが失敗しました（HTTP %1$d）：%2$@";
+"error.http" = "リクエストが失敗しました（HTTP %1$d）：%2$@";
 "error.emptyResponse" = "OpenAI から空の結果が返りました。";
 "error.refusal" = "モデルがこのリクエストを拒否しました：%@";
 "error.badLineIndex" = "モデルが不正な行番号を返しました。";
@@ -127,18 +122,18 @@
 "pdf.header" = "料理対訳 · %1$@ → %2$@";
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
-"consent.title" = "メニューの写真は OpenAI に送信されます";
-"consent.body" = "メニューを読み取って翻訳するため、ForeignMenu はこの写真を OpenAI に送信します。端末から出るのはこれだけで、「読み取って翻訳」を押したときにのみ送信されます。";
-"consent.sent.header" = "OpenAI に送るもの";
-"consent.sent.photo" = "あなたが選んだメニューの写真";
+"consent.title" = "メニューの写真は当方のサーバーと OpenAI に送信されます";
+"consent.body" = "メニューを読み取って翻訳するため、ForeignMenu は写真を自社のサーバーに送り、サーバーが翻訳のために OpenAI へ渡します。「読み取って翻訳」を押したときにのみ送信されます。";
+"consent.sent.header" = "当方のサーバー経由で OpenAI に送るもの";
+"consent.sent.photo" = "あなたが選んだメニューの写真と、そこから読み取った文字";
 "consent.sent.names" = "料理名 —— 画像生成を依頼した場合のみ";
 "consent.kept.header" = "この端末から出ないもの";
-"consent.kept.body" = "API キー、翻訳の履歴、同席する人の名前と写真。";
-"consent.retention" = "OpenAI はリクエストに応答し、不正利用の監視のため API データを短期間保持します。開発者のサーバーは存在せず、データが当方を経由することはありません。";
+"consent.kept.body" = "翻訳の履歴、同席する人の名前と写真。";
+"consent.retention" = "当方のサーバーはメニューの写真や文字を保存しません。保存するのは匿名の Apple アカウント ID、クレジット残高、利用量の記録だけです。OpenAI は不正利用の監視のため API データを短期間保持します。";
 "consent.policy" = "プライバシーポリシーを読む";
 "consent.agree" = "同意して続ける";
 "consent.decline" = "今はしない";
-"settings.consent" = "メニューの写真を OpenAI に送信";
+"settings.consent" = "メニューの写真を翻訳のために送信";
 "settings.consent.footer" = "新しいメニューの読み取りに必要です。オフにすると何も送信されず、サンプルメニューと保存済みの翻訳はそのまま使えます。次に読み取るときに再度確認します。";
 
 /* MARK: - Rename a saved scan */
@@ -149,3 +144,21 @@
 /* MARK: - Recommendations */
 "list.recommended" = "おすすめ";
 "list.recommended.allFiltered" = "おすすめしたい料理が同席する方の苦手な食材と重なるため、表示していません。";
+
+/* MARK: - Account (Sign in with Apple, credits) */
+"common.done" = "完了";
+"settings.account.header" = "アカウント";
+"settings.account.balance" = "残高";
+"settings.account.credits" = "%d クレジット";
+"settings.account.signOut" = "サインアウト";
+"settings.account.delete" = "アカウントを削除";
+"settings.account.delete.title" = "アカウントを削除しますか？";
+"settings.account.delete.message" = "アカウントとクレジットはサーバーから削除され、元に戻せません。この端末の履歴はそのまま残ります。";
+"settings.account.delete.confirm" = "アカウントを削除";
+"settings.account.footer" = "最初に 300 クレジット、その後は使った月ごとに 100 が加わります。クレジットに有効期限はありません。メニュー1ページは約 6〜12、料理画像1枚または4品のコラージュは約 2〜3 クレジットです。";
+"settings.account.signedOut.footer" = "新しいメニューの読み取りにはアカウントが必要です。使うのは匿名の Apple アカウント ID だけで、名前やメールアドレスは求めません。新規アカウントには 300 クレジット、使った月ごとに 100 が付きます。";
+"error.signInRequired" = "新しいメニューを読み取るには、まず Apple でサインインしてください（設定 → アカウント）。";
+"error.sessionExpired" = "サインインの有効期限が切れました。もう一度 Apple でサインインしてください。";
+"error.outOfCredits" = "クレジットが足りません：今回は約 %1$d 必要で、残高は %2$d です。次に使う月にさらに 100 が付きます。";
+"error.signInFailed" = "サインインに失敗しました：%@";
+"notice.imagesStopped" = "料理画像の生成を停止しました：%@";

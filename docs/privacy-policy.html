@@ -15,22 +15,27 @@
 </head>
 <body>
 <h1>ForeignMenu · 外乡人的菜单 — 隐私政策</h1>
-<p class="updated">最后更新 / Last updated: 2026-08-27</p>
+<p class="updated">最后更新 / Last updated: 2026-10-15</p>
 
 <h2>一句话总结</h2>
-<p><strong>外乡人的菜单（ForeignMenu）没有自己的服务器，也没有账号系统。除了你主动送去翻译的菜单照片之外，没有任何数据离开你的手机 —— 那张照片直接发给 OpenAI，不经过我们（我们没有服务器）。我们不出售任何数据，也不做任何追踪。</strong></p>
+<p><strong>外乡人的菜单（ForeignMenu）有一个很小的服务器，只做两件事：管理你的点数，以及把你主动送去翻译的菜单转交给 OpenAI。服务器不保存菜单照片和文字；它只记得一个匿名的 Apple 账号 ID、你的点数余额和用量统计。翻译记录、同行成员和照片都留在你的手机上。我们不出售任何数据，也不做任何追踪。</strong></p>
 
 <h2>我们如何处理你的数据</h2>
 <ul>
-  <li><strong>菜单照片</strong>：为了识别和翻译，你选择的菜单照片会通过加密连接（HTTPS）直接发送给
-      OpenAI 的接口（api.openai.com）处理。照片不会经过我们的任何服务器 —— 我们没有服务器。
+  <li><strong>账号（通过 Apple 登录）</strong>：识别新菜单需要用 Apple 登录。App 不请求你的姓名和邮箱，
+      我们只收到 Apple 给这个 App 的匿名账号 ID，用它记录你的点数余额。
+      你可以随时在 App 的设置页 →「账号」里删除账号，账号和余额会从服务器上删除。</li>
+  <li><strong>菜单照片和文字</strong>：为了识别和翻译，你选择的菜单照片、从中识别出的文字
+      （以及你要求生成配图时的菜名）会通过加密连接（HTTPS）发送到我们的服务器，
+      服务器把它们原样转交 OpenAI 的接口处理，再把结果传回你的手机。
+      <strong>服务器不保存这些内容，也不写进日志。</strong>
       首次发送前，App 会明确询问你是否同意，并说明发送的内容；你可以拒绝
       —— 拒绝后示例菜单和已保存的翻译照常可用。这项许可可以随时在设置页关闭。
-      OpenAI 会短期保留 API 数据用于滥用监控。OpenAI 对这些数据的处理遵循其
+      OpenAI 会短期保留 API 数据用于滥用监控，其处理遵循
       <a href="https://openai.com/policies/api-data-usage-policies">API 数据使用政策</a>
       （API 提交的数据默认不用于训练模型）。</li>
-  <li><strong>OpenAI API Key</strong>：你的 Key 只保存在你设备本地的系统钥匙串（Keychain）中，
-      仅用于直接调用 OpenAI，绝不会被上传到其他任何地方。</li>
+  <li><strong>服务器保存的内容</strong>：匿名账号 ID、点数余额和发放记录，以及每次请求的用量统计
+      （请求大小、token 数、花费的点数、时间）。仅用于计费和维持服务运行。</li>
   <li><strong>翻译结果与历史记录</strong>：全部保存在你设备本地的应用沙盒中。删除记录或卸载应用即彻底清除。</li>
   <li><strong>同行成员姓名与头像</strong>：仅保存在设备本地，用于点菜标记，绝不上传。</li>
   <li><strong>相机与相册权限</strong>：仅在你主动拍摄或选择菜单照片时使用。</li>
@@ -38,9 +43,10 @@
 
 <h2>我们不做的事</h2>
 <ul>
-  <li>没有账号系统，没有登录。</li>
+  <li>不请求姓名、邮箱或电话。</li>
   <li>没有分析/统计 SDK，没有广告 SDK，没有崩溃收集。</li>
   <li>不收集设备标识符、位置信息或联系人。</li>
+  <li>不保存、不查看你的菜单照片和翻译内容。</li>
 </ul>
 
 <h2>联系方式</h2>
@@ -51,21 +57,26 @@
 <h1 class="en">Privacy Policy (English)</h1>
 
 <h2 class="en">In one sentence</h2>
-<p class="en"><strong>ForeignMenu has no server of its own and no accounts. Apart from the menu photo you deliberately send for translation, no data leaves your phone — and that photo goes straight to OpenAI, never through us, because there is no us to go through. We sell nothing and track nothing.</strong></p>
+<p class="en"><strong>ForeignMenu has a small server that does two things: it keeps your credit balance, and it passes the menus you deliberately send for translation on to OpenAI. It does not keep menu photos or text; it remembers only an anonymous Apple account id, your credit balance and usage counts. Your history, party members and photos stay on your phone. We sell nothing and track nothing.</strong></p>
 
 <h2 class="en">How your data is handled</h2>
 <ul class="en">
-  <li><strong>Menu photos</strong>: photos you choose are sent over HTTPS directly to OpenAI
-      (api.openai.com) for recognition and translation. They never pass through any server of
-      ours — we don't operate one. Before the first send, the app asks for your permission and states exactly
-      what will be sent; you can decline, and the sample menus and your saved
-      translations keep working. You can withdraw the permission at any time in
-      Settings. OpenAI retains API data briefly for abuse monitoring. OpenAI handles
-      this data under its
+  <li><strong>Account (Sign in with Apple)</strong>: scanning a new menu needs Sign in with Apple. The app
+      does not ask for your name or email; we receive only the anonymous account id Apple issues for
+      this app and use it to keep your credit balance. You can delete the account at any time in
+      Settings → Account, which removes the account and its balance from our server.</li>
+  <li><strong>Menu photos and text</strong>: the menu photo you choose, the text read from it (and dish
+      names, if you ask for generated dish photos) are sent over HTTPS to our server, which passes them
+      unchanged to OpenAI's API and returns the result to your phone. <strong>Our server does not store
+      or log this content.</strong> Before the first send, the app asks for your permission and states
+      exactly what will be sent; you can decline, and the sample menus and your saved translations keep
+      working. You can withdraw the permission at any time in Settings. OpenAI retains API data briefly
+      for abuse monitoring, under its
       <a href="https://openai.com/policies/api-data-usage-policies">API data usage policies</a>
       (API data is not used for model training by default).</li>
-  <li><strong>Your OpenAI API key</strong> is stored only in your device's Keychain and used
-      solely to call OpenAI directly.</li>
+  <li><strong>What our server keeps</strong>: the anonymous account id, your credit balance and grants,
+      and per-request usage counts (request size, token counts, credits charged, time) — only for
+      billing and keeping the service running.</li>
   <li><strong>Translations and history</strong> live entirely in the app's local sandbox.
       Deleting a record or the app removes them completely.</li>
   <li><strong>Party member names and avatars</strong> stay on the device only.</li>
@@ -74,9 +85,10 @@
 
 <h2 class="en">What we don't do</h2>
 <ul class="en">
-  <li>No accounts, no sign-in.</li>
+  <li>No name, email or phone number requested.</li>
   <li>No analytics, advertising, or crash-reporting SDKs.</li>
   <li>No device identifiers, location, or contacts collected.</li>
+  <li>We neither store nor look at your menu photos or translations.</li>
 </ul>
 
 <h2 class="en">Contact</h2>

@@ -10,9 +10,8 @@
 "page.number" = "第 %d 页";
 
 /* MARK: - First run */
-"onboarding.title" = "先填一个 OpenAI Key 才能识别新菜单";
-"onboarding.body" = "Key 只存在这台手机上。现在也可以直接翻看内置的两份真实餐厅菜单。";
-"onboarding.enterKey" = "填写 Key";
+"onboarding.title" = "用 Apple 登录后即可识别新菜单";
+"onboarding.body" = "新账号送 300 点（一页菜单约 6–12 点），之后每个用过的月份再送 100 点。现在也可以直接翻看内置的两份真实餐厅菜单。";
 "onboarding.viewSamples" = "看内置菜单";
 
 /* MARK: - Home */
@@ -22,7 +21,7 @@
 "home.captureMore" = "再拍一页";
 "home.library" = "相册";
 "home.images.title" = "为没有照片的菜生成配图";
-"home.images.note" = "AI 生成，约 $0.003/道，稍慢；本次识别生效";
+"home.images.note" = "AI 生成，拼图模式每道不到 1 点，稍慢；本次识别生效";
 "home.analyze" = "识别并翻译";
 "home.analyze.pages" = "识别并翻译（%d 页）";
 "home.samples" = "看看内置示例菜单";
@@ -31,11 +30,8 @@
 "settings.title" = "设置";
 "settings.language" = "语言";
 "settings.language.footer" = "同时决定界面语言和菜单翻译的目标语言。菜单本身的语言无需设置，自动识别。";
-"settings.apiKey.header" = "OpenAI API Key";
-"settings.apiKey.help" = "如何获取 OpenAI API Key？";
-"settings.apiKey.footer" = "在上方链接的 OpenAI 平台注册并充值后，创建一个 Key 粘贴到这里。Key 只保存在你手机本地的系统钥匙串（Keychain）中，只用于直接调用 OpenAI —— 不会上传到任何云端，本 App 没有自己的服务器。";
 "settings.model" = "模型";
-"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / $0.03（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / $0.01（更省钱，译名更讲究，但要等更久）· gpt-5 最准也最慢。配图另计，拼图模式约 $0.003/道。";
+"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / 约 6 点（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / 约 2 点（更省，译名更讲究，但要等更久）· gpt-5 最准、最慢也最贵。配图另计，四宫格一张约 2–3 点。";
 "settings.party.header" = "同行成员";
 "settings.party.footer" = "点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。";
 "settings.member.name" = "名字";
@@ -44,7 +40,7 @@
 "settings.flatten" = "整页匀光（推荐）";
 "settings.flatten.footer" = "消除拍照时的阴影和光斑，纸面变得干净均匀，翻译文字与原版融合得更自然。深色菜单会自动跳过。";
 "settings.grid" = "拼图省钱模式";
-"settings.grid.footer" = "是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，每道菜约 $0.003（单张模式约 $0.011，画质稍好）。菜单本身的照片始终优先使用。";
+"settings.grid.footer" = "是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，四道菜一共约 2–3 点（单张模式每道约 2–3 点，画质稍好）。菜单本身的照片始终优先使用。";
 
 /* MARK: - Scan progress */
 "progress.note" = "排版完成后立即可以查看，配图会在后台继续补齐";
@@ -117,8 +113,7 @@
 "error.encodeImages" = "无法编码所选图片。";
 "error.recognizeFailed" = "识别失败，请重试。";
 "notice.partialPages" = "有 %1$d 页没能识别，已保留其余 %2$d 页。可以重新识别那几页。";
-"error.missingKey" = "尚未设置 OpenAI API Key，请先在设置页填写。";
-"error.http" = "OpenAI 请求失败（HTTP %1$d）：%2$@";
+"error.http" = "请求失败（HTTP %1$d）：%2$@";
 "error.emptyResponse" = "OpenAI 返回了空结果。";
 "error.refusal" = "模型拒绝了这次请求：%@";
 "error.badLineIndex" = "模型返回了无效的行号。";
@@ -127,18 +122,18 @@
 "pdf.header" = "菜品对照 · %1$@ → %2$@";
 
 /* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
-"consent.title" = "菜单照片会发送给 OpenAI";
-"consent.body" = "为了识别和翻译菜单，外乡人的菜单会把这张照片发送给 OpenAI。这是唯一离开你手机的东西，而且只在你点「识别并翻译」时才发生。";
-"consent.sent.header" = "会发给 OpenAI";
-"consent.sent.photo" = "你选择的菜单照片";
+"consent.title" = "菜单照片会发送到我们的服务器和 OpenAI";
+"consent.body" = "为了识别和翻译菜单，外乡人的菜单会把这张照片发到自己的服务器，再由服务器转交 OpenAI 翻译。只在你点「识别并翻译」时才发生。";
+"consent.sent.header" = "发到我们的服务器，再转给 OpenAI";
+"consent.sent.photo" = "你选择的菜单照片，以及从中识别出的文字";
 "consent.sent.names" = "菜名 —— 仅当你要求生成配图时";
 "consent.kept.header" = "永远不离开这台手机";
-"consent.kept.body" = "你的 API Key、所有翻译记录，以及同行成员的姓名和头像。";
-"consent.retention" = "OpenAI 处理这次请求，并会短期保留 API 数据用于滥用监控。本 App 没有自己的服务器 —— 数据不经过我们。";
+"consent.kept.body" = "所有翻译记录，以及同行成员的姓名和头像。";
+"consent.retention" = "我们的服务器不保存菜单照片和文字，只记录匿名的 Apple 账号 ID、点数余额和用量统计。OpenAI 会短期保留 API 数据用于滥用监控。";
 "consent.policy" = "查看隐私政策";
 "consent.agree" = "同意并继续";
 "consent.decline" = "暂不";
-"settings.consent" = "把菜单照片发送给 OpenAI";
+"settings.consent" = "发送菜单照片用于翻译";
 "settings.consent.footer" = "识别新菜单必须开启。关掉后什么都不会被发送，示例菜单和已保存的翻译照常可用。下次识别时会再问你一次。";
 
 /* MARK: - Rename a saved scan */
@@ -149,3 +144,21 @@
 /* MARK: - Recommendations */
 "list.recommended" = "值得点";
 "list.recommended.allFiltered" = "本来想推荐的菜和同行成员的忌口冲突，所以没有显示。";
+
+/* MARK: - Account (Sign in with Apple, credits) */
+"common.done" = "完成";
+"settings.account.header" = "账号";
+"settings.account.balance" = "余额";
+"settings.account.credits" = "%d 点";
+"settings.account.signOut" = "退出登录";
+"settings.account.delete" = "删除账号";
+"settings.account.delete.title" = "要删除账号吗？";
+"settings.account.delete.message" = "账号和余额会从我们的服务器上删除，无法恢复。这台手机上的历史记录不受影响。";
+"settings.account.delete.confirm" = "删除账号";
+"settings.account.footer" = "新账号有 300 点，之后每个用过的月份再加 100 点，点数永不过期。一页菜单约 6–12 点，一张配图或一张四宫格约 2–3 点。";
+"settings.account.signedOut.footer" = "识别新菜单需要一个账号。只使用匿名的 Apple 账号 ID，不要姓名、不要邮箱。新账号送 300 点，之后每个用过的月份再送 100 点。";
+"error.signInRequired" = "请先用 Apple 登录（设置 → 账号）再识别新菜单。";
+"error.sessionExpired" = "登录已过期，请重新用 Apple 登录。";
+"error.outOfCredits" = "点数不够：这次大约需要 %1$d 点，余额 %2$d 点。下个月使用时会再送 100 点。";
+"error.signInFailed" = "登录失败：%@";
+"notice.imagesStopped" = "配图已停止：%@";
