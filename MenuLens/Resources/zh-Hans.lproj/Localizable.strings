@@ -31,7 +31,7 @@
 "settings.language" = "语言";
 "settings.language.footer" = "同时决定界面语言和菜单翻译的目标语言。菜单本身的语言无需设置，自动识别。";
 "settings.model" = "模型";
-"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / 约 6 点（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / 约 2 点（更省，译名更讲究，但要等更久）· gpt-5 最准、最慢也最贵。配图另计，四宫格一张约 0.5 点。";
+"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / 约 6 点（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / 约 2 点（更省，译名更讲究，但要等更久）· gpt-5 最准、最慢也最贵 · Mistral Large 3 约 40 秒 / 约 3 点（更省，精度稍低，翻完才显示进度）。";
 "settings.party.header" = "同行成员";
 "settings.party.footer" = "点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。";
 "settings.member.name" = "名字";
@@ -203,3 +203,15 @@
 "redeem.error.expired" = "这个兑换码已过期。";
 "redeem.error.used_up" = "这个兑换码已被领完。";
 "redeem.error.already_redeemed" = "你已经兑换过这个兑换码了。";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "你所在的地区由 Mistral Large 3 翻译菜单：一页密排菜单约 40 秒、约 3 点。";
+"model.blurb.gpt-4.1" = "推荐";
+"model.blurb.gpt-5-mini" = "更省，较慢";
+"model.blurb.gpt-5" = "最准，最慢";
+"model.blurb.gpt-4o" = "较快，旧一代模型";
+"model.blurb.mistral-large-3" = "Mistral · 更省，精度稍低";
+"home.images.unavailable" = "你所在的地区暂不支持生成菜品配图";
+"home.region.unavailable" = "你所在的地区暂不可用";
+"progress.imagesRegion" = "你所在的地区暂不可用";
+"error.region" = "这个模型在你的 App Store 地区不可用。模型列表已更新，请重新识别。";

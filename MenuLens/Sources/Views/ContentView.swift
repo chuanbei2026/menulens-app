@@ -13,6 +13,8 @@ struct ContentView: View {
     /// Signed out there is nothing to scan with, so the capture controls
     /// stay inert until the user signs in.
     @ObservedObject private var account = AccountStore.shared
+    /// What this App Store region offers: models, and whether dish pictures.
+    @ObservedObject private var region = RegionStore.shared
     @State private var showCamera = false
     @State private var showSettings =
         ProcessInfo.processInfo.arguments.contains("-showSettings")
@@ -381,35 +383,54 @@ struct ContentView: View {
             }
             .padding(.horizontal)
 
-            Toggle(isOn: $generateDishImages) {
-                VStack(alignment: .leading, spacing: 1) {
-                    Label(L("home.images.title"), systemImage: "photo.artframe")
-                        .font(.subheadline)
-                    Text(L("home.images.note"))
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+            if region.catalog.images {
+                Toggle(isOn: $generateDishImages) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Label(L("home.images.title"), systemImage: "photo.artframe")
+                            .font(.subheadline)
+                        Text(L("home.images.note"))
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
                 }
+                .padding(.horizontal)
+            } else {
+                Label(L("home.images.unavailable"), systemImage: "photo.artframe")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
             }
-            .padding(.horizontal)
 
-            Button {
-                if aiConsentGranted {
-                    Task { await viewModel.analyze() }
-                } else {
-                    showAIConsent = true
+            if region.isAvailable {
+                Button {
+                    if aiConsentGranted {
+                        Task { await viewModel.analyze() }
+                    } else {
+                        showAIConsent = true
+                    }
+                } label: {
+                    Label(
+                        viewModel.pickedImages.count > 1
+                            ? L("home.analyze.pages", viewModel.pickedImages.count)
+                            : L("home.analyze"),
+                        systemImage: "sparkles"
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-            } label: {
-                Label(
-                    viewModel.pickedImages.count > 1
-                        ? L("home.analyze.pages", viewModel.pickedImages.count)
-                        : L("home.analyze"),
-                    systemImage: "sparkles"
-                )
-                .frame(maxWidth: .infinity)
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.pickedImages.isEmpty || !account.isSignedIn)
+                .padding(.horizontal)
+            } else {
+                // No model may run for this App Store region: say so where
+                // the scan would start, instead of a request that fails.
+                Label(L("home.region.unavailable"), systemImage: "globe.badge.chevron.backward")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .foregroundStyle(.secondary)
+                    .background(Color(.secondarySystemBackground), in: Capsule())
+                    .padding(.horizontal)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.pickedImages.isEmpty || !account.isSignedIn)
-            .padding(.horizontal)
 
             if account.isSignedIn {
                 Button(L("home.samples")) {

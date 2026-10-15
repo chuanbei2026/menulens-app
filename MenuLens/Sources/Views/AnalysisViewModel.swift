@@ -155,6 +155,13 @@ final class AnalysisViewModel: ObservableObject {
         pipeline?.translateStartedAt = Date()
         let target = AppLanguage.from(code: targetLanguageCode)
         let account = AccountStore.shared
+        // The saved model may not be offered in this App Store region (any
+        // more); the region's default stands in, as the picker would show.
+        let region = RegionStore.shared
+        await region.ready()
+        if !region.catalog.models.contains(where: { $0.id == model }), let fallback = region.catalog.defaultModel {
+            model = fallback
+        }
         let client = OpenAIClient(
             sessionToken: account.sessionToken,
             model: model,
@@ -251,6 +258,12 @@ final class AnalysisViewModel: ObservableObject {
 
         // Every page was charged (or refused); show the new balance.
         Task { await account.refreshCredits() }
+        // 403 region: the catalog changed under us (or the storefront did).
+        // Reload it — that moves the model to the region's default — and
+        // the error says to scan again.
+        if case .region = lastError as? Backend.BackendError {
+            Task { await RegionStore.shared.refresh() }
+        }
 
         // Keep documents and photos PAIRED. Dropping failed pages from the
         // documents while keeping every image would shift the two lists apart
@@ -499,7 +512,9 @@ final class AnalysisViewModel: ObservableObject {
     /// arrive and shown while `run` is on screen; nil when generation is off.
     /// The PDF is re-rendered once, when the queue drains.
     private func makeImageQueue(scanID: UUID, run: UUID, keys: PageKeyMap) -> DishImageQueue? {
-        guard generateDishImages, aiConsentGranted, AccountStore.shared.isSignedIn else { return nil }
+        guard generateDishImages, RegionStore.shared.catalog.images,
+              aiConsentGranted, AccountStore.shared.isSignedIn
+        else { return nil }
         let queue = DishImageQueue(
             client: ImageGenClient(sessionToken: AccountStore.shared.sessionToken),
             gridMode: thumbnailGridMode
@@ -518,6 +533,7 @@ final class AnalysisViewModel: ObservableObject {
             guard let self, self.displayedRun == run else { return }
             if let reason = queue?.stopReason {
                 if case .outOfCredits = reason { self.outOfCredits = true }
+                if case .region = reason { Task { await RegionStore.shared.refresh() } }
                 // Close the progress out at what was actually made.
                 if let done = self.pipeline?.imagesDone { self.pipeline?.imagesTotal = done }
                 self.notice = [self.notice, L("notice.imagesStopped", reason.localizedDescription)]

@@ -139,7 +139,7 @@ struct ImageGenClient {
             else { return nil }
 
             // Retrying cannot fix these, and neither can the next dish.
-            if http.statusCode == 401 || http.statusCode == 402 {
+            if [401, 402, 403].contains(http.statusCode) {
                 stop.stop(Backend.failure(status: http.statusCode, body: data))
                 return nil
             }

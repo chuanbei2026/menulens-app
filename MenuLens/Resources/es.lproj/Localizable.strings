@@ -31,7 +31,7 @@
 "settings.language" = "Idioma";
 "settings.language.footer" = "Define tanto el idioma de la app como el idioma al que se traducen las cartas. El idioma de la carta se detecta automáticamente.";
 "settings.model" = "Modelo";
-"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro. Las imágenes de platos se cobran aparte, unos 0,5 créditos por collage de cuatro.";
+"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro · Mistral Large 3 unos 40 s / ~3 créditos (más barato, algo menos preciso, sin avance hasta que termina).";
 "settings.party.header" = "En la mesa";
 "settings.party.footer" = "Al pedir puedes marcar quién ha pedido cada plato, para que llegue a la persona correcta. Si indicas lo que alguien no come, el resumen revisa todos sus platos y avisa de forma bien visible. Toca un avatar para poner una foto y ✕ para quitar a alguien.";
 "settings.member.name" = "Nombre";
@@ -203,3 +203,15 @@
 "redeem.error.expired" = "Este código ha caducado.";
 "redeem.error.used_up" = "Este código ya se ha agotado.";
 "redeem.error.already_redeemed" = "Ya has canjeado este código.";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "En tu región las cartas las traduce Mistral Large 3: unos 40 s y ~3 créditos por una página muy densa.";
+"model.blurb.gpt-4.1" = "Recomendado";
+"model.blurb.gpt-5-mini" = "Más barato, más lento";
+"model.blurb.gpt-5" = "El más preciso, el más lento";
+"model.blurb.gpt-4o" = "Rápido, un modelo anterior";
+"model.blurb.mistral-large-3" = "Mistral · más barato, algo menos preciso";
+"home.images.unavailable" = "Las imágenes de platos no están disponibles en tu región";
+"home.region.unavailable" = "No disponible en tu región";
+"progress.imagesRegion" = "No disponible en tu región";
+"error.region" = "Este modelo no se ofrece en tu región del App Store. Se ha actualizado la lista de modelos; vuelve a escanear.";

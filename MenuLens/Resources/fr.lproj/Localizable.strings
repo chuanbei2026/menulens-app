@@ -31,7 +31,7 @@
 "settings.language" = "Langue";
 "settings.language.footer" = "Définit à la fois la langue de l'application et celle dans laquelle les cartes sont traduites. La langue de la carte, elle, est détectée automatiquement.";
 "settings.model" = "Modèle";
-"settings.model.footer" = "Mesuré sur une page dense (148 lignes) : gpt-4.1 environ 45 s / ~6 crédits (recommandé, progression affichée pendant la traduction) · gpt-5-mini environ 115 s / ~2 crédits (moins cher, noms mieux traduits, mais plus d'attente) · gpt-5 est le plus précis, le plus lent et le plus cher. Les images de plats sont comptées à part, environ 0,5 crédit par mosaïque de quatre.";
+"settings.model.footer" = "Mesuré sur une page dense (148 lignes) : gpt-4.1 environ 45 s / ~6 crédits (recommandé, progression affichée pendant la traduction) · gpt-5-mini environ 115 s / ~2 crédits (moins cher, noms mieux traduits, mais plus d'attente) · gpt-5 est le plus précis, le plus lent et le plus cher · Mistral Large 3 environ 40 s / ~3 crédits (moins cher, un peu moins précis, sans progression avant la fin).";
 "settings.party.header" = "À table";
 "settings.party.footer" = "Pendant la commande, vous pouvez noter qui a demandé quoi, pour que chaque plat arrive à la bonne personne. Indiquez ce que quelqu'un ne mange pas et le récapitulatif vérifie chacun de ses plats et vous alerte clairement. Touchez un avatar pour ajouter une photo, ✕ pour retirer la personne.";
 "settings.member.name" = "Nom";
@@ -203,3 +203,15 @@
 "redeem.error.expired" = "Ce code a expiré.";
 "redeem.error.used_up" = "Ce code a atteint sa limite d'utilisations.";
 "redeem.error.already_redeemed" = "Vous avez déjà utilisé ce code.";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "Dans votre région, les cartes sont traduites par Mistral Large 3 : environ 40 s et ~3 crédits pour une page dense.";
+"model.blurb.gpt-4.1" = "Recommandé";
+"model.blurb.gpt-5-mini" = "Moins cher, plus lent";
+"model.blurb.gpt-5" = "Le plus précis, le plus lent";
+"model.blurb.gpt-4o" = "Rapide, modèle plus ancien";
+"model.blurb.mistral-large-3" = "Mistral · moins cher, un peu moins précis";
+"home.images.unavailable" = "Les images de plats ne sont pas disponibles dans votre région";
+"home.region.unavailable" = "Non disponible dans votre région";
+"progress.imagesRegion" = "Non disponible dans votre région";
+"error.region" = "Ce modèle n'est pas proposé dans votre région App Store. La liste des modèles a été mise à jour : scannez à nouveau.";

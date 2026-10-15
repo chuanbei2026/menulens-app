@@ -119,6 +119,9 @@ struct AnalysisProgressView: View {
             icon: "photo.artframe",
             title: L("progress.stage.images"),
             status: {
+                if !RegionStore.shared.catalog.images {
+                    return .pending(L("progress.imagesRegion"))
+                }
                 if !viewModel.generateDishImages {
                     return .pending(L("progress.imagesOff"))
                 }

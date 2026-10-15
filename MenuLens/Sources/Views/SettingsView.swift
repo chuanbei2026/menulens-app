@@ -3,7 +3,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("openai_model") private var model = "gpt-4.1"
+    @AppStorage(RegionStore.modelKey) private var model = "gpt-4.1"
     @AppStorage("thumbnail_grid_mode") private var thumbnailGridMode = true
     @AppStorage("flatten_lighting") private var flattenLighting = true
     @AppStorage(AIConsentView.grantedKey) private var aiConsentGranted = false
@@ -20,7 +20,8 @@ struct SettingsView: View {
     @State private var avatarPickerItem: PhotosPickerItem?
     @State private var showAvatarPicker = false
 
-    private let models = ["gpt-4.1", "gpt-5-mini", "gpt-5", "gpt-4o"]
+    /// The models this App Store region offers (GET /models).
+    @ObservedObject private var region = RegionStore.shared
 
     private func addMember() {
         party.add(name: newMemberName)
@@ -59,10 +60,26 @@ struct SettingsView: View {
 
                 Section {
                     Picker(L("settings.model"), selection: $model) {
-                        ForEach(models, id: \.self) { Text($0) }
+                        ForEach(region.catalog.models) { option in
+                            // Title + subtitle in the menu; the closed picker
+                            // shows the name only.
+                            VStack(alignment: .leading) {
+                                Text(option.name)
+                                Text(region.blurb(for: option))
+                            }
+                            .tag(option.id)
+                        }
+                    }
+                    if let selected = region.catalog.models.first(where: { $0.id == model }) {
+                        Text(region.blurb(for: selected))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 } footer: {
-                    Text(L("settings.model.footer"))
+                    // The measured comparison only makes sense where the
+                    // OpenAI models are on offer.
+                    Text(L(region.catalog.models.contains { $0.provider == "openai" }
+                        ? "settings.model.footer" : "settings.model.footer.regional"))
                 }
 
                 Section {
@@ -144,10 +161,17 @@ struct SettingsView: View {
                     Text(L("settings.flatten.footer"))
                 }
 
-                Section {
-                    Toggle(L("settings.grid"), isOn: $thumbnailGridMode)
-                } footer: {
-                    Text(L("settings.grid.footer"))
+                if region.catalog.images {
+                    Section {
+                        Toggle(L("settings.grid"), isOn: $thumbnailGridMode)
+                    } footer: {
+                        Text(L("settings.grid.footer"))
+                    }
+                } else {
+                    Section {
+                        Label(L("home.images.unavailable"), systemImage: "photo.artframe")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .navigationTitle(L("settings.title"))

@@ -35,7 +35,7 @@
 "settings.language" = "Language";
 "settings.language.footer" = "Sets both the app's own language and the language menus are translated into. The menu's own language is detected automatically.";
 "settings.model" = "Model";
-"settings.model.footer" = "Measured on one densely printed page (148 lines): gpt-4.1 about 45s / ~6 credits (recommended, shows progress as it translates) · gpt-5-mini about 115s / ~2 credits (cheaper, more careful naming, but a longer wait) · gpt-5 is the most accurate, the slowest and the most expensive. Dish photos are charged separately, about 0.5 credit per collage of four.";
+"settings.model.footer" = "Measured on one densely printed page (148 lines): gpt-4.1 about 45s / ~6 credits (recommended, shows progress as it translates) · gpt-5-mini about 115s / ~2 credits (cheaper, more careful naming, but a longer wait) · gpt-5 is the most accurate, the slowest and the most expensive · Mistral Large 3 about 40s / ~3 credits (cheaper, a bit less precise, no progress until it's done).";
 "settings.party.header" = "Who's at the table";
 "settings.party.footer" = "While ordering you can mark who asked for each dish, so the right plate reaches the right person. Set someone's restrictions and the summary checks every dish they ordered and warns loudly. Tap an avatar to upload a photo, tap ✕ to remove a person.";
 "settings.member.name" = "Name";
@@ -211,3 +211,15 @@
 "redeem.error.expired" = "This code has expired.";
 "redeem.error.used_up" = "This code has been fully used.";
 "redeem.error.already_redeemed" = "You have already redeemed this code.";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "In your region menus are translated by Mistral Large 3: about 40s and ~3 credits for a densely printed page.";
+"model.blurb.gpt-4.1" = "Recommended";
+"model.blurb.gpt-5-mini" = "Cheaper, slower";
+"model.blurb.gpt-5" = "Most precise, slowest";
+"model.blurb.gpt-4o" = "Fast, an older model";
+"model.blurb.mistral-large-3" = "Mistral · cheaper, a bit less precise";
+"home.images.unavailable" = "Dish pictures aren't available in your region";
+"home.region.unavailable" = "Not available in your region";
+"progress.imagesRegion" = "Not available in your region";
+"error.region" = "This model isn't offered in your App Store region. The model list has been updated — please scan again.";

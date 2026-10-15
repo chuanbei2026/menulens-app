@@ -31,7 +31,7 @@
 "settings.language" = "언어";
 "settings.language.footer" = "앱의 표시 언어와 메뉴 번역 대상 언어를 함께 바꿉니다. 메뉴 자체의 언어는 자동으로 인식됩니다.";
 "settings.model" = "모델";
-"settings.model.footer" = "빽빽한 메뉴 한 페이지(148행) 실측: gpt-4.1 약 45초 / 약 6 크레딧(권장, 번역 진행 상황이 보임) · gpt-5-mini 약 115초 / 약 2 크레딧(더 저렴하고 번역이 정성스럽지만 오래 기다림) · gpt-5는 가장 정확하고 가장 느리며 가장 비쌉니다. 요리 이미지는 별도로, 4개짜리 콜라주 한 장에 약 0.5 크레딧.";
+"settings.model.footer" = "빽빽한 메뉴 한 페이지(148행) 실측: gpt-4.1 약 45초 / 약 6 크레딧(권장, 번역 진행 상황이 보임) · gpt-5-mini 약 115초 / 약 2 크레딧(더 저렴하고 번역이 정성스럽지만 오래 기다림) · gpt-5는 가장 정확하고 가장 느리며 가장 비쌉니다 · Mistral Large 3 약 40초 / 약 3 크레딧(저렴, 정확도는 조금 낮음, 끝날 때까지 진행 상황이 보이지 않음).";
 "settings.party.header" = "같이 먹는 사람";
 "settings.party.footer" = "주문할 때 누가 시킨 요리인지 표시해 두면 음식이 나올 때 헷갈리지 않습니다. 못 먹는 것을 설정하면 주문 요약이 모든 요리를 확인해 눈에 띄게 알려 줍니다. 아이콘을 눌러 사진을 넣고, ✕로 삭제합니다.";
 "settings.member.name" = "이름";
@@ -203,3 +203,15 @@
 "redeem.error.expired" = "만료된 코드입니다.";
 "redeem.error.used_up" = "이 코드는 모두 소진되었습니다.";
 "redeem.error.already_redeemed" = "이미 교환한 코드입니다.";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "현재 지역에서는 Mistral Large 3가 메뉴를 번역합니다: 빽빽한 메뉴 한 페이지에 약 40초, 약 3 크레딧.";
+"model.blurb.gpt-4.1" = "권장";
+"model.blurb.gpt-5-mini" = "저렴, 조금 느림";
+"model.blurb.gpt-5" = "가장 정확, 가장 느림";
+"model.blurb.gpt-4o" = "빠름, 이전 세대 모델";
+"model.blurb.mistral-large-3" = "Mistral · 저렴, 정확도는 조금 낮음";
+"home.images.unavailable" = "현재 지역에서는 요리 이미지를 만들 수 없습니다";
+"home.region.unavailable" = "현재 지역에서는 사용할 수 없습니다";
+"progress.imagesRegion" = "현재 지역에서는 사용할 수 없음";
+"error.region" = "이 모델은 현재 App Store 지역에서 제공되지 않습니다. 모델 목록을 업데이트했으니 다시 인식해 주세요.";

@@ -31,7 +31,7 @@
 "settings.language" = "言語";
 "settings.language.footer" = "アプリの表示言語と、メニューの翻訳先言語の両方を切り替えます。メニュー自体の言語は自動で判別されます。";
 "settings.model" = "モデル";
-"settings.model.footer" = "文字の詰まった1ページ（148行）での実測：gpt-4.1 約45秒 / 約6クレジット（おすすめ、翻訳の進捗が見えます）· gpt-5-mini 約115秒 / 約2クレジット（安く訳語も丁寧ですが待ち時間が長い）· gpt-5 は最も正確で、最も遅く、最も高価。料理画像は別で、4品のコラージュ1枚あたり約0.5クレジット。";
+"settings.model.footer" = "文字の詰まった1ページ（148行）での実測：gpt-4.1 約45秒 / 約6クレジット（おすすめ、翻訳の進捗が見えます）· gpt-5-mini 約115秒 / 約2クレジット（安く訳語も丁寧ですが待ち時間が長い）· gpt-5 は最も正確で、最も遅く、最も高価 · Mistral Large 3 約40秒 / 約3クレジット（安価、精度はやや低め、終わるまで進捗は出ません）。";
 "settings.party.header" = "同席する人";
 "settings.party.footer" = "注文時に「誰が頼んだか」を記録できるので、料理が来たときに取り違えません。食べられないものを設定すると、注文一覧が全品をチェックしてはっきり警告します。アイコンをタップして写真を設定、✕ で削除します。";
 "settings.member.name" = "名前";
@@ -203,3 +203,15 @@
 "redeem.error.expired" = "このコードは有効期限が切れています。";
 "redeem.error.used_up" = "このコードは上限に達しました。";
 "redeem.error.already_redeemed" = "このコードはすでに引き換え済みです。";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "お住まいの地域では Mistral Large 3 がメニューを翻訳します：文字の詰まった1ページで約40秒、約3クレジットです。";
+"model.blurb.gpt-4.1" = "おすすめ";
+"model.blurb.gpt-5-mini" = "安価、やや遅い";
+"model.blurb.gpt-5" = "最も正確、最も遅い";
+"model.blurb.gpt-4o" = "速い、旧世代のモデル";
+"model.blurb.mistral-large-3" = "Mistral · 安価、精度はやや低め";
+"home.images.unavailable" = "お住まいの地域では料理画像を生成できません";
+"home.region.unavailable" = "お住まいの地域ではご利用いただけません";
+"progress.imagesRegion" = "お住まいの地域では利用できません";
+"error.region" = "このモデルはお使いの App Store の地域では提供されていません。モデル一覧を更新しました。もう一度読み取ってください。";

@@ -13,6 +13,9 @@ enum Backend {
         case sessionExpired
         /// 402: the request costs more than the balance.
         case outOfCredits(balance: Int, needed: Int)
+        /// 403 reason "region": this model (or dish pictures) isn't offered
+        /// in the App Store region the request came from.
+        case region
         case http(Int, String)
 
         var errorDescription: String? {
@@ -23,6 +26,8 @@ enum Backend {
                 return L("error.sessionExpired")
             case let .outOfCredits(balance, needed):
                 return L("error.outOfCredits", needed, balance)
+            case .region:
+                return L("error.region")
             case let .http(code, message):
                 return L("error.http", code, message)
             }
@@ -34,6 +39,10 @@ enum Backend {
         request.httpMethod = method
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        // The server decides per App Store region which models may run.
+        if let storefront = RegionStore.storefrontCode {
+            request.setValue(storefront, forHTTPHeaderField: "X-Storefront")
         }
         if let json {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -59,6 +68,8 @@ enum Backend {
             return .sessionExpired
         case 402:
             return .outOfCredits(balance: whole("totalCredits"), needed: whole("needed"))
+        case 403 where (object?["reason"] ?? detail?["reason"]) as? String == "region":
+            return .region
         default:
             let message = detail?["message"] as? String
                 ?? String(decoding: body.prefix(500), as: UTF8.self)

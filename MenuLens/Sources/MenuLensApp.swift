@@ -10,6 +10,9 @@ struct MenuLensApp: App {
         // Listens for StoreKit transactions from launch on, so a purchase
         // paid but not yet credited (app killed, offline) is retried.
         _ = CreditShop.shared
+        // Learns the App Store region (and its model catalog) before the
+        // first request needs the X-Storefront header.
+        _ = RegionStore.shared
     }
 
     var body: some Scene {
