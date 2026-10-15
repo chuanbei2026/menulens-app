@@ -7,7 +7,7 @@ import { issueSessionToken } from "../src/auth.mjs";
 const base = (process.argv[2] ?? "").replace(/\/$/, "");
 if (!base) throw new Error("usage: live-test.mjs <function-url>");
 const sm = new SecretsManagerClient({ region: "us-west-2" });
-const { SecretString } = await sm.send(new GetSecretValueCommand({ SecretId: "dateseries/foreignmenu-session-key" }));
+const { SecretString } = await sm.send(new GetSecretValueCommand({ SecretId: "foreignmenu/session-key" }));
 const { token } = issueSessionToken(`dev:live-${Date.now()}`, JSON.parse(SecretString).key, { days: 1 });
 const auth = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 const credits = async () => (await (await fetch(`${base}/credits`, { headers: auth })).json()).totalCredits;

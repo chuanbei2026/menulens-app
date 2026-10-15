@@ -42,7 +42,7 @@ AWS_PROFILE=claude-agent node scripts/live-test.mjs <function-url>     # end to 
 
 Live: `https://uwondrk7ngmf3jgkimsifwa62q0fwgzo.lambda-url.us-west-2.on.aws/`
 
-- OpenAI key: secret `AwsLambdaKey/foreign-menu` (`{"key": …}`). Session key: `dateseries/foreignmenu-session-key`.
+- OpenAI key: secret `AwsLambdaKey/foreign-menu` (`{"key": …}`). Session key: `foreignmenu/session-key`.
 - Logs: `/aws/lambda/foreignmenu-api` (90 days), one JSON line per request with sizes, tokens, `costUsd` and
   credits; metrics in the `ForeignMenu` namespace; saved queries under **ForeignMenu/**.
   **Never logged:** menu photos, text, prompts, model output, tokens or secrets.

@@ -6,8 +6,7 @@
 # Creates (if missing) / updates:
 #   DynamoDB  foreignmenu-accounts (PK userId), foreignmenu-ledger (PK userId, SK at),
 #             foreignmenu-promo (PK code, SK sk), foreignmenu-usage-daily (PK userId, SK day) — on-demand
-#   Secret    dateseries/foreignmenu-session-key {"key": <random>} — signs our 30-day session tokens
-#             (under dateseries/ because that is the prefix the deploy user may create secrets in)
+#   Secret    foreignmenu/session-key {"key": <random>} — signs our 30-day session tokens
 #   IAM role  foreignmenu-api-role (with the ClaudeWorkloadBoundary permissions boundary)
 #   Lambda    foreignmenu-api (Node.js) + Function URL in RESPONSE_STREAM mode
 # The OpenAI key is read from the existing secret AwsLambdaKey/foreign-menu ({"key": "sk-…"}).
@@ -19,7 +18,7 @@ ACCOUNTS_TABLE="foreignmenu-accounts"
 LEDGER_TABLE="foreignmenu-ledger"
 PROMO_TABLE="foreignmenu-promo"
 DAILY_TABLE="foreignmenu-usage-daily"
-SESSION_SECRET_NAME="dateseries/foreignmenu-session-key"
+SESSION_SECRET_NAME="foreignmenu/session-key"
 OPENAI_SECRET_ID="AwsLambdaKey/foreign-menu"
 RUNTIME="${RUNTIME:-nodejs22.x}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
