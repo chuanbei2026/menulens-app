@@ -178,9 +178,8 @@
 /* MARK: - Credit shop */
 "shop.title" = "商店";
 "shop.buy" = "买点数";
-"shop.header" = "点数包 · 每档都多送 10%";
+"shop.header" = "点数包";
 "shop.footer" = "通过 Apple 付款。点数用来识别菜单和生成配图，买的点数永不过期。打开已保存的菜单和示例菜单不花点数。";
-"shop.pack.detail" = "%1$d 点 + 赠 %2$d 点";
 "shop.loading" = "正在读取商品…";
 "shop.unavailable" = "商品还没上架。";
 "shop.loadFailed" = "读不到商品：%@";
@@ -191,3 +190,16 @@
 "shop.unverified" = "这笔交易没有通过 Apple 的验证。";
 "shop.credited" = "已到账 %d 点";
 "shop.notCredited" = "已付款，但点数还没到账：%@。下次打开 App 时会自动补上。";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "兑换码";
+"redeem.title" = "兑换码";
+"redeem.placeholder" = "输入兑换码";
+"redeem.footer" = "每个兑换码每个账号只能用一次。大小写和空格不影响。";
+"redeem.action" = "兑换";
+"redeem.success" = "已兑换「%1$@」：+%2$d 点";
+"redeem.error.not_found" = "没有这个兑换码，请检查拼写。";
+"redeem.error.inactive" = "这个兑换码目前不可用。";
+"redeem.error.expired" = "这个兑换码已过期。";
+"redeem.error.used_up" = "这个兑换码已被领完。";
+"redeem.error.already_redeemed" = "你已经兑换过这个兑换码了。";

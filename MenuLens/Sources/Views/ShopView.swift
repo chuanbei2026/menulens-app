@@ -1,7 +1,7 @@
 import StoreKit
 import SwiftUI
 
-/// Three credit packs, each with 10% extra. Prices come from the App Store
+/// Three credit packs. Prices come from the App Store
 /// (local currency); names are ours, so they follow the app language.
 struct ShopView: View {
     @Environment(\.dismiss) private var dismiss
@@ -66,20 +66,12 @@ private struct PackRow: View {
     let buy: () -> Void
 
     var body: some View {
-        let pack = CreditShop.pack(product.id)
         HStack(spacing: 12) {
             Image(systemName: "seal.fill")
                 .font(.title2)
                 .foregroundStyle(.orange.gradient)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(L("settings.account.credits", pack.map { $0.credits + $0.bonus } ?? 0))
-                    .font(.title3.bold().monospacedDigit())
-                if let pack {
-                    Text(L("shop.pack.detail", pack.credits, pack.bonus))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            Text(L("settings.account.credits", CreditShop.credits(of: product.id) ?? 0))
+                .font(.title3.bold().monospacedDigit())
             Spacer()
             Button(action: buy) {
                 if buying { ProgressView() } else { Text(product.displayPrice).monospacedDigit() }

@@ -186,9 +186,8 @@
 /* MARK: - Credit shop */
 "shop.title" = "Shop";
 "shop.buy" = "Buy credits";
-"shop.header" = "Credit packs · 10% extra on every pack";
+"shop.header" = "Credit packs";
 "shop.footer" = "Paid through Apple. Credits pay for scanning menus and drawing dish pictures, and bought credits never expire. Saved menus and the samples cost nothing to open.";
-"shop.pack.detail" = "%1$d credits + %2$d bonus";
 "shop.loading" = "Loading packs…";
 "shop.unavailable" = "The packs aren't available yet.";
 "shop.loadFailed" = "Couldn't load the packs: %@";
@@ -199,3 +198,16 @@
 "shop.unverified" = "Apple could not verify this transaction.";
 "shop.credited" = "%d credits added";
 "shop.notCredited" = "Paid, but the credits haven't arrived yet: %@. The app tries again the next time it opens.";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "Redeem code";
+"redeem.title" = "Redeem code";
+"redeem.placeholder" = "Enter code";
+"redeem.footer" = "Each code can be used once per account. Upper or lower case and spaces don't matter.";
+"redeem.action" = "Redeem";
+"redeem.success" = "Redeemed “%1$@”: +%2$d credits";
+"redeem.error.not_found" = "There is no such code. Check the spelling.";
+"redeem.error.inactive" = "This code is not active.";
+"redeem.error.expired" = "This code has expired.";
+"redeem.error.used_up" = "This code has been fully used.";
+"redeem.error.already_redeemed" = "You have already redeemed this code.";

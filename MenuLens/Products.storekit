@@ -8,18 +8,18 @@
       "internalID": "6740000001",
       "localizations": [
         {
-          "description": "100 credits plus 10 bonus",
-          "displayName": "110 credits",
+          "description": "100 credits for scanning menus",
+          "displayName": "100 credits",
           "locale": "en_US"
         },
         {
-          "description": "100 点，额外赠 10 点",
-          "displayName": "110 点",
+          "description": "100 点，用来识别菜单",
+          "displayName": "100 点",
           "locale": "zh_Hans"
         }
       ],
       "productID": "ai.xiangyang.MenuLens.credits.100",
-      "referenceName": "Credits 100 (+10)",
+      "referenceName": "Credits 100",
       "type": "Consumable"
     },
     {
@@ -28,18 +28,18 @@
       "internalID": "6740000002",
       "localizations": [
         {
-          "description": "500 credits plus 50 bonus",
-          "displayName": "550 credits",
+          "description": "500 credits for scanning menus",
+          "displayName": "500 credits",
           "locale": "en_US"
         },
         {
-          "description": "500 点，额外赠 50 点",
-          "displayName": "550 点",
+          "description": "500 点，用来识别菜单",
+          "displayName": "500 点",
           "locale": "zh_Hans"
         }
       ],
       "productID": "ai.xiangyang.MenuLens.credits.500",
-      "referenceName": "Credits 500 (+50)",
+      "referenceName": "Credits 500",
       "type": "Consumable"
     },
     {
@@ -48,18 +48,18 @@
       "internalID": "6740000003",
       "localizations": [
         {
-          "description": "2000 credits plus 200 bonus",
-          "displayName": "2200 credits",
+          "description": "2000 credits for scanning menus",
+          "displayName": "2000 credits",
           "locale": "en_US"
         },
         {
-          "description": "2000 点，额外赠 200 点",
-          "displayName": "2200 点",
+          "description": "2000 点，用来识别菜单",
+          "displayName": "2000 点",
           "locale": "zh_Hans"
         }
       ],
       "productID": "ai.xiangyang.MenuLens.credits.2000",
-      "referenceName": "Credits 2000 (+200)",
+      "referenceName": "Credits 2000",
       "type": "Consumable"
     }
   ],

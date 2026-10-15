@@ -86,6 +86,7 @@ struct ContentView: View {
             //   -sessionToken <t> store a backend session token (signed in)
             //   -signOut          forget the session (first-run onboarding)
             //   -delayPage <i> <s> hold page i back s seconds (half-arrived result)
+            //   -redeem <code>    with -showSettings: open Redeem code and submit it
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet

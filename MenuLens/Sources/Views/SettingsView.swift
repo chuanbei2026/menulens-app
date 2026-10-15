@@ -14,6 +14,7 @@ struct SettingsView: View {
     @ObservedObject private var account = AccountStore.shared
     @State private var confirmDelete = false
     @State private var showShop = false
+    @State private var showRedeem = ProcessInfo.processInfo.arguments.contains("-redeem")
     @State private var newMemberName = ""
     @State private var avatarTargetID: UUID?
     @State private var avatarPickerItem: PhotosPickerItem?
@@ -158,6 +159,7 @@ struct SettingsView: View {
             }
             .task { await account.refreshCredits() }
             .sheet(isPresented: $showShop) { ShopView() }
+            .sheet(isPresented: $showRedeem) { RedeemSheet() }
         }
     }
 
@@ -168,7 +170,7 @@ struct SettingsView: View {
     private var accountSection: some View {
         Section {
             if account.isSignedIn {
-                CreditsCard(account: account) { showShop = true }
+                CreditsCard(account: account, onBuy: { showShop = true }, onRedeem: { showRedeem = true })
                     .padding(.vertical, 4)
                 Button(L("settings.account.signOut")) { account.signOut() }
                 Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }

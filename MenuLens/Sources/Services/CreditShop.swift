@@ -8,12 +8,12 @@ import StoreKit
 final class CreditShop: ObservableObject {
     static let shared = CreditShop()
 
-    /// Product ids and what they add (base + 10% bonus) — must match
+    /// Product ids and the credits each adds — must match
     /// backend/src/purchase.mjs. Prices live in App Store Connect.
-    static let packs: [(id: String, credits: Int, bonus: Int)] = [
-        ("ai.xiangyang.MenuLens.credits.100", 100, 10),
-        ("ai.xiangyang.MenuLens.credits.500", 500, 50),
-        ("ai.xiangyang.MenuLens.credits.2000", 2000, 200),
+    static let packs: [(id: String, credits: Int)] = [
+        ("ai.xiangyang.MenuLens.credits.100", 100),
+        ("ai.xiangyang.MenuLens.credits.500", 500),
+        ("ai.xiangyang.MenuLens.credits.2000", 2000),
     ]
 
     @Published private(set) var products: [Product] = []
@@ -82,7 +82,7 @@ final class CreditShop: ObservableObject {
             problem = L("shop.unverified")
             return
         }
-        guard Self.pack(transaction.productID) != nil else { return }
+        guard Self.credits(of: transaction.productID) != nil else { return }
         guard account.isSignedIn else {
             problem = L("shop.notCredited", L("shop.signInFirst"))
             return
@@ -106,7 +106,8 @@ final class CreditShop: ObservableObject {
         }
     }
 
-    static func pack(_ id: String) -> (credits: Int, bonus: Int)? {
-        packs.first { $0.id == id }.map { ($0.credits, $0.bonus) }
+    /// Credits the pack adds, nil for a product that isn't ours.
+    static func credits(of id: String) -> Int? {
+        packs.first { $0.id == id }?.credits
     }
 }

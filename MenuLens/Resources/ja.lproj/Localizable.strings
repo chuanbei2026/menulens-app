@@ -178,9 +178,8 @@
 /* MARK: - Credit shop */
 "shop.title" = "ショップ";
 "shop.buy" = "クレジットを購入";
-"shop.header" = "クレジットパック · どのパックも 10% 増量";
+"shop.header" = "クレジットパック";
 "shop.footer" = "お支払いは Apple を通じて行われます。クレジットはメニューの読み取りと料理画像の生成に使い、購入したクレジットに有効期限はありません。保存済みのメニューやサンプルを開くのは無料です。";
-"shop.pack.detail" = "%1$d クレジット + ボーナス %2$d";
 "shop.loading" = "パックを読み込み中…";
 "shop.unavailable" = "パックはまだ販売されていません。";
 "shop.loadFailed" = "パックを読み込めませんでした：%@";
@@ -191,3 +190,16 @@
 "shop.unverified" = "この取引は Apple の検証を通りませんでした。";
 "shop.credited" = "%d クレジットを追加しました";
 "shop.notCredited" = "お支払いは済みましたが、クレジットはまだ追加されていません：%@。次にアプリを開いたときに自動で再試行します。";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "コードを使う";
+"redeem.title" = "引き換えコード";
+"redeem.placeholder" = "コードを入力";
+"redeem.footer" = "各コードは1アカウントにつき1回だけ使えます。大文字・小文字やスペースは区別しません。";
+"redeem.action" = "引き換える";
+"redeem.success" = "「%1$@」を引き換えました：+%2$d クレジット";
+"redeem.error.not_found" = "このコードは存在しません。綴りを確認してください。";
+"redeem.error.inactive" = "このコードは現在使えません。";
+"redeem.error.expired" = "このコードは有効期限が切れています。";
+"redeem.error.used_up" = "このコードは上限に達しました。";
+"redeem.error.already_redeemed" = "このコードはすでに引き換え済みです。";

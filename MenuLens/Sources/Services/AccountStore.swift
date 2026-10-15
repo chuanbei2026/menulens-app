@@ -104,6 +104,29 @@ final class AccountStore: ObservableObject {
         credits = total
     }
 
+    /// Redeems a promotion code (POST /promo/redeem). The server ignores
+    /// case and spaces. Returns what to tell the user; on success the
+    /// balance and chart are refreshed.
+    func redeem(_ code: String) async -> (ok: Bool, message: String) {
+        let request = Backend.request(
+            "promo/redeem", method: "POST", token: sessionToken,
+            json: ["code": code.trimmingCharacters(in: .whitespacesAndNewlines)]
+        )
+        do {
+            let reply = try await Backend.send(request)
+            let credits = (reply["credits"] as? NSNumber)?.intValue ?? 0
+            if let total = reply["totalCredits"] as? NSNumber { applyBalance(total.intValue) }
+            await refreshCredits()
+            return (true, L("redeem.success", reply["code"] as? String ?? code, credits))
+        } catch let Backend.BackendError.http(_, reason)
+            where ["not_found", "inactive", "expired", "used_up", "already_redeemed"].contains(reason) {
+            // The promo errors carry their reason as the message.
+            return (false, L("redeem.error.\(reason)"))
+        } catch {
+            return (false, error.localizedDescription)
+        }
+    }
+
     /// "2026-10-15" → local midnight, for the chart's day axis.
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()

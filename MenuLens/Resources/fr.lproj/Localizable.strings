@@ -178,9 +178,8 @@
 /* MARK: - Credit shop */
 "shop.title" = "Boutique";
 "shop.buy" = "Acheter des crédits";
-"shop.header" = "Packs de crédits · 10 % offerts sur chaque pack";
+"shop.header" = "Packs de crédits";
 "shop.footer" = "Paiement via Apple. Les crédits servent à scanner des cartes et à dessiner des images de plats ; les crédits achetés n'expirent jamais. Ouvrir une carte enregistrée ou un exemple ne coûte rien.";
-"shop.pack.detail" = "%1$d crédits + %2$d offerts";
 "shop.loading" = "Chargement des packs…";
 "shop.unavailable" = "Les packs ne sont pas encore disponibles.";
 "shop.loadFailed" = "Impossible de charger les packs : %@";
@@ -191,3 +190,16 @@
 "shop.unverified" = "Apple n'a pas pu vérifier cette transaction.";
 "shop.credited" = "%d crédits ajoutés";
 "shop.notCredited" = "Paiement effectué, mais les crédits ne sont pas encore arrivés : %@. L'app réessaiera à sa prochaine ouverture.";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "Utiliser un code";
+"redeem.title" = "Code promo";
+"redeem.placeholder" = "Saisissez le code";
+"redeem.footer" = "Chaque code ne peut être utilisé qu'une fois par compte. Majuscules, minuscules et espaces n'ont pas d'importance.";
+"redeem.action" = "Valider";
+"redeem.success" = "Code « %1$@ » validé : +%2$d crédits";
+"redeem.error.not_found" = "Ce code n'existe pas. Vérifiez l'orthographe.";
+"redeem.error.inactive" = "Ce code n'est pas actif.";
+"redeem.error.expired" = "Ce code a expiré.";
+"redeem.error.used_up" = "Ce code a atteint sa limite d'utilisations.";
+"redeem.error.already_redeemed" = "Vous avez déjà utilisé ce code.";

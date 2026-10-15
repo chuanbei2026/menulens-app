@@ -178,9 +178,8 @@
 /* MARK: - Credit shop */
 "shop.title" = "Tienda";
 "shop.buy" = "Comprar créditos";
-"shop.header" = "Packs de créditos · 10 % extra en cada pack";
+"shop.header" = "Packs de créditos";
 "shop.footer" = "Se paga a través de Apple. Los créditos sirven para escanear cartas y dibujar imágenes de platos, y los créditos comprados no caducan. Abrir cartas guardadas y los ejemplos no cuesta nada.";
-"shop.pack.detail" = "%1$d créditos + %2$d de regalo";
 "shop.loading" = "Cargando packs…";
 "shop.unavailable" = "Los packs aún no están disponibles.";
 "shop.loadFailed" = "No se pudieron cargar los packs: %@";
@@ -191,3 +190,16 @@
 "shop.unverified" = "Apple no pudo verificar esta transacción.";
 "shop.credited" = "%d créditos añadidos";
 "shop.notCredited" = "Pagado, pero los créditos aún no han llegado: %@. La app lo volverá a intentar la próxima vez que se abra.";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "Canjear código";
+"redeem.title" = "Canjear código";
+"redeem.placeholder" = "Escribe el código";
+"redeem.footer" = "Cada código se puede usar una vez por cuenta. Las mayúsculas, minúsculas y los espacios dan igual.";
+"redeem.action" = "Canjear";
+"redeem.success" = "Código «%1$@» canjeado: +%2$d créditos";
+"redeem.error.not_found" = "Ese código no existe. Revisa cómo está escrito.";
+"redeem.error.inactive" = "Este código no está activo.";
+"redeem.error.expired" = "Este código ha caducado.";
+"redeem.error.used_up" = "Este código ya se ha agotado.";
+"redeem.error.already_redeemed" = "Ya has canjeado este código.";

@@ -5,8 +5,9 @@ import SwiftUI
 /// days, and a chart of either the balance or the daily use.
 struct CreditsCard: View {
     @ObservedObject var account: AccountStore
-    /// Opens the shop; the card has no sheet of its own.
+    /// Open the shop / the redeem-code sheet; the card has no sheets of its own.
     var onBuy: (() -> Void)?
+    var onRedeem: (() -> Void)?
     @State private var mode = Mode.balance
 
     enum Mode: CaseIterable, Identifiable {
@@ -43,13 +44,24 @@ struct CreditsCard: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             chart.frame(height: 120)
-            if let onBuy {
-                Button(action: onBuy) {
-                    Label(L("shop.buy"), systemImage: "cart.badge.plus")
-                        .frame(maxWidth: .infinity)
+            HStack(spacing: 10) {
+                if let onBuy {
+                    Button(action: onBuy) {
+                        Label(L("shop.buy"), systemImage: "cart.badge.plus")
+                            .frame(maxWidth: .infinity)
+                    }
                 }
-                .buttonStyle(.bordered)
+                if let onRedeem {
+                    Button(action: onRedeem) {
+                        Label(L("redeem.button"), systemImage: "ticket")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
             }
+            // Bordered buttons keep their own hit areas inside the Form row.
+            .buttonStyle(.bordered)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
     }
 
