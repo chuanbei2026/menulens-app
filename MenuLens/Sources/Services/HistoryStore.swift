@@ -142,12 +142,33 @@ final class HistoryStore: ObservableObject {
 
     // MARK: - AI-generated dish thumbnails (gen_<dishKey>.jpg alongside the scan)
 
+    /// Once per install: give every generated picture already on disk — the
+    /// bundled samples' and any saved before 1.1 — the AI marking that new
+    /// ones get when they are saved. Lossless; runs off the main thread.
+    func labelGeneratedImagesIfNeeded() {
+        let flag = "generated_images_ai_labelled_v2"
+        guard !UserDefaults.standard.bool(forKey: flag) else { return }
+        UserDefaults.standard.set(true, forKey: flag)
+        let root = rootURL
+        Task.detached(priority: .utility) {
+            let fm = FileManager.default
+            guard let scans = try? fm.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) else { return }
+            for scan in scans where scan.hasDirectoryPath {
+                let files = (try? fm.contentsOfDirectory(at: scan, includingPropertiesForKeys: nil)) ?? []
+                for file in files where file.lastPathComponent.hasPrefix("gen_") && file.pathExtension == "jpg" {
+                    AILabel.labelFile(at: file)
+                }
+            }
+        }
+    }
+
     func saveGeneratedImage(_ image: UIImage, scanID: UUID, dishKey: String) {
         // A scan still coming in has no scan.json yet; its thumbnails are
         // filed first (and stay invisible to `refresh()` until it is saved).
         let dir = directory(for: scanID)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        try? image.jpegData(compressionQuality: 0.8)?.write(to: dir.appendingPathComponent("gen_\(dishKey).jpg"))
+        // Generated pictures carry the IPTC "AI-generated" marking on disk.
+        try? AILabel.jpegData(image)?.write(to: dir.appendingPathComponent("gen_\(dishKey).jpg"))
     }
 
     /// Re-file thumbnails saved under provisional dish keys when pages

@@ -126,7 +126,7 @@
 "consent.body" = "为了识别和翻译菜单，外乡人的菜单会把这张照片发到自己的服务器，再由服务器转交 OpenAI 翻译。只在你点「识别并翻译」时才发生。";
 "consent.sent.header" = "发到我们的服务器，再转给 OpenAI";
 "consent.sent.photo" = "你选择的菜单照片，以及从中识别出的文字";
-"consent.sent.names" = "菜名 —— 仅当你要求生成配图时";
+"consent.sent.names" = "菜名 —— 仅当你要求 AI 生成配图时";
 "consent.kept.header" = "永远不离开这台手机";
 "consent.kept.body" = "所有翻译记录，以及同行成员的姓名和头像。";
 "consent.retention" = "我们的服务器不保存菜单照片和文字，只记录匿名的 Apple 账号 ID、点数余额和用量统计。OpenAI 会短期保留 API 数据用于滥用监控。";
@@ -215,3 +215,8 @@
 "home.region.unavailable" = "你所在的地区暂不可用";
 "progress.imagesRegion" = "你所在的地区暂不可用";
 "error.region" = "这个模型在你的 App Store 地区不可用。模型列表已更新，请重新识别。";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "支持多页 · 任意语言 · 本地保存";
+"ai.badge" = "AI";
+"ai.badge.accessibility" = "AI 生成的图片";

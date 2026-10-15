@@ -134,7 +134,7 @@
 "consent.body" = "To read and translate a menu, ForeignMenu sends the photo to its own server, which passes it on to OpenAI for the translation. This happens only when you tap Scan.";
 "consent.sent.header" = "Sent to our server, then OpenAI";
 "consent.sent.photo" = "The menu photo you choose and the text read from it";
-"consent.sent.names" = "Dish names, only if you ask for generated dish photos";
+"consent.sent.names" = "Dish names, only if you ask for AI-generated dish pictures";
 "consent.kept.header" = "Never leaves this phone";
 "consent.kept.body" = "Your translation history, and the names and photos of the people at your table.";
 "consent.retention" = "Our server does not keep menu photos or text. It stores only an anonymous Apple account id, your credit balance and usage counts. OpenAI keeps API data briefly for abuse monitoring.";
@@ -223,3 +223,8 @@
 "home.region.unavailable" = "Not available in your region";
 "progress.imagesRegion" = "Not available in your region";
 "error.region" = "This model isn't offered in your App Store region. The model list has been updated — please scan again.";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "Multi-page · Any language · Stored on device";
+"ai.badge" = "AI";
+"ai.badge.accessibility" = "AI-generated picture";

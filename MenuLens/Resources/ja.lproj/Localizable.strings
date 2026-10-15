@@ -126,7 +126,7 @@
 "consent.body" = "メニューを読み取って翻訳するため、ForeignMenu は写真を自社のサーバーに送り、サーバーが翻訳のために OpenAI へ渡します。「読み取って翻訳」を押したときにのみ送信されます。";
 "consent.sent.header" = "当方のサーバー経由で OpenAI に送るもの";
 "consent.sent.photo" = "あなたが選んだメニューの写真と、そこから読み取った文字";
-"consent.sent.names" = "料理名 —— 画像生成を依頼した場合のみ";
+"consent.sent.names" = "料理名 —— AI による料理画像の生成を依頼した場合のみ";
 "consent.kept.header" = "この端末から出ないもの";
 "consent.kept.body" = "翻訳の履歴、同席する人の名前と写真。";
 "consent.retention" = "当方のサーバーはメニューの写真や文字を保存しません。保存するのは匿名の Apple アカウント ID、クレジット残高、利用量の記録だけです。OpenAI は不正利用の監視のため API データを短期間保持します。";
@@ -215,3 +215,8 @@
 "home.region.unavailable" = "お住まいの地域ではご利用いただけません";
 "progress.imagesRegion" = "お住まいの地域では利用できません";
 "error.region" = "このモデルはお使いの App Store の地域では提供されていません。モデル一覧を更新しました。もう一度読み取ってください。";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "複数ページ対応 · 多言語 · 端末内に保存";
+"ai.badge" = "AI";
+"ai.badge.accessibility" = "AI で生成された画像";

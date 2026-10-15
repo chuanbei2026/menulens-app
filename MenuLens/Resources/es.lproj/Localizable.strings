@@ -126,7 +126,7 @@
 "consent.body" = "Para leer y traducir una carta, ForeignMenu envía la foto a su propio servidor, que la pasa a OpenAI para la traducción. Solo ocurre cuando tocas Escanear.";
 "consent.sent.header" = "Se envía a nuestro servidor y de ahí a OpenAI";
 "consent.sent.photo" = "La foto de la carta que elijas y el texto leído en ella";
-"consent.sent.names" = "Los nombres de los platos, solo si pides imágenes generadas";
+"consent.sent.names" = "Los nombres de los platos, solo si pides imágenes de platos generadas por IA";
 "consent.kept.header" = "Nunca sale de este teléfono";
 "consent.kept.body" = "Tu historial de traducciones y los nombres y fotos de las personas de tu mesa.";
 "consent.retention" = "Nuestro servidor no guarda fotos ni texto de las cartas. Solo conserva un identificador anónimo de Apple, tu saldo de créditos y recuentos de uso. OpenAI conserva brevemente los datos de la API para vigilar abusos.";
@@ -215,3 +215,8 @@
 "home.region.unavailable" = "No disponible en tu región";
 "progress.imagesRegion" = "No disponible en tu región";
 "error.region" = "Este modelo no se ofrece en tu región del App Store. Se ha actualizado la lista de modelos; vuelve a escanear.";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "Varias páginas · Cualquier idioma · Guardado en el dispositivo";
+"ai.badge" = "IA";
+"ai.badge.accessibility" = "Imagen generada por IA";

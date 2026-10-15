@@ -20,7 +20,11 @@ struct AppleSignInButton: View {
                     account.message = L("error.signInFailed", L("common.unknown"))
                     return
                 }
-                Task { await account.signIn(identityToken: identityToken) }
+                // The one-time authorization code lets the server revoke this
+                // Sign in with Apple authorization when the account is
+                // deleted (guideline 5.1.1(v)).
+                let authorizationCode = credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
+                Task { await account.signIn(identityToken: identityToken, authorizationCode: authorizationCode) }
             case let .failure(error):
                 // Closing the Apple sheet is a choice, not an error.
                 if (error as? ASAuthorizationError)?.code == .canceled { return }

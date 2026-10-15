@@ -158,7 +158,8 @@ struct ContentView: View {
                             : SampleData.sampleImage(),
                     ])
                 }
-                // Open a specific history scan by UUID prefix (DEBUG nav).
+                // Open a specific history scan by UUID prefix (DEBUG nav); also
+            // dumps its PDF to Documents/scan.pdf.
                 if let idx = args.firstIndex(of: "-openScan"), idx + 1 < args.count {
                     let prefix = args[idx + 1].uppercased()
                     Task { @MainActor in
@@ -169,6 +170,13 @@ struct ContentView: View {
                             $0.id.uuidString.hasPrefix(prefix)
                         }) {
                             viewModel.open(match)
+                            // Like -openLatest: the PDF as it renders once
+                            // the thumbnails are in, as Documents/scan.pdf.
+                            for _ in 0 ..< 120 where viewModel.pdfData == nil {
+                                try? await Task.sleep(nanoseconds: 500_000_000)
+                            }
+                            let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                            try? viewModel.pdfData?.write(to: docs.appendingPathComponent("scan.pdf"))
                         }
                     }
                 }
@@ -271,6 +279,7 @@ struct ContentView: View {
             #endif
             .onAppear {
                 viewModel.history.seedBundledSamplesIfNeeded()
+                viewModel.history.labelGeneratedImagesIfNeeded()
             }
             .task { await account.refreshCredits() }
             .onChange(of: photosItems) {
@@ -337,7 +346,8 @@ struct ContentView: View {
                         .foregroundStyle(.secondary)
                     Text(L("home.headline"))
                         .font(.headline)
-                    Text(L("home.subheadline"))
+                    // No "dish photos" promise where the region has none.
+                    Text(L(region.catalog.images ? "home.subheadline" : "home.subheadline.noImages"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }

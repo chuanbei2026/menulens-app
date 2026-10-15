@@ -23,14 +23,17 @@ final class AccountStore: ObservableObject {
     }
 
     /// Exchanges a Sign in with Apple identity token for our session token.
-    /// The first sign-in creates the account with its starting credits.
-    func signIn(identityToken: String) async {
+    /// The first sign-in creates the account with its starting credits. The
+    /// authorization code, when Apple gives one, lets the server revoke the
+    /// authorization when the account is deleted.
+    func signIn(identityToken: String, authorizationCode: String? = nil) async {
         isBusy = true
         defer { isBusy = false }
         do {
             let request = Backend.request(
                 "auth/apple", method: "POST", token: "",
-                json: ["identityToken": identityToken]
+                json: ["identityToken": identityToken, "authorizationCode": authorizationCode]
+                    .compactMapValues { $0 }
             )
             // A 401 here is Apple's token being rejected, not an expired
             // session — report it as a failed sign-in.

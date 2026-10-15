@@ -727,18 +727,20 @@ private struct DishListView: View {
         }
     }
 
-    private func photo(for row: Row) -> UIImage? {
+    private func photo(for row: Row) -> DishPhoto? {
         photo(dishKey: row.id, pageIndex: row.pageIndex, box: row.item.photoBBox)
     }
 
     /// Printed photo cropped from the page when the menu has one, else the
-    /// generated thumbnail. Shared by the list rows and the recommendations.
-    private func photo(dishKey: String, pageIndex: Int, box: NormalizedRect? = nil) -> UIImage? {
+    /// generated thumbnail (flagged, so it gets the AI badge). Shared by the
+    /// list rows and the recommendations.
+    private func photo(dishKey: String, pageIndex: Int, box: NormalizedRect? = nil) -> DishPhoto? {
         let printed = box ?? dishItem(dishKey)?.photoBBox
         if let printed, pageIndex < viewModel.scanImages.count {
             return viewModel.scanImages[pageIndex].crop(normalized: printed)
+                .map { DishPhoto(image: $0, generated: false) }
         }
-        return viewModel.generatedImages[dishKey]
+        return viewModel.generatedImages[dishKey].map { DishPhoto(image: $0, generated: true) }
     }
 
     private func dishItem(_ key: String) -> MenuItemEntry? {
@@ -796,10 +798,17 @@ private struct DishListView: View {
     }
 }
 
+/// A dish thumbnail and where it came from: a crop of the photo printed on
+/// the menu, or an AI-generated picture (which is labelled as such).
+private struct DishPhoto {
+    let image: UIImage
+    let generated: Bool
+}
+
 private struct DishRow: View {
     let item: MenuItemEntry
     let inferredTags: [String]
-    let photo: UIImage?
+    let photo: DishPhoto?
     let quantity: Int
     let memberBreakdown: String?
     let showGlutenFree: Bool
@@ -809,11 +818,14 @@ private struct DishRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             if let photo {
-                Image(uiImage: photo)
+                Image(uiImage: photo.image)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 68, height: 68)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(alignment: .bottomTrailing) {
+                        if photo.generated { AIBadge() }
+                    }
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.originalName)
@@ -860,16 +872,19 @@ private struct DishRow: View {
 private struct RecommendationRow: View {
     let recommendation: MenuItemEntry
     let reason: String
-    let photo: UIImage?
+    let photo: DishPhoto?
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             if let photo {
-                Image(uiImage: photo)
+                Image(uiImage: photo.image)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(alignment: .bottomTrailing) {
+                        if photo.generated { AIBadge() }
+                    }
             }
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {

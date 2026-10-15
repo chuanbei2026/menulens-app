@@ -126,7 +126,7 @@
 "consent.body" = "메뉴를 인식하고 번역하기 위해 ForeignMenu는 사진을 자체 서버로 보내고, 서버가 번역을 위해 OpenAI에 전달합니다. 「인식하고 번역」을 누를 때만 전송됩니다.";
 "consent.sent.header" = "저희 서버를 거쳐 OpenAI로 보내는 것";
 "consent.sent.photo" = "당신이 선택한 메뉴 사진과 거기서 읽어 낸 글자";
-"consent.sent.names" = "요리 이름 — 이미지 생성을 요청한 경우에만";
+"consent.sent.names" = "요리 이름 — AI 요리 이미지 생성을 요청한 경우에만";
 "consent.kept.header" = "이 기기를 벗어나지 않는 것";
 "consent.kept.body" = "번역 기록, 그리고 같이 먹는 사람의 이름과 사진.";
 "consent.retention" = "저희 서버는 메뉴 사진이나 글자를 저장하지 않습니다. 익명 Apple 계정 ID, 크레딧 잔액, 사용량 기록만 보관합니다. OpenAI는 오용 감시를 위해 API 데이터를 짧게 보관합니다.";
@@ -215,3 +215,8 @@
 "home.region.unavailable" = "현재 지역에서는 사용할 수 없습니다";
 "progress.imagesRegion" = "현재 지역에서는 사용할 수 없음";
 "error.region" = "이 모델은 현재 App Store 지역에서 제공되지 않습니다. 모델 목록을 업데이트했으니 다시 인식해 주세요.";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "여러 페이지 · 다국어 · 기기 내 저장";
+"ai.badge" = "AI";
+"ai.badge.accessibility" = "AI로 생성된 이미지";

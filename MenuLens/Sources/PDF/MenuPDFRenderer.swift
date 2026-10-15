@@ -100,8 +100,8 @@ struct MenuPDFRenderer {
 
                 for (itemIndex, item) in section.items.enumerated() {
                     let key = MenuScan.dishKey(page: pageIndex, section: sectionIndex, item: itemIndex)
-                    let photo = item.photoBBox.flatMap { pageImage?.crop(normalized: $0) }
-                        ?? generatedImages[key]
+                    let printed = item.photoBBox.flatMap { pageImage?.crop(normalized: $0) }
+                    let photo = printed ?? generatedImages[key]
                     let photoSide: CGFloat = photo == nil ? 0 : 190
                     let textX = margin + (photo == nil ? 0 : photoSide + 24)
                     let textWidth = contentWidth - (photo == nil ? 0 : photoSide + 24)
@@ -114,7 +114,10 @@ struct MenuPDFRenderer {
                     if let photo {
                         let scale = photoSide / max(photo.size.width, photo.size.height)
                         let size = CGSize(width: photo.size.width * scale, height: photo.size.height * scale)
-                        photo.draw(in: CGRect(origin: CGPoint(x: margin, y: y), size: size))
+                        let frame = CGRect(origin: CGPoint(x: margin, y: y), size: size)
+                        photo.draw(in: frame)
+                        // Generated pictures are labelled on paper too.
+                        if printed == nil { AILabel.drawBadge(in: frame) }
                     }
                     _ = appendixCardText(item, at: CGPoint(x: textX, y: y), maxWidth: textWidth, dryRun: false)
 
