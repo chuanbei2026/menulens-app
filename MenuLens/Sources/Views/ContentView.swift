@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var showSettings =
         ProcessInfo.processInfo.arguments.contains("-showSettings")
     @State private var showHistory = false
+    @State private var showShop = false
     /// Picking a photo sends nothing; only Scan does. So consent is asked
     /// at the button that transmits, which is also where the user can see
     /// what they are about to send.
@@ -60,6 +61,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .sheet(isPresented: $showShop) { ShopView() }
             .sheet(isPresented: $showAIConsent) {
                 AIConsentView {
                     aiConsentGranted = true
@@ -83,6 +85,7 @@ struct ContentView: View {
             //   -autoPDF          also dump the rendered PDF into Documents
             //   -sessionToken <t> store a backend session token (signed in)
             //   -signOut          forget the session (first-run onboarding)
+            //   -delayPage <i> <s> hold page i back s seconds (half-arrived result)
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
@@ -101,6 +104,10 @@ struct ContentView: View {
                 }
                 if let idx = args.firstIndex(of: "-targetLang"), idx + 1 < args.count {
                     viewModel.targetLanguageCode = args[idx + 1]
+                }
+                if let idx = args.firstIndex(of: "-delayPage"), idx + 2 < args.count,
+                   let page = Int(args[idx + 1]), let seconds = Double(args[idx + 2]) {
+                    AnalysisViewModel.debugPageDelay[page] = seconds
                 }
                 if let idx = args.firstIndex(of: "-model"), idx + 1 < args.count {
                     viewModel.model = args[idx + 1]
@@ -341,6 +348,15 @@ struct ContentView: View {
                     .foregroundStyle(.red)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+                if viewModel.outOfCredits {
+                    Button {
+                        showShop = true
+                    } label: {
+                        Label(L("shop.buy"), systemImage: "cart.badge.plus")
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
             }
 
             Spacer()

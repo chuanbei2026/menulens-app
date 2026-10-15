@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Apple でサインインすると新しいメニューを読み取れます";
-"onboarding.body" = "新規アカウントには 300 クレジット（メニュー1ページで約 5〜10）、使った月ごとにさらに 100 が付きます。今すぐ、内蔵の実店舗メニュー2件を見てみることもできます。";
+"onboarding.body" = "新規アカウントには 300 クレジット（メニュー1ページで約 5〜10）が付き、足りなくなったらショップで購入できます。今すぐ、内蔵の実店舗メニュー2件を見てみることもできます。";
 "onboarding.viewSamples" = "サンプルを見る";
 
 /* MARK: - Home */
@@ -155,11 +155,11 @@
 "settings.account.delete.title" = "アカウントを削除しますか？";
 "settings.account.delete.message" = "アカウントとクレジットはサーバーから削除され、元に戻せません。この端末の履歴はそのまま残ります。";
 "settings.account.delete.confirm" = "アカウントを削除";
-"settings.account.footer" = "最初に 300 クレジット、その後は使った月ごとに 100 が加わります。クレジットに有効期限はありません。メニュー1ページは約 5〜10、料理画像1枚または4品のコラージュは約 0.5 クレジットです。";
-"settings.account.signedOut.footer" = "新しいメニューの読み取りにはアカウントが必要です。使うのは匿名の Apple アカウント ID だけで、名前やメールアドレスは求めません。新規アカウントには 300 クレジット、使った月ごとに 100 が付きます。";
+"settings.account.footer" = "最初に 300 クレジットが無料で付き、その後はショップで購入できます。クレジットに有効期限はありません。メニュー1ページは約 5〜10、料理画像1枚または4品のコラージュは約 0.5 クレジットです。";
+"settings.account.signedOut.footer" = "新しいメニューの読み取りにはアカウントが必要です。使うのは匿名の Apple アカウント ID だけで、名前やメールアドレスは求めません。新規アカウントには 300 クレジットが付きます。";
 "error.signInRequired" = "新しいメニューを読み取るには、まず Apple でサインインしてください（設定 → アカウント）。";
 "error.sessionExpired" = "サインインの有効期限が切れました。もう一度 Apple でサインインしてください。";
-"error.outOfCredits" = "クレジットが足りません：今回は約 %1$d 必要で、残高は %2$d です。次に使う月にさらに 100 が付きます。";
+"error.outOfCredits" = "クレジットが足りません：今回は約 %1$d 必要で、残高は %2$d です。ショップで購入できます。";
 "error.signInFailed" = "サインインに失敗しました：%@";
 "notice.imagesStopped" = "料理画像の生成を停止しました：%@";
 
@@ -169,3 +169,25 @@
 "credits.chart.balance" = "残高";
 "credits.chart.spent" = "日ごとの利用";
 "credits.chart.empty" = "まだ記録がありません";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "%2$d ページ中 %1$d ページ完了 · 残りを翻訳中…";
+"result.pageTranslating" = "このページを翻訳中…";
+"result.pageFailed" = "このページは翻訳できませんでした";
+
+/* MARK: - Credit shop */
+"shop.title" = "ショップ";
+"shop.buy" = "クレジットを購入";
+"shop.header" = "クレジットパック · どのパックも 10% 増量";
+"shop.footer" = "お支払いは Apple を通じて行われます。クレジットはメニューの読み取りと料理画像の生成に使い、購入したクレジットに有効期限はありません。保存済みのメニューやサンプルを開くのは無料です。";
+"shop.pack.detail" = "%1$d クレジット + ボーナス %2$d";
+"shop.loading" = "パックを読み込み中…";
+"shop.unavailable" = "パックはまだ販売されていません。";
+"shop.loadFailed" = "パックを読み込めませんでした：%@";
+"shop.signInFirst" = "まず Apple でサインインしてください。";
+"shop.noServer" = "サーバーに接続できません。しばらくしてからもう一度お試しください。";
+"shop.pending" = "承認待ちです（「承認と購入のリクエスト」など）。承認されるとクレジットは自動で追加されます。";
+"shop.purchaseFailed" = "購入が完了しませんでした：%@";
+"shop.unverified" = "この取引は Apple の検証を通りませんでした。";
+"shop.credited" = "%d クレジットを追加しました";
+"shop.notCredited" = "お支払いは済みましたが、クレジットはまだ追加されていません：%@。次にアプリを開いたときに自動で再試行します。";

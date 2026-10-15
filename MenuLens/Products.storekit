@@ -1,0 +1,77 @@
+{
+  "identifier": "9C1F3B7E-2D4A-4E5B-8A6C-1F0E2D3C4B5A",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "6740000001",
+      "localizations": [
+        {
+          "description": "100 credits plus 10 bonus",
+          "displayName": "110 credits",
+          "locale": "en_US"
+        },
+        {
+          "description": "100 点，额外赠 10 点",
+          "displayName": "110 点",
+          "locale": "zh_Hans"
+        }
+      ],
+      "productID": "ai.xiangyang.MenuLens.credits.100",
+      "referenceName": "Credits 100 (+10)",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "6740000002",
+      "localizations": [
+        {
+          "description": "500 credits plus 50 bonus",
+          "displayName": "550 credits",
+          "locale": "en_US"
+        },
+        {
+          "description": "500 点，额外赠 50 点",
+          "displayName": "550 点",
+          "locale": "zh_Hans"
+        }
+      ],
+      "productID": "ai.xiangyang.MenuLens.credits.500",
+      "referenceName": "Credits 500 (+50)",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "19.99",
+      "familyShareable": false,
+      "internalID": "6740000003",
+      "localizations": [
+        {
+          "description": "2000 credits plus 200 bonus",
+          "displayName": "2200 credits",
+          "locale": "en_US"
+        },
+        {
+          "description": "2000 点，额外赠 200 点",
+          "displayName": "2200 点",
+          "locale": "zh_Hans"
+        }
+      ],
+      "productID": "ai.xiangyang.MenuLens.credits.2000",
+      "referenceName": "Credits 2000 (+200)",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "6740000000",
+    "_developerTeamID": "LNP5ER743F",
+    "_locale": "en_US",
+    "_storefront": "USA"
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 4,
+    "minor": 0
+  }
+}

@@ -143,8 +143,36 @@ final class HistoryStore: ObservableObject {
     // MARK: - AI-generated dish thumbnails (gen_<dishKey>.jpg alongside the scan)
 
     func saveGeneratedImage(_ image: UIImage, scanID: UUID, dishKey: String) {
-        let url = directory(for: scanID).appendingPathComponent("gen_\(dishKey).jpg")
-        try? image.jpegData(compressionQuality: 0.8)?.write(to: url)
+        // A scan still coming in has no scan.json yet; its thumbnails are
+        // filed first (and stay invisible to `refresh()` until it is saved).
+        let dir = directory(for: scanID)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        try? image.jpegData(compressionQuality: 0.8)?.write(to: dir.appendingPathComponent("gen_\(dishKey).jpg"))
+    }
+
+    /// Re-file thumbnails saved under provisional dish keys when pages
+    /// moved (a failed page was dropped). `newKey` nil deletes the file.
+    /// Ascending page order is safe: pages only ever move up into slots
+    /// that dropped pages, which never had thumbnails, left empty.
+    func rekeyGeneratedImages(scanID: UUID, _ newKey: (String) -> String?) {
+        let fm = FileManager.default
+        let dir = directory(for: scanID)
+        let files = (try? fm.contentsOfDirectory(atPath: dir.path)) ?? []
+        let keys = files
+            .filter { $0.hasPrefix("gen_") && $0.hasSuffix(".jpg") }
+            .map { String($0.dropFirst("gen_".count).dropLast(".jpg".count)) }
+            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        for key in keys {
+            let source = dir.appendingPathComponent("gen_\(key).jpg")
+            guard let moved = newKey(key) else {
+                try? fm.removeItem(at: source)
+                continue
+            }
+            guard moved != key else { continue }
+            let destination = dir.appendingPathComponent("gen_\(moved).jpg")
+            try? fm.removeItem(at: destination)
+            try? fm.moveItem(at: source, to: destination)
+        }
     }
 
     func loadGeneratedImages(for scan: MenuScan) -> [String: UIImage] {

@@ -7,6 +7,9 @@ struct MenuLensApp: App {
     init() {
         // A fresh install opens in the device's language when we speak it.
         Localization.registerDeviceDefault()
+        // Listens for StoreKit transactions from launch on, so a purchase
+        // paid but not yet credited (app killed, offline) is retried.
+        _ = CreditShop.shared
     }
 
     var body: some Scene {

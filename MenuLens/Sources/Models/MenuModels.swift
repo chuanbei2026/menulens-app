@@ -118,6 +118,12 @@ struct MenuDocument: Codable, Hashable {
     var textLines: [TextLine]?
 
     var allItems: [MenuItemEntry] { sections.flatMap(\.items) }
+
+    /// Stands in for a page that is still being translated (or failed)
+    /// while a multi-page scan comes in. Never saved.
+    static let placeholder = MenuDocument(
+        sourceLanguage: "", sourceLanguageChinese: "", restaurantName: nil, sections: [], textLines: []
+    )
 }
 
 /// One complete scan of a menu: one or more photographed pages analyzed
@@ -142,15 +148,30 @@ struct MenuScan: Codable, Hashable, Identifiable {
     var allItems: [MenuItemEntry] { pages.flatMap(\.allItems) }
 
     /// Combine per-page analysis results into one scan record.
-    static func combining(pages: [MenuDocument], targetLanguage: AppLanguage = .simplifiedChinese) -> MenuScan {
+    static func combining(
+        pages: [MenuDocument],
+        targetLanguage: AppLanguage = .simplifiedChinese,
+        id: UUID = UUID(),
+        createdAt: Date = Date()
+    ) -> MenuScan {
         MenuScan(
-            id: UUID(),
-            createdAt: Date(),
+            id: id,
+            createdAt: createdAt,
             restaurantName: pages.compactMap(\.restaurantName).first,
             sourceLanguage: pages.first?.sourceLanguage ?? "unknown",
             sourceLanguageChinese: pages.first?.sourceLanguageChinese ?? L("common.unknown"),
             pages: pages,
             targetLanguage: targetLanguage.rawValue
+        )
+    }
+
+    /// The same scan with other pages — used while a scan is still coming
+    /// in, with placeholders standing in for pages not translated yet.
+    func withPages(_ pages: [MenuDocument]) -> MenuScan {
+        MenuScan(
+            id: id, createdAt: createdAt, restaurantName: restaurantName,
+            sourceLanguage: sourceLanguage, sourceLanguageChinese: sourceLanguageChinese,
+            pages: pages, targetLanguage: targetLanguage
         )
     }
 

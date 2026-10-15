@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Connectez-vous avec Apple pour scanner une carte";
-"onboarding.body" = "Les nouveaux comptes reçoivent 300 crédits offerts (une page de carte en coûte environ 5 à 10), puis 100 de plus chaque mois où vous utilisez l'app. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
+"onboarding.body" = "Les nouveaux comptes reçoivent 300 crédits offerts (une page de carte en coûte environ 5 à 10) ; vous pouvez en acheter d'autres dans la boutique. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
 "onboarding.viewSamples" = "Voir les exemples";
 
 /* MARK: - Home */
@@ -155,11 +155,11 @@
 "settings.account.delete.title" = "Supprimer votre compte ?";
 "settings.account.delete.message" = "Votre compte et ses crédits sont effacés de notre serveur, sans retour possible. L'historique sur ce téléphone est conservé.";
 "settings.account.delete.confirm" = "Supprimer le compte";
-"settings.account.footer" = "Vous démarrez avec 300 crédits et en recevez 100 de plus chaque mois où vous utilisez l'app ; les crédits n'expirent jamais. Une page de carte coûte environ 5 à 10 crédits, une image de plat ou une mosaïque de quatre environ 0,5.";
-"settings.account.signedOut.footer" = "Scanner une nouvelle carte nécessite un compte. Seul un identifiant Apple anonyme est utilisé — ni nom, ni e-mail. Les nouveaux comptes reçoivent 300 crédits offerts, puis 100 chaque mois où vous utilisez l'app.";
+"settings.account.footer" = "Vous démarrez avec 300 crédits offerts ; ensuite, ils s'achètent dans la boutique. Les crédits n'expirent jamais. Une page de carte coûte environ 5 à 10 crédits, une image de plat ou une mosaïque de quatre environ 0,5.";
+"settings.account.signedOut.footer" = "Scanner une nouvelle carte nécessite un compte. Seul un identifiant Apple anonyme est utilisé — ni nom, ni e-mail. Les nouveaux comptes reçoivent 300 crédits offerts.";
 "error.signInRequired" = "Connectez-vous d'abord avec Apple (Réglages → Compte) pour scanner une nouvelle carte.";
 "error.sessionExpired" = "Votre connexion a expiré. Reconnectez-vous avec Apple.";
-"error.outOfCredits" = "Crédits insuffisants : il en faut environ %1$d et votre solde est de %2$d. 100 de plus arrivent le prochain mois où vous utilisez l'app.";
+"error.outOfCredits" = "Crédits insuffisants : il en faut environ %1$d et votre solde est de %2$d. Vous pouvez en acheter dans la boutique.";
 "error.signInFailed" = "Échec de la connexion : %@";
 "notice.imagesStopped" = "Images de plats interrompues : %@";
 
@@ -169,3 +169,25 @@
 "credits.chart.balance" = "Solde";
 "credits.chart.spent" = "Utilisation par jour";
 "credits.chart.empty" = "Pas encore d’historique";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "%1$d page(s) sur %2$d prête(s) · traduction du reste…";
+"result.pageTranslating" = "Traduction de cette page…";
+"result.pageFailed" = "Cette page n'a pas pu être traduite";
+
+/* MARK: - Credit shop */
+"shop.title" = "Boutique";
+"shop.buy" = "Acheter des crédits";
+"shop.header" = "Packs de crédits · 10 % offerts sur chaque pack";
+"shop.footer" = "Paiement via Apple. Les crédits servent à scanner des cartes et à dessiner des images de plats ; les crédits achetés n'expirent jamais. Ouvrir une carte enregistrée ou un exemple ne coûte rien.";
+"shop.pack.detail" = "%1$d crédits + %2$d offerts";
+"shop.loading" = "Chargement des packs…";
+"shop.unavailable" = "Les packs ne sont pas encore disponibles.";
+"shop.loadFailed" = "Impossible de charger les packs : %@";
+"shop.signInFirst" = "Connectez-vous d'abord avec Apple.";
+"shop.noServer" = "Impossible de joindre le serveur. Réessayez plus tard.";
+"shop.pending" = "En attente d'approbation (par exemple « Autorisation d'achat ») ; les crédits arriveront d'eux-mêmes une fois l'achat approuvé.";
+"shop.purchaseFailed" = "L'achat n'a pas abouti : %@";
+"shop.unverified" = "Apple n'a pas pu vérifier cette transaction.";
+"shop.credited" = "%d crédits ajoutés";
+"shop.notCredited" = "Paiement effectué, mais les crédits ne sont pas encore arrivés : %@. L'app réessaiera à sa prochaine ouverture.";

@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Inicia sesión con Apple para escanear una carta";
-"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 5–10) y 100 más cada mes que uses la app. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
+"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 5–10); puedes comprar más en la tienda. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
 "onboarding.viewSamples" = "Ver ejemplos";
 
 /* MARK: - Home */
@@ -155,11 +155,11 @@
 "settings.account.delete.title" = "¿Eliminar tu cuenta?";
 "settings.account.delete.message" = "Tu cuenta y sus créditos se borran de nuestro servidor y no se pueden recuperar. El historial de este teléfono se queda.";
 "settings.account.delete.confirm" = "Eliminar cuenta";
-"settings.account.footer" = "Empiezas con 300 créditos y recibes 100 más cada mes que uses la app; los créditos no caducan. Una página de carta cuesta unos 5–10 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
-"settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis y 100 más cada mes que uses la app.";
+"settings.account.footer" = "Empiezas con 300 créditos gratis; después puedes comprar más en la tienda. Los créditos no caducan. Una página de carta cuesta unos 5–10 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
+"settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis.";
 "error.signInRequired" = "Inicia sesión con Apple primero (Ajustes → Cuenta) para escanear una carta nueva.";
 "error.sessionExpired" = "Tu sesión ha caducado. Vuelve a iniciar sesión con Apple.";
-"error.outOfCredits" = "No hay créditos suficientes: hacen falta unos %1$d y tu saldo es %2$d. Llegan 100 más el próximo mes que uses la app.";
+"error.outOfCredits" = "No hay créditos suficientes: hacen falta unos %1$d y tu saldo es %2$d. Puedes comprar más en la tienda.";
 "error.signInFailed" = "No se pudo iniciar sesión: %@";
 "notice.imagesStopped" = "Se detuvieron las imágenes de platos: %@";
 
@@ -169,3 +169,25 @@
 "credits.chart.balance" = "Saldo";
 "credits.chart.spent" = "Uso diario";
 "credits.chart.empty" = "Aún no hay historial";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "%1$d de %2$d páginas listas · traduciendo el resto…";
+"result.pageTranslating" = "Traduciendo esta página…";
+"result.pageFailed" = "No se pudo traducir esta página";
+
+/* MARK: - Credit shop */
+"shop.title" = "Tienda";
+"shop.buy" = "Comprar créditos";
+"shop.header" = "Packs de créditos · 10 % extra en cada pack";
+"shop.footer" = "Se paga a través de Apple. Los créditos sirven para escanear cartas y dibujar imágenes de platos, y los créditos comprados no caducan. Abrir cartas guardadas y los ejemplos no cuesta nada.";
+"shop.pack.detail" = "%1$d créditos + %2$d de regalo";
+"shop.loading" = "Cargando packs…";
+"shop.unavailable" = "Los packs aún no están disponibles.";
+"shop.loadFailed" = "No se pudieron cargar los packs: %@";
+"shop.signInFirst" = "Inicia sesión con Apple primero.";
+"shop.noServer" = "No se pudo conectar con el servidor. Inténtalo más tarde.";
+"shop.pending" = "Pendiente de aprobación (por ejemplo, «Solicitar la compra»); los créditos llegarán solos cuando se apruebe.";
+"shop.purchaseFailed" = "La compra no se completó: %@";
+"shop.unverified" = "Apple no pudo verificar esta transacción.";
+"shop.credited" = "%d créditos añadidos";
+"shop.notCredited" = "Pagado, pero los créditos aún no han llegado: %@. La app lo volverá a intentar la próxima vez que se abra.";

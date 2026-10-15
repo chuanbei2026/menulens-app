@@ -126,7 +126,8 @@ App 不再用用户自己的 OpenAI key。所有模型调用都走我们自己�
 一个 AWS Lambda）：Sign in with Apple → 我们的 session token → 按点数计费 → 用我们的
 key 转发给 OpenAI。`POST /menu` 接收的就是 App 原来发给 Chat Completions 的请求体并
 原样流回 SSE，`POST /image` 生成配图；余额不足返回 **402**，session 失效返回 **401**。
-新账号 300 点，每个用过的月份 +100。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
+新账号送 300 点，之后在 App 内商店买（StoreKit 2 消耗型商品，见 `CreditShop.swift`；
+`POST /purchase` 验证交易后才 finish）。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
 接口、计价和部署见 [`backend/README.md`](backend/README.md)。
 
 ## Notes

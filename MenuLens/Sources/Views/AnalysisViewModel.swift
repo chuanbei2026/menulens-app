@@ -89,7 +89,24 @@ final class AnalysisViewModel: ObservableObject {
     @AppStorage("thumbnail_grid_mode") var thumbnailGridMode = true
 
     let history: HistoryStore
-    private var imageGenTask: Task<Void, Never>?
+    /// Thumbnails for the scan on screen (nil when generation is off).
+    private var imageQueue: DishImageQueue?
+    /// The analysis run (or opened scan) whose result is on screen. A run
+    /// the user has left — home, or another scan from History — still
+    /// finishes and saves to history, but stops touching the screen.
+    private var displayedRun: UUID?
+
+    /// While a multi-page scan is still coming in: indices into
+    /// `scan.pages` of pages not translated yet / that failed. Those pages
+    /// hold an empty placeholder document until the run finishes.
+    @Published private(set) var pendingPages: Set<Int> = []
+    @Published private(set) var failedPages: Set<Int> = []
+    /// The last scan (or its dish pictures) ran out of credits: the error
+    /// and notice offer the shop.
+    @Published private(set) var outOfCredits = false
+    /// True until every page of the scan on screen is in. The PDF (and so
+    /// the share button) waits for this: it is rendered once, complete.
+    var isReceivingPages: Bool { !pendingPages.isEmpty }
 
     init(history: HistoryStore = .shared) {
         self.history = history
@@ -103,11 +120,12 @@ final class AnalysisViewModel: ObservableObject {
         pickedImages.append(contentsOf: photos)
     }
 
-    /// Analyze all picked pages concurrently (one API call per page),
-    /// combine into a MenuScan, auto-save to history, then run layout
-    /// rendering and thumbnail generation IN PARALLEL. The result view
-    /// opens as soon as the layout PDF is ready; thumbnails keep filling
-    /// in behind the banner and the PDF refreshes when they finish.
+    /// Analyze all picked pages concurrently (one API call per page). The
+    /// result view opens as soon as the FIRST page is back; the others fill
+    /// in as they finish, and each page's dish thumbnails start as soon as
+    /// that page lands. Once every page is in (or failed), failed pages are
+    /// dropped, the scan is saved to history and the PDF is rendered — the
+    /// same scan, history entry and PDF as if it had been shown all at once.
     func analyze() async {
         let originals = pickedImages
         guard !originals.isEmpty else { return }
@@ -142,7 +160,28 @@ final class AnalysisViewModel: ObservableObject {
             model: model,
             targetLanguage: target.promptName
         )
+
+        let run = UUID()
+        imageQueue?.cancel()
+        displayedRun = run
+        let scanID = UUID()
+        let createdAt = Date()
+        notice = nil
+        outOfCredits = false
+        pdfData = nil
+        generatedImages = [:]
+        cart = [:]
+        // Dish keys carry the page index. Until the run ends that is the
+        // photo's index; failed pages are then dropped and later pages move
+        // up, so thumbnails and cart entries are re-keyed through this.
+        let keys = PageKeyMap()
+        let queue = makeImageQueue(scanID: scanID, run: run, keys: keys)
+        imageQueue = queue
+        if queue == nil { pipeline?.imagesTotal = 0 }
+
         var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
+        var pending = Set(pages.indices)
+        var failed: Set<Int> = []
         var lastError: Error?
         // Pages are independent: one failure must not throw away the pages
         // that came back fine (a 3-page scan losing everything to a single
@@ -157,6 +196,11 @@ final class AnalysisViewModel: ObservableObject {
                     // the model only classifies and translates by index.
                     let ocrLines = OCRService.recognizeLines(in: pageImage)
                     await MainActor.run { self?.pipeline?.linesTotal += ocrLines.count }
+                    #if DEBUG
+                    if let seconds = await Self.debugPageDelay[index] {
+                        try? await Task.sleep(for: .seconds(seconds))
+                    }
+                    #endif
                     do {
                         let document = try await client.analyzeMenu(
                             jpegData: jpeg, ocrLines: ocrLines,
@@ -174,57 +218,102 @@ final class AnalysisViewModel: ObservableObject {
                 }
             }
             for await (index, result) in group {
+                pending.remove(index)
                 switch result {
                 case let .success(document):
                     pages[index] = document
+                    let dishes = Self.dishesNeedingImages(document, page: index)
+                    queue?.add(dishes)
+                    guard displayedRun == run else { continue }
                     pipeline?.pagesDone += 1
+                    if queue != nil { pipeline?.imagesTotal = (pipeline?.imagesTotal ?? 0) + dishes.count }
                 case let .failure(error):
                     lastError = error
+                    failed.insert(index)
+                    if case .outOfCredits = error as? Backend.BackendError, displayedRun == run {
+                        outOfCredits = true
+                    }
+                }
+                guard displayedRun == run, pages.contains(where: { $0 != nil }) else { continue }
+                // Show what is in so far; pending pages keep their photo.
+                let landed = pages.compactMap { $0 }
+                scan = MenuScan.combining(pages: landed, targetLanguage: target, id: scanID, createdAt: createdAt)
+                    .withPages(pages.map { $0 ?? .placeholder })
+                scanImages = images
+                pendingPages = pending
+                failedPages = failed
+                if phase != .done {
+                    pipeline?.layoutState = .done
+                    phase = .done
                 }
             }
         }
+
+        // Every page was charged (or refused); show the new balance.
+        Task { await account.refreshCredits() }
 
         // Keep documents and photos PAIRED. Dropping failed pages from the
         // documents while keeping every image would shift the two lists apart
         // and paint one page's translations onto another page's photo.
         var results: [(document: MenuDocument, image: UIImage)] = []
+        var finalIndex: [Int: Int] = [:]
         for (index, page) in pages.enumerated() {
-            if let page { results.append((page, images[index])) }
+            if let page {
+                finalIndex[index] = results.count
+                results.append((page, images[index]))
+            }
         }
-        // Every page was charged (or refused); show the new balance.
-        Task { await account.refreshCredits() }
         guard !results.isEmpty else {
+            queue?.cancel()
+            guard displayedRun == run else { return }
             pipeline = nil
+            pendingPages = []
+            failedPages = []
             phase = .failed(lastError?.localizedDescription ?? L("error.recognizeFailed"))
             return
         }
-        let failedPages = images.count - results.count
-        notice = failedPages > 0
-            ? L("notice.partialPages", failedPages, results.count)
-            : nil
-        do {
-            let newScan = MenuScan.combining(pages: results.map(\.document), targetLanguage: target)
-            history.save(scan: newScan, images: results.map(\.image))
-            scan = newScan
-            scanImages = results.map(\.image)
-            generatedImages = [:]
-            cart = [:]
 
-            // Layout and thumbnails run concurrently from here.
-            pipeline?.layoutState = .running
-            startImageGenerationIfNeeded()
+        let finalScan = MenuScan.combining(
+            pages: results.map(\.document), targetLanguage: target, id: scanID, createdAt: createdAt
+        )
+        keys.map = finalIndex
+        if !failed.isEmpty {
+            history.rekeyGeneratedImages(scanID: scanID) { keys.finalKey($0) }
+        }
+        history.save(scan: finalScan, images: results.map(\.image))
+
+        if displayedRun == run {
+            if !failed.isEmpty {
+                notice = [notice, L("notice.partialPages", failed.count, results.count)]
+                    .compactMap { $0 }
+                    .joined(separator: "\n")
+                generatedImages = Dictionary(uniqueKeysWithValues: generatedImages.compactMap { key, image in
+                    keys.finalKey(key).map { ($0, image) }
+                })
+                cart = Dictionary(uniqueKeysWithValues: cart.compactMap { key, perMember in
+                    keys.finalKey(key).map { ($0, perMember) }
+                })
+            }
+            scan = finalScan
+            scanImages = results.map(\.image)
+            pendingPages = []
+            failedPages = []
+        }
+        // No more dishes: leftovers that were waiting for a collage go out.
+        queue?.finish()
+        if displayedRun == run {
             await renderPDFAsync()
-            pipeline?.layoutState = .done
-            phase = .done
-        } catch {
-            pipeline = nil
-            phase = .failed(error.localizedDescription)
         }
     }
 
     /// Open a saved scan from the history list.
     func open(_ saved: MenuScan) {
-        imageGenTask?.cancel()
+        imageQueue?.cancel()
+        let run = UUID()
+        displayedRun = run
+        pendingPages = []
+        failedPages = []
+        outOfCredits = false
         notice = nil
         scan = saved
         scanImages = history.loadImages(for: saved)
@@ -243,11 +332,24 @@ final class AnalysisViewModel: ObservableObject {
         Task {
             await renderPDFAsync()
         }
-        startImageGenerationIfNeeded()
+        let queue = makeImageQueue(scanID: saved.id, run: run, keys: PageKeyMap())
+        imageQueue = queue
+        var dishes: [DishImageQueue.Dish] = []
+        for (p, page) in saved.pages.enumerated() {
+            dishes += Self.dishesNeedingImages(page, page: p).filter { generatedImages[$0.key] == nil }
+        }
+        pipeline?.imagesTotal = queue == nil ? 0 : dishes.count
+        queue?.add(dishes)
+        queue?.finish()
     }
 
     func reset() {
-        imageGenTask?.cancel()
+        imageQueue?.cancel()
+        imageQueue = nil
+        displayedRun = nil
+        pendingPages = []
+        failedPages = []
+        outOfCredits = false
         notice = nil
         phase = .idle
         pickedImages = []
@@ -379,105 +481,60 @@ final class AnalysisViewModel: ObservableObject {
     // MARK: - Concurrent dish-thumbnail generation
 
     /// Dishes that have no printed photo on the menu get an AI thumbnail.
-    /// Requests are split one-per-dish and run through a small concurrency
-    /// window; each result is persisted immediately, and the PDF is
-    /// re-rendered once at the end.
-    private func startImageGenerationIfNeeded() {
-        guard generateDishImages, aiConsentGranted, let scan,
-              AccountStore.shared.isSignedIn
-        else {
-            pipeline?.imagesTotal = 0
-            return
-        }
-
-        var dishes: [(key: String, spec: ImageGenClient.DishSpec)] = []
-        for (p, page) in scan.pages.enumerated() {
-            for (s, section) in page.sections.enumerated() {
-                for (i, item) in section.items.enumerated() {
-                    let key = MenuScan.dishKey(page: p, section: s, item: i)
-                    if item.photoBBox == nil, generatedImages[key] == nil {
-                        dishes.append((key, ImageGenClient.DishSpec(
-                            name: item.originalName,
-                            chineseName: item.chineseName,
-                            description: item.originalDescription
-                        )))
-                    }
-                }
+    static func dishesNeedingImages(_ document: MenuDocument, page: Int) -> [DishImageQueue.Dish] {
+        var dishes: [DishImageQueue.Dish] = []
+        for (s, section) in document.sections.enumerated() {
+            for (i, item) in section.items.enumerated() where item.photoBBox == nil {
+                dishes.append((MenuScan.dishKey(page: page, section: s, item: i), ImageGenClient.DishSpec(
+                    name: item.originalName,
+                    chineseName: item.chineseName,
+                    description: item.originalDescription
+                )))
             }
         }
-        pipeline?.imagesDone = 0
-        pipeline?.imagesTotal = dishes.count
-        guard !dishes.isEmpty else { return }
+        return dishes
+    }
 
-        // One request per full group of 4 (a 2x2 collage sliced into cells,
-        // ~4x cheaper per dish); leftovers fall back to single requests.
-        enum GenJob {
-            case grid([(key: String, spec: ImageGenClient.DishSpec)])
-            case single(key: String, spec: ImageGenClient.DishSpec)
-        }
-        var jobs: [GenJob] = []
-        if thumbnailGridMode {
-            var rest = dishes[...]
-            while rest.count >= 4 {
-                jobs.append(.grid(Array(rest.prefix(4))))
-                rest = rest.dropFirst(4)
+    /// A thumbnail queue for one scan whose results are persisted as they
+    /// arrive and shown while `run` is on screen; nil when generation is off.
+    /// The PDF is re-rendered once, when the queue drains.
+    private func makeImageQueue(scanID: UUID, run: UUID, keys: PageKeyMap) -> DishImageQueue? {
+        guard generateDishImages, aiConsentGranted, AccountStore.shared.isSignedIn else { return nil }
+        let queue = DishImageQueue(
+            client: ImageGenClient(sessionToken: AccountStore.shared.sessionToken),
+            gridMode: thumbnailGridMode
+        )
+        queue.onResult = { [weak self] queuedKey, image in
+            guard let self, let key = keys.currentKey(queuedKey) else { return }
+            if let image {
+                self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
             }
-            jobs.append(contentsOf: rest.map { .single(key: $0.key, spec: $0.spec) })
-        } else {
-            jobs = dishes.map { .single(key: $0.key, spec: $0.spec) }
+            guard self.displayedRun == run else { return }
+            if let image { self.generatedImages[key] = image }
+            self.pipeline?.imagesDone += 1
         }
-
-        let client = ImageGenClient(sessionToken: AccountStore.shared.sessionToken)
-        let scanID = scan.id
-
-        imageGenTask = Task { [weak self] in
-            await withTaskGroup(of: [(String, UIImage?)].self) { group in
-                var pending = jobs[...]
-                // 2-wide: stays under gpt-image-1's images-per-minute cap.
-                let window = 2
-                func addNext(_ group: inout TaskGroup<[(String, UIImage?)]>) {
-                    guard let job = pending.popFirst() else { return }
-                    group.addTask {
-                        switch job {
-                        case let .single(key, spec):
-                            return [(key, await client.generateDishThumbnail(spec))]
-                        case let .grid(cells):
-                            let images = await client.generateDishGrid(cells.map(\.spec))
-                            return cells.enumerated().map { index, cell in
-                                (cell.key, images?[index])
-                            }
-                        }
-                    }
-                }
-                for _ in 0 ..< window { addNext(&group) }
-
-                for await results in group {
-                    guard let self, !Task.isCancelled else { return }
-                    for (key, image) in results {
-                        if let image {
-                            self.generatedImages[key] = image
-                            self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
-                        }
-                        self.pipeline?.imagesDone += 1
-                    }
-                    // Out of credits (or signed out): queue nothing more.
-                    if client.stopReason == nil { addNext(&group) }
-                }
-            }
-            guard let self, !Task.isCancelled else { return }
-            if let reason = client.stopReason {
+        queue.onDrained = { [weak self, weak queue] in
+            Task { await AccountStore.shared.refreshCredits() }
+            guard let self, self.displayedRun == run else { return }
+            if let reason = queue?.stopReason {
+                if case .outOfCredits = reason { self.outOfCredits = true }
                 // Close the progress out at what was actually made.
                 if let done = self.pipeline?.imagesDone { self.pipeline?.imagesTotal = done }
                 self.notice = [self.notice, L("notice.imagesStopped", reason.localizedDescription)]
                     .compactMap { $0 }
                     .joined(separator: "\n")
             }
-            await AccountStore.shared.refreshCredits()
-            await self.renderPDFAsync()
+            Task { await self.renderPDFAsync() }
         }
+        return queue
     }
 
     #if DEBUG
+    /// Holds a page back before its request (`-delayPage <index> <seconds>`),
+    /// so the half-arrived result screen can be looked at even when the
+    /// pages come from the response cache and would otherwise land at once.
+    static var debugPageDelay: [Int: Double] = [:]
+
     /// Load the synthetic demo menu — verifies bbox cropping and PDF export
     /// in the simulator without signing in.
     func loadSample() {
@@ -491,4 +548,27 @@ final class AnalysisViewModel: ObservableObject {
         Task { await renderPDFAsync() }
     }
     #endif
+}
+
+/// Original page index → index in the saved scan, filled in when a run
+/// ends. Until then dish keys are used as they are.
+@MainActor
+final class PageKeyMap {
+    var map: [Int: Int]?
+
+    /// The key to file a thumbnail under right now.
+    func currentKey(_ key: String) -> String? {
+        map == nil ? key : finalKey(key)
+    }
+
+    /// "p2_s0_i3" with page 2 moved to its saved position; nil when that
+    /// page was dropped.
+    func finalKey(_ key: String) -> String? {
+        guard let map else { return key }
+        guard key.hasPrefix("p"), let separator = key.firstIndex(of: "_"),
+              let page = Int(key[key.index(after: key.startIndex) ..< separator]),
+              let moved = map[page]
+        else { return nil }
+        return "p\(moved)" + key[separator...]
+    }
 }

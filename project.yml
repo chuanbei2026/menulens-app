@@ -12,6 +12,12 @@ targets:
   MenuLens:
     type: application
     platform: iOS
+    scheme:
+      # Local StoreKit testing (Xcode runs on a simulator): the credit packs
+      # without App Store Connect. Such transactions are signed by Xcode, not
+      # Apple, so POST /purchase rejects them (bad_jws) — expected.
+      storeKitConfiguration: MenuLens/Products.storekit
+      testTargets: [MenuLensTests]
     sources:
       - MenuLens/Sources
       - path: MenuLens/Resources
@@ -74,3 +80,22 @@ targets:
         GENERATE_INFOPLIST_FILE: false
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: "1.0"
+
+  # Hosted unit tests. ShopTests drives the credit shop against the live
+  # backend with StoreKit served from Products.storekit (see the file).
+  MenuLensTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - MenuLensTests
+      - path: MenuLens/Products.storekit
+        buildPhase: resources
+    dependencies:
+      - target: MenuLens
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_VERSION: "5.10"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: LNP5ER743F
+

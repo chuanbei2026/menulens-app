@@ -15,7 +15,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Sign in with Apple to scan a new menu";
-"onboarding.body" = "New accounts get 300 free credits (a menu page takes about 5–10), plus 100 more every month you use the app. In the meantime you can browse the two real restaurant menus already inside.";
+"onboarding.body" = "New accounts get 300 free credits (a menu page takes about 5–10); more can be bought in the shop. In the meantime you can browse the two real restaurant menus already inside.";
 "onboarding.viewSamples" = "Browse samples";
 
 /* MARK: - Home */
@@ -163,11 +163,11 @@
 "settings.account.delete.title" = "Delete your account?";
 "settings.account.delete.message" = "Your account and its credits are removed from our server and can't be restored. History on this phone stays.";
 "settings.account.delete.confirm" = "Delete account";
-"settings.account.footer" = "You start with 300 credits and get 100 more in every month you use the app; credits never expire. A menu page costs about 5–10 credits, a dish picture or a 4-dish collage about 0.5.";
-"settings.account.signedOut.footer" = "Scanning a new menu needs an account. Only an anonymous Apple account id is used — no name, no email. New accounts get 300 free credits, plus 100 every month you use the app.";
+"settings.account.footer" = "You start with 300 free credits; buy more in the shop. Credits never expire. A menu page costs about 5–10 credits, a dish picture or a 4-dish collage about 0.5.";
+"settings.account.signedOut.footer" = "Scanning a new menu needs an account. Only an anonymous Apple account id is used — no name, no email. New accounts get 300 free credits.";
 "error.signInRequired" = "Sign in with Apple first (Settings → Account) to scan a new menu.";
 "error.sessionExpired" = "Your sign-in has expired. Please sign in with Apple again.";
-"error.outOfCredits" = "Not enough credits: this needs about %1$d and your balance is %2$d. 100 more arrive in the next month you use the app.";
+"error.outOfCredits" = "Not enough credits: this needs about %1$d and your balance is %2$d. You can buy more in the shop.";
 "error.signInFailed" = "Sign in failed: %@";
 "notice.imagesStopped" = "Dish photos stopped: %@";
 
@@ -177,3 +177,25 @@
 "credits.chart.balance" = "Balance";
 "credits.chart.spent" = "Daily use";
 "credits.chart.empty" = "No history yet";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "%1$d of %2$d pages ready · translating the rest…";
+"result.pageTranslating" = "Translating this page…";
+"result.pageFailed" = "This page could not be translated";
+
+/* MARK: - Credit shop */
+"shop.title" = "Shop";
+"shop.buy" = "Buy credits";
+"shop.header" = "Credit packs · 10% extra on every pack";
+"shop.footer" = "Paid through Apple. Credits pay for scanning menus and drawing dish pictures, and bought credits never expire. Saved menus and the samples cost nothing to open.";
+"shop.pack.detail" = "%1$d credits + %2$d bonus";
+"shop.loading" = "Loading packs…";
+"shop.unavailable" = "The packs aren't available yet.";
+"shop.loadFailed" = "Couldn't load the packs: %@";
+"shop.signInFirst" = "Sign in with Apple first.";
+"shop.noServer" = "Couldn't reach the server. Please try again later.";
+"shop.pending" = "Waiting for approval (for example Ask to Buy); the credits arrive on their own once it's approved.";
+"shop.purchaseFailed" = "The purchase didn't complete: %@";
+"shop.unverified" = "Apple could not verify this transaction.";
+"shop.credited" = "%d credits added";
+"shop.notCredited" = "Paid, but the credits haven't arrived yet: %@. The app tries again the next time it opens.";

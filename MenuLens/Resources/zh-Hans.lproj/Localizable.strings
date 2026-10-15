@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "用 Apple 登录后即可识别新菜单";
-"onboarding.body" = "新账号送 300 点（一页菜单约 5–10 点），之后每个用过的月份再送 100 点。现在也可以直接翻看内置的两份真实餐厅菜单。";
+"onboarding.body" = "新账号送 300 点（一页菜单约 5–10 点），用完可以在商店里买。现在也可以直接翻看内置的两份真实餐厅菜单。";
 "onboarding.viewSamples" = "看内置菜单";
 
 /* MARK: - Home */
@@ -155,11 +155,11 @@
 "settings.account.delete.title" = "要删除账号吗？";
 "settings.account.delete.message" = "账号和余额会从我们的服务器上删除，无法恢复。这台手机上的历史记录不受影响。";
 "settings.account.delete.confirm" = "删除账号";
-"settings.account.footer" = "新账号有 300 点，之后每个用过的月份再加 100 点，点数永不过期。一页菜单约 5–10 点，一张配图或一张四宫格约 0.5 点。";
-"settings.account.signedOut.footer" = "识别新菜单需要一个账号。只使用匿名的 Apple 账号 ID，不要姓名、不要邮箱。新账号送 300 点，之后每个用过的月份再送 100 点。";
+"settings.account.footer" = "新账号送 300 点，之后可以在商店里买，点数永不过期。一页菜单约 5–10 点，一张配图或一张四宫格约 0.5 点。";
+"settings.account.signedOut.footer" = "识别新菜单需要一个账号。只使用匿名的 Apple 账号 ID，不要姓名、不要邮箱。新账号送 300 点。";
 "error.signInRequired" = "请先用 Apple 登录（设置 → 账号）再识别新菜单。";
 "error.sessionExpired" = "登录已过期，请重新用 Apple 登录。";
-"error.outOfCredits" = "点数不够：这次大约需要 %1$d 点，余额 %2$d 点。下个月使用时会再送 100 点。";
+"error.outOfCredits" = "点数不够：这次大约需要 %1$d 点，余额 %2$d 点。可以在商店里买点数。";
 "error.signInFailed" = "登录失败：%@";
 "notice.imagesStopped" = "配图已停止：%@";
 
@@ -169,3 +169,25 @@
 "credits.chart.balance" = "余额";
 "credits.chart.spent" = "每日用量";
 "credits.chart.empty" = "暂无记录";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "已完成 %1$d/%2$d 页 · 其余页面翻译中…";
+"result.pageTranslating" = "这一页正在翻译…";
+"result.pageFailed" = "这一页没能翻译出来";
+
+/* MARK: - Credit shop */
+"shop.title" = "商店";
+"shop.buy" = "买点数";
+"shop.header" = "点数包 · 每档都多送 10%";
+"shop.footer" = "通过 Apple 付款。点数用来识别菜单和生成配图，买的点数永不过期。打开已保存的菜单和示例菜单不花点数。";
+"shop.pack.detail" = "%1$d 点 + 赠 %2$d 点";
+"shop.loading" = "正在读取商品…";
+"shop.unavailable" = "商品还没上架。";
+"shop.loadFailed" = "读不到商品：%@";
+"shop.signInFirst" = "请先用 Apple 登录。";
+"shop.noServer" = "连不上服务器，请稍后再试。";
+"shop.pending" = "等待确认（比如家长同意），确认后点数会自动到账。";
+"shop.purchaseFailed" = "购买没有完成：%@";
+"shop.unverified" = "这笔交易没有通过 Apple 的验证。";
+"shop.credited" = "已到账 %d 点";
+"shop.notCredited" = "已付款，但点数还没到账：%@。下次打开 App 时会自动补上。";

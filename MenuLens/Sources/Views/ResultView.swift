@@ -21,6 +21,7 @@ struct ResultView: View {
         ProcessInfo.processInfo.arguments.contains("-listMode") ? .list : .canvas
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
+    @State private var showShop = false
     @State private var showOrderSummary =
         ProcessInfo.processInfo.arguments.contains("-showSummary")
     /// Canvas shows the untouched original menu (order marks kept) — for
@@ -48,6 +49,11 @@ struct ResultView: View {
                     Text(notice)
                         .font(.footnote)
                     Spacer()
+                    if viewModel.outOfCredits {
+                        Button(L("shop.buy")) { showShop = true }
+                            .font(.footnote.weight(.semibold))
+                            .buttonStyle(.borderless)
+                    }
                     Button {
                         viewModel.notice = nil
                     } label: {
@@ -63,6 +69,25 @@ struct ResultView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
+                if viewModel.isReceivingPages, let scan = viewModel.scan {
+                    // Pages arrive one at a time; say how many are still out.
+                    let total = scan.pages.count
+                    let ready = total - viewModel.pendingPages.count - viewModel.failedPages.count
+                    VStack(spacing: 6) {
+                        HStack {
+                            Label(L("result.pagesProgress", ready, total), systemImage: "text.viewfinder")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            ProgressView().controlSize(.small)
+                        }
+                        ProgressView(value: Double(ready), total: Double(total))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(.thinMaterial)
+                }
+
                 if let progress = viewModel.pipeline,
                    let total = progress.imagesTotal, total > 0, !progress.imagesFinished {
                     VStack(spacing: 6) {
@@ -119,6 +144,7 @@ struct ResultView: View {
                 .background(.regularMaterial)
             }
         }
+        .sheet(isPresented: $showShop) { ShopView() }
         .sheet(isPresented: $showOrderSummary) {
             OrderSummaryView(viewModel: viewModel) {
                 mode = .canvas
@@ -133,7 +159,8 @@ struct ResultView: View {
                 .accessibilityLabel(L("result.home"))
             }
             ToolbarItem(placement: .topBarTrailing) {
-                if let url = currentShareURL() {
+                // The PDF is rendered once every page is in.
+                if !viewModel.isReceivingPages, let url = currentShareURL() {
                     ShareLink(item: url) {
                         Label(L("result.exportPDF"), systemImage: "square.and.arrow.up")
                     }
@@ -182,13 +209,22 @@ private struct MenuCanvasView: View {
     @Binding var showOriginal: Bool
     let onSelectDish: (String) -> Void
     @ObservedObject private var loc = Localization.shared
+    @State private var page = 0
 
     var body: some View {
         if let scan = viewModel.scan {
             let multiPage = scan.pages.count > 1
-            TabView {
+            TabView(selection: $page) {
                 ForEach(Array(scan.pages.enumerated()), id: \.offset) { index, document in
-                    if index < viewModel.scanImages.count {
+                    if index < viewModel.scanImages.count,
+                       viewModel.pendingPages.contains(index) || viewModel.failedPages.contains(index) {
+                        PendingPage(
+                            image: viewModel.scanImages[index],
+                            failed: viewModel.failedPages.contains(index)
+                        )
+                        .padding(.bottom, multiPage ? 34 : 0)
+                        .tag(index)
+                    } else if index < viewModel.scanImages.count {
                         CanvasPage(
                             document: document,
                             pageIndex: index,
@@ -200,10 +236,20 @@ private struct MenuCanvasView: View {
                         )
                         // Keep the page dots clear (multi-page only).
                         .padding(.bottom, multiPage ? 34 : 0)
+                        .tag(index)
                     }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: multiPage ? .always : .never))
+            // Pages land in any order. While they do, don't leave the
+            // reader looking at a placeholder when another page is ready.
+            .onChange(of: viewModel.pendingPages, initial: true) {
+                let waiting = viewModel.pendingPages.union(viewModel.failedPages)
+                guard viewModel.isReceivingPages, waiting.contains(page),
+                      let ready = scan.pages.indices.first(where: { !waiting.contains($0) })
+                else { return }
+                page = ready
+            }
             .indexViewStyle(.page(backgroundDisplayMode: .always))
             .background(Color(.systemGray5))
             .overlay(alignment: .topTrailing) {
@@ -225,6 +271,37 @@ private struct MenuCanvasView: View {
                 .padding(.top, 10)
             }
         }
+    }
+}
+
+/// A page of a scan still coming in: its photo, dimmed, with what is
+/// happening to it. Replaced by a `CanvasPage` the moment it lands.
+private struct PendingPage: View {
+    let image: UIImage
+    let failed: Bool
+
+    var body: some View {
+        Image(uiImage: image)
+            .resizable()
+            .scaledToFit()
+            .opacity(0.35)
+            .overlay {
+                VStack(spacing: 10) {
+                    if failed {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.orange)
+                    } else {
+                        ProgressView().controlSize(.large)
+                    }
+                    Text(L(failed ? "result.pageFailed" : "result.pageTranslating"))
+                        .font(.subheadline.weight(.medium))
+                        .multilineTextAlignment(.center)
+                }
+                .padding(18)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

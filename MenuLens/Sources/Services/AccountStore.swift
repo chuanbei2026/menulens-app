@@ -50,6 +50,10 @@ final class AccountStore: ObservableObject {
         sessionToken = token
         credits = nil
         message = nil
+        cachedPurchaseToken = nil
+        // Purchases paid for while signed out (or before a crash) can be
+        // credited now.
+        CreditShop.shared.retryUnfinished()
     }
 
     /// One day of the credit history: what was used and added, and the
@@ -79,6 +83,27 @@ final class AccountStore: ObservableObject {
         }
     }
 
+    /// The UUID every StoreKit purchase carries (`appAccountToken` from
+    /// GET /credits): the server credits a transaction only to the account
+    /// whose token it carries. Fixed per account, so fetched once.
+    func purchaseToken() async -> UUID? {
+        if let cachedPurchaseToken { return cachedPurchaseToken }
+        guard isSignedIn,
+              let reply = try? await Backend.send(Backend.request("credits", token: sessionToken)),
+              let text = reply["appAccountToken"] as? String,
+              let token = UUID(uuidString: text)
+        else { return nil }
+        cachedPurchaseToken = token
+        return token
+    }
+
+    private var cachedPurchaseToken: UUID?
+
+    /// The balance a purchase reply reported, ahead of the next refresh.
+    func applyBalance(_ total: Int) {
+        credits = total
+    }
+
     /// "2026-10-15" → local midnight, for the chart's day axis.
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -93,6 +118,7 @@ final class AccountStore: ObservableObject {
         sessionToken = ""
         credits = nil
         usage = []
+        cachedPurchaseToken = nil
     }
 
     /// The server no longer accepts the session (it expires after 30 days).

@@ -5,6 +5,8 @@ import SwiftUI
 /// days, and a chart of either the balance or the daily use.
 struct CreditsCard: View {
     @ObservedObject var account: AccountStore
+    /// Opens the shop; the card has no sheet of its own.
+    var onBuy: (() -> Void)?
     @State private var mode = Mode.balance
 
     enum Mode: CaseIterable, Identifiable {
@@ -41,6 +43,13 @@ struct CreditsCard: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             chart.frame(height: 120)
+            if let onBuy {
+                Button(action: onBuy) {
+                    Label(L("shop.buy"), systemImage: "cart.badge.plus")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
     }
 

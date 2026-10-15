@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Apple로 로그인하면 새 메뉴를 인식할 수 있습니다";
-"onboarding.body" = "새 계정에는 300 크레딧(메뉴 한 페이지에 약 5–10)이 주어지고, 사용한 달마다 100이 더 들어옵니다. 지금 바로 내장된 실제 식당 메뉴 2개를 살펴볼 수도 있습니다.";
+"onboarding.body" = "새 계정에는 300 크레딧(메뉴 한 페이지에 약 5–10)이 무료로 주어지고, 더 필요하면 상점에서 살 수 있습니다. 지금 바로 내장된 실제 식당 메뉴 2개를 살펴볼 수도 있습니다.";
 "onboarding.viewSamples" = "샘플 보기";
 
 /* MARK: - Home */
@@ -155,11 +155,11 @@
 "settings.account.delete.title" = "계정을 삭제할까요?";
 "settings.account.delete.message" = "계정과 크레딧이 서버에서 삭제되며 복구할 수 없습니다. 이 기기의 기록은 그대로 남습니다.";
 "settings.account.delete.confirm" = "계정 삭제";
-"settings.account.footer" = "처음에 300 크레딧으로 시작하고, 사용한 달마다 100이 더해집니다. 크레딧은 만료되지 않습니다. 메뉴 한 페이지는 약 5–10, 요리 이미지 한 장이나 4개짜리 콜라주는 약 0.5 크레딧입니다.";
-"settings.account.signedOut.footer" = "새 메뉴를 인식하려면 계정이 필요합니다. 익명 Apple 계정 ID만 사용하며 이름이나 이메일은 받지 않습니다. 새 계정에는 300 크레딧, 사용한 달마다 100이 주어집니다.";
+"settings.account.footer" = "처음에 300 크레딧이 무료로 주어지고, 그 뒤에는 상점에서 살 수 있습니다. 크레딧은 만료되지 않습니다. 메뉴 한 페이지는 약 5–10, 요리 이미지 한 장이나 4개짜리 콜라주는 약 0.5 크레딧입니다.";
+"settings.account.signedOut.footer" = "새 메뉴를 인식하려면 계정이 필요합니다. 익명 Apple 계정 ID만 사용하며 이름이나 이메일은 받지 않습니다. 새 계정에는 300 크레딧이 무료로 주어집니다.";
 "error.signInRequired" = "새 메뉴를 인식하려면 먼저 Apple로 로그인하세요(설정 → 계정).";
 "error.sessionExpired" = "로그인이 만료되었습니다. Apple로 다시 로그인해 주세요.";
-"error.outOfCredits" = "크레딧이 부족합니다: 이번에 약 %1$d이 필요하고 잔액은 %2$d입니다. 다음에 사용하는 달에 100이 더 들어옵니다.";
+"error.outOfCredits" = "크레딧이 부족합니다: 이번에 약 %1$d이 필요하고 잔액은 %2$d입니다. 상점에서 더 살 수 있습니다.";
 "error.signInFailed" = "로그인 실패: %@";
 "notice.imagesStopped" = "요리 이미지 생성이 중단되었습니다: %@";
 
@@ -169,3 +169,25 @@
 "credits.chart.balance" = "잔액";
 "credits.chart.spent" = "일별 사용량";
 "credits.chart.empty" = "아직 기록이 없어요";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "%2$d페이지 중 %1$d페이지 완료 · 나머지를 번역하는 중…";
+"result.pageTranslating" = "이 페이지를 번역하는 중…";
+"result.pageFailed" = "이 페이지는 번역하지 못했습니다";
+
+/* MARK: - Credit shop */
+"shop.title" = "상점";
+"shop.buy" = "크레딧 구매";
+"shop.header" = "크레딧 팩 · 모든 팩에 10% 추가";
+"shop.footer" = "결제는 Apple을 통해 이루어집니다. 크레딧은 메뉴 인식과 요리 이미지 생성에 쓰이며, 구매한 크레딧은 만료되지 않습니다. 저장된 메뉴와 샘플은 무료로 열 수 있습니다.";
+"shop.pack.detail" = "%1$d 크레딧 + 보너스 %2$d";
+"shop.loading" = "팩을 불러오는 중…";
+"shop.unavailable" = "아직 판매 중인 팩이 없습니다.";
+"shop.loadFailed" = "팩을 불러오지 못했습니다: %@";
+"shop.signInFirst" = "먼저 Apple로 로그인하세요.";
+"shop.noServer" = "서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.";
+"shop.pending" = "승인을 기다리는 중입니다(예: 구매 요청). 승인되면 크레딧이 자동으로 들어옵니다.";
+"shop.purchaseFailed" = "구매가 완료되지 않았습니다: %@";
+"shop.unverified" = "이 거래는 Apple의 검증을 통과하지 못했습니다.";
+"shop.credited" = "%d 크레딧이 추가되었습니다";
+"shop.notCredited" = "결제는 되었지만 크레딧이 아직 들어오지 않았습니다: %@. 다음에 앱을 열 때 자동으로 다시 시도합니다.";

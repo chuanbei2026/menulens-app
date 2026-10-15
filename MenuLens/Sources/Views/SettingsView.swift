@@ -13,6 +13,7 @@ struct SettingsView: View {
     @ObservedObject private var party = PartyStore.shared
     @ObservedObject private var account = AccountStore.shared
     @State private var confirmDelete = false
+    @State private var showShop = false
     @State private var newMemberName = ""
     @State private var avatarTargetID: UUID?
     @State private var avatarPickerItem: PhotosPickerItem?
@@ -156,6 +157,7 @@ struct SettingsView: View {
                 }
             }
             .task { await account.refreshCredits() }
+            .sheet(isPresented: $showShop) { ShopView() }
         }
     }
 
@@ -166,7 +168,7 @@ struct SettingsView: View {
     private var accountSection: some View {
         Section {
             if account.isSignedIn {
-                CreditsCard(account: account)
+                CreditsCard(account: account) { showShop = true }
                     .padding(.vertical, 4)
                 Button(L("settings.account.signOut")) { account.signOut() }
                 Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }

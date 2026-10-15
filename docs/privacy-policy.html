@@ -25,6 +25,8 @@
   <li><strong>账号（通过 Apple 登录）</strong>：识别新菜单需要用 Apple 登录。App 不请求你的姓名和邮箱，
       我们只收到 Apple 给这个 App 的匿名账号 ID，用它记录你的点数余额。
       你可以随时在 App 的设置页 →「账号」里删除账号，账号和余额会从服务器上删除。</li>
+  <li><strong>购买点数</strong>：付款完全由 Apple 处理，我们看不到你的支付信息。App 只把 Apple 签名的交易凭证
+      发给服务器，用来核对并给对应账号加点数。</li>
   <li><strong>菜单照片和文字</strong>：为了识别和翻译，你选择的菜单照片、从中识别出的文字
       （以及你要求生成配图时的菜名）会通过加密连接（HTTPS）发送到我们的服务器，
       服务器把它们原样转交 OpenAI 的接口处理，再把结果传回你的手机。
@@ -34,7 +36,7 @@
       OpenAI 会短期保留 API 数据用于滥用监控，其处理遵循
       <a href="https://openai.com/policies/api-data-usage-policies">API 数据使用政策</a>
       （API 提交的数据默认不用于训练模型）。</li>
-  <li><strong>服务器保存的内容</strong>：匿名账号 ID、点数余额和发放记录，以及每次请求的用量统计
+  <li><strong>服务器保存的内容</strong>：匿名账号 ID、点数余额、赠送和购买记录（Apple 的交易编号和所买的点数包），以及每次请求的用量统计
       （请求大小、token 数、花费的点数、时间）。仅用于计费和维持服务运行。</li>
   <li><strong>翻译结果与历史记录</strong>：全部保存在你设备本地的应用沙盒中。删除记录或卸载应用即彻底清除。</li>
   <li><strong>同行成员姓名与头像</strong>：仅保存在设备本地，用于点菜标记，绝不上传。</li>
@@ -65,6 +67,9 @@
       does not ask for your name or email; we receive only the anonymous account id Apple issues for
       this app and use it to keep your credit balance. You can delete the account at any time in
       Settings → Account, which removes the account and its balance from our server.</li>
+  <li><strong>Buying credits</strong>: payment is handled entirely by Apple; we never see your payment
+      details. The app sends our server only Apple's signed transaction, which is checked and used to add
+      the credits to your account.</li>
   <li><strong>Menu photos and text</strong>: the menu photo you choose, the text read from it (and dish
       names, if you ask for generated dish photos) are sent over HTTPS to our server, which passes them
       unchanged to OpenAI's API and returns the result to your phone. <strong>Our server does not store
@@ -74,7 +79,7 @@
       for abuse monitoring, under its
       <a href="https://openai.com/policies/api-data-usage-policies">API data usage policies</a>
       (API data is not used for model training by default).</li>
-  <li><strong>What our server keeps</strong>: the anonymous account id, your credit balance and grants,
+  <li><strong>What our server keeps</strong>: the anonymous account id, your credit balance, free grants and purchases (Apple's transaction id and the pack bought),
       and per-request usage counts (request size, token counts, credits charged, time) — only for
       billing and keeping the service running.</li>
   <li><strong>Translations and history</strong> live entirely in the app's local sandbox.
