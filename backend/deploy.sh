@@ -124,23 +124,7 @@ if ! URL="$(aws lambda get-function-url-config --function-name "${NAME}" --query
     --action lambda:InvokeFunction --principal "*" --invoked-via-function-url >/dev/null 2>&1 || true
 fi
 
-echo "== Saved queries"
-save_query() {  # name, query — update in place if it already exists
-  local id
-  id="$(aws logs describe-query-definitions --query-definition-name-prefix "$1" \
-        --query "queryDefinitions[?name=='$1'].queryDefinitionId | [0]" --output text)"
-  if [[ "${id}" == "None" || -z "${id}" ]]; then
-    aws logs put-query-definition --name "$1" --log-group-names "${LOG_GROUP}" --query-string "$2" >/dev/null
-  else
-    aws logs put-query-definition --query-definition-id "${id}" --name "$1" --log-group-names "${LOG_GROUP}" --query-string "$2" >/dev/null
-  fi
-}
-save_query "ForeignMenu/recent requests" \
-  'filter msg = "request" | fields @timestamp, route, status, ms, userId, model, creditsCharged, costUsd, inputTokens, outputTokens, error | sort @timestamp desc | limit 100'
-save_query "ForeignMenu/errors" \
-  'filter level = "ERROR" or level = "WARN" | fields @timestamp, msg, route, status, userId, error, ref | sort @timestamp desc | limit 100'
-save_query "ForeignMenu/cost and credits (pick a time range)" \
-  'filter msg = "request" and costUsd > 0 | stats sum(costUsd) as usd, sum(creditsCharged) as credits, count(*) as calls, count_distinct(userId) as users by route, model'
+"${HERE}/observability.sh"
 
 echo
 echo "Deployed: ${URL}"
