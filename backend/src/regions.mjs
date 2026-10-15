@@ -15,8 +15,13 @@ const list = (s) => new Set(String(s ?? "").split(",").map((c) => c.trim().toUpp
 /** No model at all: CAC filing (CHN), sanctions / export controls (RUS, BLR, IRN, PRK, CUB, SYR). */
 export const BLOCKED_EVERYWHERE = list("CHN,RUS,BLR,IRN,PRK,CUB,SYR");
 
-/** Not in OpenAI's supported list (on top of BLOCKED_EVERYWHERE). */
-export const OPENAI_BLOCKED = new Set([...list("HKG,MAC"), ...list(process.env.OPENAI_BLOCKED_STOREFRONTS)]);
+/**
+ * App Store storefronts missing from OpenAI's list (developers.openai.com/api/docs/supported-countries,
+ * 208 entries, checked 2026-10-15), on top of BLOCKED_EVERYWHERE: Hong Kong, Macau, Venezuela, Kosovo,
+ * and the British territories the list doesn't name (Anguilla, BVI, Montserrat, Turks and Caicos —
+ * OpenAI says nothing about territories following their country, unlike Anthropic).
+ */
+export const OPENAI_BLOCKED = new Set([...list("HKG,MAC,VEN,XKS,AIA,VGB,MSR,TCA"), ...list(process.env.OPENAI_BLOCKED_STOREFRONTS)]);
 
 export function normalizeStorefront(raw) {
   const s = String(raw ?? "").trim().toUpperCase();

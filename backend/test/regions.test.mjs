@@ -9,6 +9,8 @@ test("storefronts: OpenAI not in HK/Macau, nothing in China or sanctioned countr
   assert.equal(normalizeStorefront("HK"), null);
   assert.equal(providerAllowed("openai", "USA"), true);
   assert.equal(providerAllowed("openai", "HKG"), false);
+  for (const s of ["MAC", "VEN", "XKS", "AIA", "VGB", "MSR", "TCA"]) assert.equal(providerAllowed("openai", s), false);
+  for (const s of ["JPN", "TWN", "VNM", "GBR", "AFG"]) assert.equal(providerAllowed("openai", s), true);
   assert.equal(providerAllowed("bedrock", "HKG"), true);
   for (const s of ["CHN", "RUS", "IRN", "PRK"]) assert.equal(providerAllowed("bedrock", s), false);
   assert.equal(providerAllowed("openai", null), true);
