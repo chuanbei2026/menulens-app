@@ -78,7 +78,7 @@ targets:
         # the first time, so xcodebuild can create the store profile.
         DEVELOPMENT_TEAM: LNP5ER743F
         GENERATE_INFOPLIST_FILE: false
-        CURRENT_PROJECT_VERSION: 2
+        CURRENT_PROJECT_VERSION: 3
         MARKETING_VERSION: "1.1"
 
   # Hosted unit tests. ShopTests drives the credit shop against the live
