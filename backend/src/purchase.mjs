@@ -15,11 +15,12 @@ export const APPLE_ROOT_G3_SHA256 =
 
 const RECEIPT_SIGNING_OID = "1.2.840.113635.100.6.11.1";
 
-/** What each product adds: the base credits plus a 10% bonus. Prices live in App Store Connect. */
+/** What each product adds. No bonus (unlike DateSeries): the 300 free credits are generous enough.
+ * Prices live in App Store Connect: US$0.99 / 4.99 / 19.99. */
 export const PRODUCTS = {
-  "ai.xiangyang.MenuLens.credits.100": { credits: 100, bonus: 10 },
-  "ai.xiangyang.MenuLens.credits.500": { credits: 500, bonus: 50 },
-  "ai.xiangyang.MenuLens.credits.2000": { credits: 2000, bonus: 200 },
+  "ai.xiangyang.MenuLens.credits.100": { credits: 100, bonus: 0 },
+  "ai.xiangyang.MenuLens.credits.500": { credits: 500, bonus: 0 },
+  "ai.xiangyang.MenuLens.credits.2000": { credits: 2000, bonus: 0 },
 };
 
 export class PurchaseError extends Error {

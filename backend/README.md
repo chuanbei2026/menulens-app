@@ -26,7 +26,7 @@ App ──POST /image {prompt} ──────────────► res
   (at least 0.1). A menu page on gpt-4.1 is ~5–10 credits; a low-quality 2×2 collage of dish pictures (gpt-image-1-mini) ~0.5.
 - Stored in tenths; the API returns whole credits. Out of credits → **402** `{reason: "credits", totalCredits, needed}`.
 - Purchases (`POST /purchase`, StoreKit 2 JWS): `ai.xiangyang.MenuLens.credits.{100,500,2000}` at US$0.99 / 4.99 / 19.99
-  give 110 / 550 / 2200 (+10%), the same packs as DateSeries — ~35% margin after Apple's 15%.
+  give 100 / 500 / 2000 (no bonus, unlike DateSeries) — ~40% margin after Apple's 15%.
 
 The server picks what reaches OpenAI: the model must be one of `MODELS` in `src/pricing.mjs`
 (default `gpt-4.1`), output is capped, images are pinned to gpt-image-1-mini 1024² low-quality jpeg.

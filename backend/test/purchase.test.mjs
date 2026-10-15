@@ -31,11 +31,11 @@ const ctx = { userId, bundleId: "ai.xiangyang.MenuLens", allowSandbox: false };
 test("a correctly signed transaction verifies and credits base + 10%", () => {
   const p = verifyAppleJWS(jws(payload), opts);
   assert.deepEqual(creditableTransaction(p, ctx),
-    { transactionId: payload.transactionId, productId: payload.productId, environment: "Production", credits: 550 });
+    { transactionId: payload.transactionId, productId: payload.productId, environment: "Production", credits: 500 });
 });
 
-test("every product carries a 10% bonus", () => {
-  for (const { credits, bonus } of Object.values(PRODUCTS)) assert.equal(bonus, credits / 10);
+test("products give exactly their credits: no bonus", () => {
+  for (const { bonus } of Object.values(PRODUCTS)) assert.equal(bonus, 0);
 });
 
 test("Apple's root is pinned: a chain to any other root is rejected", () => {
@@ -62,7 +62,7 @@ test("payload checks: app, product, environment, account, revocation", () => {
   assert.throws(check({ bundleId: "com.other.app" }), (e) => e.reason === "wrong_app");
   assert.throws(check({ productId: "ai.xiangyang.MenuLens.credits.999" }), (e) => e.reason === "unknown_product");
   assert.throws(check({ environment: "Sandbox" }), (e) => e.reason === "wrong_environment");
-  assert.equal(check({ environment: "Sandbox" }, { ...ctx, allowSandbox: true })().credits, 550);
+  assert.equal(check({ environment: "Sandbox" }, { ...ctx, allowSandbox: true })().credits, 500);
   assert.throws(check({ environment: "Xcode" }, { ...ctx, allowSandbox: true }), (e) => e.reason === "wrong_environment");
   assert.throws(check({ appAccountToken: accountToken("apple:someone-else") }), (e) => e.reason === "wrong_account");
   assert.throws(check({ revocationDate: 1760000000000 }), (e) => e.reason === "revoked");
@@ -92,9 +92,9 @@ test("a transaction is credited once, and never to a second account", async () =
     return {}; // ledger writes
   } };
   const store = new CreditStore(ddb, { promoTable: "p", accountsTable: "a", ledgerTable: "l", dailyTable: "d", billingTimeZone: "UTC" });
-  const tx = { transactionId: "t1", productId: "ai.xiangyang.MenuLens.credits.100", credits: 110, environment: "Production" };
-  assert.deepEqual(await store.creditPurchase(userId, tx), { credited: true, credits: 110 });
-  assert.deepEqual(await store.creditPurchase(userId, tx), { credited: false, credits: 110 });
+  const tx = { transactionId: "t1", productId: "ai.xiangyang.MenuLens.credits.100", credits: 100, environment: "Production" };
+  assert.deepEqual(await store.creditPurchase(userId, tx), { credited: true, credits: 100 });
+  assert.deepEqual(await store.creditPurchase(userId, tx), { credited: false, credits: 100 });
   await assert.rejects(store.creditPurchase("apple:other", tx), PurchaseConflict);
-  assert.equal(paid, 1100); // stored in tenths of a credit: 110 credits
+  assert.equal(paid, 1000); // stored in tenths of a credit: 100 credits
 });
