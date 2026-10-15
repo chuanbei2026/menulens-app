@@ -30,7 +30,7 @@ struct OpenAIClient {
     var targetLanguage: String = "Simplified Chinese"
 
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v18"
+    private static let promptVersion = "v19"
 
     private var systemPrompt: String {
         """
@@ -64,8 +64,12 @@ struct OpenAIClient {
         `photoBBox` — the printed photo of the dish on the page, as x/y/width/height \
         normalized to the photo with top-left origin, ONLY if such a photo exists, \
         else null.
-        4. Also report the menu's language, that language's name written in \
-        \(targetLanguage), and the restaurant name (null if not printed).
+        4. Also report `sourceLanguage` — the menu's language as its English name \
+        ("Spanish", never a code like "es") —, `sourceLanguageName` — that same \
+        language's name written in \(targetLanguage) (for a Spanish menu: "Spanish" \
+        in English, "西班牙语" in Simplified Chinese, "espagnol" in French) —, and \
+        the restaurant name \
+        (null if not printed).
         5. Pick the 2-3 dishes a first-time visitor should actually order, and \
         set `recommended` on exactly those. For each write `recommendReason`: ONE \
         short sentence in \(targetLanguage) that states a CHECKABLE FACT about the \
@@ -150,12 +154,15 @@ struct OpenAIClient {
             "additionalProperties": false,
             "properties": [
                 "sourceLanguage": ["type": "string"],
-                "sourceLanguageChinese": ["type": "string"],
+                // Wire name only. It used to be "sourceLanguageChinese" (the
+                // stored field's name), and models followed the key over the
+                // prompt: an English-target scan came back with "英语".
+                "sourceLanguageName": ["type": "string"],
                 "restaurantName": ["type": ["string", "null"]],
                 "lines": ["type": "array", "items": line],
                 "dishes": ["type": "array", "items": dish],
             ],
-            "required": ["sourceLanguage", "sourceLanguageChinese", "restaurantName", "lines", "dishes"],
+            "required": ["sourceLanguage", "sourceLanguageName", "restaurantName", "lines", "dishes"],
         ]
     }
 
@@ -186,7 +193,7 @@ struct OpenAIClient {
 
     private struct WireResponse: Decodable {
         let sourceLanguage: String
-        let sourceLanguageChinese: String
+        let sourceLanguageName: String
         let restaurantName: String?
         let lines: [WireLine]
         let dishes: [WireDish]
@@ -486,7 +493,7 @@ struct OpenAIClient {
 
         return MenuDocument(
             sourceLanguage: wire.sourceLanguage,
-            sourceLanguageChinese: wire.sourceLanguageChinese,
+            sourceLanguageChinese: wire.sourceLanguageName,
             restaurantName: wire.restaurantName,
             sections: sections,
             textLines: textLines

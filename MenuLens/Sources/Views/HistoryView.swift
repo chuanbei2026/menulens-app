@@ -97,7 +97,7 @@ private struct HistoryRow: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(scan.restaurantName ?? L("history.untitled"))
                 .font(.headline)
-            Text(L("history.meta", scan.sourceLanguageChinese, scan.allItems.count, scan.pages.count))
+            Text(L("history.meta", scan.sourceLanguageDisplayName, scan.allItems.count, scan.pages.count))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             // Date format follows the chosen language too, not the device.

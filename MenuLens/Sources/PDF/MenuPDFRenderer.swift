@@ -68,7 +68,7 @@ struct MenuPDFRenderer {
                 format: Loc.bundle(for: scanLanguage)
                     .localizedString(forKey: "pdf.header", value: "pdf.header", table: "Localizable"),
                 locale: scanLanguage.locale,
-                scan.sourceLanguageChinese, scanLanguage.displayName
+                scan.sourceLanguageDisplayName, scanLanguage.displayName
             )
             if let name = scan.restaurantName { header = "\(name) — " + header }
             TextDraw.text(header, font: .boldSystemFont(ofSize: 30), color: .black,

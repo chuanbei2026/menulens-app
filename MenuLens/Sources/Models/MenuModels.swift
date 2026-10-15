@@ -147,6 +147,40 @@ struct MenuScan: Codable, Hashable, Identifiable {
 
     var allItems: [MenuItemEntry] { pages.flatMap(\.allItems) }
 
+    /// The menu's language named in this scan's own target language, for
+    /// the PDF header and History. Derived from `sourceLanguage` (an English
+    /// name, or a code) through Locale, because scans made before prompt v19
+    /// stored a Chinese name whatever the target; the stored name is the
+    /// fallback when the language isn't recognized.
+    var sourceLanguageDisplayName: String {
+        let target = AppLanguage.from(code: targetLanguage)
+        guard let code = Self.languageCode(for: sourceLanguage),
+              let name = Locale(identifier: target.rawValue).localizedString(forLanguageCode: code)
+        else { return sourceLanguageChinese }
+        return name
+    }
+
+    private static let codeLock = NSLock()
+    private nonisolated(unsafe) static var codeCache: [String: String?] = [:]
+
+    /// "Spanish" or "es" → "es"; nil for anything Locale doesn't know.
+    static func languageCode(for name: String) -> String? {
+        let key = name.trimmingCharacters(in: .whitespaces).lowercased()
+        codeLock.lock()
+        defer { codeLock.unlock() }
+        if let cached = codeCache[key] { return cached }
+        let english = Locale(identifier: "en")
+        let code: String? = if key.count <= 3, english.localizedString(forLanguageCode: key) != nil {
+            key
+        } else {
+            Locale.LanguageCode.isoLanguageCodes.first {
+                english.localizedString(forLanguageCode: $0.identifier)?.lowercased() == key
+            }?.identifier
+        }
+        codeCache[key] = code
+        return code
+    }
+
     /// Combine per-page analysis results into one scan record.
     static func combining(
         pages: [MenuDocument],
