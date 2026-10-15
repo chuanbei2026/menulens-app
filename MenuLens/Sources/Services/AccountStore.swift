@@ -72,6 +72,14 @@ final class AccountStore: ObservableObject {
     /// The balance and the 30-day history in one call (`GET /usage`).
     func refreshCredits() async {
         guard isSignedIn else { return }
+        #if DEBUG
+        // `-demoUsage`: a plausible month instead of the dev account's own
+        // (App Store screenshots of Settings → Account).
+        if ProcessInfo.processInfo.arguments.contains("-demoUsage") {
+            applyDemoUsage()
+            return
+        }
+        #endif
         let request = Backend.request("usage", token: sessionToken)
         guard let reply = try? await Backend.send(request),
               let balance = reply["balance"] as? [String: Any],
@@ -129,6 +137,25 @@ final class AccountStore: ObservableObject {
             return (false, error.localizedDescription)
         }
     }
+
+    #if DEBUG
+    /// 30 days ending today: small daily use with idle days, one 500-credit
+    /// purchase mid-month; 6 used today, 95 in the 30 days, ending at 640.
+    private func applyDemoUsage() {
+        let spends = [0, 4, 7, 0, 0, 9, 3, 0, 5, 0, 2, 8, 0, 0, 11, 4, 0, 0, 6, 3, 0, 7, 4, 2, 0, 5, 6, 3, 0, 6]
+        let purchaseDay = 15
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var balance = 640 - 500 + spends.reduce(0, +)
+        usage = spends.enumerated().map { index, spent in
+            let added = index == purchaseDay ? 500 : 0
+            balance += added - spent
+            let date = calendar.date(byAdding: .day, value: index - (spends.count - 1), to: today)!
+            return UsageDay(date: date, spent: spent, added: added, balance: balance)
+        }
+        credits = balance
+    }
+    #endif
 
     /// "2026-10-15" → local midnight, for the chart's day axis.
     private static let dayFormatter: DateFormatter = {

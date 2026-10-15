@@ -6,8 +6,8 @@
 #
 # Needs a DEBUG build — the launch-argument hooks it drives are #if DEBUG.
 # SESSION_TOKEN is a short-lived dev session (backend/README.md): every shot
-# but the sign-in card is taken signed in, and 04_account shows that
-# account's real balance and history. Nothing here sends a menu anywhere —
+# but the sign-in card is taken signed in (04_account's balance and history
+# are made up, -demoUsage). Nothing here sends a menu anywhere —
 # the shots use the bundled samples, so they cost no credits.
 #
 # Per language: uninstall (wipes the sandbox so the samples re-seed in that
@@ -100,9 +100,10 @@ for LANG in "$@"; do
   run -sessionToken "$TOKEN" -demoReceiving
   sleep 16; shot "$OUT/03_pages.png"
 
-  # 04 account — Settings: balance, credit history, Buy credits / Redeem code
+  # 04 account — Settings: balance, credit history, Buy credits / Redeem code.
+  # -demoUsage: a plausible month of history instead of the dev account's own.
   # (the home screen shows behind the sheet on iPad: toggle at its default)
-  IMAGES="-generate_dish_images YES" run -sessionToken "$TOKEN" -grantConsent -showSettings
+  IMAGES="-generate_dish_images YES" run -sessionToken "$TOKEN" -grantConsent -demoUsage -showSettings
   sleep 10; shot "$OUT/04_account.png"
 
   # 05 sign-in — the start screen as a new user sees it. -noImages is stored

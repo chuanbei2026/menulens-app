@@ -90,6 +90,7 @@ struct ContentView: View {
             //   -delayPage <i> <s> hold page i back s seconds (half-arrived result)
             //   -redeem <code>    with -showSettings: open Redeem code and submit it
             //   -demoReceiving    newest multi-page scan, shown with its last page pending
+            //   -demoUsage        a made-up month of credit history (Settings → Account)
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
