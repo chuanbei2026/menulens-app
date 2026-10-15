@@ -35,9 +35,9 @@ const dish = { type: "object", additionalProperties: false, properties: {
   photoBBox: { anyOf: [rect, { type: "null" }] }, recommended: { type: "boolean" }, recommendReason: { type: "string" } },
   required: ["originalName", "translatedName", "nameLine", "descriptionLines", "translatedDescription", "price", "sectionOriginal", "sectionTranslated", "sectionTitleLine", "tags", "photoBBox", "recommended", "recommendReason"] };
 const schema = { type: "object", additionalProperties: false, properties: {
-  sourceLanguage: { type: "string" }, sourceLanguageChinese: { type: "string" }, restaurantName: { type: ["string", "null"] },
+  sourceLanguage: { type: "string" }, sourceLanguageName: { type: "string" }, restaurantName: { type: ["string", "null"] },
   lines: { type: "array", items: line }, dishes: { type: "array", items: dish } },
-  required: ["sourceLanguage", "sourceLanguageChinese", "restaurantName", "lines", "dishes"] };
+  required: ["sourceLanguage", "sourceLanguageName", "restaurantName", "lines", "dishes"] };
 
 // --- Inputs: photo (1024 px), OCR inventory, reference ------------------------------------------
 const samples = ["la-mar", "naan-n-curry"].map((name) => {
