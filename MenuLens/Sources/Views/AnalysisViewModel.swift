@@ -551,6 +551,18 @@ final class AnalysisViewModel: ObservableObject {
     /// pages come from the response cache and would otherwise land at once.
     static var debugPageDelay: [Int: Double] = [:]
 
+    /// Shows the open scan as if its last page were still being translated:
+    /// the half-arrived result of a multi-page scan, without a request
+    /// (`-demoReceiving`, for screenshots; the response cache doesn't
+    /// survive the reinstall the screenshot script does per language).
+    func debugShowReceiving() {
+        guard let scan, scan.pages.count > 1 else { return }
+        let pending = scan.pages.count - 1
+        self.scan = scan.withPages(scan.pages.enumerated().map { $0.offset == pending ? .placeholder : $0.element })
+        pendingPages = [pending]
+        pdfData = nil
+    }
+
     /// Load the synthetic demo menu — verifies bbox cropping and PDF export
     /// in the simulator without signing in.
     func loadSample() {

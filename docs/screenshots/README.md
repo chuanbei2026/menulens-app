@@ -12,10 +12,13 @@ App Store Connect 支持按 locale 上传不同截图；没拍的语言会回落
 
 | 文件 | 内容 |
 |---|---|
-| `01_home` | 首页 |
-| `02_canvas` | **主图** —— 原版式就地翻译，带多人点单标记 |
-| `03_list` | 菜品列表：配图、搜索、成员筹码 |
-| `04_server` | 原文菜单 + 点单标记，给服务员看（仅 iPhone） |
+| `01_canvas` | **主图** —— 原版式就地翻译，带多人点单标记 |
+| `02_list` | 菜品列表：「值得点」推荐、带 AI 角标的配图、成员筹码 |
+| `03_pages` | 多页菜单翻到一半：第 1 页已可看，第 2 页还在翻译（「1/2 页」横幅） |
+| `04_account` | 设置 → 账号：余额、点数图表、买点数 / 兑换码 |
+| `05_signin` | 未登录的首页：用 Apple 登录卡片 |
+| `06_server` | 原文菜单 + 点单标记，给服务员看（仅 iPhone） |
+| `../iap-review-shop.png` | 内购审核截图：商店（三档点数包和价格），iPhone · en |
 
 ## 怎么重拍
 
@@ -27,9 +30,22 @@ xcodebuild -project MenuLens.xcodeproj -scheme MenuLens -sdk iphonesimulator \
 # 3) 跑 tools/shoot-screenshots.sh（见该脚本头部注释）
 ```
 
-拍摄依赖 `ContentView.swift` 里的 DEBUG 启动参数（`-openLatest` /
-`-listMode` / `-showOriginal` / `-demoCart` / `-target_language`），
-所以**必须用 Debug 构建**拍，Release 里那些钩子被编译掉了。
+拍摄依赖 `ContentView.swift` 里的 DEBUG 启动参数（`-openLatest` / `-listMode` /
+`-showOriginal` / `-demoCart` / `-demoReceiving` / `-showSettings` / `-sessionToken` /
+`-signOut` / `-storefront` / `-target_language`），所以**必须用 Debug 构建**拍，
+Release 里那些钩子被编译掉了。
+
+- **要一个开发用 session token**（`SESSION_TOKEN=…`，签发方法见 `backend/README.md`）：
+  除了 `05_signin` 都是登录状态拍的，`04_account` 显示的就是这个账号的真实余额和用量。
+- **不花点数**：全部用内置示例菜单。`03_pages` 用 `-demoReceiving` 把双页示例的第 2 页
+  显示成「翻译中」—— 和真实扫描到一半时同一套界面，但不发请求（响应缓存在每种语言
+  重装时会被清掉，没法靠缓存重现）。
+- `-storefront USA`：按美区拍（所有模型、配图开启）。
+- 模拟器可能被别的会话关掉；脚本每次启动前会检查并重新启动设备、重设状态栏。
 
 每种语言开拍前会先 `simctl uninstall` 清沙盒 —— 内置示例是「首次启动时按当时的
 App 语言 seed 一次」，不重装就还是上一种语言的那套。
+
+内购审核截图（`iap-review-shop.png`）不在脚本里：商店的商品只有在 StoreKit 测试配置
+（`MenuLens/Products.storekit`）下才有，用 `MenuLensTests/ShopTests` 在 iPhone 17 Pro Max
+上把商店页摆出来再截（见该测试的注释）。

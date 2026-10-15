@@ -144,6 +144,7 @@
               "originalDescription": "Also known as Butter Chicken. A sweet creamy tomato and fenugreek based sauce available in chicken or paneer.",
               "originalName": "TIKKA MASALA",
               "price": "$19.99",
+              "recommendation": "The menu notes it is also known as Butter Chicken.",
               "tags": [
                 "gluten_free"
               ]
@@ -416,6 +417,7 @@
               ],
               "originalDescription": "Our most popular dish! Pakistani-style Basmati rice slow-cooked in saffron and simmered with meat or vegetables.",
               "originalName": "DUMM BIRYANI",
+              "recommendation": "The menu calls it “Our most popular dish!”",
               "tags": [
                 "gluten_free"
               ]
@@ -904,6 +906,7 @@
               "originalDescription": "Fried Pakistani style fish marinated in coriander, all-spice, and red-chili flakes. The pride of Lahore!",
               "originalName": "LAHORI FISH",
               "price": "$24.99",
+              "recommendation": "The menu calls it “The pride of Lahore!”",
               "tags": [
                 "gluten_free",
                 "contains_seafood"

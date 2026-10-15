@@ -89,6 +89,7 @@ struct ContentView: View {
             //   -signOut          forget the session (first-run onboarding)
             //   -delayPage <i> <s> hold page i back s seconds (half-arrived result)
             //   -redeem <code>    with -showSettings: open Redeem code and submit it
+            //   -demoReceiving    newest multi-page scan, shown with its last page pending
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
@@ -178,6 +179,17 @@ struct ContentView: View {
                             let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                             try? viewModel.pdfData?.write(to: docs.appendingPathComponent("scan.pdf"))
                         }
+                    }
+                }
+                // The newest multi-page scan, half-arrived (DEBUG screenshots).
+                if args.contains("-demoReceiving") {
+                    Task { @MainActor in
+                        for _ in 0 ..< 20 where viewModel.history.scans.isEmpty {
+                            try? await Task.sleep(nanoseconds: 300_000_000)
+                        }
+                        guard let scan = viewModel.history.scans.first(where: { $0.pages.count > 1 }) else { return }
+                        viewModel.open(scan)
+                        viewModel.debugShowReceiving()
                     }
                 }
                 // Reopen the newest history scan (thumbnails load from disk)

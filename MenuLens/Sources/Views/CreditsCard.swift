@@ -44,25 +44,35 @@ struct CreditsCard: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             chart.frame(height: 120)
-            HStack(spacing: 10) {
-                if let onBuy {
-                    Button(action: onBuy) {
-                        Label(L("shop.buy"), systemImage: "cart.badge.plus")
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-                if let onRedeem {
-                    Button(action: onRedeem) {
-                        Label(L("redeem.button"), systemImage: "ticket")
-                            .frame(maxWidth: .infinity)
-                    }
-                }
+            // Side by side when both labels fit; stacked otherwise ("Acheter
+            // des crédits" / "Utiliser un code" don't, on a phone).
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) { actionButtons }
+                VStack(spacing: 8) { actionButtons }
             }
             // Bordered buttons keep their own hit areas inside the Form row.
             .buttonStyle(.bordered)
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
         }
+    }
+
+    /// Icon + text spelled out rather than a Label: inside ViewThatFits a
+    /// Label measured at its ideal size dropped to icon-only.
+    @ViewBuilder private var actionButtons: some View {
+        if let onBuy {
+            Button(action: onBuy) { buttonLabel(L("shop.buy"), icon: "cart.badge.plus") }
+        }
+        if let onRedeem {
+            Button(action: onRedeem) { buttonLabel(L("redeem.button"), icon: "ticket") }
+        }
+    }
+
+    private func buttonLabel(_ title: String, icon: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+            Text(title).lineLimit(1)
+        }
+        .fixedSize()
+        .frame(maxWidth: .infinity)
     }
 
     private func stat(_ label: String, _ value: Int) -> some View {
