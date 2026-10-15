@@ -12,8 +12,10 @@ export const MODELS = {
   "gpt-5-mini": { input: 0.25, cached: 0.025, output: 2.0, reasoning: true },
 };
 
-/** gpt-image-1: text and image input, image output. */
-export const IMAGE_MODEL = { id: "gpt-image-1", text: 5.0, image: 10.0, output: 40.0 };
+/** Dish pictures: text and image input, image output. gpt-image-1-mini is a fifth of gpt-image-1's price
+ * (US$40 → 8 per 1M output tokens; same 272 tokens for a low-quality 1024² picture) and draws a 2×2
+ * collage about as well (2026-10-15 side by side). */
+export const IMAGE_MODEL = { id: "gpt-image-1-mini", text: 2.0, image: 2.5, output: 8.0 };
 
 /** A low-quality 1024×1024 picture is 272 output tokens; reserve a little more. */
 export const EXPECTED_IMAGE_OUTPUT_TOKENS = 400;

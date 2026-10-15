@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "用 Apple 登录后即可识别新菜单";
-"onboarding.body" = "新账号送 300 点（一页菜单约 6–12 点），之后每个用过的月份再送 100 点。现在也可以直接翻看内置的两份真实餐厅菜单。";
+"onboarding.body" = "新账号送 300 点（一页菜单约 5–10 点），之后每个用过的月份再送 100 点。现在也可以直接翻看内置的两份真实餐厅菜单。";
 "onboarding.viewSamples" = "看内置菜单";
 
 /* MARK: - Home */
@@ -31,7 +31,7 @@
 "settings.language" = "语言";
 "settings.language.footer" = "同时决定界面语言和菜单翻译的目标语言。菜单本身的语言无需设置，自动识别。";
 "settings.model" = "模型";
-"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / 约 6 点（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / 约 2 点（更省，译名更讲究，但要等更久）· gpt-5 最准、最慢也最贵。配图另计，四宫格一张约 2–3 点。";
+"settings.model.footer" = "实测一页密排菜单（148 行）：gpt-4.1 约 45 秒 / 约 6 点（推荐，边翻边显示进度）· gpt-5-mini 约 115 秒 / 约 2 点（更省，译名更讲究，但要等更久）· gpt-5 最准、最慢也最贵。配图另计，四宫格一张约 0.5 点。";
 "settings.party.header" = "同行成员";
 "settings.party.footer" = "点菜时可以标记每道菜是谁点的，上菜时按名字对号入座。设了忌口后，总结页会检查每道菜并给出醒目提醒。点头像可从相册上传照片，点 ✕ 删除成员。";
 "settings.member.name" = "名字";
@@ -40,7 +40,7 @@
 "settings.flatten" = "整页匀光（推荐）";
 "settings.flatten.footer" = "消除拍照时的阴影和光斑，纸面变得干净均匀，翻译文字与原版融合得更自然。深色菜单会自动跳过。";
 "settings.grid" = "拼图省钱模式";
-"settings.grid.footer" = "是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，四道菜一共约 2–3 点（单张模式每道约 2–3 点，画质稍好）。菜单本身的照片始终优先使用。";
+"settings.grid.footer" = "是否生成配图在主界面每次识别前勾选。拼图模式一次生成 2×2 四宫格再切开，四道菜一共约 0.5 点（单张模式每道约 0.5 点，画质稍好）。菜单本身的照片始终优先使用。";
 
 /* MARK: - Scan progress */
 "progress.note" = "排版完成后立即可以查看，配图会在后台继续补齐";
@@ -155,7 +155,7 @@
 "settings.account.delete.title" = "要删除账号吗？";
 "settings.account.delete.message" = "账号和余额会从我们的服务器上删除，无法恢复。这台手机上的历史记录不受影响。";
 "settings.account.delete.confirm" = "删除账号";
-"settings.account.footer" = "新账号有 300 点，之后每个用过的月份再加 100 点，点数永不过期。一页菜单约 6–12 点，一张配图或一张四宫格约 2–3 点。";
+"settings.account.footer" = "新账号有 300 点，之后每个用过的月份再加 100 点，点数永不过期。一页菜单约 5–10 点，一张配图或一张四宫格约 0.5 点。";
 "settings.account.signedOut.footer" = "识别新菜单需要一个账号。只使用匿名的 Apple 账号 ID，不要姓名、不要邮箱。新账号送 300 点，之后每个用过的月份再送 100 点。";
 "error.signInRequired" = "请先用 Apple 登录（设置 → 账号）再识别新菜单。";
 "error.sessionExpired" = "登录已过期，请重新用 Apple 登录。";

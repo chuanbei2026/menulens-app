@@ -23,7 +23,8 @@ export const config = {
   signupBonus: Number(process.env.SIGNUP_BONUS ?? 200),
   // What one credit buys at OpenAI list price (same basis as DateSeries: US$0.005). Every request is
   // charged its real cost, rounded up to the next 0.1 credit, at least 0.1. One menu page on gpt-4.1
-  // is ~US$0.03–0.06 (6–12 credits); a 2×2 grid of dish pictures ~US$0.012 (~3 credits).
+  // is ~US$0.025–0.05 (5–10 credits; a dense page measured 5); a 2×2 collage of dish pictures on
+  // gpt-image-1-mini ~US$0.0025 (~0.5 credit).
   usdPerCredit: Number(process.env.USD_PER_CREDIT ?? 0.005),
   usageDays: 30,
   // Calendar month boundaries are computed in this zone, so changing the phone's

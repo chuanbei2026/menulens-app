@@ -1,7 +1,7 @@
 // The two OpenAI calls the app makes, relayed with our key. Request and response keep OpenAI's own
 // shape, so the app's parsing doesn't change; the server picks the model and caps the output.
 //   menu   Chat Completions, streamed: bytes are copied through while the final usage chunk is sniffed
-//   image  Images (gpt-image-1): one JSON response, passed through
+//   image  Images (gpt-image-1-mini): one JSON response, passed through
 
 import { chatModel, estimateTokens, tokensForImage } from "./pricing.mjs";
 import { IMAGE_MODEL } from "./pricing.mjs";

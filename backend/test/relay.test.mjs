@@ -82,7 +82,7 @@ test("an upstream error is reported without starting the stream", async () => {
 
 test("image requests are pinned to one low-quality square jpeg", () => {
   const { body } = imageRequest({ prompt: "A bowl of cebiche", size: "4096x4096", quality: "high", n: 8, model: "dall-e-3" }, { maxPromptChars: 4000 });
-  assert.deepEqual([body.model, body.size, body.quality, body.n, body.output_format], ["gpt-image-1", "1024x1024", "low", 1, "jpeg"]);
+  assert.deepEqual([body.model, body.size, body.quality, body.n, body.output_format], ["gpt-image-1-mini", "1024x1024", "low", 1, "jpeg"]);
   assert.throws(() => imageRequest({ prompt: "" }, { maxPromptChars: 4000 }), RequestError);
 });
 
@@ -93,6 +93,6 @@ test("credits follow the dollar cost: US$0.005 a credit, charged to 0.1, at leas
   // A typical page on gpt-4.1: 3k in (1k cached), 5k out ≈ US$0.0445 → 8.9 credits.
   const page = chatCostUsd(chatModel("gpt-4.1"), { input: 3000, cached: 1000, output: 5000 });
   assert.equal(tenthsForUsd(page, 0.005), 89);
-  // A low-quality picture: ~50 prompt tokens + 272 output ≈ US$0.011 → 2.2 credits.
-  assert.equal(tenthsForUsd(imageCostUsd({ text: 50, output: 272 }), 0.005), 23);
+  // A low-quality 2×2 collage on gpt-image-1-mini: ~170 prompt tokens + 272 output ≈ US$0.0025 → 0.5 credit.
+  assert.equal(tenthsForUsd(imageCostUsd({ text: 170, output: 272 }), 0.005), 6);
 });

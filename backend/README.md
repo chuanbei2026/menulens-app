@@ -8,7 +8,7 @@ Same design as the DateSeries backend, with its own tables, secret and credits.
 App ──POST /auth/apple {identityToken}──► verify Apple JWT ──► 30-day session token (HS256)
 App ──GET  /credits ─────────────────────► balance (lazy monthly grant happens on use)
 App ──POST /menu  (Chat Completions body)─► reserve estimate ──► OpenAI stream, bytes unchanged ──► settle usage
-App ──POST /image {prompt} ──────────────► reserve estimate ──► gpt-image-1 (1024², low, jpeg)  ──► settle usage
+App ──POST /image {prompt} ──────────────► reserve estimate ──► gpt-image-1-mini (1024², low, jpeg) ──► settle usage
 ```
 
 | Piece | Where |
@@ -24,13 +24,13 @@ App ──POST /image {prompt} ──────────────► res
 - **Free:** 200 at signup + 100 in every calendar month (America/Vancouver) with real use, so a new
   account starts at **300**. Idle months get nothing; nothing expires.
 - **Price:** every call is charged its OpenAI list cost at **US$0.005 a credit**, rounded up to 0.1 credit
-  (at least 0.1). A menu page on gpt-4.1 is ~6–12 credits; a low-quality dish picture (or a 2×2 grid) ~2–3.
+  (at least 0.1). A menu page on gpt-4.1 is ~5–10 credits; a low-quality 2×2 collage of dish pictures (gpt-image-1-mini) ~0.5.
 - Stored in tenths; the API returns whole credits. Out of credits → **402** `{reason: "credits", totalCredits, needed}`.
 - Purchases (`POST /purchase`, StoreKit 2 JWS) are wired for products `ai.xiangyang.MenuLens.credits.{100,500,2000}`
   (+10%), once they exist in App Store Connect.
 
 The server picks what reaches OpenAI: the model must be one of `MODELS` in `src/pricing.mjs`
-(default `gpt-4.1`), output is capped, images are pinned to gpt-image-1 1024² low-quality jpeg.
+(default `gpt-4.1`), output is capped, images are pinned to gpt-image-1-mini 1024² low-quality jpeg.
 
 ## Deploy / test
 

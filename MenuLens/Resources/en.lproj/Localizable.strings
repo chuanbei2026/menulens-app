@@ -15,7 +15,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Sign in with Apple to scan a new menu";
-"onboarding.body" = "New accounts get 300 free credits (a menu page takes about 6–12), plus 100 more every month you use the app. In the meantime you can browse the two real restaurant menus already inside.";
+"onboarding.body" = "New accounts get 300 free credits (a menu page takes about 5–10), plus 100 more every month you use the app. In the meantime you can browse the two real restaurant menus already inside.";
 "onboarding.viewSamples" = "Browse samples";
 
 /* MARK: - Home */
@@ -35,7 +35,7 @@
 "settings.language" = "Language";
 "settings.language.footer" = "Sets both the app's own language and the language menus are translated into. The menu's own language is detected automatically.";
 "settings.model" = "Model";
-"settings.model.footer" = "Measured on one densely printed page (148 lines): gpt-4.1 about 45s / ~6 credits (recommended, shows progress as it translates) · gpt-5-mini about 115s / ~2 credits (cheaper, more careful naming, but a longer wait) · gpt-5 is the most accurate, the slowest and the most expensive. Dish photos are charged separately, about 2–3 credits per collage of four.";
+"settings.model.footer" = "Measured on one densely printed page (148 lines): gpt-4.1 about 45s / ~6 credits (recommended, shows progress as it translates) · gpt-5-mini about 115s / ~2 credits (cheaper, more careful naming, but a longer wait) · gpt-5 is the most accurate, the slowest and the most expensive. Dish photos are charged separately, about 0.5 credit per collage of four.";
 "settings.party.header" = "Who's at the table";
 "settings.party.footer" = "While ordering you can mark who asked for each dish, so the right plate reaches the right person. Set someone's restrictions and the summary checks every dish they ordered and warns loudly. Tap an avatar to upload a photo, tap ✕ to remove a person.";
 "settings.member.name" = "Name";
@@ -44,7 +44,7 @@
 "settings.flatten" = "Even out lighting (recommended)";
 "settings.flatten.footer" = "Removes the shadows and glare of a hand-held photo so the paper looks clean and even, and the translated text blends into the original. Dark menus are skipped automatically.";
 "settings.grid" = "Collage mode (cheaper)";
-"settings.grid.footer" = "Whether to generate dish photos at all is a checkbox on the home screen, ticked per scan. Collage mode generates four dishes in one 2×2 image and slices it, about 2–3 credits for all four (one at a time costs 2–3 credits a dish and looks slightly better). Photos printed on the menu itself are always used first.";
+"settings.grid.footer" = "Whether to generate dish photos at all is a checkbox on the home screen, ticked per scan. Collage mode generates four dishes in one 2×2 image and slices it, about 0.5 credit for all four (one at a time costs about 0.5 credit a dish and looks slightly better). Photos printed on the menu itself are always used first.";
 
 /* MARK: - Scan progress */
 "progress.note" = "You can read the menu the moment layout finishes; dish photos keep filling in behind it";
@@ -163,7 +163,7 @@
 "settings.account.delete.title" = "Delete your account?";
 "settings.account.delete.message" = "Your account and its credits are removed from our server and can't be restored. History on this phone stays.";
 "settings.account.delete.confirm" = "Delete account";
-"settings.account.footer" = "You start with 300 credits and get 100 more in every month you use the app; credits never expire. A menu page costs about 6–12 credits, a dish picture or a 4-dish collage about 2–3.";
+"settings.account.footer" = "You start with 300 credits and get 100 more in every month you use the app; credits never expire. A menu page costs about 5–10 credits, a dish picture or a 4-dish collage about 0.5.";
 "settings.account.signedOut.footer" = "Scanning a new menu needs an account. Only an anonymous Apple account id is used — no name, no email. New accounts get 300 free credits, plus 100 every month you use the app.";
 "error.signInRequired" = "Sign in with Apple first (Settings → Account) to scan a new menu.";
 "error.sessionExpired" = "Your sign-in has expired. Please sign in with Apple again.";

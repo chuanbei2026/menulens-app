@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Inicia sesión con Apple para escanear una carta";
-"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 6–12) y 100 más cada mes que uses la app. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
+"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 5–10) y 100 más cada mes que uses la app. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
 "onboarding.viewSamples" = "Ver ejemplos";
 
 /* MARK: - Home */
@@ -31,7 +31,7 @@
 "settings.language" = "Idioma";
 "settings.language.footer" = "Define tanto el idioma de la app como el idioma al que se traducen las cartas. El idioma de la carta se detecta automáticamente.";
 "settings.model" = "Modelo";
-"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro. Las imágenes de platos se cobran aparte, unos 2–3 créditos por collage de cuatro.";
+"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro. Las imágenes de platos se cobran aparte, unos 0,5 créditos por collage de cuatro.";
 "settings.party.header" = "En la mesa";
 "settings.party.footer" = "Al pedir puedes marcar quién ha pedido cada plato, para que llegue a la persona correcta. Si indicas lo que alguien no come, el resumen revisa todos sus platos y avisa de forma bien visible. Toca un avatar para poner una foto y ✕ para quitar a alguien.";
 "settings.member.name" = "Nombre";
@@ -40,7 +40,7 @@
 "settings.flatten" = "Igualar la iluminación (recomendado)";
 "settings.flatten.footer" = "Quita las sombras y los brillos de una foto hecha a mano: el papel queda limpio y uniforme, y el texto traducido se integra con el original. Las cartas oscuras se omiten automáticamente.";
 "settings.grid" = "Modo collage (más barato)";
-"settings.grid.footer" = "Si se generan imágenes o no se marca en la pantalla de inicio, escaneo por escaneo. El modo collage genera cuatro platos en una imagen 2×2 y luego la recorta, unos 2–3 créditos por los cuatro (de una en una, unos 2–3 créditos por plato y algo mejor). Las fotos impresas en la propia carta siempre tienen prioridad.";
+"settings.grid.footer" = "Si se generan imágenes o no se marca en la pantalla de inicio, escaneo por escaneo. El modo collage genera cuatro platos en una imagen 2×2 y luego la recorta, unos 0,5 créditos por los cuatro (de una en una, unos 0,5 créditos por plato y algo mejor). Las fotos impresas en la propia carta siempre tienen prioridad.";
 
 /* MARK: - Scan progress */
 "progress.note" = "Puedes leerla en cuanto termine la maquetación; las imágenes siguen llegando después";
@@ -155,7 +155,7 @@
 "settings.account.delete.title" = "¿Eliminar tu cuenta?";
 "settings.account.delete.message" = "Tu cuenta y sus créditos se borran de nuestro servidor y no se pueden recuperar. El historial de este teléfono se queda.";
 "settings.account.delete.confirm" = "Eliminar cuenta";
-"settings.account.footer" = "Empiezas con 300 créditos y recibes 100 más cada mes que uses la app; los créditos no caducan. Una página de carta cuesta unos 6–12 créditos; una imagen de plato o un collage de cuatro, unos 2–3.";
+"settings.account.footer" = "Empiezas con 300 créditos y recibes 100 más cada mes que uses la app; los créditos no caducan. Una página de carta cuesta unos 5–10 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
 "settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis y 100 más cada mes que uses la app.";
 "error.signInRequired" = "Inicia sesión con Apple primero (Ajustes → Cuenta) para escanear una carta nueva.";
 "error.sessionExpired" = "Tu sesión ha caducado. Vuelve a iniciar sesión con Apple.";
