@@ -87,7 +87,7 @@ export class ChatUsageSniffer {
  * Calls Chat Completions and copies every byte to `write`. `onStart(status)` runs once the upstream
  * answered. Returns { ok, status, usage, finishReason, errorBody? }.
  */
-export async function relayMenu({ apiKey, body, write, onStart, fetchImpl = fetch }) {
+export async function relayMenu({ apiKey, body, write, onStart, fetchImpl = fetch, keepAliveMs = 10_000 }) {
   const upstream = await fetchImpl("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -99,10 +99,28 @@ export async function relayMenu({ apiKey, body, write, onStart, fetchImpl = fetc
   onStart(upstream.status);
   const sniffer = new ChatUsageSniffer();
   const decoder = new TextDecoder();
-  // Keep reading even if the app has gone away: the usage arrives at the very end.
-  for await (const chunk of upstream.body) {
-    sniffer.push(decoder.decode(chunk, { stream: true }));
-    write(chunk);
+  // A reasoning model can stay silent for a minute or more before its first token, and CloudFront
+  // drops a response that sends nothing for 60 s. So while the stream is idle, send an SSE comment
+  // (ignored by the app) every 10 s — but only between events, never inside a half-written one.
+  let lastWrite = Date.now();
+  let atBoundary = true;
+  const keepAlive = setInterval(() => {
+    if (atBoundary && Date.now() - lastWrite >= keepAliveMs) {
+      write(": working\n\n");
+      lastWrite = Date.now();
+    }
+  }, Math.min(keepAliveMs, 1000));
+  try {
+    // Keep reading even if the app has gone away: the usage arrives at the very end.
+    for await (const chunk of upstream.body) {
+      const text = decoder.decode(chunk, { stream: true });
+      sniffer.push(text);
+      write(chunk);
+      lastWrite = Date.now();
+      if (text.length) atBoundary = text.endsWith("\n\n");
+    }
+  } finally {
+    clearInterval(keepAlive);
   }
   return { ok: true, status: upstream.status, usage: sniffer.usage, finishReason: sniffer.finishReason };
 }

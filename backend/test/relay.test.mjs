@@ -96,3 +96,21 @@ test("credits follow the dollar cost: US$0.005 a credit, charged to 0.1, at leas
   // A low-quality 2×2 collage on gpt-image-1-mini: ~170 prompt tokens + 272 output ≈ US$0.0025 → 0.5 credit.
   assert.equal(tenthsForUsd(imageCostUsd({ text: 170, output: 272 }), 0.005), 6);
 });
+
+test("an idle stream gets keep-alive comments, but only between events", async () => {
+  const enc = new TextEncoder();
+  const parts = ['data: {"choices":[{"delta":{"content":"he', 'llo"}}]}\n\n', 'data: [DONE]\n\n'];
+  const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+  const body = new ReadableStream({ async start(c) {
+    c.enqueue(enc.encode(parts[0])); await pause(60);   // idle INSIDE an event: no keep-alive allowed
+    c.enqueue(enc.encode(parts[1])); await pause(60);   // idle between events: keep-alive expected
+    c.enqueue(enc.encode(parts[2])); c.close();
+  } });
+  const out = [];
+  await relayMenu({ apiKey: "k", body: {}, write: (x) => out.push(typeof x === "string" ? x : Buffer.from(x).toString()),
+    onStart: () => {}, fetchImpl: async () => new Response(body, { status: 200 }), keepAliveMs: 20 });
+  const sse = out.join("");
+  assert.ok(sse.includes(': working\n\ndata: [DONE]'), "a keep-alive between the events");
+  assert.ok(!sse.slice(0, sse.indexOf('llo"}}]}')).includes(": working"), "none inside the first event");
+  assert.equal(sse.replace(/: working\n\n/g, ""), parts.join(""));
+});
