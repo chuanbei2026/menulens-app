@@ -113,7 +113,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "No se han podido codificar las fotos seleccionadas.";
 "error.recognizeFailed" = "El escaneo ha fallado. Inténtalo de nuevo.";
-"notice.partialPages" = "No se han podido escanear %1$d páginas; se han conservado las otras %2$d. Puedes volver a escanear esas páginas.";
+"notice.partialPages" = "No se han podido escanear %1$d páginas; se han conservado las otras %2$d. Puedes reintentarlo desde Estado.";
 "error.http" = "La petición ha fallado (HTTP %1$d): %2$@";
 "error.emptyResponse" = "OpenAI ha devuelto un resultado vacío.";
 "error.refusal" = "El modelo ha rechazado esta petición: %@";

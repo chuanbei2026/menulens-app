@@ -120,7 +120,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "Could not encode the selected photos.";
 "error.recognizeFailed" = "Scanning failed. Please try again.";
-"notice.partialPages" = "%1$d pages could not be scanned; the other %2$d were kept. You can scan those pages again.";
+"notice.partialPages" = "%1$d pages could not be scanned; the other %2$d were kept. You can retry under Status.";
 "error.http" = "Request failed (HTTP %1$d): %2$@";
 "error.emptyResponse" = "OpenAI returned an empty result.";
 "error.refusal" = "The model refused this request: %@";

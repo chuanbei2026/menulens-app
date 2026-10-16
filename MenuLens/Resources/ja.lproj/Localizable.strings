@@ -113,7 +113,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "選択した写真を変換できませんでした。";
 "error.recognizeFailed" = "読み取りに失敗しました。もう一度お試しください。";
-"notice.partialPages" = "%1$dページを読み取れませんでしたが、残りの %2$dページは保持しました。そのページだけ読み取り直せます。";
+"notice.partialPages" = "%1$dページを読み取れませんでしたが、残りの %2$dページは保持しました。「状況」から再試行できます。";
 "error.http" = "リクエストが失敗しました（HTTP %1$d）：%2$@";
 "error.emptyResponse" = "OpenAI から空の結果が返りました。";
 "error.refusal" = "モデルがこのリクエストを拒否しました：%@";

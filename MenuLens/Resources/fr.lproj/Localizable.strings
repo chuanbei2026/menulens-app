@@ -113,7 +113,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "Impossible d'encoder les photos sélectionnées.";
 "error.recognizeFailed" = "Le scan a échoué. Veuillez réessayer.";
-"notice.partialPages" = "%1$d pages n'ont pas pu être scannées ; les %2$d autres ont été conservées. Vous pouvez rescanner ces pages.";
+"notice.partialPages" = "%1$d pages n'ont pas pu être scannées ; les %2$d autres ont été conservées. Vous pouvez réessayer depuis État.";
 "error.http" = "Échec de la requête (HTTP %1$d) : %2$@";
 "error.emptyResponse" = "OpenAI a renvoyé un résultat vide.";
 "error.refusal" = "Le modèle a refusé cette requête : %@";

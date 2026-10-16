@@ -63,6 +63,9 @@ App Store 上的名字是 **ForeignMenu**（中文区 **外乡人的菜单**）�
   *设备* 语言，会出现「界面中文、译文法语」的错配。
 - 加新文案：**八份** `MenuLens/Resources/*.lproj/Localizable.strings` 同时加同一个 key
   （键集合和格式占位符必须完全一致），再在代码里 `L("新key")`。
+- 数字要变单复数的句子（英/法/西/印地语）另在该语言的 `Localizable.stringsdict` 里写
+  one/other 两种形式；它覆盖 `.strings` 里的同名 key，`.strings` 那份保留复数写法作兜底，
+  键集合照样八份一致。目前只有 `notice.partialPages`。
 - 加新语言：`AppLanguage` 加一个 case（`displayName` / `promptName` /
   `showsGlutenFree` / `deviceDefault`）→ 建 `<lang>.lproj/` 两份 `.strings` →
   `project.yml` 的 `CFBundleLocalizations` 加一行 → 用

@@ -113,7 +113,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "선택한 사진을 변환할 수 없습니다.";
 "error.recognizeFailed" = "인식에 실패했습니다. 다시 시도해 주세요.";
-"notice.partialPages" = "%1$d페이지를 인식하지 못했지만 나머지 %2$d페이지는 보관했습니다. 해당 페이지만 다시 인식할 수 있습니다.";
+"notice.partialPages" = "%1$d페이지를 인식하지 못했지만 나머지 %2$d페이지는 보관했습니다. 「상태」에서 다시 시도할 수 있습니다.";
 "error.http" = "요청이 실패했습니다(HTTP %1$d): %2$@";
 "error.emptyResponse" = "OpenAI가 빈 결과를 반환했습니다.";
 "error.refusal" = "모델이 이 요청을 거부했습니다: %@";

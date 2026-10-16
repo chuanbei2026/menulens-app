@@ -113,7 +113,7 @@
 /* MARK: - Errors */
 "error.encodeImages" = "無法編碼所選圖片。";
 "error.recognizeFailed" = "辨識失敗，請重試。";
-"notice.partialPages" = "有 %1$d 頁沒能辨識，已保留其餘 %2$d 頁。可以重新辨識那幾頁。";
+"notice.partialPages" = "有 %1$d 頁沒能辨識，已保留其餘 %2$d 頁。可以在「狀態」裡重試。";
 "error.http" = "請求失敗（HTTP %1$d）：%2$@";
 "error.emptyResponse" = "OpenAI 傳回了空結果。";
 "error.refusal" = "模型拒絕了這次請求：%@";

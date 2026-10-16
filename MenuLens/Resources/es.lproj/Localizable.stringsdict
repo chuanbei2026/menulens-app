@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Plural forms. A key here overrides the same key in Localizable.strings,
+     which keeps the plural "other" wording as the fallback. -->
+<plist version="1.0">
+<dict>
+	<key>notice.partialPages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%1$#@failed@; %2$#@kept@. Puedes reintentarlo desde Estado.</string>
+		<key>failed</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>No se ha podido escanear %1$d página</string>
+			<key>other</key>
+			<string>No se han podido escanear %1$d páginas</string>
+		</dict>
+		<key>kept</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>se ha conservado la otra</string>
+			<key>other</key>
+			<string>se han conservado las otras %2$d</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
