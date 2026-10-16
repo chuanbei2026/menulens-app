@@ -22,6 +22,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
 import { config } from "./config.mjs";
+import { stripPrefix } from "./prefix.mjs";
 import { AuthError, issueSessionToken, verifyAppleIdentityToken, verifySessionToken } from "./auth.mjs";
 import { CreditStore, InsufficientCredits, PromoError, PurchaseConflict, balanceHistory, publicBalance, publicDay, toCredits } from "./credits.mjs";
 import { accountToken, creditableTransaction, PurchaseError, verifyAppleJWS } from "./purchase.mjs";
@@ -385,7 +386,11 @@ export const handler = awslambda.streamifyResponse((event, stream, context) =>
 
 async function handle(event, stream, context) {
   const method = event.requestContext?.http?.method ?? "GET";
-  const path = event.rawPath ?? "/";
+  // Behind CloudFront every route arrives under /menu (api.chuanbei.dev/menu/… → this Lambda;
+  // CloudFront can route by prefix but not strip it). Builds that call the Lambda URL directly send
+  // the bare path, so both work.
+  event.rawPath = stripPrefix(event.rawPath ?? "/");
+  const path = event.rawPath;
   const ctx = { requestId: context?.awsRequestId, route: `${method} ${path}`, startedAt: Date.now() };
   try {
     if (method === "POST" && path === "/auth/apple") return sendJSON(stream, 200, await signInWithApple(event, ctx), ctx);
