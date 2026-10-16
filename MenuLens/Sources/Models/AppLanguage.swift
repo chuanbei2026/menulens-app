@@ -9,6 +9,7 @@ import Foundation
 /// `.lproj` directory to load strings from — see `Loc`.
 enum AppLanguage: String, CaseIterable, Identifiable {
     case simplifiedChinese = "zh-Hans"
+    case traditionalChinese = "zh-Hant"
     case english = "en"
     case japanese = "ja"
     case korean = "ko"
@@ -24,6 +25,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .simplifiedChinese: return "中文（简体）"
+        case .traditionalChinese: return "中文（繁體）"
         case .english: return "English"
         case .japanese: return "日本語"
         case .korean: return "한국어"
@@ -43,7 +45,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var showsGlutenFree: Bool {
         switch self {
         case .english, .french, .spanish: return true
-        case .simplifiedChinese, .japanese, .korean, .hindi: return false
+        case .simplifiedChinese, .traditionalChinese, .japanese, .korean, .hindi: return false
         }
     }
 
@@ -51,6 +53,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var promptName: String {
         switch self {
         case .simplifiedChinese: return "Simplified Chinese"
+        case .traditionalChinese: return "Traditional Chinese"
         case .english: return "English"
         case .japanese: return "Japanese"
         case .korean: return "Korean"
@@ -74,7 +77,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     static var deviceDefault: AppLanguage {
         for identifier in Locale.preferredLanguages {
             switch identifier.split(separator: "-").first.map(String.init)?.lowercased() {
-            case "zh": return .simplifiedChinese // incl. zh-Hant: closer than English
+            case "zh": return chineseScript(of: identifier)
             case "en": return .english
             case "ja": return .japanese
             case "ko": return .korean
@@ -85,5 +88,18 @@ enum AppLanguage: String, CaseIterable, Identifiable {
             }
         }
         return .english
+    }
+
+    /// zh-Hant, zh-TW, zh-HK, zh-MO and any zh-Hant-* read Traditional;
+    /// everything else Chinese (zh-Hans, zh-CN, zh-SG, bare zh) Simplified.
+    /// An explicit script subtag wins over the region (zh-Hans-HK is
+    /// Simplified).
+    static func chineseScript(of identifier: String) -> AppLanguage {
+        let parts = identifier.replacingOccurrences(of: "_", with: "-")
+            .split(separator: "-").dropFirst().map { $0.lowercased() }
+        if parts.contains("hant") { return .traditionalChinese }
+        if parts.contains("hans") { return .simplifiedChinese }
+        return parts.contains(where: { ["tw", "hk", "mo"].contains($0) })
+            ? .traditionalChinese : .simplifiedChinese
     }
 }

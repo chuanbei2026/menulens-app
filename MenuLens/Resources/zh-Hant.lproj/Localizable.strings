@@ -1,0 +1,222 @@
+"app.name" = "外鄉人的菜單";
+
+/* MARK: - Shared */
+"common.cancel" = "取消";
+"common.save" = "儲存";
+"common.add" = "新增";
+"common.close" = "關閉";
+"common.unknown" = "未知";
+"list.separator" = "、";
+"page.number" = "第 %d 頁";
+
+/* MARK: - First run */
+"onboarding.title" = "用 Apple 登入後即可辨識新菜單";
+"onboarding.body" = "新帳號送 300 點（一頁菜單約 5–10 點），用完可以在商店裡買。現在也可以直接翻看內建的兩份真實餐廳菜單。";
+"onboarding.viewSamples" = "看內建菜單";
+
+/* MARK: - Home */
+"home.headline" = "拍下菜單，得到同版式的對照 PDF";
+"home.subheadline" = "支援多頁 · 自動配圖 · 任意語言 · 本機儲存";
+"home.capture" = "拍照";
+"home.captureMore" = "再拍一頁";
+"home.library" = "相簿";
+"home.images.title" = "為沒有照片的菜生成配圖";
+"home.images.note" = "AI 生成，拼圖模式每道不到 1 點，稍慢；本次辨識生效";
+"home.analyze" = "辨識並翻譯";
+"home.analyze.pages" = "辨識並翻譯（%d 頁）";
+"home.samples" = "看看內建範例菜單";
+
+/* MARK: - Settings */
+"settings.title" = "設定";
+"settings.language" = "語言";
+"settings.language.footer" = "同時決定介面語言和菜單翻譯的目標語言。菜單本身的語言無需設定，自動辨識。";
+"settings.model" = "模型";
+"settings.model.footer" = "實測一頁密排菜單（148 行）：gpt-4.1 約 45 秒 / 約 6 點（推薦，邊翻邊顯示進度）· gpt-5-mini 約 115 秒 / 約 2 點（更省，譯名更講究，但要等更久）· gpt-5 最準、最慢也最貴 · Mistral Large 3 約 40 秒 / 約 3 點（更省，精度稍低，翻完才顯示進度）。";
+"settings.party.header" = "同行成員";
+"settings.party.footer" = "點菜時可以標記每道菜是誰點的，上菜時按名字對號入座。設了忌口後，總結頁會檢查每道菜並給出醒目提醒。點頭像可從相簿上傳照片，點 ✕ 刪除成員。";
+"settings.member.name" = "名字";
+"settings.member.avoid" = "不吃";
+"settings.member.addPlaceholder" = "新增成員…";
+"settings.flatten" = "整頁勻光（推薦）";
+"settings.flatten.footer" = "消除拍照時的陰影和光斑，紙面變得乾淨均勻，翻譯文字與原版融合得更自然。深色菜單會自動跳過。";
+"settings.grid" = "拼圖省錢模式";
+"settings.grid.footer" = "是否生成配圖在主介面每次辨識前勾選。拼圖模式一次生成 2×2 四宮格再切開，四道菜一共約 0.5 點（單張模式每道約 0.5 點，畫質稍好）。菜單本身的照片始終優先使用。";
+
+/* MARK: - Scan progress */
+"progress.note" = "排版完成後立即可以檢視，配圖會在背景繼續補齊";
+"progress.stage.rectify" = "矯正照片";
+"progress.stage.translate" = "翻譯文字";
+"progress.stage.layout" = "排版佈局";
+"progress.stage.images" = "生成配圖";
+"progress.pages" = "%d 頁";
+"progress.pages.fraction" = "%1$d/%2$d 頁";
+"progress.lines.fraction" = "%1$d/%2$d 行";
+"progress.reading" = "正在讀取文字…";
+"progress.waitingModel" = "讀到 %d 行，等待模型…";
+"progress.linesElapsed" = "%1$d 行待翻譯 · 已用 %2$d 秒";
+"progress.waitRectify" = "等待矯正完成";
+"progress.waitTranslate" = "等待翻譯完成";
+"progress.layoutRunning" = "排版中…";
+"progress.imagesOff" = "已在設定中關閉";
+"progress.menuHasPhotos" = "菜單已有照片";
+"progress.images" = "%d 張";
+"progress.images.fraction" = "%1$d/%2$d 張";
+
+/* MARK: - Result */
+"result.generatingImages" = "正在生成菜色配圖";
+"result.selected" = "已選 %d 道";
+"result.summary" = "總結";
+"result.tab.canvas" = "畫布";
+"result.tab.list" = "清單";
+"result.home" = "返回首頁";
+"result.exportPDF" = "匯出 PDF";
+"canvas.showTranslation" = "看譯文";
+"canvas.showOriginal" = "看原文";
+"canvas.drawing" = "正在繪製畫布…";
+"share.menu" = "菜單";
+"list.searchPlaceholder" = "搜尋菜名（譯文或原文）";
+"chips.forWhom" = "為誰點:";
+"chips.addMember" = "新增成員";
+"chips.addMemberNote" = "也可以在設定頁管理同行成員。";
+
+/* MARK: - Order summary */
+"summary.title" = "已點菜色";
+"summary.conflicts" = "忌口衝突";
+"summary.avoidsButOrdered" = "但點了「%1$@」%2$@";
+"summary.count" = "共 %d 道";
+"summary.total" = "合計 %@";
+"summary.continue" = "繼續點餐";
+"summary.annotate" = "標註到菜單上給服務生看";
+
+/* MARK: - History */
+"history.title" = "歷史紀錄";
+"history.empty.title" = "還沒有紀錄";
+"history.empty.body" = "辨識過的菜單會自動儲存在這裡，方便再去同一家餐廳時直接檢視。";
+"history.untitled" = "未命名菜單";
+"history.meta" = "%1$@ · %2$d 道菜 · %3$d 頁";
+
+/* MARK: - Dietary tags */
+"diet.vegan" = "純素";
+"diet.vegetarian" = "素";
+"diet.glutenFree" = "麩質";
+"diet.pork" = "豬肉";
+"diet.chicken" = "雞肉";
+"diet.beef" = "牛肉";
+"diet.lamb" = "羊肉";
+"diet.seafood" = "海鮮";
+"diet.avoid.gluten" = "忌麩質";
+"diet.avoid" = "不吃%@";
+
+"party.me" = "我";
+
+/* MARK: - Errors */
+"error.encodeImages" = "無法編碼所選圖片。";
+"error.recognizeFailed" = "辨識失敗，請重試。";
+"notice.partialPages" = "有 %1$d 頁沒能辨識，已保留其餘 %2$d 頁。可以重新辨識那幾頁。";
+"error.http" = "請求失敗（HTTP %1$d）：%2$@";
+"error.emptyResponse" = "OpenAI 傳回了空結果。";
+"error.refusal" = "模型拒絕了這次請求：%@";
+"error.badLineIndex" = "模型傳回了無效的行號。";
+
+/* MARK: - PDF */
+"pdf.header" = "菜色對照 · %1$@ → %2$@";
+
+/* MARK: - Third-party AI consent (App Store guideline 5.1.2(i)) */
+"consent.title" = "菜單照片會發送到我們的伺服器和 OpenAI";
+"consent.body" = "為了辨識和翻譯菜單，外鄉人的菜單會把這張照片發到自己的伺服器，再由伺服器轉交 OpenAI 翻譯。只在你點「辨識並翻譯」時才發生。";
+"consent.sent.header" = "發到我們的伺服器，再轉給 OpenAI";
+"consent.sent.photo" = "你選擇的菜單照片，以及從中辨識出的文字";
+"consent.sent.names" = "菜名 —— 僅當你要求 AI 生成配圖時";
+"consent.kept.header" = "永遠不離開這部手機";
+"consent.kept.body" = "所有翻譯紀錄，以及同行成員的姓名和頭像。";
+"consent.retention" = "我們的伺服器不儲存菜單照片和文字，只記錄匿名的 Apple 帳號 ID、點數餘額和用量統計。OpenAI 會短期保留 API 資料用於濫用監控。";
+"consent.policy" = "檢視隱私權政策";
+"consent.agree" = "同意並繼續";
+"consent.decline" = "暫不";
+"settings.consent" = "傳送菜單照片用於翻譯";
+"settings.consent.footer" = "辨識新菜單必須開啟。關掉後什麼都不會被傳送，範例菜單和已儲存的翻譯照常可用。下次辨識時會再問你一次。";
+
+/* MARK: - Rename a saved scan */
+"history.rename" = "重新命名";
+"history.rename.placeholder" = "餐廳名字";
+"history.rename.prompt" = "留空則還原為「未命名菜單」。";
+
+/* MARK: - Recommendations */
+"list.recommended" = "值得點";
+"list.recommended.allFiltered" = "本來想推薦的菜和同行成員的忌口衝突，所以沒有顯示。";
+
+/* MARK: - Account (Sign in with Apple, credits) */
+"common.done" = "完成";
+"settings.account.header" = "帳號";
+"settings.account.balance" = "餘額";
+"settings.account.credits" = "%d 點";
+"settings.account.signOut" = "登出";
+"settings.account.delete" = "刪除帳號";
+"settings.account.delete.title" = "要刪除帳號嗎？";
+"settings.account.delete.message" = "帳號和餘額會從我們的伺服器上刪除，無法復原。這部手機上的歷史紀錄不受影響。";
+"settings.account.delete.confirm" = "刪除帳號";
+"settings.account.footer" = "新帳號送 300 點，之後可以在商店裡買，點數永不過期。一頁菜單約 5–10 點，一張配圖或一張四宮格約 0.5 點。";
+"settings.account.signedOut.footer" = "辨識新菜單需要一個帳號。只使用匿名的 Apple 帳號 ID，不要姓名、不要電子郵件。新帳號送 300 點。";
+"error.signInRequired" = "請先用 Apple 登入（設定 → 帳號）再辨識新菜單。";
+"error.sessionExpired" = "登入已過期，請重新用 Apple 登入。";
+"error.outOfCredits" = "點數不夠：這次大約需要 %1$d 點，餘額 %2$d 點。可以在商店裡買點數。";
+"error.signInFailed" = "登入失敗：%@";
+"notice.imagesStopped" = "配圖已停止：%@";
+
+/* Settings → Account: credit history chart */
+"credits.today" = "今天";
+"credits.last30" = "近 30 天";
+"credits.chart.balance" = "餘額";
+"credits.chart.spent" = "每日用量";
+"credits.chart.empty" = "暫無紀錄";
+
+/* MARK: - Progressive results */
+"result.pagesProgress" = "已完成 %1$d/%2$d 頁 · 其餘頁面翻譯中…";
+"result.pageTranslating" = "這一頁正在翻譯…";
+"result.pageFailed" = "這一頁沒能翻譯出來";
+
+/* MARK: - Credit shop */
+"shop.title" = "商店";
+"shop.buy" = "買點數";
+"shop.header" = "點數包";
+"shop.footer" = "透過 Apple 付款。點數用來辨識菜單和生成配圖，買的點數永不過期。開啟已儲存的菜單和範例菜單不花點數。";
+"shop.loading" = "正在讀取商品…";
+"shop.unavailable" = "商品還沒上架。";
+"shop.loadFailed" = "讀不到商品：%@";
+"shop.signInFirst" = "請先用 Apple 登入。";
+"shop.noServer" = "連不上伺服器，請稍後再試。";
+"shop.pending" = "等待確認（比如家長同意），確認後點數會自動入帳。";
+"shop.purchaseFailed" = "購買沒有完成：%@";
+"shop.unverified" = "這筆交易沒有透過 Apple 的驗證。";
+"shop.credited" = "已入帳 %d 點";
+"shop.notCredited" = "已付款，但點數還沒入帳：%@。下次開啟 App 時會自動補上。";
+
+/* MARK: - Redeem codes */
+"redeem.button" = "兌換碼";
+"redeem.title" = "兌換碼";
+"redeem.placeholder" = "輸入兌換碼";
+"redeem.footer" = "每個兌換碼每個帳號只能用一次。大小寫和空格不影響。";
+"redeem.action" = "兌換";
+"redeem.success" = "已兌換「%1$@」：+%2$d 點";
+"redeem.error.not_found" = "沒有這個兌換碼，請檢查拼寫。";
+"redeem.error.inactive" = "這個兌換碼目前不可用。";
+"redeem.error.expired" = "這個兌換碼已過期。";
+"redeem.error.used_up" = "這個兌換碼已被領完。";
+"redeem.error.already_redeemed" = "你已經兌換過這個兌換碼了。";
+
+/* MARK: - Models by App Store region */
+"settings.model.footer.regional" = "你所在的地區由 Mistral Large 3 翻譯菜單：一頁密排菜單約 40 秒、約 3 點。";
+"model.blurb.gpt-4.1" = "推薦";
+"model.blurb.gpt-5-mini" = "更省，較慢";
+"model.blurb.gpt-5" = "最準，最慢";
+"model.blurb.gpt-4o" = "較快，舊一代模型";
+"model.blurb.mistral-large-3" = "Mistral · 更省，精度稍低";
+"home.images.unavailable" = "你所在的地區暫不支援生成菜色配圖";
+"home.region.unavailable" = "你所在的地區暫不可用";
+"progress.imagesRegion" = "你所在的地區暫不可用";
+"error.region" = "這個模型在你的 App Store 地區不可用。模型列表已更新，請重新辨識。";
+
+/* MARK: - AI-generated picture label */
+"home.subheadline.noImages" = "支援多頁 · 任意語言 · 本機儲存";
+"ai.badge" = "AI";
+"ai.badge.accessibility" = "AI 生成的圖片";

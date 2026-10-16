@@ -54,6 +54,7 @@ targets:
         CFBundleLocalizations:
           - en
           - zh-Hans
+          - zh-Hant
           - ja
           - ko
           - fr

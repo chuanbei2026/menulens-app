@@ -48,6 +48,7 @@ ENDPOINT = "https://api.openai.com/v1/chat/completions"
 # Mirrors AppLanguage in the app. Keep in sync.
 LANGUAGES = {
     "zh-Hans": "Simplified Chinese",
+    "zh-Hant": "Traditional Chinese",
     "en": "English",
     "ja": "Japanese",
     "ko": "Korean",
@@ -316,7 +317,7 @@ def check(original: dict, new: dict, lang: str) -> None:
         if not item["chineseName"].strip()
     ]
     assert not empty, f"dishes left untranslated: {empty[:5]}"
-    if lang != "zh-Hans":
+    if lang not in ("zh-Hans", "zh-Hant"):
         # Cheap smell test: Han characters left in a non-CJK target usually
         # means the model echoed the Chinese it was NOT given.
         han = re.compile(r"[一-鿿]")

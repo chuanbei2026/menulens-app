@@ -226,6 +226,7 @@ struct ContentView: View {
                         // reads as a leftover, not as a feature.
                         let companion: String = switch Loc.language {
                         case .simplifiedChinese: "小明"
+                        case .traditionalChinese: "小明"
                         case .japanese: "ゆき"
                         case .korean: "지훈"
                         case .hindi: "आरव"

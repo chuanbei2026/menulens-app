@@ -45,28 +45,33 @@ App Store 上的名字是 **ForeignMenu**（中文区 **外乡人的菜单**）�
 
 | 位置 | 内容 |
 |---|---|
-| 七份 `Resources/*.lproj/Localizable.strings` | `app.name`（导航栏标题）、`consent.body` 里的行文 |
-| 七份 `Resources/*.lproj/InfoPlist.strings` | `CFBundleDisplayName`（桌面图标名） |
+| 八份 `Resources/*.lproj/Localizable.strings` | `app.name`（导航栏标题）、`consent.body` 里的行文 |
+| 八份 `Resources/*.lproj/InfoPlist.strings` | `CFBundleDisplayName`（桌面图标名） |
 | `project.yml` | `CFBundleDisplayName`（基准语言的兜底） |
 
 ## Language
 
 设置页里只有**一个**语言开关，它同时决定两件事：**界面语言**和**菜单翻译的目标语言**。
-支持 `zh-Hans` / `en` / `ja` / `ko` / `fr` / `es` / `hi`（七种）。
+支持 `zh-Hans` / `zh-Hant` / `en` / `ja` / `ko` / `fr` / `es` / `hi`（八种）。
 菜单原文语言永远自动识别，不需要设置。
 
-- 全新安装跟随**设备语言**（`AppLanguage.deviceDefault`），设备语言不在上述六种里则回落英文。
+- 全新安装跟随**设备语言**（`AppLanguage.deviceDefault`），设备语言不在上述几种里则回落英文。
 - 切换后**立即生效、不需要重启**，也不会丢掉正在看的识别结果。
 - 所有界面文案走 `L("key")`（`MenuLens/Sources/Localization/Localization.swift`），
   它按 App 内的选择显式加载 `<lang>.lproj/Localizable.strings`。
   **不要**用 `NSLocalizedString` 或 SwiftUI 的 `Text("字面量")` —— 那两者跟随的是
   *设备* 语言，会出现「界面中文、译文法语」的错配。
-- 加新文案：**七份** `MenuLens/Resources/*.lproj/Localizable.strings` 同时加同一个 key
+- 加新文案：**八份** `MenuLens/Resources/*.lproj/Localizable.strings` 同时加同一个 key
   （键集合和格式占位符必须完全一致），再在代码里 `L("新key")`。
 - 加新语言：`AppLanguage` 加一个 case（`displayName` / `promptName` /
   `showsGlutenFree` / `deviceDefault`）→ 建 `<lang>.lproj/` 两份 `.strings` →
   `project.yml` 的 `CFBundleLocalizations` 加一行 → 用
   `tools/retarget_sample.py` 烤该语言的内置示例。
+- 繁体中文（`zh-Hant`）的两份 `.strings` 和内置示例不是模型翻的，而是从 `zh-Hans`
+  用 OpenCC `s2twp`（台湾用语）转出来再人工校对术语（菜單、帳號、登入/登出、點數、
+  辨識、範例、隱私權政策…；`s2twp` 会把「菜单」转成电脑意义的「選單」，要改回）。
+  改了 `zh-Hans` 的文案记得同步改 `zh-Hant`。设备语言 zh-Hant / zh-TW / zh-HK /
+  zh-MO 默认繁体，其余 zh 默认简体。
 - 已保存的识别结果**保留自己当初的语言**（`MenuScan.targetLanguage`）：换界面语言不会
   重译旧菜单，PDF 表头也仍按那份扫描自己的语言渲染。
 - 例外：桌面图标名和相机/相册权限弹窗由 iOS 自己绘制，只能跟随**设备**语言
