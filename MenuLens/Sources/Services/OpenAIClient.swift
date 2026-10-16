@@ -30,10 +30,23 @@ struct OpenAIClient {
     var targetLanguage: String = "Simplified Chinese"
 
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v19"
+    private static let promptVersion = "v20"
+
+    private var writesTraditionalChinese: Bool {
+        targetLanguage == AppLanguage.traditionalChinese.promptName
+    }
 
     private var systemPrompt: String {
-        """
+        // Models asked for Traditional Chinese still slip Simplified
+        // characters into food words (腌, 鱼, 蓟), and a Simplified example
+        // in the prompt gets copied verbatim — so for that target the
+        // example is Traditional and the script is spelled out.
+        let exampleName = writesTraditionalChinese ? "經典酸橘汁醃魚" : "经典酸橘汁腌鱼"
+        let scriptRule = writesTraditionalChinese
+            ? "   Write Traditional Chinese characters as used in Taiwan and Hong Kong, "
+                + "never Simplified ones (醃 not 腌, 魚 not 鱼, 薊 not 蓟).\n"
+            : ""
+        return """
         You are a menu translation engine. You receive (a) a reference photo of one \
         restaurant menu page and (b) the DEFINITIVE list of OCR text lines on that page, \
         each with an index. The line list is the single source of truth for what text \
@@ -49,12 +62,12 @@ struct OpenAIClient {
            parenthesize the original text inside it.
            Brand/logo text keeps translated = "" (leave logos untouched).
            Fix obvious OCR misreads using the photo before translating.
-        3. Group the dishes: for each dish report `originalName` — the dish name ALONE, \
+        \(scriptRule)3. Group the dishes: for each dish report `originalName` — the dish name ALONE, \
         without its price and without bracketed dietary codes like [GF] or [VG] — and \
         `translatedName`, the translation ALONE (never append the source name in \
         parentheses). A translated name must stand on its own: when the printed \
         name omits the dish type ("Clásico", "Limeño" on a cebiche menu), name the \
-        dish in the target language ("经典酸橘汁腌鱼"), don't transliterate. Also its name line index, its description \
+        dish in the target language ("\(exampleName)"), don't transliterate. Also its name line index, its description \
         line indices (reading order; empty array if none), the price EXACTLY as printed \
         (null if absent), its section (original + translated title, and the section \
         title's line index, -1 when the menu has no section headings), dietary `tags` \
@@ -341,7 +354,10 @@ struct OpenAIClient {
         guard let jsonData = content.data(using: .utf8) else { throw ClientError.emptyResponse }
 
         let wire = try JSONDecoder().decode(WireResponse.self, from: jsonData)
-        let document = try Self.assemble(wire: wire, ocrLines: ocrLines)
+        var document = try Self.assemble(wire: wire, ocrLines: ocrLines)
+        if writesTraditionalChinese {
+            document = document.mappingTranslations(TraditionalChinese.fixingSimplified)
+        }
         if let encoded = try? JSONEncoder().encode(document) {
             ResponseCache.store(cacheKey, encoded)
         }
