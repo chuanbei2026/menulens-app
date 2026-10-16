@@ -1,4 +1,5 @@
 import Foundation
+import os
 import UIKit
 
 /// Architecture v2 client: the request carries the OCR line inventory
@@ -30,7 +31,7 @@ struct OpenAIClient {
     var targetLanguage: String = "Simplified Chinese"
 
     /// Bump when the prompt or schema changes so stale cache entries miss.
-    private static let promptVersion = "v20"
+    private static let promptVersion = "v21"
 
     private var writesTraditionalChinese: Bool {
         targetLanguage == AppLanguage.traditionalChinese.promptName
@@ -54,6 +55,9 @@ struct OpenAIClient {
 
         Tasks:
         1. Classify EVERY line's role: section_title | dish_name | description | price | other.
+           `lines` must hold exactly one entry for EVERY index from 0 to N−1 (N is given \
+        with the line list), in index order — prices, logos, codes and fragments included \
+        (with translated = "" where the rules below say so). Never skip a line or stop early.
         2. Translate into \(targetLanguage):
            - description and other lines: natural whole-phrase translation in `translated`;
            - dish_name and section_title lines: short translated name in `translated`;
@@ -204,6 +208,40 @@ struct OpenAIClient {
         let recommendReason: String?
     }
 
+    private static let log = Logger(subsystem: "ai.xiangyang.MenuLens", category: "translate")
+
+    /// How much of the page one answer covers. Lines the model leaves out of
+    /// `lines` end up untranslated on the canvas (and their dishes missing
+    /// from the list), so a thin answer is worth one more request.
+    struct Coverage: Equatable {
+        /// Distinct in-range line indices the answer returned.
+        let returnedLines: Int
+        let lineCount: Int
+        let dishes: Int
+
+        /// Below this share of the page's lines, the page is asked again.
+        static let retryBelow = 0.9
+
+        init(indices: [Int], lineCount: Int, dishes: Int) {
+            returnedLines = Set(indices.filter { (0 ..< lineCount).contains($0) }).count
+            self.lineCount = lineCount
+            self.dishes = dishes
+        }
+
+        var fraction: Double {
+            lineCount == 0 ? 1 : Double(returnedLines) / Double(lineCount)
+        }
+
+        var needsRetry: Bool { fraction < Self.retryBelow }
+
+        /// More lines wins; on a tie, more dishes; a full tie keeps `other`
+        /// (the answer already in hand).
+        func isBetter(than other: Coverage) -> Bool {
+            if returnedLines != other.returnedLines { return returnedLines > other.returnedLines }
+            return dishes > other.dishes
+        }
+    }
+
     private struct WireResponse: Decodable {
         let sourceLanguage: String
         let sourceLanguageName: String
@@ -254,7 +292,8 @@ struct OpenAIClient {
                         ],
                         [
                             "type": "text",
-                            "text": "OCR lines (index: text):\n" + inventory,
+                            "text": "OCR lines (index: text), N = \(ocrLines.count), "
+                                + "indices 0…\(max(ocrLines.count - 1, 0)):\n" + inventory,
                         ],
                     ],
                 ],
@@ -301,7 +340,9 @@ struct OpenAIClient {
             let choices: [Choice]
         }
 
-        func streamContent() async throws -> String {
+        /// `progressFloor`: on a coverage retry the bar must not fall back
+        /// to 0 — it holds at what the first answer already delivered.
+        func streamContent(progressFloor: Int) async throws -> String {
             let (bytes, response) = try await URLSession.shared.bytes(for: request)
             if let http = response as? HTTPURLResponse, !(200 ..< 300).contains(http.statusCode) {
                 var body = ""
@@ -327,7 +368,7 @@ struct OpenAIClient {
                 let seen = content.components(separatedBy: "\"index\"").count - 1
                 if seen != reported {
                     reported = seen
-                    onProgress?(min(seen, ocrLines.count))
+                    onProgress?(max(progressFloor, min(seen, ocrLines.count)))
                 }
             }
             if !refusal.isEmpty { throw ClientError.refusal(refusal) }
@@ -335,28 +376,63 @@ struct OpenAIClient {
             return content
         }
 
-        var content = ""
-        for attempt in 0 ..< 2 {
-            do {
-                content = try await streamContent()
-                break
-            } catch {
-                // One retry for timeouts and dropped connections; anything
-                // else (or a second failure) surfaces to the caller.
-                let code = (error as? URLError)?.code
-                let transient: Set<URLError.Code> = [
-                    .timedOut, .networkConnectionLost, .cannotConnectToHost, .dnsLookupFailed,
-                ]
-                guard attempt == 0, let code, transient.contains(code) else { throw error }
-                try? await Task.sleep(nanoseconds: 3_000_000_000)
+        /// One whole request: stream, decode, assemble.
+        func answer(progressFloor: Int) async throws -> (MenuDocument, Coverage) {
+            var content = ""
+            for attempt in 0 ..< 2 {
+                do {
+                    content = try await streamContent(progressFloor: progressFloor)
+                    break
+                } catch {
+                    // One retry for timeouts and dropped connections; anything
+                    // else (or a second failure) surfaces to the caller.
+                    let code = (error as? URLError)?.code
+                    let transient: Set<URLError.Code> = [
+                        .timedOut, .networkConnectionLost, .cannotConnectToHost, .dnsLookupFailed,
+                    ]
+                    guard attempt == 0, let code, transient.contains(code) else { throw error }
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                }
             }
-        }
-        guard let jsonData = content.data(using: .utf8) else { throw ClientError.emptyResponse }
+            guard let jsonData = content.data(using: .utf8) else { throw ClientError.emptyResponse }
 
-        let wire = try JSONDecoder().decode(WireResponse.self, from: jsonData)
-        var document = try Self.assemble(wire: wire, ocrLines: ocrLines)
-        if writesTraditionalChinese {
-            document = document.mappingTranslations(TraditionalChinese.fixingSimplified)
+            let wire = try JSONDecoder().decode(WireResponse.self, from: jsonData)
+            var document = try Self.assemble(wire: wire, ocrLines: ocrLines)
+            if writesTraditionalChinese {
+                document = document.mappingTranslations(TraditionalChinese.fixingSimplified)
+            }
+            let coverage = Coverage(
+                indices: wire.lines.map(\.index), lineCount: ocrLines.count,
+                dishes: document.allItems.count
+            )
+            Self.log.notice("""
+                answer: \(coverage.returnedLines)/\(coverage.lineCount) lines, \(coverage.dishes) dishes \
+                (\(model, privacy: .public), \(targetLanguage, privacy: .public))
+                """)
+            return (document, coverage)
+        }
+
+        // gpt-4.1 sometimes simply stops listing lines — finish_reason
+        // "stop", far below the token cap, valid JSON — and drops the dishes
+        // with them: the same page and prompt gave 129+ of 144 lines once and
+        // 43–87 on other runs. The prompt asks for all N; when an answer still
+        // covers too little of the page, ask once more and keep the better
+        // answer. The retry is charged like any request, so it is only ever
+        // one, and a failed retry keeps the first answer.
+        var (document, coverage) = try await answer(progressFloor: 0)
+        if coverage.needsRetry {
+            Self.log.notice("coverage retry: below \(Int(Coverage.retryBelow * 100))% of the page's lines")
+            do {
+                let (retried, retriedCoverage) = try await answer(progressFloor: coverage.returnedLines)
+                let keepRetry = retriedCoverage.isBetter(than: coverage)
+                Self.log.notice("coverage retry: keeping \(keepRetry ? "the retry" : "the first answer", privacy: .public)")
+                if keepRetry {
+                    (document, coverage) = (retried, retriedCoverage)
+                }
+            } catch {
+                Self.log.error("coverage retry failed, keeping the first answer: \(error.localizedDescription, privacy: .public)")
+            }
+            onProgress?(min(coverage.returnedLines, ocrLines.count))
         }
         if let encoded = try? JSONEncoder().encode(document) {
             ResponseCache.store(cacheKey, encoded)
