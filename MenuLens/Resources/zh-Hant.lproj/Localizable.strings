@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "用 Apple 登入後即可辨識新菜單";
-"onboarding.body" = "新帳號送 300 點（一頁菜單約 5–10 點），用完可以在商店裡買。現在也可以直接翻看內建的兩份真實餐廳菜單。";
+"onboarding.body" = "新帳號送 300 點（一頁菜單約 8–12 點），用完可以在商店裡買。現在也可以直接翻看內建的兩份真實餐廳菜單。";
 "onboarding.viewSamples" = "看內建菜單";
 
 /* MARK: - Home */
@@ -31,7 +31,7 @@
 "settings.language" = "語言";
 "settings.language.footer" = "同時決定介面語言和菜單翻譯的目標語言。菜單本身的語言無需設定，自動辨識。";
 "settings.model" = "模型";
-"settings.model.footer" = "實測一頁密排菜單（148 行）：gpt-4.1 約 45 秒 / 約 6 點（推薦，邊翻邊顯示進度）· gpt-5-mini 約 115 秒 / 約 2 點（更省，譯名更講究，但要等更久）· gpt-5 最準、最慢也最貴 · Mistral Large 3 約 40 秒 / 約 3 點（更省，精度稍低，翻完才顯示進度）。";
+"settings.model.footer" = "實測一頁密排菜單（148 行）：gpt-4.1 約 45 秒 / 約 10 點（推薦，邊翻邊顯示進度）· gpt-5-mini 約 115 秒 / 約 2 點（更省，譯名更講究，但要等更久）· gpt-5 最準、最慢也最貴 · Mistral Large 3 約 40 秒 / 約 3 點（更省，精度稍低，翻完才顯示進度）。";
 "settings.party.header" = "同行成員";
 "settings.party.footer" = "點菜時可以標記每道菜是誰點的，上菜時按名字對號入座。設了忌口後，總結頁會檢查每道菜並給出醒目提醒。點頭像可從相簿上傳照片，點 ✕ 刪除成員。";
 "settings.member.name" = "名字";
@@ -155,7 +155,7 @@
 "settings.account.delete.title" = "要刪除帳號嗎？";
 "settings.account.delete.message" = "帳號和餘額會從我們的伺服器上刪除，無法復原。這部手機上的歷史紀錄不受影響。";
 "settings.account.delete.confirm" = "刪除帳號";
-"settings.account.footer" = "新帳號送 300 點，之後可以在商店裡買，點數永不過期。一頁菜單約 5–10 點，一張配圖或一張四宮格約 0.5 點。";
+"settings.account.footer" = "新帳號送 300 點，之後可以在商店裡買，點數永不過期。一頁菜單約 8–12 點，一張配圖或一張四宮格約 0.5 點。";
 "settings.account.signedOut.footer" = "辨識新菜單需要一個帳號。只使用匿名的 Apple 帳號 ID，不要姓名、不要電子郵件。新帳號送 300 點。";
 "error.signInRequired" = "請先用 Apple 登入（設定 → 帳號）再辨識新菜單。";
 "error.sessionExpired" = "登入已過期，請重新用 Apple 登入。";

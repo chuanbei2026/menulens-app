@@ -212,27 +212,42 @@ struct OpenAIClient {
 
     /// How much of the page one answer covers. Lines the model leaves out of
     /// `lines` end up untranslated on the canvas (and their dishes missing
-    /// from the list), so a thin answer is worth one more request.
+    /// from the list), so a thin answer is worth one more request. So is an
+    /// answer that lists every line but groups far fewer dishes than it
+    /// labelled dish names (gpt-4.1: 39 dish_name lines, 16 dishes).
     struct Coverage: Equatable {
         /// Distinct in-range line indices the answer returned.
         let returnedLines: Int
         let lineCount: Int
         let dishes: Int
+        /// Distinct in-range lines the answer labelled `dish_name`.
+        let dishNameLines: Int
 
         /// Below this share of the page's lines, the page is asked again.
         static let retryBelow = 0.9
+        /// …or below this many dishes per dish_name line, once a page has
+        /// enough dish names for the ratio to mean something.
+        static let dishesRetryBelow = 0.8
+        static let dishNamesForDishCheck = 5
 
-        init(indices: [Int], lineCount: Int, dishes: Int) {
-            returnedLines = Set(indices.filter { (0 ..< lineCount).contains($0) }).count
+        init(indices: [Int], lineCount: Int, dishes: Int, dishNameIndices: [Int] = []) {
+            let inRange = { (index: Int) in (0 ..< lineCount).contains(index) }
+            returnedLines = Set(indices.filter(inRange)).count
             self.lineCount = lineCount
             self.dishes = dishes
+            dishNameLines = Set(dishNameIndices.filter(inRange)).count
         }
 
         var fraction: Double {
             lineCount == 0 ? 1 : Double(returnedLines) / Double(lineCount)
         }
 
-        var needsRetry: Bool { fraction < Self.retryBelow }
+        var tooFewDishes: Bool {
+            dishNameLines >= Self.dishNamesForDishCheck
+                && Double(dishes) < Self.dishesRetryBelow * Double(dishNameLines)
+        }
+
+        var needsRetry: Bool { fraction < Self.retryBelow || tooFewDishes }
 
         /// More lines wins; on a tie, more dishes; a full tie keeps `other`
         /// (the answer already in hand).
@@ -403,10 +418,12 @@ struct OpenAIClient {
             }
             let coverage = Coverage(
                 indices: wire.lines.map(\.index), lineCount: ocrLines.count,
-                dishes: document.allItems.count
+                dishes: document.allItems.count,
+                dishNameIndices: wire.lines.filter { $0.role == "dish_name" }.map(\.index)
             )
             Self.log.notice("""
                 answer: \(coverage.returnedLines)/\(coverage.lineCount) lines, \(coverage.dishes) dishes \
+                for \(coverage.dishNameLines) dish names \
                 (\(model, privacy: .public), \(targetLanguage, privacy: .public))
                 """)
             return (document, coverage)
@@ -416,12 +433,13 @@ struct OpenAIClient {
         // "stop", far below the token cap, valid JSON — and drops the dishes
         // with them: the same page and prompt gave 129+ of 144 lines once and
         // 43–87 on other runs. The prompt asks for all N; when an answer still
-        // covers too little of the page, ask once more and keep the better
+        // covers too little of the page (or every line but 16 dishes for 39
+        // dish names), ask once more and keep the better
         // answer. The retry is charged like any request, so it is only ever
         // one, and a failed retry keeps the first answer.
         var (document, coverage) = try await answer(progressFloor: 0)
         if coverage.needsRetry {
-            Self.log.notice("coverage retry: below \(Int(Coverage.retryBelow * 100))% of the page's lines")
+            Self.log.notice("coverage retry: \(coverage.tooFewDishes ? "too few dishes" : "too few lines", privacy: .public)")
             do {
                 let (retried, retriedCoverage) = try await answer(progressFloor: coverage.returnedLines)
                 let keepRetry = retriedCoverage.isBetter(than: coverage)

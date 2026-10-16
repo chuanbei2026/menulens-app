@@ -11,7 +11,7 @@
 
 /* MARK: - First run */
 "onboarding.title" = "Inicia sesión con Apple para escanear una carta";
-"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 5–10); puedes comprar más en la tienda. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
+"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 8–12); puedes comprar más en la tienda. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
 "onboarding.viewSamples" = "Ver ejemplos";
 
 /* MARK: - Home */
@@ -31,7 +31,7 @@
 "settings.language" = "Idioma";
 "settings.language.footer" = "Define tanto el idioma de la app como el idioma al que se traducen las cartas. El idioma de la carta se detecta automáticamente.";
 "settings.model" = "Modelo";
-"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~6 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro · Mistral Large 3 unos 40 s / ~3 créditos (más barato, algo menos preciso, sin avance hasta que termina).";
+"settings.model.footer" = "Medido en una página muy densa (148 líneas): gpt-4.1 unos 45 s / ~10 créditos (recomendado, muestra el avance mientras traduce) · gpt-5-mini unos 115 s / ~2 créditos (más barato y con mejores nombres, pero más espera) · gpt-5 es el más preciso, el más lento y el más caro · Mistral Large 3 unos 40 s / ~3 créditos (más barato, algo menos preciso, sin avance hasta que termina).";
 "settings.party.header" = "En la mesa";
 "settings.party.footer" = "Al pedir puedes marcar quién ha pedido cada plato, para que llegue a la persona correcta. Si indicas lo que alguien no come, el resumen revisa todos sus platos y avisa de forma bien visible. Toca un avatar para poner una foto y ✕ para quitar a alguien.";
 "settings.member.name" = "Nombre";
@@ -155,7 +155,7 @@
 "settings.account.delete.title" = "¿Eliminar tu cuenta?";
 "settings.account.delete.message" = "Tu cuenta y sus créditos se borran de nuestro servidor y no se pueden recuperar. El historial de este teléfono se queda.";
 "settings.account.delete.confirm" = "Eliminar cuenta";
-"settings.account.footer" = "Empiezas con 300 créditos gratis; después puedes comprar más en la tienda. Los créditos no caducan. Una página de carta cuesta unos 5–10 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
+"settings.account.footer" = "Empiezas con 300 créditos gratis; después puedes comprar más en la tienda. Los créditos no caducan. Una página de carta cuesta unos 8–12 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
 "settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis.";
 "error.signInRequired" = "Inicia sesión con Apple primero (Ajustes → Cuenta) para escanear una carta nueva.";
 "error.sessionExpired" = "Tu sesión ha caducado. Vuelve a iniciar sesión con Apple.";
