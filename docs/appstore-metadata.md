@@ -286,6 +286,21 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
 
 ---
 
+## 1.2 提审前 checklist（繁体中文 + 港澳重新上架）
+
+- [ ] App：繁体中文（zh-Hant）做完并合入；版本号 1.2、构建号从 1 起
+- [ ] 商店页：新增 zh-Hant / ja / ko / fr / es / hi 六个语言（上面「1.2 多语言商店页」）
+- [ ] 截图：补拍 zh-Hant（iPhone + iPad）；fr / ko 沿用；ja / es / hi 回落英文
+- [ ] **上架地区：重新勾选香港、澳门**（其余 OpenAI 不支持的地区继续不选）
+  - 港澳用户在 App 里只能选 Mistral Large 3（AWS Bedrock，AWS 销售，没有地区名单，只受美国制裁约束），没有 AI 配图；后端早已就绪（src/regions.mjs）
+  - 港澳当地没有 ICP / 网信办式的备案要求（docs 见 DateSeries 仓库 docs/research/2026-10-china-and-model-terms.md 的 A5）
+  - 上架前先在模拟器用 `-storefront HKG` + 繁体中文实扫一页，确认 Mistral 输出的是繁体
+- [ ] 审核备注加一句：“In Hong Kong and Macau the app uses a different model (Mistral Large 3 on AWS Bedrock) and offers no AI dish pictures, because OpenAI does not serve those regions.”
+- [ ] 隐私政策：已经写了「OpenAI 或 AWS Bedrock」，不用改
+- [ ] What's New（en / zh-Hans 也加）：新增繁体中文；香港、澳门可以下载了
+
+---
+
 ## 1.0 提审资料（2026-08，已提交；以下为历史记录）
 
 ## 基本信息
