@@ -120,6 +120,172 @@ Two full sample restaurants are included — try every feature without signing i
 
 ---
 
+## 1.2 多语言商店页（App 已支持这些语言，商店页还没有）
+
+> 1.2 提交时在 App Store Connect 里**新增这 6 个语言**，各填下面的名称、副标题、宣传文本、描述、关键词、更新说明。
+> 字数已用脚本核对，都在 Apple 的限制以内（名称 / 副标题 30、宣传文本 170、关键词 100、描述 4000）。
+> 截图：fr、ko 已有（docs/screenshots/*/fr|ko/）；zh-Hant 等繁体中文版做好后补拍；ja、es、hi 暂时回落到英文截图。
+> 1.2 的 What's New 在 en / zh-Hans 里也加一句「新增繁体中文」。
+
+### 繁體中文 (zh-Hant)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | 外鄉人的菜單 |
+| 副标题 | 拍菜單，秒變母語，還能點菜 |
+| 宣传文本 | 拍一張外語菜單，原版式變成母語菜單。新帳號送 300 點，不用申請 OpenAI key。 |
+| 关键词 | `菜單,翻譯,旅行,點菜,餐廳,日本,韓國,泰國,出國,美食,menu,translator,OCR,外食` |
+| 更新说明 | 新增繁體中文。 |
+
+描述：
+
+出國吃飯看不懂菜單？拍一張，外鄉人的菜單把整份菜單原版式翻譯成你的語言。
+
+【原版式翻譯】譯文直接寫在菜單原來的位置上，版式、字號都保留，像拿到一份母語版菜單。菜名保留原文對照，點菜時直接指給服務生看。
+
+【翻好一頁先看一頁】多頁菜單不用等全部翻完，第一頁好了就能先看。
+
+【自動校正】手持拍攝的傾斜、透視照片自動拉正，一次最多 8 頁。
+
+【看圖點菜】沒有配圖的菜，AI 生成參考小圖（標註為 AI 生成）。列表支援搜尋、素食／海鮮／豬肉／牛肉／羊肉標示，還會挑出兩三道值得點的菜並說明理由。
+
+【多人點單】為同桌每個人建檔、標出各自不吃的東西，誰點了什麼一目了然，確認後一鍵標回原菜單給服務生看。
+
+【八種語言】繁體中文、简体中文、English、日本語、한국어、Français、Español、हिन्दी。
+
+【點數】用 Apple 帳號登入即可使用，新帳號送 300 點。翻譯一頁約 5–10 點，一張配圖（4 道菜）約 0.5 點，點數不過期，用完可在 App 內購買。
+
+【隱私】不需要姓名和電子郵件。菜單照片和文字只在辨識時經我們的伺服器轉給 AI，不保存；翻譯紀錄、同行成員只存在手機上。
+
+內建兩家真實餐廳的完整範例，不登入也能體驗全部功能。
+
+### 日本語 (ja)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | ForeignMenu |
+| 副标题 | 外国語メニューをそのまま翻訳 |
+| 宣传文本 | 外国語のメニューを撮るだけで、元のレイアウトのまま母国語に。新規アカウントに300クレジット、OpenAIのキーは不要です。 |
+| 关键词 | `メニュー,翻訳,旅行,レストラン,海外,食事,注文,カメラ,OCR,グルメ,外食,韓国,タイ,フランス` |
+| 更新说明 | 繁体字中国語に対応しました。 |
+
+描述：
+
+海外でメニューが読めない？撮るだけで、ForeignMenu がメニュー全体を元のレイアウトのまま翻訳します。
+
+・その場で翻訳：訳文を元の位置に書き込むので、母国語版のメニューを手にしたような感覚。料理名は原文と並べて表示し、指さしで注文できます。
+・できたページから表示：複数ページのメニューも、訳せたページから順に見られます。
+・自動補正：傾いた写真もまっすぐに。一度に最大8ページ。
+・写真のない料理には AI が参考画像を生成（AI 生成と表示）。検索、ベジタリアン／シーフード／豚・牛・羊の表示、おすすめの2〜3品とその理由も。
+・グループの注文：同席者ごとに苦手なものを登録し、誰が何を頼んだかをメニューに書き戻して店員さんに見せられます。
+・8言語対応：日本語、English、简体中文、繁體中文、한국어、Français、Español、हिन्दी。
+・クレジット：Apple でサインインすると300クレジット。1ページ約5〜10、料理画像（4品）約0.5。期限なし、アプリ内で購入できます。
+・プライバシー：名前やメールは不要。メニューの写真と文字は読み取りのときだけ当社サーバー経由で AI に送られ、保存しません。履歴は端末内のみ。
+
+実在のレストラン2軒のサンプル付き。サインインしなくても全機能を試せます。
+
+### 한국어 (ko)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | ForeignMenu |
+| 副标题 | 외국어 메뉴를 그대로 번역 |
+| 宣传文本 | 외국어 메뉴를 찍기만 하면 원래 레이아웃 그대로 내 언어로. 새 계정에 300 크레딧, OpenAI 키는 필요 없어요. |
+| 关键词 | `메뉴,번역,여행,식당,레스토랑,해외,음식,주문,카메라,OCR,맛집,일본,태국,번역기` |
+| 更新说明 | 번체 중국어를 지원합니다. |
+
+描述：
+
+해외에서 메뉴를 못 읽겠다면? 찍기만 하세요. ForeignMenu가 메뉴 전체를 원래 레이아웃 그대로 번역합니다.
+
+• 제자리 번역: 번역문을 원래 자리에 써 넣어, 내 언어로 된 메뉴판을 받은 것처럼 보입니다. 요리 이름은 원문과 함께 보여 줘 손가락으로 가리켜 주문할 수 있어요.
+• 번역된 페이지부터 보기: 여러 페이지 메뉴도 번역이 끝난 페이지부터 바로 볼 수 있습니다.
+• 자동 보정: 기울어진 사진도 반듯하게, 한 번에 최대 8페이지.
+• 사진이 없는 요리는 AI가 참고 이미지를 만들어 줍니다(AI 생성 표시). 검색, 채식／해산물／돼지고기／소고기／양고기 표시, 추천 메뉴 2~3개와 그 이유까지.
+• 함께 주문: 일행마다 못 먹는 음식을 등록하고, 누가 무엇을 시켰는지 메뉴에 표시해 직원에게 보여 줄 수 있어요.
+• 8개 언어: 한국어, English, 日本語, 简体中文, 繁體中文, Français, Español, हिन्दी.
+• 크레딧: Apple로 로그인하면 300 크레딧. 한 페이지 약 5–10, 요리 이미지(4개) 약 0.5. 만료 없음, 앱에서 구매 가능.
+• 개인정보: 이름과 이메일은 받지 않습니다. 메뉴 사진과 글자는 인식할 때만 저희 서버를 거쳐 AI로 전달되고 저장되지 않으며, 기록은 기기에만 남습니다.
+
+실제 레스토랑 두 곳의 샘플이 들어 있어 로그인하지 않아도 모든 기능을 써 볼 수 있습니다.
+
+### Français (fr)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | ForeignMenu |
+| 副标题 | Menus traduits sur place |
+| 宣传文本 | Photographiez une carte en langue étrangère et lisez-la dans votre langue, mise en page d'origine. 300 crédits offerts, sans clé OpenAI. |
+| 关键词 | `menu,carte,traduction,traducteur,voyage,restaurant,cuisine,commander,photo,OCR,japon,corée` |
+| 更新说明 | Ajout du chinois traditionnel. |
+
+描述：
+
+Impossible de lire la carte ? Prenez-la en photo : ForeignMenu la traduit en entier, en gardant la mise en page d'origine.
+
+• Traduction sur place : le texte traduit prend la place de l'original, comme si on vous tendait la carte dans votre langue. Les noms des plats restent bilingues pour commander du doigt.
+• Page par page : sur une carte de plusieurs pages, chaque page s'affiche dès qu'elle est prête.
+• Redressement automatique des photos prises à la main, jusqu'à 8 pages.
+• Les plats sans photo reçoivent une image générée par IA (signalée comme telle). Recherche, mentions végétarien / fruits de mer / porc / bœuf / agneau, et 2 ou 3 plats à essayer, avec la raison.
+• Repas en groupe : notez ce que chacun ne mange pas, voyez qui a commandé quoi et annotez la commande sur la carte pour le serveur.
+• 8 langues : Français, English, Español, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
+• Crédits : connectez-vous avec Apple et recevez 300 crédits. Une page coûte environ 5–10, une image de plats (quatre) environ 0,5. Sans expiration, rechargeables dans l'app.
+• Confidentialité : ni nom ni e-mail. Les photos et le texte de la carte passent par notre serveur vers l'IA le temps de la lecture et ne sont pas conservés ; l'historique reste sur votre téléphone.
+
+Deux vrais restaurants sont inclus en exemple : essayez tout sans vous connecter.
+
+### Español (es)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | ForeignMenu |
+| 副标题 | Menús traducidos al instante |
+| 宣传文本 | Fotografía una carta en otro idioma y léela en el tuyo, con su diseño original. 300 créditos gratis al empezar, sin clave de OpenAI. |
+| 关键词 | `menú,carta,traducir,traductor,viaje,restaurante,comida,pedir,foto,OCR,japón,corea` |
+| 更新说明 | Ahora en chino tradicional. |
+
+描述：
+
+¿No entiendes la carta? Hazle una foto: ForeignMenu la traduce entera manteniendo el diseño original.
+
+• Traducción en su sitio: el texto traducido ocupa el lugar del original, como si te dieran la carta en tu idioma. Los nombres de los platos quedan en los dos idiomas para pedir señalando.
+• Página a página: en cartas de varias páginas, cada página aparece en cuanto está lista.
+• Endereza solo las fotos torcidas; hasta 8 páginas.
+• Los platos sin foto reciben una imagen generada por IA (marcada como tal). Búsqueda, etiquetas vegetariano / marisco / cerdo / ternera / cordero, y 2 o 3 platos recomendados con el motivo.
+• Comidas en grupo: apunta lo que no come cada uno, mira quién pidió qué y marca el pedido sobre la carta para el camarero.
+• 8 idiomas: Español, English, Français, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
+• Créditos: inicia sesión con Apple y recibe 300. Una página cuesta unos 5–10 y una imagen de platos (cuatro) unos 0,5. No caducan y puedes comprar más en la app.
+• Privacidad: sin nombre ni correo. Las fotos y el texto de la carta pasan por nuestro servidor hacia la IA solo mientras se leen y no se guardan; el historial queda en tu teléfono.
+
+Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
+
+### हिन्दी (hi)
+
+| 字段 | 内容 |
+|---|---|
+| 名称 | ForeignMenu |
+| 副标题 | विदेशी मेन्यू, आपकी भाषा में |
+| 宣传文本 | विदेशी भाषा के मेन्यू की फ़ोटो लें और उसे अपनी भाषा में पढ़ें, वही लेआउट। नए खाते को 300 मुफ़्त क्रेडिट, OpenAI की ज़रूरत नहीं। |
+| 关键词 | `मेन्यू,अनुवाद,यात्रा,रेस्टोरेंट,खाना,ऑर्डर,menu,translate,travel,OCR,विदेश` |
+| 更新说明 | अब पारंपरिक चीनी में भी। |
+
+描述：
+
+विदेश में मेन्यू पढ़ नहीं पा रहे? बस फ़ोटो लें — ForeignMenu पूरे मेन्यू का अनुवाद उसी लेआउट में कर देता है।
+
+• वहीं पर अनुवाद: अनुवाद ठीक उसी जगह लिखा जाता है, जैसे मेन्यू आपकी भाषा में छपा हो। व्यंजनों के नाम दोनों भाषाओं में रहते हैं, ताकि आप उंगली रखकर ऑर्डर कर सकें।
+• पेज तैयार होते ही दिखे: कई पेज वाले मेन्यू में हर पेज अनुवाद होते ही दिखने लगता है।
+• टेढ़ी फ़ोटो अपने-आप सीधी, एक बार में 8 पेज तक।
+• जिन व्यंजनों की फ़ोटो नहीं, उनके लिए AI से बनी तस्वीर (AI लिखा रहता है)। खोज, शाकाहारी / सीफ़ूड / पोर्क / बीफ़ / मटन के निशान, और 2-3 सुझाए गए व्यंजन, कारण के साथ।
+• साथ में ऑर्डर: हर व्यक्ति क्या नहीं खाता, लिखें; किसने क्या ऑर्डर किया, देखें; और वेटर के लिए मेन्यू पर ऑर्डर चिह्नित करें।
+• 8 भाषाएँ: हिन्दी, English, 日本語, 한국어, 简体中文, 繁體中文, Français, Español।
+• क्रेडिट: Apple से साइन इन करें और 300 क्रेडिट पाएँ। एक पेज लगभग 5–10, व्यंजनों की एक तस्वीर (चार) लगभग 0.5। क्रेडिट कभी ख़त्म नहीं होते, ऐप में और ख़रीद सकते हैं।
+• निजता: नाम या ईमेल नहीं चाहिए। मेन्यू की फ़ोटो और टेक्स्ट केवल पढ़ते समय हमारे सर्वर से AI तक जाते हैं, सहेजे नहीं जाते; इतिहास आपके फ़ोन पर ही रहता है।
+
+दो असली रेस्टोरेंट के उदाहरण शामिल हैं — बिना साइन इन किए सब आज़माएँ।
+
+---
+
 ## 1.0 提审资料（2026-08，已提交；以下为历史记录）
 
 ## 基本信息
