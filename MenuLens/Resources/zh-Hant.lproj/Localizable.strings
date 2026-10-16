@@ -68,6 +68,7 @@
 "result.summary" = "總結";
 "result.tab.canvas" = "畫布";
 "result.tab.list" = "清單";
+"result.tab.status" = "狀態";
 "result.home" = "返回首頁";
 "result.exportPDF" = "匯出 PDF";
 "canvas.showTranslation" = "看譯文";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "支援多頁 · 任意語言 · 本機儲存";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI 生成的圖片";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d 道菜";
+"status.queued" = "排隊中";
+"status.retryPage" = "重試這一頁";

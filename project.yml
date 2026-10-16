@@ -17,7 +17,7 @@ targets:
       # without App Store Connect. Such transactions are signed by Xcode, not
       # Apple, so POST /purchase rejects them (bad_jws) — expected.
       storeKitConfiguration: MenuLens/Products.storekit
-      testTargets: [MenuLensTests]
+      testTargets: [MenuLensTests, MenuLensUITests]
     sources:
       - MenuLens/Sources
       - path: MenuLens/Resources
@@ -100,3 +100,19 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: LNP5ER743F
 
+  # Gesture checks of the result screen (swipe between status / canvas /
+  # list, the bottom bar, retry a page) on the free -demoScan pipeline.
+  MenuLensUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - MenuLensUITests
+    dependencies:
+      - target: MenuLens
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_VERSION: "5.10"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: LNP5ER743F
+        TEST_TARGET_NAME: MenuLens

@@ -68,6 +68,7 @@
 "result.summary" = "सारांश";
 "result.tab.canvas" = "मेन्यू";
 "result.tab.list" = "सूची";
+"result.tab.status" = "स्थिति";
 "result.home" = "होम पर लौटें";
 "result.exportPDF" = "PDF निकालें";
 "canvas.showTranslation" = "अनुवाद";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "कई पेज · कोई भी भाषा · फ़ोन में सेव";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI से बनी तस्वीर";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d व्यंजन";
+"status.queued" = "कतार में";
+"status.retryPage" = "यह पेज फिर से आज़माएँ";

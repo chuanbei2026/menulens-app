@@ -68,6 +68,7 @@
 "result.summary" = "요약";
 "result.tab.canvas" = "메뉴";
 "result.tab.list" = "목록";
+"result.tab.status" = "상태";
 "result.home" = "홈으로";
 "result.exportPDF" = "PDF 내보내기";
 "canvas.showTranslation" = "번역문";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "여러 페이지 · 다국어 · 기기 내 저장";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI로 생성된 이미지";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "요리 %d개";
+"status.queued" = "대기 중";
+"status.retryPage" = "이 페이지 다시 시도";

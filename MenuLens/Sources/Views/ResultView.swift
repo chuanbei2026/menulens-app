@@ -1,24 +1,48 @@
 import SwiftUI
 
-/// Result screen with two switchable views (segmented control in the nav bar):
+/// Result screen with three views:
 ///
+/// - **Status** — one row per photographed page (translating, done, failed
+///   with a retry) and the dish pictures' progress. Where a multi-page scan
+///   opens while its pages are still coming in.
 /// - **Canvas** — one zoomable canvas per photographed page (pinch to zoom,
-///   double-tap to magnify), pages swiped via bottom page dots. Cards carry
-///   no images; tapping a card jumps to that dish in the list view.
+///   double-tap to magnify). Cards carry no images; tapping a card jumps to
+///   that dish in the list view.
 /// - **List** — native iOS list of every dish (with cropped/AI images),
 ///   searchable in the translation or the menu's original language.
+///
+/// On a phone the three are swiped through as ONE pager — status, each
+/// canvas page, list — so swiping past the last menu page reaches the list
+/// (a pager of pages nested in a pager of views would swallow the swipe);
+/// the bottom bar jumps between them. On a landscape iPad they stand side
+/// by side as columns.
 struct ResultView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     let onRestart: () -> Void
     @ObservedObject private var loc = Localization.shared
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
-    enum Mode: Hashable {
-        case canvas
+    /// One stop of the phone pager.
+    enum Pane: Hashable {
+        case status
+        case canvas(Int)
         case list
+
+        var tab: ResultTab {
+            switch self {
+            case .status: .status
+            case .canvas: .canvas
+            case .list: .list
+            }
+        }
     }
 
-    @State private var mode: Mode =
-        ProcessInfo.processInfo.arguments.contains("-listMode") ? .list : .canvas
+    @State private var pane: Pane
+    /// The canvas page last looked at — where the canvas tab returns to.
+    @State private var canvasPage = 0
+    /// The user switched views (tab, swipe, a status row) since the scan
+    /// started: no more automatic switching.
+    @State private var userChoseView = false
     /// Dish key the list should scroll to (set by tapping a canvas card).
     @State private var listTarget: String?
     @State private var showShop = false
@@ -29,63 +53,217 @@ struct ResultView: View {
     @State private var showOriginal =
         ProcessInfo.processInfo.arguments.contains("-showOriginal")
 
+    init(viewModel: AnalysisViewModel, onRestart: @escaping () -> Void) {
+        self.viewModel = viewModel
+        self.onRestart = onRestart
+        let args = ProcessInfo.processInfo.arguments
+        let initial: ResultTab = args.contains("-listMode") ? .list
+            : args.contains("-statusMode") ? .status
+            : ResultTab.initial(
+                pageCount: viewModel.scan?.pages.count ?? 0,
+                receivingPages: viewModel.isReceivingPages
+            )
+        let firstReady = viewModel.scan?.pages.indices.first { !viewModel.pendingPages.contains($0) } ?? 0
+        _canvasPage = State(initialValue: firstReady)
+        let pane: Pane = switch initial {
+        case .status: .status
+        case .canvas: .canvas(firstReady)
+        case .list: .list
+        }
+        _pane = State(initialValue: pane)
+    }
+
     var body: some View {
-        Group {
-            switch mode {
-            case .canvas:
-                MenuCanvasView(viewModel: viewModel, showOriginal: $showOriginal) { dishKey in
-                    listTarget = dishKey
-                    mode = .list
+        GeometryReader { geometry in
+            let columns = sizeClass == .regular && geometry.size.width > geometry.size.height
+            Group {
+                if columns {
+                    columnsLayout(width: geometry.size.width)
+                } else {
+                    pager
                 }
-            case .list:
-                DishListView(viewModel: viewModel, scrollTarget: $listTarget)
+            }
+            .safeAreaInset(edge: .top) { noticeBanner }
+            .safeAreaInset(edge: .bottom) { bottomBars(columns: columns) }
+        }
+        .sheet(isPresented: $showShop) { ShopView() }
+        .sheet(isPresented: $showOrderSummary) {
+            OrderSummaryView(viewModel: viewModel) {
+                show(.canvas(canvasPage), byUser: false)
             }
         }
-        .safeAreaInset(edge: .top) {
-            if let notice = viewModel.notice {
-                HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
-                    Text(notice)
-                        .font(.footnote)
-                    Spacer()
-                    if viewModel.outOfCredits {
-                        Button(L("shop.buy")) { showShop = true }
-                            .font(.footnote.weight(.semibold))
-                            .buttonStyle(.borderless)
-                    }
-                    Button {
-                        viewModel.notice = nil
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.caption)
-                    }
-                    .buttonStyle(.borderless)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: onRestart) {
+                    Image(systemName: "house")
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(.thinMaterial)
+                .accessibilityLabel(L("result.home"))
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                // The PDF is rendered once every page is in.
+                if !viewModel.isReceivingPages, let url = currentShareURL() {
+                    ShareLink(item: url) {
+                        Label(L("result.exportPDF"), systemImage: "square.and.arrow.up")
+                    }
+                }
             }
         }
-        .safeAreaInset(edge: .bottom) {
+        // Every page has finished: off the status view to the canvas, once,
+        // unless the user has picked a view themselves.
+        .onChange(of: viewModel.isReceivingPages) { wasReceiving, receiving in
+            guard wasReceiving, !receiving,
+                  let next = ResultTab.afterAllPagesFinished(
+                    current: pane.tab, userChoseView: userChoseView,
+                    anyPageDone: viewModel.pageStates.contains { if case .done = $0 { true } else { false } }
+                  ),
+                  next == .canvas
+            else { return }
+            userChoseView = true // once per scan
+            show(.canvas(firstReadyPage(preferring: canvasPage)), byUser: false)
+        }
+        // Pages land in any order. While they do, don't leave the reader
+        // looking at a placeholder when another page is ready.
+        .onChange(of: viewModel.pendingPages, initial: true) {
+            guard viewModel.isReceivingPages, case let .canvas(page) = pane,
+                  viewModel.pendingPages.union(viewModel.failedPages).contains(page)
+            else { return }
+            let ready = firstReadyPage(preferring: page)
+            if ready != page { show(.canvas(ready), byUser: false) }
+        }
+    }
+
+    // MARK: - Layouts
+
+    /// Phone (and portrait iPad): status · canvas pages · list, one swipe apart.
+    private var pager: some View {
+        let selection = Binding<Pane>(
+            get: { pane },
+            set: { show($0, byUser: true) } // only the user swipes
+        )
+        let pageCount = viewModel.scan?.pages.count ?? 0
+        return TabView(selection: selection) {
+            PageStatusView(viewModel: viewModel) { page in
+                show(.canvas(page), byUser: true)
+            }
+            .tag(Pane.status)
+            ForEach(0 ..< pageCount, id: \.self) { index in
+                CanvasSlot(viewModel: viewModel, index: index, showOriginal: showOriginal,
+                           onSelectDish: openInList)
+                    .padding(.bottom, pageCount > 1 ? 30 : 0)
+                    .background(Color(.systemGray5))
+                    .overlay(alignment: .topTrailing) { originalToggle }
+                    .overlay(alignment: .bottom) {
+                        if pageCount > 1 { pageDots(count: pageCount, current: index) }
+                    }
+                    .tag(Pane.canvas(index))
+            }
+            DishListView(viewModel: viewModel, scrollTarget: $listTarget)
+                .tag(Pane.list)
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .ignoresSafeArea(.keyboard)
+    }
+
+    /// Landscape iPad: all three at once — status narrow, canvas wide,
+    /// list medium.
+    private func columnsLayout(width: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            PageStatusView(viewModel: viewModel) { page in
+                canvasPage = page
+            }
+            .frame(width: min(320, width * 0.24))
+            Divider()
+            MenuCanvasView(viewModel: viewModel, page: $canvasPage, showOriginal: $showOriginal) { dishKey in
+                listTarget = dishKey
+            }
+            .frame(maxWidth: .infinity)
+            Divider()
             VStack(spacing: 0) {
+                DishListView(viewModel: viewModel, scrollTarget: $listTarget)
+                MemberChips(viewModel: viewModel)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(.thinMaterial)
+            }
+            .frame(width: min(420, width * 0.32))
+        }
+    }
+
+    private func show(_ next: Pane, byUser: Bool) {
+        if byUser { userChoseView = true }
+        if case let .canvas(page) = next { canvasPage = page }
+        pane = next
+    }
+
+    private func openInList(_ dishKey: String) {
+        listTarget = dishKey
+        show(.list, byUser: true)
+    }
+
+    /// `preferring` if it is in, else the first page that is.
+    private func firstReadyPage(preferring page: Int) -> Int {
+        let waiting = viewModel.pendingPages.union(viewModel.failedPages)
+        guard waiting.contains(page) else { return page }
+        return viewModel.scan?.pages.indices.first { !waiting.contains($0) } ?? page
+    }
+
+    // MARK: - Chrome
+
+    @ViewBuilder
+    private var noticeBanner: some View {
+        if let notice = viewModel.notice {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text(notice)
+                    .font(.footnote)
+                Spacer()
+                if viewModel.outOfCredits {
+                    Button(L("shop.buy")) { showShop = true }
+                        .font(.footnote.weight(.semibold))
+                        .buttonStyle(.borderless)
+                }
+                Button {
+                    viewModel.notice = nil
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption)
+                }
+                .buttonStyle(.borderless)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(.thinMaterial)
+        }
+    }
+
+    private func bottomBars(columns: Bool) -> some View {
+        VStack(spacing: 0) {
+            // The status view says all of this itself, page by page.
+            if !columns, pane != .status {
                 if viewModel.isReceivingPages, let scan = viewModel.scan {
                     // Pages arrive one at a time; say how many are still out.
                     let total = scan.pages.count
                     let ready = total - viewModel.pendingPages.count - viewModel.failedPages.count
-                    VStack(spacing: 6) {
-                        HStack {
-                            Label(L("result.pagesProgress", ready, total), systemImage: "text.viewfinder")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            ProgressView().controlSize(.small)
+                    Button {
+                        show(.status, byUser: true)
+                    } label: {
+                        VStack(spacing: 6) {
+                            HStack {
+                                Label(L("result.pagesProgress", ready, total), systemImage: "text.viewfinder")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                ProgressView().controlSize(.small)
+                            }
+                            ProgressView(value: Double(ready), total: Double(total))
                         }
-                        ProgressView(value: Double(ready), total: Double(total))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(.thinMaterial)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(.thinMaterial)
+                    .buttonStyle(.plain)
                 }
 
                 if let progress = viewModel.pipeline,
@@ -106,37 +284,41 @@ struct ResultView: View {
                     .padding(.vertical, 10)
                     .background(.thinMaterial)
                 }
+            }
 
-                if mode == .list {
-                    MemberChips(viewModel: viewModel)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(.thinMaterial)
-                }
-
-                if viewModel.cartCount > 0 {
-                    HStack(spacing: 10) {
-                        Image(systemName: "cart")
-                        Text(L("result.selected", viewModel.cartCount))
-                            .font(.subheadline.weight(.medium))
-                        if let total = viewModel.cartTotalText {
-                            Text(total)
-                                .font(.subheadline.monospacedDigit())
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Button(L("result.summary")) { showOrderSummary = true }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
+            if !columns, pane == .list {
+                MemberChips(viewModel: viewModel)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
                     .background(.thinMaterial)
-                }
+            }
 
-                // Two big view-switch buttons across the very tail of the screen.
+            if viewModel.cartCount > 0 {
+                HStack(spacing: 10) {
+                    Image(systemName: "cart")
+                    Text(L("result.selected", viewModel.cartCount))
+                        .font(.subheadline.weight(.medium))
+                    if let total = viewModel.cartTotalText {
+                        Text(total)
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(L("result.summary")) { showOrderSummary = true }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(.thinMaterial)
+            }
+
+            // Three big view-switch buttons across the very tail of the screen.
+            if !columns {
                 HStack(spacing: 0) {
-                    viewTab(.canvas, icon: "doc.richtext", selectedIcon: "doc.richtext.fill",
+                    viewTab(.status, icon: "square.stack", selectedIcon: "square.stack.fill",
+                            title: L("result.tab.status"), busy: viewModel.isReceivingPages)
+                    viewTab(.canvas(canvasPage), icon: "doc.richtext", selectedIcon: "doc.richtext.fill",
                             title: L("result.tab.canvas"))
                     viewTab(.list, icon: "list.bullet", selectedIcon: "list.bullet",
                             title: L("result.tab.list"))
@@ -144,40 +326,24 @@ struct ResultView: View {
                 .background(.regularMaterial)
             }
         }
-        .sheet(isPresented: $showShop) { ShopView() }
-        .sheet(isPresented: $showOrderSummary) {
-            OrderSummaryView(viewModel: viewModel) {
-                mode = .canvas
-            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: onRestart) {
-                    Image(systemName: "house")
-                }
-                .accessibilityLabel(L("result.home"))
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                // The PDF is rendered once every page is in.
-                if !viewModel.isReceivingPages, let url = currentShareURL() {
-                    ShareLink(item: url) {
-                        Label(L("result.exportPDF"), systemImage: "square.and.arrow.up")
-                    }
-                }
-            }
-        }
     }
 
-    /// One half of the bottom view-switch bar.
-    private func viewTab(_ tab: Mode, icon: String, selectedIcon: String, title: String) -> some View {
-        let selected = mode == tab
+    /// One third of the bottom view-switch bar.
+    private func viewTab(_ target: Pane, icon: String, selectedIcon: String, title: String,
+                         busy: Bool = false) -> some View {
+        let selected = pane.tab == target.tab
         return Button {
-            mode = tab
+            show(target, byUser: true)
         } label: {
             VStack(spacing: 3) {
                 Image(systemName: selected ? selectedIcon : icon)
                     .font(.title3)
+                    .overlay(alignment: .topTrailing) {
+                        // Pages still out: a small dot on the status tab.
+                        if busy, !selected {
+                            Circle().fill(Color.orange).frame(width: 7, height: 7).offset(x: 5, y: -2)
+                        }
+                    }
                 Text(title)
                     .font(.caption2)
             }
@@ -186,6 +352,45 @@ struct ResultView: View {
             .foregroundStyle(selected ? Color.orange : Color.secondary)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityIdentifier("tab.\(target.tab)")
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+
+    /// Hand-to-server switch: the original menu, order marks kept.
+    private var originalToggle: some View {
+        Button {
+            showOriginal.toggle()
+        } label: {
+            Label(
+                showOriginal ? L("canvas.showTranslation") : L("canvas.showOriginal"),
+                systemImage: showOriginal ? "character.bubble" : "globe"
+            )
+            .font(.footnote.weight(.medium))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(.regularMaterial, in: Capsule())
+            .shadow(color: .black.opacity(0.15), radius: 5, y: 2)
+        }
+        .padding(.trailing, 14)
+        .padding(.top, 10)
+    }
+
+    /// Which menu page this is, under the canvas (tap a dot to jump).
+    private func pageDots(count: Int, current: Int) -> some View {
+        HStack(spacing: 8) {
+            ForEach(0 ..< count, id: \.self) { index in
+                Circle()
+                    .fill(index == current ? Color.primary : Color.secondary.opacity(0.4))
+                    .frame(width: 7, height: 7)
+                    .contentShape(Rectangle().inset(by: -6))
+                    .onTapGesture { show(.canvas(index), byUser: true) }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(.regularMaterial, in: Capsule())
+        .padding(.bottom, 4)
     }
 
     /// Write the current PDF to a stable temp file for ShareLink.
@@ -202,58 +407,227 @@ struct ResultView: View {
     }
 }
 
-// MARK: - Canvas view (zoomable pages + page dots)
+// MARK: - Status view (one row per photographed page)
 
+private struct PageStatusView: View {
+    @ObservedObject var viewModel: AnalysisViewModel
+    let onOpenPage: (Int) -> Void
+    @ObservedObject private var loc = Localization.shared
+
+    var body: some View {
+        let states = viewModel.pageStates
+        let done = states.filter { if case .done = $0 { true } else { false } }.count
+        List {
+            Section {
+                ForEach(states.indices, id: \.self) { index in
+                    row(index, state: states[index])
+                }
+            } header: {
+                Text(L("progress.pages.fraction", done, states.count))
+            }
+            Section {
+                imagesRow
+            } header: {
+                Text(L("progress.stage.images"))
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    @ViewBuilder
+    private func row(_ index: Int, state: PageState) -> some View {
+        let content = HStack(spacing: 12) {
+            thumbnail(index)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(L("page.number", index + 1))
+                    .font(.headline)
+                detail(index, state: state)
+            }
+            Spacer(minLength: 0)
+            if case .done = state {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.vertical, 4)
+        if case .done = state {
+            Button { onOpenPage(index) } label: { content.contentShape(Rectangle()) }
+                .buttonStyle(.plain)
+        } else {
+            content
+        }
+    }
+
+    private func thumbnail(_ index: Int) -> some View {
+        Group {
+            if index < viewModel.scanImages.count {
+                Image(uiImage: viewModel.scanImages[index])
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Color(.systemGray5)
+            }
+        }
+        .frame(width: 52, height: 70)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(.separator), lineWidth: 0.5))
+    }
+
+    @ViewBuilder
+    private func detail(_ index: Int, state: PageState) -> some View {
+        switch state {
+        case .queued:
+            Label(L("status.queued"), systemImage: "clock")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        case let .translating(since):
+            let total = viewModel.pageLineTotals[index] ?? 0
+            let done = viewModel.pageLinesDone[index] ?? 0
+            if done > 0, total > 0 {
+                // The model streams its answer: an honest line counter.
+                VStack(alignment: .leading, spacing: 4) {
+                    ProgressView(value: Double(min(done, total)), total: Double(total))
+                    Text(L("progress.lines.fraction", min(done, total), total))
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                // Silent until the whole answer arrives (Bedrock, reasoning
+                // models): a spinner and the clock.
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    HStack(spacing: 6) {
+                        ProgressView().controlSize(.small)
+                        Text(total > 0
+                             ? L("progress.linesElapsed", total, max(0, Int(context.date.timeIntervalSince(since))))
+                             : L("progress.reading"))
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        case let .done(dishes):
+            Label(L("status.dishes", dishes), systemImage: "checkmark.circle.fill")
+                .font(.subheadline)
+                .foregroundStyle(.green)
+        case let .failed(message):
+            VStack(alignment: .leading, spacing: 6) {
+                Label(L("result.pageFailed"), systemImage: "exclamationmark.triangle.fill")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
+                if viewModel.canRetryPages {
+                    Button {
+                        viewModel.retryPage(index)
+                    } label: {
+                        Label(L("status.retryPage"), systemImage: "arrow.clockwise")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var imagesRow: some View {
+        let progress = viewModel.pipeline
+        HStack(spacing: 12) {
+            Image(systemName: "photo.artframe")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+                .frame(width: 52)
+            VStack(alignment: .leading, spacing: 4) {
+                if !RegionStore.shared.catalog.images {
+                    Text(L("progress.imagesRegion")).foregroundStyle(.secondary)
+                } else if !viewModel.generateDishImages {
+                    Text(L("progress.imagesOff")).foregroundStyle(.secondary)
+                } else if let total = progress?.imagesTotal {
+                    let done = progress?.imagesDone ?? 0
+                    if total > 0 {
+                        ProgressView(value: Double(min(done, total)), total: Double(total))
+                        Text(L("progress.images.fraction", min(done, total), total))
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text(L("progress.menuHasPhotos")).foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text(L("progress.waitTranslate")).foregroundStyle(.secondary)
+                }
+                if let reason = viewModel.imagesStopReason {
+                    Text(L("notice.imagesStopped", reason))
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+            }
+            .font(.subheadline)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Canvas
+
+/// One photographed page on the canvas: its translated canvas once in, the
+/// dimmed photo while it is out (or failed, with a retry).
+private struct CanvasSlot: View {
+    @ObservedObject var viewModel: AnalysisViewModel
+    let index: Int
+    let showOriginal: Bool
+    let onSelectDish: (String) -> Void
+
+    var body: some View {
+        if let scan = viewModel.scan, index < scan.pages.count, index < viewModel.scanImages.count {
+            if viewModel.pendingPages.contains(index) || viewModel.failedPages.contains(index) {
+                PendingPage(
+                    image: viewModel.scanImages[index],
+                    failed: viewModel.failedPages.contains(index),
+                    onRetry: viewModel.canRetryPages ? { viewModel.retryPage(index) } : nil
+                )
+            } else {
+                CanvasPage(
+                    document: scan.pages[index],
+                    pageIndex: index,
+                    image: viewModel.scanImages[index],
+                    highlights: viewModel.highlightTotals,
+                    orderLabels: viewModel.orderLabels,
+                    showOriginal: showOriginal,
+                    onSelectDish: onSelectDish
+                )
+            }
+        }
+    }
+}
+
+/// The canvas column on a landscape iPad: its own pager of menu pages.
 private struct MenuCanvasView: View {
     @ObservedObject var viewModel: AnalysisViewModel
+    @Binding var page: Int
     @Binding var showOriginal: Bool
     let onSelectDish: (String) -> Void
     @ObservedObject private var loc = Localization.shared
-    @State private var page = 0
 
     var body: some View {
         if let scan = viewModel.scan {
             let multiPage = scan.pages.count > 1
             TabView(selection: $page) {
-                ForEach(Array(scan.pages.enumerated()), id: \.offset) { index, document in
-                    if index < viewModel.scanImages.count,
-                       viewModel.pendingPages.contains(index) || viewModel.failedPages.contains(index) {
-                        PendingPage(
-                            image: viewModel.scanImages[index],
-                            failed: viewModel.failedPages.contains(index)
-                        )
-                        .padding(.bottom, multiPage ? 34 : 0)
-                        .tag(index)
-                    } else if index < viewModel.scanImages.count {
-                        CanvasPage(
-                            document: document,
-                            pageIndex: index,
-                            image: viewModel.scanImages[index],
-                            highlights: viewModel.highlightTotals,
-                            orderLabels: viewModel.orderLabels,
-                            showOriginal: showOriginal,
-                            onSelectDish: onSelectDish
-                        )
+                ForEach(0 ..< scan.pages.count, id: \.self) { index in
+                    CanvasSlot(viewModel: viewModel, index: index, showOriginal: showOriginal,
+                               onSelectDish: onSelectDish)
                         // Keep the page dots clear (multi-page only).
                         .padding(.bottom, multiPage ? 34 : 0)
                         .tag(index)
-                    }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: multiPage ? .always : .never))
-            // Pages land in any order. While they do, don't leave the
-            // reader looking at a placeholder when another page is ready.
-            .onChange(of: viewModel.pendingPages, initial: true) {
-                let waiting = viewModel.pendingPages.union(viewModel.failedPages)
-                guard viewModel.isReceivingPages, waiting.contains(page),
-                      let ready = scan.pages.indices.first(where: { !waiting.contains($0) })
-                else { return }
-                page = ready
-            }
             .indexViewStyle(.page(backgroundDisplayMode: .always))
             .background(Color(.systemGray5))
             .overlay(alignment: .topTrailing) {
-                // Hand-to-server switch: the original menu, order marks kept.
                 Button {
                     showOriginal.toggle()
                 } label: {
@@ -279,6 +653,7 @@ private struct MenuCanvasView: View {
 private struct PendingPage: View {
     let image: UIImage
     let failed: Bool
+    var onRetry: (() -> Void)?
 
     var body: some View {
         Image(uiImage: image)
@@ -297,6 +672,14 @@ private struct PendingPage: View {
                     Text(L(failed ? "result.pageFailed" : "result.pageTranslating"))
                         .font(.subheadline.weight(.medium))
                         .multilineTextAlignment(.center)
+                    if failed, let onRetry {
+                        Button(action: onRetry) {
+                            Label(L("status.retryPage"), systemImage: "arrow.clockwise")
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                    }
                 }
                 .padding(18)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))

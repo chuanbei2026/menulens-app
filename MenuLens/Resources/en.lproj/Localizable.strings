@@ -72,6 +72,7 @@
 "result.summary" = "Summary";
 "result.tab.canvas" = "Menu";
 "result.tab.list" = "List";
+"result.tab.status" = "Status";
 "result.home" = "Back to home";
 "result.exportPDF" = "Export PDF";
 "canvas.showTranslation" = "Translation";
@@ -228,3 +229,8 @@
 "home.subheadline.noImages" = "Multi-page · Any language · Stored on device";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI-generated picture";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d dishes";
+"status.queued" = "Queued";
+"status.retryPage" = "Retry this page";

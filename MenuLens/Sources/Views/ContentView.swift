@@ -94,6 +94,13 @@ struct ContentView: View {
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet
+            //   -demoScan <r,…>   multi-page run on bundled samples, answered
+            //                     from them (no request); -failPage <i> fails
+            //                     page i once, -autoRetry <s> retries failed
+            //                     pages after s seconds, -dumpPDF writes
+            //                     Documents/result.pdf on every render
+            //   -statusMode       open the result on the status view
+            //   -landscape        rotate (iPad: the three-column result)
             //   -showSettings     open Settings (longest strings live in its footers,
             //                     so this is the screen text overflow shows up on)
             //   -grantConsent     grant the third-party-AI consent; REQUIRED
@@ -288,6 +295,59 @@ struct ContentView: View {
                         .split(separator: ",")
                         .compactMap { UIImage(contentsOfFile: String($0)) }
                     if !photos.isEmpty { analyzeAndDump(photos) }
+                }
+                // Simulator only, zero API cost: the multi-page pipeline on
+                // bundled samples, answered from the samples themselves —
+                // e.g. -demoScan naan-n-curry,la-mar -failPage 1 -noImages.
+                // See AnalysisViewModel.debugAnswers.
+                if let idx = args.firstIndex(of: "-demoScan"), idx + 1 < args.count,
+                   let root = Bundle.main.resourceURL?.appendingPathComponent("Samples") {
+                    let language = FileManager.default.fileExists(
+                        atPath: root.appendingPathComponent(Loc.language.rawValue).path
+                    ) ? Loc.language.rawValue : AppLanguage.english.rawValue
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    var photos: [UIImage] = []
+                    var answers: [MenuDocument] = []
+                    for name in args[idx + 1].split(separator: ",") {
+                        let dir = root.appendingPathComponent(language).appendingPathComponent(String(name))
+                        guard let data = try? Data(contentsOf: dir.appendingPathComponent("scan.json")),
+                              let sample = try? decoder.decode(MenuScan.self, from: data)
+                        else { continue }
+                        for (page, document) in sample.pages.enumerated() {
+                            guard let photo = UIImage(contentsOfFile: dir.appendingPathComponent("page_\(page).jpg").path)
+                            else { continue }
+                            photos.append(photo)
+                            answers.append(document)
+                        }
+                    }
+                    if let failIdx = args.firstIndex(of: "-failPage"), failIdx + 1 < args.count,
+                       let page = Int(args[failIdx + 1]) {
+                        AnalysisViewModel.debugFailOnce = [page]
+                    }
+                    AnalysisViewModel.debugAnswers = answers
+                    if !photos.isEmpty { analyzeAndDump(photos) }
+                }
+                // Retry every failed page after <s> seconds (what the
+                // status view's retry button does), e.g. after the run ended.
+                if let idx = args.firstIndex(of: "-autoRetry"), idx + 1 < args.count,
+                   let seconds = Double(args[idx + 1]) {
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(seconds))
+                        for page in viewModel.failedPages.sorted() { viewModel.retryPage(page) }
+                    }
+                }
+                // iPad screenshots in landscape (the three-column result).
+                if args.contains("-landscape") {
+                    Task { @MainActor in
+                        // Too early at launch: the scene must be active first.
+                        try? await Task.sleep(for: .seconds(1))
+                        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+                        scene.keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+                        scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { error in
+                            print("-landscape: \(error.localizedDescription)")
+                        }
+                    }
                 }
             }
             #endif

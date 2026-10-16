@@ -68,6 +68,7 @@
 "result.summary" = "Récapitulatif";
 "result.tab.canvas" = "Carte";
 "result.tab.list" = "Liste";
+"result.tab.status" = "État";
 "result.home" = "Retour à l'accueil";
 "result.exportPDF" = "Exporter en PDF";
 "canvas.showTranslation" = "Traduction";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "Multipage · Toutes langues · Stocké sur l'appareil";
 "ai.badge" = "IA";
 "ai.badge.accessibility" = "Image générée par IA";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d plats";
+"status.queued" = "En attente";
+"status.retryPage" = "Réessayer cette page";

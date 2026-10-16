@@ -30,16 +30,6 @@ struct PipelineProgress: Equatable {
     }
 }
 
-/// Collects per-page translated-line counts from concurrent page tasks.
-actor LineProgress {
-    private var byPage: [Int: Int] = [:]
-
-    func record(page: Int, done: Int) -> Int {
-        byPage[page] = done
-        return byPage.values.reduce(0, +)
-    }
-}
-
 @MainActor
 final class AnalysisViewModel: ObservableObject {
     enum Phase: Equatable {
@@ -96,17 +86,38 @@ final class AnalysisViewModel: ObservableObject {
     /// finishes and saves to history, but stops touching the screen.
     private var displayedRun: UUID?
 
-    /// While a multi-page scan is still coming in: indices into
-    /// `scan.pages` of pages not translated yet / that failed. Those pages
-    /// hold an empty placeholder document until the run finishes.
-    @Published private(set) var pendingPages: Set<Int> = []
-    @Published private(set) var failedPages: Set<Int> = []
+    /// Where each photographed page of the scan on screen stands, in photo
+    /// order. Failed pages keep their slot (and their photo) so they can be
+    /// retried; the saved scan leaves them out.
+    @Published private(set) var pageStates: [PageState] = []
+    /// Per page: OCR lines, and lines the model has translated so far.
+    @Published private(set) var pageLineTotals: [Int: Int] = [:]
+    @Published private(set) var pageLinesDone: [Int: Int] = [:]
+    /// Why dish pictures stopped early (out of credits, region), if they did.
+    @Published private(set) var imagesStopReason: String?
     /// The last scan (or its dish pictures) ran out of credits: the error
     /// and notice offer the shop.
     @Published private(set) var outOfCredits = false
-    /// True until every page of the scan on screen is in. The PDF (and so
-    /// the share button) waits for this: it is rendered once, complete.
+
+    /// Pages not translated yet (queued or in flight) / that failed.
+    /// Pending and failed pages hold an empty placeholder document.
+    var pendingPages: Set<Int> { Set(pageStates.indices.filter { pageStates[$0].isWaiting }) }
+    var failedPages: Set<Int> {
+        Set(pageStates.indices.filter { if case .failed = pageStates[$0] { true } else { false } })
+    }
+    /// True while any page of the scan on screen is still coming in — also
+    /// while a failed page is being retried. The PDF (and so the share
+    /// button) waits for this: it is rendered complete.
     var isReceivingPages: Bool { !pendingPages.isEmpty }
+    /// A failed page of the scan on screen can be asked again.
+    var canRetryPages: Bool { current != nil && current?.id == displayedRun }
+
+    /// The fresh scan on screen (nil for one opened from History): what a
+    /// single-page retry needs, during the run and after it.
+    private var current: ScanRun?
+    /// The "N pages failed" line of `notice`, so a successful retry can take
+    /// it back out.
+    private var partialPagesNotice: String?
 
     init(history: HistoryStore = .shared) {
         self.history = history
@@ -123,9 +134,11 @@ final class AnalysisViewModel: ObservableObject {
     /// Analyze all picked pages concurrently (one API call per page). The
     /// result view opens as soon as the FIRST page is back; the others fill
     /// in as they finish, and each page's dish thumbnails start as soon as
-    /// that page lands. Once every page is in (or failed), failed pages are
-    /// dropped, the scan is saved to history and the PDF is rendered — the
+    /// that page lands. Once every page is in (or failed), the scan is saved
+    /// to history without the failed pages and the PDF is rendered — the
     /// same scan, history entry and PDF as if it had been shown all at once.
+    /// A failed page can be retried on its own (`retryPage`), during the run
+    /// or after it; a late success is saved into the same history entry.
     func analyze() async {
         let originals = pickedImages
         guard !originals.isEmpty else { return }
@@ -139,9 +152,19 @@ final class AnalysisViewModel: ObservableObject {
         // step (OCR geometry, canvas, crops, history) works on a clean sheet.
         var images: [UIImage] = []
         for original in originals {
-            let rectified = await Task.detached(priority: .userInitiated) {
-                DocumentRectifier.rectify(original)
-            }.value
+            var rectified = original
+            #if DEBUG
+            // Demo pages are bundled, already-flat sample photos whose
+            // geometry the sample answers were made against.
+            let flat = Self.debugAnswers != nil
+            #else
+            let flat = false
+            #endif
+            if !flat {
+                rectified = await Task.detached(priority: .userInitiated) {
+                    DocumentRectifier.rectify(original)
+                }.value
+            }
             images.append(rectified)
             pipeline?.rectifyDone += 1
         }
@@ -168,93 +191,45 @@ final class AnalysisViewModel: ObservableObject {
             targetLanguage: target.promptName
         )
 
-        let run = UUID()
+        let run = ScanRun(client: client, target: target, images: images, jpegs: jpegs)
         imageQueue?.cancel()
-        displayedRun = run
-        let scanID = UUID()
-        let createdAt = Date()
+        current?.cancelLateQueues()
+        current = run
+        displayedRun = run.id
         notice = nil
+        partialPagesNotice = nil
         outOfCredits = false
+        imagesStopReason = nil
         pdfData = nil
         generatedImages = [:]
         cart = [:]
-        // Dish keys carry the page index. Until the run ends that is the
-        // photo's index; failed pages are then dropped and later pages move
-        // up, so thumbnails and cart entries are re-keyed through this.
-        let keys = PageKeyMap()
-        let queue = makeImageQueue(scanID: scanID, run: run, keys: keys)
+        // Dish keys carry the photo's index. Saved scans leave failed pages
+        // out and later pages move up, so pictures on disk are filed through
+        // `run.keys`; the screen keeps photo order throughout.
+        let queue = makeImageQueue(scanID: run.scanID, run: run.id, keys: run.keys)
         imageQueue = queue
+        run.queue = queue
         if queue == nil { pipeline?.imagesTotal = 0 }
+        pageLineTotals = [:]
+        pageLinesDone = [:]
+        publish(run)
 
-        var pages = [MenuDocument?](repeating: nil, count: jpegs.count)
-        var pending = Set(pages.indices)
-        var failed: Set<Int> = []
-        var lastError: Error?
         // Pages are independent: one failure must not throw away the pages
         // that came back fine (a 3-page scan losing everything to a single
-        // timeout is the worst possible outcome for the user).
-        // Per-page line counters, summed for the progress bar.
-        let linesDoneByPage = LineProgress()
-        await withTaskGroup(of: (Int, Result<MenuDocument, Error>).self) { group in
-            for (index, jpeg) in jpegs.enumerated() {
-                let pageImage = images[index]
-                group.addTask { [weak self] in
-                    // v2: OCR first — the line inventory IS the geometry;
-                    // the model only classifies and translates by index.
-                    let ocrLines = OCRService.recognizeLines(in: pageImage)
-                    await MainActor.run { self?.pipeline?.linesTotal += ocrLines.count }
-                    #if DEBUG
-                    if let seconds = await Self.debugPageDelay[index] {
-                        try? await Task.sleep(for: .seconds(seconds))
-                    }
-                    #endif
-                    do {
-                        let document = try await client.analyzeMenu(
-                            jpegData: jpeg, ocrLines: ocrLines,
-                            onProgress: { done in
-                                Task { @MainActor [weak self] in
-                                    let total = await linesDoneByPage.record(page: index, done: done)
-                                    self?.pipeline?.linesDone = total
-                                }
-                            }
-                        )
-                        return (index, .success(document))
-                    } catch {
-                        return (index, .failure(error))
-                    }
-                }
-            }
-            for await (index, result) in group {
-                pending.remove(index)
-                switch result {
-                case let .success(document):
-                    pages[index] = document
-                    let dishes = Self.dishesNeedingImages(document, page: index)
-                    queue?.add(dishes)
-                    guard displayedRun == run else { continue }
-                    pipeline?.pagesDone += 1
-                    if queue != nil { pipeline?.imagesTotal = (pipeline?.imagesTotal ?? 0) + dishes.count }
-                case let .failure(error):
-                    lastError = error
-                    failed.insert(index)
-                    if case .outOfCredits = error as? Backend.BackendError, displayedRun == run {
-                        outOfCredits = true
-                    }
-                }
-                guard displayedRun == run, pages.contains(where: { $0 != nil }) else { continue }
-                // Show what is in so far; pending pages keep their photo.
-                let landed = pages.compactMap { $0 }
-                scan = MenuScan.combining(pages: landed, targetLanguage: target, id: scanID, createdAt: createdAt)
-                    .withPages(pages.map { $0 ?? .placeholder })
-                scanImages = images
-                pendingPages = pending
-                failedPages = failed
-                if phase != .done {
-                    pipeline?.layoutState = .done
-                    phase = .done
-                }
-            }
+        // timeout is the worst possible outcome for the user). Results come
+        // back through one stream, which a retry of a failed page joins as
+        // long as the run is still collecting.
+        let (results, continuation) = AsyncStream.makeStream(of: (Int, Result<MenuDocument, Error>).self)
+        run.continuation = continuation
+        for index in images.indices { startPage(index, of: run) }
+        var lastError: Error?
+        for await (index, result) in results {
+            if case let .failure(error) = result { lastError = error }
+            receive(result, page: index, of: run)
+            if !run.states.contains(where: \.isWaiting) { break }
         }
+        run.continuation = nil
+        continuation.finish()
 
         // Every page was charged (or refused); show the new balance.
         Task { await account.refreshCredits() }
@@ -265,69 +240,202 @@ final class AnalysisViewModel: ObservableObject {
             Task { await RegionStore.shared.refresh() }
         }
 
-        // Keep documents and photos PAIRED. Dropping failed pages from the
-        // documents while keeping every image would shift the two lists apart
-        // and paint one page's translations onto another page's photo.
-        var results: [(document: MenuDocument, image: UIImage)] = []
-        var finalIndex: [Int: Int] = [:]
-        for (index, page) in pages.enumerated() {
-            if let page {
-                finalIndex[index] = results.count
-                results.append((page, images[index]))
-            }
-        }
-        guard !results.isEmpty else {
+        guard run.documents.contains(where: { $0 != nil }) else {
             queue?.cancel()
-            guard displayedRun == run else { return }
+            guard displayedRun == run.id else { return }
+            current = nil
             pipeline = nil
-            pendingPages = []
-            failedPages = []
+            pageStates = []
             phase = .failed(lastError?.localizedDescription ?? L("error.recognizeFailed"))
             return
         }
 
-        let finalScan = MenuScan.combining(
-            pages: results.map(\.document), targetLanguage: target, id: scanID, createdAt: createdAt
-        )
-        keys.map = finalIndex
-        if !failed.isEmpty {
-            history.rekeyGeneratedImages(scanID: scanID) { keys.finalKey($0) }
-        }
-        history.save(scan: finalScan, images: results.map(\.image))
-
-        if displayedRun == run {
-            if !failed.isEmpty {
-                notice = [notice, L("notice.partialPages", failed.count, results.count)]
-                    .compactMap { $0 }
-                    .joined(separator: "\n")
-                generatedImages = Dictionary(uniqueKeysWithValues: generatedImages.compactMap { key, image in
-                    keys.finalKey(key).map { ($0, image) }
-                })
-                cart = Dictionary(uniqueKeysWithValues: cart.compactMap { key, perMember in
-                    keys.finalKey(key).map { ($0, perMember) }
-                })
+        let saved = commit(run)
+        if displayedRun == run.id {
+            let failed = run.states.filter { if case .failed = $0 { true } else { false } }.count
+            if failed > 0 {
+                setPartialPagesNotice(L("notice.partialPages", failed, saved.pages.count))
+            } else {
+                // Nothing left out: the screen shows exactly the saved scan.
+                scan = saved
             }
-            scan = finalScan
-            scanImages = results.map(\.image)
-            pendingPages = []
-            failedPages = []
         }
         // No more dishes: leftovers that were waiting for a collage go out.
         queue?.finish()
-        if displayedRun == run {
+        if displayedRun == run.id {
             await renderPDFAsync()
         }
+    }
+
+    /// Ask for one failed page again — only that page is sent, and charged.
+    /// During the run the answer joins the run; after it, a success is saved
+    /// into the same history entry and the PDF is rendered again.
+    func retryPage(_ index: Int) {
+        guard let run = current, displayedRun == run.id, aiConsentGranted,
+              run.states.indices.contains(index), case .failed = run.states[index]
+        else { return }
+        notice = nil
+        partialPagesNotice = nil
+        startPage(index, of: run)
+    }
+
+    /// OCR and translate one page of `run`, then hand the result back.
+    private func startPage(_ index: Int, of run: ScanRun) {
+        run.states[index] = .queued
+        publish(run)
+        let image = run.images[index]
+        let jpeg = run.jpegs[index]
+        let client = run.client
+        Task { [weak self] in
+            // v2: OCR first — the line inventory IS the geometry; the model
+            // only classifies and translates by index.
+            let ocrLines = await Task.detached(priority: .userInitiated) {
+                OCRService.recognizeLines(in: image)
+            }.value
+            guard let self else { return }
+            run.lineTotals[index] = ocrLines.count
+            run.linesDone[index] = 0
+            #if DEBUG
+            if let seconds = Self.debugPageDelay[index] {
+                try? await Task.sleep(for: .seconds(seconds))
+            }
+            #endif
+            run.states[index] = .translating(since: Date())
+            self.publish(run)
+            let onProgress: @Sendable (Int) -> Void = { done in
+                Task { @MainActor [weak self] in
+                    run.linesDone[index] = done
+                    self?.publish(run)
+                }
+            }
+            let result: Result<MenuDocument, Error>
+            do {
+                #if DEBUG
+                if let answer = try await Self.debugAnswer(page: index, lines: ocrLines.count, onProgress: onProgress) {
+                    result = .success(answer)
+                } else {
+                    result = .success(try await client.analyzeMenu(
+                        jpegData: jpeg, ocrLines: ocrLines, onProgress: onProgress))
+                }
+                #else
+                result = .success(try await client.analyzeMenu(
+                    jpegData: jpeg, ocrLines: ocrLines, onProgress: onProgress))
+                #endif
+            } catch {
+                result = .failure(error)
+            }
+            if let continuation = run.continuation {
+                continuation.yield((index, result))
+            } else {
+                await self.receiveLate(result, page: index, of: run)
+            }
+        }
+    }
+
+    /// One page's answer: into the run, and onto the screen while it shows.
+    private func receive(_ result: Result<MenuDocument, Error>, page index: Int, of run: ScanRun) {
+        let displayed = displayedRun == run.id
+        switch result {
+        case let .success(document):
+            run.documents[index] = document
+            run.states[index] = .done(dishes: document.allItems.count)
+            run.linesDone[index] = run.lineTotals[index]
+            let dishes = Self.dishesNeedingImages(document, page: index)
+            if run.continuation != nil {
+                run.queue?.add(dishes)
+                if displayed, run.queue != nil {
+                    pipeline?.imagesTotal = (pipeline?.imagesTotal ?? 0) + dishes.count
+                }
+            } else if displayed, !dishes.isEmpty,
+                      let queue = makeImageQueue(scanID: run.scanID, run: run.id, keys: run.keys) {
+                // A page retried after the run: its own small picture queue.
+                run.lateQueues.append(queue)
+                pipeline?.imagesTotal = (pipeline?.imagesTotal ?? 0) + dishes.count
+                queue.add(dishes)
+                queue.finish()
+            }
+            if displayed { pipeline?.pagesDone += 1 }
+        case let .failure(error):
+            run.states[index] = .failed(error.localizedDescription)
+            if case .outOfCredits = error as? Backend.BackendError, displayed {
+                outOfCredits = true
+            }
+        }
+        publish(run)
+        guard displayed, run.documents.contains(where: { $0 != nil }) else { return }
+        // Show what is in so far; pending and failed pages keep their photo.
+        scan = run.screenScan
+        scanImages = run.images
+        if phase != .done {
+            pipeline?.layoutState = .done
+            phase = .done
+        }
+    }
+
+    /// A retried page answering after the run ended: saved into the same
+    /// history entry, with the PDF rendered again.
+    private func receiveLate(_ result: Result<MenuDocument, Error>, page index: Int, of run: ScanRun) async {
+        receive(result, page: index, of: run)
+        Task { await AccountStore.shared.refreshCredits() }
+        guard case .success = result else {
+            if displayedRun == run.id, case let .failed(message) = run.states[index] {
+                notice = [notice, message].compactMap { $0 }.joined(separator: "\n")
+            }
+            return
+        }
+        let saved = commit(run)
+        guard displayedRun == run.id else { return }
+        if !run.states.contains(where: { if case .failed = $0 { true } else { false } }) {
+            scan = saved
+        }
+        if !isReceivingPages { await renderPDFAsync() }
+    }
+
+    /// Save the run's pages that came back to history (the same entry every
+    /// time), filing its dish pictures under the saved page positions.
+    @discardableResult
+    private func commit(_ run: ScanRun) -> MenuScan {
+        let map = PageCompaction.map(present: run.documents.map { $0 != nil })
+        let old = run.keys.map
+        let moves = old == nil ? map.contains { $0.key != $0.value } : old != map
+        if moves {
+            history.rekeyGeneratedImages(scanID: run.scanID) { PageCompaction.rekey($0, from: old, to: map) }
+        }
+        run.keys.map = map
+        let saved = run.savedScan
+        history.save(scan: saved, images: run.savedImages)
+        return saved
+    }
+
+    /// Copy the run's page states to the screen, if it is the one shown.
+    private func publish(_ run: ScanRun) {
+        guard displayedRun == run.id else { return }
+        pageStates = run.states
+        pageLineTotals = run.lineTotals
+        pageLinesDone = run.linesDone
+        pipeline?.linesTotal = run.lineTotals.values.reduce(0, +)
+        pipeline?.linesDone = run.linesDone.values.reduce(0, +)
+    }
+
+    private func setPartialPagesNotice(_ line: String) {
+        partialPagesNotice = line
+        notice = [notice, line].compactMap { $0 }.joined(separator: "\n")
     }
 
     /// Open a saved scan from the history list.
     func open(_ saved: MenuScan) {
         imageQueue?.cancel()
+        current?.cancelLateQueues()
+        current = nil
         let run = UUID()
         displayedRun = run
-        pendingPages = []
-        failedPages = []
+        pageStates = saved.pages.map { .done(dishes: $0.allItems.count) }
+        pageLineTotals = [:]
+        pageLinesDone = [:]
+        imagesStopReason = nil
         outOfCredits = false
         notice = nil
+        partialPagesNotice = nil
         scan = saved
         scanImages = history.loadImages(for: saved)
         generatedImages = history.loadGeneratedImages(for: saved)
@@ -359,11 +467,16 @@ final class AnalysisViewModel: ObservableObject {
     func reset() {
         imageQueue?.cancel()
         imageQueue = nil
+        current?.cancelLateQueues()
+        current = nil
         displayedRun = nil
-        pendingPages = []
-        failedPages = []
+        pageStates = []
+        pageLineTotals = [:]
+        pageLinesDone = [:]
+        imagesStopReason = nil
         outOfCredits = false
         notice = nil
+        partialPagesNotice = nil
         phase = .idle
         pickedImages = []
         scan = nil
@@ -478,17 +591,30 @@ final class AnalysisViewModel: ObservableObject {
     }
 
     /// Render the PDF off the main thread so scrolling/progress stay smooth.
+    /// It is the SAVED scan's PDF: a failed page left on screen for a retry
+    /// is not in it, exactly like the history entry.
     func renderPDFAsync() async {
         guard let scan else { return }
-        let renderer = MenuPDFRenderer(
-            scan: scan,
-            images: scanImages,
-            generatedImages: generatedImages
-        )
+        var renderer = MenuPDFRenderer(scan: scan, images: scanImages, generatedImages: generatedImages)
+        if let run = current, run.id == displayedRun, run.documents.contains(where: { $0 == nil }) {
+            renderer = MenuPDFRenderer(
+                scan: run.savedScan,
+                images: run.savedImages,
+                generatedImages: Dictionary(uniqueKeysWithValues: generatedImages.compactMap { key, image in
+                    run.keys.finalKey(key).map { ($0, image) }
+                })
+            )
+        }
         let data = await Task.detached(priority: .userInitiated) {
             renderer.renderPDF()
         }.value
         pdfData = data
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-dumpPDF") {
+            let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            try? data.write(to: docs.appendingPathComponent("result.pdf"))
+        }
+        #endif
     }
 
     // MARK: - Concurrent dish-thumbnail generation
@@ -520,18 +646,21 @@ final class AnalysisViewModel: ObservableObject {
             gridMode: thumbnailGridMode
         )
         queue.onResult = { [weak self] queuedKey, image in
-            guard let self, let key = keys.currentKey(queuedKey) else { return }
-            if let image {
+            guard let self else { return }
+            // On disk under the saved page position; on screen (photo
+            // order) under the key it was queued with.
+            if let image, let key = keys.currentKey(queuedKey) {
                 self.history.saveGeneratedImage(image, scanID: scanID, dishKey: key)
             }
             guard self.displayedRun == run else { return }
-            if let image { self.generatedImages[key] = image }
+            if let image { self.generatedImages[queuedKey] = image }
             self.pipeline?.imagesDone += 1
         }
         queue.onDrained = { [weak self, weak queue] in
             Task { await AccountStore.shared.refreshCredits() }
             guard let self, self.displayedRun == run else { return }
             if let reason = queue?.stopReason {
+                self.imagesStopReason = reason.localizedDescription
                 if case .outOfCredits = reason { self.outOfCredits = true }
                 if case .region = reason { Task { await RegionStore.shared.refresh() } }
                 // Close the progress out at what was actually made.
@@ -559,8 +688,35 @@ final class AnalysisViewModel: ObservableObject {
         guard let scan, scan.pages.count > 1 else { return }
         let pending = scan.pages.count - 1
         self.scan = scan.withPages(scan.pages.enumerated().map { $0.offset == pending ? .placeholder : $0.element })
-        pendingPages = [pending]
+        pageStates[pending] = .translating(since: Date())
         pdfData = nil
+    }
+
+    /// `-demoScan <restaurant>[,<restaurant>…]`: run the real multi-page
+    /// pipeline (page states, progressive canvas/list, history, PDF) on the
+    /// bundled samples' photos, answered from the samples instead of the
+    /// network — free and repeatable. Each page "streams" its lines over a
+    /// few seconds; `-failPage <i>` makes page i fail once (a retry then
+    /// succeeds).
+    static var debugAnswers: [MenuDocument]?
+    static var debugFailOnce: Set<Int> = []
+
+    private struct DebugFailure: LocalizedError {
+        var errorDescription: String? { L("error.http", 503, "simulated failure (-failPage)") }
+    }
+
+    nonisolated static func debugAnswer(
+        page: Int, lines: Int, onProgress: @escaping @Sendable (Int) -> Void
+    ) async throws -> MenuDocument? {
+        guard let answers = await MainActor.run(body: { debugAnswers }), page < answers.count else { return nil }
+        let fails = await MainActor.run { debugFailOnce.remove(page) != nil }
+        let steps = 12
+        for step in 1 ... steps {
+            try await Task.sleep(for: .milliseconds(450 + 120 * page))
+            if fails, step == steps / 2 { throw DebugFailure() }
+            onProgress(lines * step / steps)
+        }
+        return answers[page]
     }
 
     /// Load the synthetic demo menu — verifies bbox cropping and PDF export
@@ -576,6 +732,76 @@ final class AnalysisViewModel: ObservableObject {
         Task { await renderPDFAsync() }
     }
     #endif
+}
+
+/// Where one photographed page stands.
+enum PageState: Equatable {
+    /// Waiting to be read and sent.
+    case queued
+    /// Its request is out (the line counter moves if the model streams).
+    case translating(since: Date)
+    case done(dishes: Int)
+    case failed(String)
+
+    var isWaiting: Bool {
+        switch self {
+        case .queued, .translating: true
+        case .done, .failed: false
+        }
+    }
+}
+
+/// One fresh scan: what it was asked with and what came back, per photo.
+/// Kept while it is on screen so a failed page can be asked again.
+@MainActor
+final class ScanRun {
+    let id = UUID()
+    let scanID = UUID()
+    let createdAt = Date()
+    let client: OpenAIClient
+    let target: AppLanguage
+    let images: [UIImage]
+    let jpegs: [Data]
+    var documents: [MenuDocument?]
+    var states: [PageState]
+    var lineTotals: [Int: Int] = [:]
+    var linesDone: [Int: Int] = [:]
+    /// Photo index → saved index, once saved (see `PageCompaction`).
+    let keys = PageKeyMap()
+    var queue: DishImageQueue?
+    /// Picture queues of pages retried after the run.
+    var lateQueues: [DishImageQueue] = []
+    /// Set while the run is still collecting page results.
+    var continuation: AsyncStream<(Int, Result<MenuDocument, Error>)>.Continuation?
+
+    init(client: OpenAIClient, target: AppLanguage, images: [UIImage], jpegs: [Data]) {
+        self.client = client
+        self.target = target
+        self.images = images
+        self.jpegs = jpegs
+        documents = Array(repeating: nil, count: images.count)
+        states = Array(repeating: .queued, count: images.count)
+    }
+
+    /// Photo order, pages not (yet) in as placeholders — what the screen shows.
+    var screenScan: MenuScan {
+        MenuScan.combining(pages: documents.compactMap { $0 }, targetLanguage: target, id: scanID, createdAt: createdAt)
+            .withPages(documents.map { $0 ?? .placeholder })
+    }
+
+    /// Only the pages that came back — what history and the PDF hold.
+    var savedScan: MenuScan {
+        MenuScan.combining(pages: documents.compactMap { $0 }, targetLanguage: target, id: scanID, createdAt: createdAt)
+    }
+
+    var savedImages: [UIImage] {
+        zip(documents, images).compactMap { $0.0 == nil ? nil : $0.1 }
+    }
+
+    func cancelLateQueues() {
+        lateQueues.forEach { $0.cancel() }
+        lateQueues = []
+    }
 }
 
 /// Original page index → index in the saved scan, filled in when a run

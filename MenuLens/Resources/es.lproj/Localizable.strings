@@ -68,6 +68,7 @@
 "result.summary" = "Resumen";
 "result.tab.canvas" = "Carta";
 "result.tab.list" = "Lista";
+"result.tab.status" = "Estado";
 "result.home" = "Volver al inicio";
 "result.exportPDF" = "Exportar PDF";
 "canvas.showTranslation" = "Traducción";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "Varias páginas · Cualquier idioma · Guardado en el dispositivo";
 "ai.badge" = "IA";
 "ai.badge.accessibility" = "Imagen generada por IA";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d platos";
+"status.queued" = "En cola";
+"status.retryPage" = "Reintentar esta página";

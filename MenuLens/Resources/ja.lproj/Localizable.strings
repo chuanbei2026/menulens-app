@@ -68,6 +68,7 @@
 "result.summary" = "注文一覧";
 "result.tab.canvas" = "メニュー";
 "result.tab.list" = "リスト";
+"result.tab.status" = "状況";
 "result.home" = "ホームに戻る";
 "result.exportPDF" = "PDF を書き出す";
 "canvas.showTranslation" = "訳文";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "複数ページ対応 · 多言語 · 端末内に保存";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI で生成された画像";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d品";
+"status.queued" = "待機中";
+"status.retryPage" = "このページを再試行";

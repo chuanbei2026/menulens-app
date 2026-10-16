@@ -68,6 +68,7 @@
 "result.summary" = "总结";
 "result.tab.canvas" = "画布";
 "result.tab.list" = "列表";
+"result.tab.status" = "状态";
 "result.home" = "返回首页";
 "result.exportPDF" = "导出 PDF";
 "canvas.showTranslation" = "看译文";
@@ -220,3 +221,8 @@
 "home.subheadline.noImages" = "支持多页 · 任意语言 · 本地保存";
 "ai.badge" = "AI";
 "ai.badge.accessibility" = "AI 生成的图片";
+
+/* MARK: - Result: per-page status */
+"status.dishes" = "%d 道菜";
+"status.queued" = "排队中";
+"status.retryPage" = "重试这一页";

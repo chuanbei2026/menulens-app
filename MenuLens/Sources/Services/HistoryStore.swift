@@ -37,7 +37,7 @@ final class HistoryStore: ObservableObject {
             .appendingPathComponent("scans", isDirectory: true)
     }
 
-    private func directory(for id: UUID) -> URL {
+    func directory(for id: UUID) -> URL {
         rootURL.appendingPathComponent(id.uuidString, isDirectory: true)
     }
 
@@ -171,10 +171,9 @@ final class HistoryStore: ObservableObject {
         try? AILabel.jpegData(image)?.write(to: dir.appendingPathComponent("gen_\(dishKey).jpg"))
     }
 
-    /// Re-file thumbnails saved under provisional dish keys when pages
-    /// moved (a failed page was dropped). `newKey` nil deletes the file.
-    /// Ascending page order is safe: pages only ever move up into slots
-    /// that dropped pages, which never had thumbnails, left empty.
+    /// Re-file thumbnails saved under other dish keys when pages moved — a
+    /// failed page was dropped, or a retried one put back in between.
+    /// `newKey` nil deletes the file.
     func rekeyGeneratedImages(scanID: UUID, _ newKey: (String) -> String?) {
         let fm = FileManager.default
         let dir = directory(for: scanID)
@@ -183,6 +182,10 @@ final class HistoryStore: ObservableObject {
             .filter { $0.hasPrefix("gen_") && $0.hasSuffix(".jpg") }
             .map { String($0.dropFirst("gen_".count).dropLast(".jpg".count)) }
             .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        // Two passes, through temporary names: pages move down when a failed
+        // page is dropped and UP when a retried one is put back, and an
+        // in-place rename would overwrite a picture not moved yet.
+        var staged: [(temporary: URL, destination: URL)] = []
         for key in keys {
             let source = dir.appendingPathComponent("gen_\(key).jpg")
             guard let moved = newKey(key) else {
@@ -190,9 +193,14 @@ final class HistoryStore: ObservableObject {
                 continue
             }
             guard moved != key else { continue }
-            let destination = dir.appendingPathComponent("gen_\(moved).jpg")
+            let temporary = dir.appendingPathComponent("rekey_\(key).jpg")
+            try? fm.removeItem(at: temporary)
+            guard (try? fm.moveItem(at: source, to: temporary)) != nil else { continue }
+            staged.append((temporary, dir.appendingPathComponent("gen_\(moved).jpg")))
+        }
+        for (temporary, destination) in staged {
             try? fm.removeItem(at: destination)
-            try? fm.moveItem(at: source, to: destination)
+            try? fm.moveItem(at: temporary, to: destination)
         }
     }
 
