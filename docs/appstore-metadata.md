@@ -153,7 +153,7 @@ Two full sample restaurants are included — try every feature without signing i
 
 【八種語言】繁體中文、简体中文、English、日本語、한국어、Français、Español、हिन्दी。
 
-【點數】用 Apple 帳號登入即可使用，新帳號送 300 點。翻譯一頁約 5–10 點，一張配圖（4 道菜）約 0.5 點，點數不過期，用完可在 App 內購買。
+【點數】用 Apple 帳號登入即可使用，新帳號送 300 點。翻譯一頁約 8–12 點，一張配圖（4 道菜）約 0.5 點，點數不過期，用完可在 App 內購買。
 
 【隱私】不需要姓名和電子郵件。菜單照片和文字只在辨識時經我們的伺服器轉給 AI，不保存；翻譯紀錄、同行成員只存在手機上。
 
@@ -179,7 +179,7 @@ Two full sample restaurants are included — try every feature without signing i
 ・写真のない料理には AI が参考画像を生成（AI 生成と表示）。検索、ベジタリアン／シーフード／豚・牛・羊の表示、おすすめの2〜3品とその理由も。
 ・グループの注文：同席者ごとに苦手なものを登録し、誰が何を頼んだかをメニューに書き戻して店員さんに見せられます。
 ・8言語対応：日本語、English、简体中文、繁體中文、한국어、Français、Español、हिन्दी。
-・クレジット：Apple でサインインすると300クレジット。1ページ約5〜10、料理画像（4品）約0.5。期限なし、アプリ内で購入できます。
+・クレジット：Apple でサインインすると300クレジット。1ページ約8〜12、料理画像（4品）約0.5。期限なし、アプリ内で購入できます。
 ・プライバシー：名前やメールは不要。メニューの写真と文字は読み取りのときだけ当社サーバー経由で AI に送られ、保存しません。履歴は端末内のみ。
 
 実在のレストラン2軒のサンプル付き。サインインしなくても全機能を試せます。
@@ -204,7 +204,7 @@ Two full sample restaurants are included — try every feature without signing i
 • 사진이 없는 요리는 AI가 참고 이미지를 만들어 줍니다(AI 생성 표시). 검색, 채식／해산물／돼지고기／소고기／양고기 표시, 추천 메뉴 2~3개와 그 이유까지.
 • 함께 주문: 일행마다 못 먹는 음식을 등록하고, 누가 무엇을 시켰는지 메뉴에 표시해 직원에게 보여 줄 수 있어요.
 • 8개 언어: 한국어, English, 日本語, 简体中文, 繁體中文, Français, Español, हिन्दी.
-• 크레딧: Apple로 로그인하면 300 크레딧. 한 페이지 약 5–10, 요리 이미지(4개) 약 0.5. 만료 없음, 앱에서 구매 가능.
+• 크레딧: Apple로 로그인하면 300 크레딧. 한 페이지 약 8–12, 요리 이미지(4개) 약 0.5. 만료 없음, 앱에서 구매 가능.
 • 개인정보: 이름과 이메일은 받지 않습니다. 메뉴 사진과 글자는 인식할 때만 저희 서버를 거쳐 AI로 전달되고 저장되지 않으며, 기록은 기기에만 남습니다.
 
 실제 레스토랑 두 곳의 샘플이 들어 있어 로그인하지 않아도 모든 기능을 써 볼 수 있습니다.
@@ -229,7 +229,7 @@ Impossible de lire la carte ? Prenez-la en photo : ForeignMenu la traduit en ent
 • Les plats sans photo reçoivent une image générée par IA (signalée comme telle). Recherche, mentions végétarien / fruits de mer / porc / bœuf / agneau, et 2 ou 3 plats à essayer, avec la raison.
 • Repas en groupe : notez ce que chacun ne mange pas, voyez qui a commandé quoi et annotez la commande sur la carte pour le serveur.
 • 8 langues : Français, English, Español, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
-• Crédits : connectez-vous avec Apple et recevez 300 crédits. Une page coûte environ 5–10, une image de plats (quatre) environ 0,5. Sans expiration, rechargeables dans l'app.
+• Crédits : connectez-vous avec Apple et recevez 300 crédits. Une page coûte environ 8–12, une image de plats (quatre) environ 0,5. Sans expiration, rechargeables dans l'app.
 • Confidentialité : ni nom ni e-mail. Les photos et le texte de la carte passent par notre serveur vers l'IA le temps de la lecture et ne sont pas conservés ; l'historique reste sur votre téléphone.
 
 Deux vrais restaurants sont inclus en exemple : essayez tout sans vous connecter.
@@ -254,7 +254,7 @@ Deux vrais restaurants sont inclus en exemple : essayez tout sans vous connecter
 • Los platos sin foto reciben una imagen generada por IA (marcada como tal). Búsqueda, etiquetas vegetariano / marisco / cerdo / ternera / cordero, y 2 o 3 platos recomendados con el motivo.
 • Comidas en grupo: apunta lo que no come cada uno, mira quién pidió qué y marca el pedido sobre la carta para el camarero.
 • 8 idiomas: Español, English, Français, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
-• Créditos: inicia sesión con Apple y recibe 300. Una página cuesta unos 5–10 y una imagen de platos (cuatro) unos 0,5. No caducan y puedes comprar más en la app.
+• Créditos: inicia sesión con Apple y recibe 300. Una página cuesta unos 8–12 y una imagen de platos (cuatro) unos 0,5. No caducan y puedes comprar más en la app.
 • Privacidad: sin nombre ni correo. Las fotos y el texto de la carta pasan por nuestro servidor hacia la IA solo mientras se leen y no se guardan; el historial queda en tu teléfono.
 
 Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
@@ -279,7 +279,7 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
 • जिन व्यंजनों की फ़ोटो नहीं, उनके लिए AI से बनी तस्वीर (AI लिखा रहता है)। खोज, शाकाहारी / सीफ़ूड / पोर्क / बीफ़ / मटन के निशान, और 2-3 सुझाए गए व्यंजन, कारण के साथ।
 • साथ में ऑर्डर: हर व्यक्ति क्या नहीं खाता, लिखें; किसने क्या ऑर्डर किया, देखें; और वेटर के लिए मेन्यू पर ऑर्डर चिह्नित करें।
 • 8 भाषाएँ: हिन्दी, English, 日本語, 한국어, 简体中文, 繁體中文, Français, Español।
-• क्रेडिट: Apple से साइन इन करें और 300 क्रेडिट पाएँ। एक पेज लगभग 5–10, व्यंजनों की एक तस्वीर (चार) लगभग 0.5। क्रेडिट कभी ख़त्म नहीं होते, ऐप में और ख़रीद सकते हैं।
+• क्रेडिट: Apple से साइन इन करें और 300 क्रेडिट पाएँ। एक पेज लगभग 8–12, व्यंजनों की एक तस्वीर (चार) लगभग 0.5। क्रेडिट कभी ख़त्म नहीं होते, ऐप में और ख़रीद सकते हैं।
 • निजता: नाम या ईमेल नहीं चाहिए। मेन्यू की फ़ोटो और टेक्स्ट केवल पढ़ते समय हमारे सर्वर से AI तक जाते हैं, सहेजे नहीं जाते; इतिहास आपके फ़ोन पर ही रहता है।
 
 दो असली रेस्टोरेंट के उदाहरण शामिल हैं — बिना साइन इन किए सब आज़माएँ।
@@ -297,7 +297,8 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
   - 上架前先在模拟器用 `-storefront HKG` + 繁体中文实扫一页，确认 Mistral 输出的是繁体
 - [ ] 审核备注加一句：“In Hong Kong and Macau the app uses a different model (Mistral Large 3 on AWS Bedrock) and offers no AI dish pictures, because OpenAI does not serve those regions.”
 - [ ] 隐私政策：已经写了「OpenAI 或 AWS Bedrock」，不用改
-- [ ] What's New（en / zh-Hans 也加）：新增繁体中文；香港、澳门可以下载了
+- [ ] What's New（en / zh-Hans 也加）：新增繁体中文；香港、澳门可以下载了；翻译更完整（不再漏行漏菜）
+- [ ] 1.2 的 en / zh-Hans 描述里「一页约 5–10 点」改成「约 8–12 点」（完整的翻译输出更长，2026-10-16 实测 9–12）
 
 ---
 
