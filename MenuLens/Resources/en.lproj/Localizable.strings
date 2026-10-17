@@ -200,6 +200,24 @@
 "shop.credited" = "%d credits added";
 "shop.notCredited" = "Paid, but the credits haven't arrived yet: %@. The app tries again the next time it opens.";
 
+"member.header" = "Membership";
+"member.pitch.title" = "ForeignMenu Membership";
+"member.pitch.unlimited" = "Scan menus and make dish pictures without using credits";
+"member.pitch.fairUse" = "Fair use: about %d credits' worth a month";
+"member.pitch.grant" = "Plus %d credits every month, and they never expire";
+"member.footer" = "Renews automatically until you cancel; cancel any time in your App Store settings. Past the monthly fair use, scans and pictures use your credits as usual.";
+"member.badge" = "Member · until %@";
+"member.autoRenew.on" = "Renews automatically";
+"member.autoRenew.off" = "Auto-renew is off: ends on that date";
+"member.meter.title" = "Fair use this month";
+"member.meter.value" = "%1$d / %2$d credits";
+"member.meter.footer" = "Scans and dish pictures don't use your credits, up to about %d credits' worth a month.";
+"member.meter.over" = "You've passed this month's fair use: scans and pictures use your credits again until next month.";
+"member.manage" = "Manage subscription";
+"member.welcome" = "You're a member now. Thank you!";
+"member.notActivated" = "Subscribed, but the membership isn't active yet: %@. The app tries again the next time it opens.";
+"member.unavailable" = "The membership isn't available here yet.";
+
 /* MARK: - Redeem codes */
 "redeem.button" = "Redeem code";
 "redeem.title" = "Redeem code";

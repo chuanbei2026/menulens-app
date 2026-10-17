@@ -29,6 +29,11 @@ export const config = {
   // is ~US$0.025–0.05 (5–10 credits; a dense page measured 5); a 2×2 collage of dish pictures on
   // gpt-image-1-mini ~US$0.0025 (~0.5 credit).
   usdPerCredit: Number(process.env.USD_PER_CREDIT ?? 0.005),
+  // Subscribers (subscription.mjs): scans and dish pictures are covered by the subscription instead of
+  // charged, up to this many credits' worth per billing month (fair use); above it calls are charged
+  // from the balance as usual. Plus this many credits granted in every month they use the app.
+  subscriberMonthlyFairUse: Number(process.env.SUBSCRIBER_MONTHLY_FAIR_USE ?? 600),
+  subscriberMonthlyGrant: Number(process.env.SUBSCRIBER_MONTHLY_GRANT ?? 50),
   usageDays: 30,
   // Calendar month boundaries are computed in this zone, so changing the phone's
   // time zone cannot trigger an extra monthly grant.

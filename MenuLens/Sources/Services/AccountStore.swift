@@ -12,6 +12,9 @@ final class AccountStore: ObservableObject {
     @Published private(set) var credits: Int?
     /// The last 30 days, oldest first (the server's billing time zone).
     @Published private(set) var usage: [UsageDay] = []
+    /// The subscription as the server last reported it; nil until it has
+    /// answered (and for accounts that never subscribed, inactive).
+    @Published private(set) var membership: Membership?
     /// Why the user is signed out, or what last went wrong with the account.
     @Published var message: String?
     @Published private(set) var isBusy = false
@@ -53,10 +56,28 @@ final class AccountStore: ObservableObject {
         sessionToken = token
         credits = nil
         message = nil
+        membership = nil
         cachedPurchaseToken = nil
         // Purchases paid for while signed out (or before a crash) can be
-        // credited now.
+        // credited now, and a subscription bought on this Apple ID linked.
         CreditShop.shared.retryUnfinished()
+        Task { await CreditShop.shared.syncSubscription() }
+    }
+
+    #if DEBUG
+    /// Unit tests can't pass launch arguments to the host app: this is their
+    /// `-demoUsage`.
+    static var forceDemo = false
+    #endif
+
+    /// `true` while DEBUG screenshots run on made-up account data: nothing
+    /// account-related is sent to the server.
+    var isDemo: Bool {
+        #if DEBUG
+        return Self.forceDemo || ProcessInfo.processInfo.arguments.contains("-demoUsage")
+        #else
+        return false
+        #endif
     }
 
     /// One day of the credit history: what was used and added, and the
@@ -75,7 +96,7 @@ final class AccountStore: ObservableObject {
         #if DEBUG
         // `-demoUsage`: a plausible month instead of the dev account's own
         // (App Store screenshots of Settings → Account).
-        if ProcessInfo.processInfo.arguments.contains("-demoUsage") {
+        if isDemo {
             applyDemoUsage()
             return
         }
@@ -86,6 +107,7 @@ final class AccountStore: ObservableObject {
               let total = balance["totalCredits"] as? NSNumber
         else { return }
         credits = total.intValue
+        applyMembership(reply["subscription"])
         let days = reply["days"] as? [[String: Any]] ?? []
         usage = days.compactMap { day in
             guard let key = day["date"] as? String, let date = Self.dayFormatter.date(from: key) else { return nil }
@@ -99,6 +121,9 @@ final class AccountStore: ObservableObject {
     /// whose token it carries. Fixed per account, so fetched once.
     func purchaseToken() async -> UUID? {
         if let cachedPurchaseToken { return cachedPurchaseToken }
+        #if DEBUG
+        if isDemo { return UUID(uuidString: "00000000-0000-4000-A000-000000000000") }
+        #endif
         guard isSignedIn,
               let reply = try? await Backend.send(Backend.request("credits", token: sessionToken)),
               let text = reply["appAccountToken"] as? String,
@@ -113,6 +138,11 @@ final class AccountStore: ObservableObject {
     /// The balance a purchase reply reported, ahead of the next refresh.
     func applyBalance(_ total: Int) {
         credits = total
+    }
+
+    /// The `subscription` object of GET /usage, /credits or POST /subscription.
+    func applyMembership(_ json: Any?) {
+        if let membership = Membership(json: json) { self.membership = membership }
     }
 
     /// Redeems a promotion code (POST /promo/redeem). The server ignores
@@ -154,6 +184,16 @@ final class AccountStore: ObservableObject {
             return UsageDay(date: date, spent: spent, added: added, balance: balance)
         }
         credits = balance
+        // `-demoMembership` (a member this month, 87 of 600 used) or
+        // `-demoMembershipOver` (past the fair use): the membership card.
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("-demoMembership") || args.contains("-demoMembershipOver") {
+            membership = Membership(
+                active: true, productID: CreditShop.subscriptions[2],
+                expiresAt: calendar.date(byAdding: .month, value: 11, to: today), autoRenew: true,
+                monthUsedCredits: args.contains("-demoMembershipOver") ? 612 : 87, monthFairUseCredits: 600
+            )
+        }
     }
     #endif
 
@@ -171,6 +211,7 @@ final class AccountStore: ObservableObject {
         sessionToken = ""
         credits = nil
         usage = []
+        membership = nil
         cachedPurchaseToken = nil
     }
 

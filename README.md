@@ -63,6 +63,7 @@ App Store 上的名字是 **ForeignMenu**（中文区 **外乡人的菜单**）�
   *设备* 语言，会出现「界面中文、译文法语」的错配。
 - 加新文案：**八份** `MenuLens/Resources/*.lproj/Localizable.strings` 同时加同一个 key
   （键集合和格式占位符必须完全一致），再在代码里 `L("新key")`。
+  `python3 tools/check_strings.py` 检查八份的键和占位符是否一致。
 - 数字要变单复数的句子（英/法/西/印地语）另在该语言的 `Localizable.stringsdict` 里写
   one/other 两种形式；它覆盖 `.strings` 里的同名 key，`.strings` 那份保留复数写法作兜底，
   键集合照样八份一致。目前只有 `notice.partialPages`。
@@ -135,7 +136,7 @@ App 不再用用户自己的 OpenAI key。所有模型调用都走我们自己�
 key 转发给 OpenAI。`POST /menu` 接收的就是 App 原来发给 Chat Completions 的请求体并
 原样流回 SSE，`POST /image` 生成配图；余额不足返回 **402**，session 失效返回 **401**。
 新账号送 300 点，之后在 App 内商店买（StoreKit 2 消耗型商品，见 `CreditShop.swift`；
-`POST /purchase` 验证交易后才 finish）。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
+`POST /purchase` 验证交易后才 finish）。1.2 起另有会员订阅（月 / 季 / 年，`SubscriptionStoreView`，`POST /subscription` + App Store Server Notifications）：会员识别和配图不扣点（每月约 600 点合理使用），每月再送 50 点。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
 接口、计价和部署见 [`backend/README.md`](backend/README.md)。
 
 ## Notes

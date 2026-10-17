@@ -19,7 +19,8 @@ struct ContentView: View {
     @State private var showSettings =
         ProcessInfo.processInfo.arguments.contains("-showSettings")
     @State private var showHistory = false
-    @State private var showShop = false
+    @State private var showShop =
+        ProcessInfo.processInfo.arguments.contains("-showShop")
     /// Picking a photo sends nothing; only Scan does. So consent is asked
     /// at the button that transmits, which is also where the user can see
     /// what they are about to send.
@@ -91,6 +92,9 @@ struct ContentView: View {
             //   -redeem <code>    with -showSettings: open Redeem code and submit it
             //   -demoReceiving    newest multi-page scan, shown with its last page pending
             //   -demoUsage        a made-up month of credit history (Settings → Account)
+            //   -demoMembership   with -demoUsage: a member (87 of 600 used this month);
+            //                     -demoMembershipOver: past the fair use
+            //   -showShop         open the shop (membership plans + credit packs)
             //   -analyzeSample    run the REAL OpenAI call on the demo image,
             //                     then dump result JSON + PDF into Documents
             //   -showConsent      open the third-party AI consent sheet

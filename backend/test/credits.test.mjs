@@ -88,24 +88,27 @@ test("promo codes match regardless of case and spaces", () => {
 });
 
 test("rollup: holds and settlements are spending, grants and promotions are additions (tenths)", () => {
-  assert.deepEqual(rollupDelta({ type: "hold", giftTenths: -40, paidTenths: -2 }), { spent: 42, added: 0, calls: 1 });
-  assert.deepEqual(rollupDelta({ type: "settle", giftTenths: 37, paidTenths: 0 }), { spent: -37, added: 0, calls: 0 });
-  assert.deepEqual(rollupDelta({ type: "promo", giftTenths: 20000, paidTenths: 0 }), { spent: 0, added: 20000, calls: 0 });
+  assert.deepEqual(rollupDelta({ type: "hold", giftTenths: -40, paidTenths: -2 }), { spent: 42, added: 0, calls: 1, covered: 0 });
+  assert.deepEqual(rollupDelta({ type: "settle", giftTenths: 37, paidTenths: 0 }), { spent: -37, added: 0, calls: 0, covered: 0 });
+  assert.deepEqual(rollupDelta({ type: "promo", giftTenths: 20000, paidTenths: 0 }), { spent: 0, added: 20000, calls: 0, covered: 0 });
+  // A call a subscription covered: nothing spent, what it would have cost counted as covered.
+  assert.deepEqual(rollupDelta({ type: "hold", giftTenths: 0, paidTenths: 0, coveredHoldTenths: 128 }), { spent: 0, added: 0, calls: 1, covered: 0 });
+  assert.deepEqual(rollupDelta({ type: "settle", giftTenths: 0, paidTenths: 0, chargedTenths: 0, coveredTenths: 53 }), { spent: 0, added: 0, calls: 0, covered: 53 });
 });
 
 test("old whole-credit records read as tenths", () => {
   // Ledger entries before the switch: gift / paid in whole credits.
   assert.deepEqual(entryTenths({ type: "hold", gift: -4, paid: -1 }), { gift: -40, paid: -10 });
-  assert.deepEqual(rollupDelta({ type: "promo", gift: 2000, paid: 0 }), { spent: 0, added: 20000, calls: 0 });
-  assert.deepEqual(rollupDelta({ type: "settle", gift: 3, paid: 0, charged: 1 }), { spent: -30, added: 0, calls: 0 });
+  assert.deepEqual(rollupDelta({ type: "promo", gift: 2000, paid: 0 }), { spent: 0, added: 20000, calls: 0, covered: 0 });
+  assert.deepEqual(rollupDelta({ type: "settle", gift: 3, paid: 0, charged: 1 }), { spent: -30, added: 0, calls: 0, covered: 0 });
   // Accounts not yet migrated; migrated ones win even when both are present.
   assert.deepEqual(accountTenths({ giftCredits: 287, paidCredits: 110 }), { gift: 2870, paid: 1100 });
   assert.deepEqual(accountTenths({ giftCredits: -2 }), { gift: -20, paid: 0 });
   assert.deepEqual(accountTenths({ giftTenths: 2874, paidTenths: 0, giftCredits: 999 }), { gift: 2874, paid: 0 });
   // The day of the switch holds whole credits (before) and tenths (after) side by side.
   assert.deepEqual(rowTenths({ day: "2026-10-14", spent: 5, added: 100, spentTenths: 7, calls: 6 }),
-    { day: "2026-10-14", spent: 57, added: 1000, calls: 6 });
-  assert.deepEqual(rowTenths({ day: "2026-10-15", spentTenths: 3, addedTenths: 0, calls: 1 }), { day: "2026-10-15", spent: 3, added: 0, calls: 1 });
+    { day: "2026-10-14", spent: 57, added: 1000, calls: 6, covered: 0 });
+  assert.deepEqual(rowTenths({ day: "2026-10-15", spentTenths: 3, addedTenths: 0, calls: 1 }), { day: "2026-10-15", spent: 3, added: 0, calls: 1, covered: 0 });
 });
 
 test("API amounts are whole credits only", () => {
@@ -121,7 +124,7 @@ test("API amounts are whole credits only", () => {
     if (typeof v === "number") assert.ok(Number.isInteger(v), String(v));
   }
   assert.deepEqual(publicDay({ date: "2026-10-14", spent: 3, added: 0, calls: 1, balance: 2874 }), {
-    date: "2026-10-14", spent: 0, added: 0, calls: 1, balance: 287,
+    date: "2026-10-14", spent: 0, added: 0, calls: 1, covered: 0, balance: 287,
   });
 });
 
@@ -134,9 +137,9 @@ test("balance history is derived backwards from the current balance, zero-filled
   ].map(rowTenths);
   const days = balanceHistory(rows, { balance: 22963, days: 3, timeZone: "America/Vancouver", now });
   assert.deepEqual(days, [
-    { date: "2026-10-09", spent: 0, added: 0, calls: 0, balance: 3000 },
-    { date: "2026-10-10", spent: 30, added: 0, calls: 1, balance: 2970 },
-    { date: "2026-10-11", spent: 7, added: 20000, calls: 2, balance: 22963 },
+    { date: "2026-10-09", spent: 0, added: 0, calls: 0, covered: 0, balance: 3000 },
+    { date: "2026-10-10", spent: 30, added: 0, calls: 1, covered: 0, balance: 2970 },
+    { date: "2026-10-11", spent: 7, added: 20000, calls: 2, covered: 0, balance: 22963 },
   ]);
   assert.deepEqual(days.map(publicDay).map((d) => d.balance), [300, 297, 2296]);
 });

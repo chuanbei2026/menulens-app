@@ -4,6 +4,12 @@ import StoreKit
 /// the signed transaction and adds the credits (POST /purchase, idempotent per
 /// transaction); only then is the transaction finished. Unfinished ones (app
 /// killed, offline, signed out) are retried on the next launch and sign-in.
+///
+/// The membership (an auto-renewable subscription, bought in ShopView's
+/// SubscriptionStoreView) works the same way: its transactions go to POST
+/// /subscription, and the current entitlement is sent again on every return
+/// to the foreground, so renewals and lapses reach the server even without
+/// App Store Server Notifications.
 @MainActor
 final class CreditShop: ObservableObject {
     static let shared = CreditShop()
@@ -16,7 +22,23 @@ final class CreditShop: ObservableObject {
         ("ai.xiangyang.MenuLens.credits.2000", 2000),
     ]
 
+    /// The membership's three plans, one subscription group — must match
+    /// backend/src/subscription.mjs. Shown shortest first.
+    nonisolated static let subscriptions = [
+        "ai.xiangyang.MenuLens.sub.monthly",
+        "ai.xiangyang.MenuLens.sub.quarterly",
+        "ai.xiangyang.MenuLens.sub.yearly",
+    ]
+    /// What the membership gives, for the pitch before the server has
+    /// answered (backend config: SUBSCRIBER_MONTHLY_FAIR_USE / _GRANT).
+    nonisolated static let fairUseCredits = 600
+    nonisolated static let monthlyGrantCredits = 50
+
     @Published private(set) var products: [Product] = []
+    /// The membership plans, once StoreKit has them. Empty where they
+    /// aren't offered: the shop then shows the pitch without plans rather
+    /// than StoreKit's full-size "unavailable" view.
+    @Published private(set) var plans: [Product] = []
     @Published private(set) var loading = false
     /// Product id of the purchase in progress.
     @Published private(set) var buying: String?
@@ -51,6 +73,7 @@ final class CreditShop: ObservableObject {
             products = try await Product.products(for: order)
                 .sorted { (order.firstIndex(of: $0.id) ?? 0) < (order.firstIndex(of: $1.id) ?? 0) }
             if products.isEmpty { problem = L("shop.unavailable") }
+            plans = (try? await Product.products(for: Self.subscriptions)) ?? []
         } catch {
             problem = L("shop.loadFailed", error.localizedDescription)
         }
@@ -82,6 +105,10 @@ final class CreditShop: ObservableObject {
             problem = L("shop.unverified")
             return
         }
+        if Self.subscriptions.contains(transaction.productID) {
+            await activate(transaction, jws: result.jwsRepresentation)
+            return
+        }
         guard Self.credits(of: transaction.productID) != nil else { return }
         guard account.isSignedIn else {
             problem = L("shop.notCredited", L("shop.signInFirst"))
@@ -104,6 +131,70 @@ final class CreditShop: ObservableObject {
         } catch {
             problem = L("shop.notCredited", error.localizedDescription)
         }
+    }
+
+    /// Called from the subscription store view when a purchase completes.
+    func subscriptionPurchased(_ result: VerificationResult<Transaction>) async {
+        problem = nil
+        message = nil
+        await handle(result)
+    }
+
+    /// Sends the membership's current entitlement (if this Apple ID has one)
+    /// to the server: on launch, on every return to the foreground and after
+    /// signing in. Quiet: a failure just waits for the next time.
+    func syncSubscription() async {
+        guard account.isSignedIn, !account.isDemo, !syncing else { return }
+        syncing = true
+        defer { syncing = false }
+        for await result in Transaction.currentEntitlements {
+            guard case let .verified(transaction) = result,
+                  Self.subscriptions.contains(transaction.productID) else { continue }
+            try? await sendSubscription(transaction, jws: result.jwsRepresentation)
+        }
+    }
+
+    private var syncing = false
+
+    /// A subscription transaction (new purchase, renewal, upgrade): the
+    /// server records it, then it is finished. Left unfinished on failure.
+    private func activate(_ transaction: Transaction, jws: String) async {
+        guard account.isSignedIn else {
+            problem = L("member.notActivated", L("shop.signInFirst"))
+            return
+        }
+        do {
+            try await sendSubscription(transaction, jws: jws)
+            await transaction.finish()
+            if account.membership?.active == true, transaction.revocationDate == nil,
+               Date().timeIntervalSince(transaction.purchaseDate) < 600 {
+                message = L("member.welcome")
+            }
+        } catch {
+            problem = L("member.notActivated", error.localizedDescription)
+        }
+    }
+
+    /// POST /subscription with the transaction and, when StoreKit has it,
+    /// its renewal info (auto-renew on/off, billing grace period).
+    private func sendSubscription(_ transaction: Transaction, jws: String) async throws {
+        var body = ["jws": jws]
+        if let renewal = await renewalInfo(for: transaction) { body["renewalJws"] = renewal }
+        let request = Backend.request("subscription", method: "POST", token: account.sessionToken, json: body)
+        let reply = try await Backend.send(request)
+        account.applyMembership(reply["subscription"])
+        if let total = reply["totalCredits"] as? NSNumber { account.applyBalance(total.intValue) }
+    }
+
+    /// The signed renewal info of the subscription `transaction` belongs to.
+    private func renewalInfo(for transaction: Transaction) async -> String? {
+        guard let product = try? await Product.products(for: [transaction.productID]).first,
+              let statuses = try? await product.subscription?.status
+        else { return nil }
+        return statuses.first { status in
+            guard case let .verified(current) = status.transaction else { return false }
+            return current.originalID == transaction.originalID
+        }?.renewalInfo.jwsRepresentation
     }
 
     /// Credits the pack adds, nil for a product that isn't ours.

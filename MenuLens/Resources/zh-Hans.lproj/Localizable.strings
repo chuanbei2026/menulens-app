@@ -192,6 +192,24 @@
 "shop.credited" = "已到账 %d 点";
 "shop.notCredited" = "已付款，但点数还没到账：%@。下次打开 App 时会自动补上。";
 
+"member.header" = "会员";
+"member.pitch.title" = "外乡人的菜单会员";
+"member.pitch.unlimited" = "随便扫菜单、生成配图，不扣点数";
+"member.pitch.fairUse" = "合理使用：每月约 %d 点的用量";
+"member.pitch.grant" = "每个月再送 %d 点，永不过期";
+"member.footer" = "订阅会自动续订，可随时在 App Store 设置里取消。超出每月合理使用后，识别和配图照常从点数里扣。";
+"member.badge" = "会员 · 到 %@";
+"member.autoRenew.on" = "到期自动续订";
+"member.autoRenew.off" = "已关闭自动续订，到期后结束";
+"member.meter.title" = "本月合理使用";
+"member.meter.value" = "%1$d / %2$d 点";
+"member.meter.footer" = "会员识别菜单、生成配图不扣点数，每月约 %d 点的用量以内。";
+"member.meter.over" = "本月已超出合理使用额度，下个月之前识别和配图会从点数里扣。";
+"member.manage" = "管理订阅";
+"member.welcome" = "会员已开通，谢谢支持！";
+"member.notActivated" = "已订阅，但会员还没开通：%@。下次打开 App 时会自动补上。";
+"member.unavailable" = "这里暂时还不能开通会员。";
+
 /* MARK: - Redeem codes */
 "redeem.button" = "兑换码";
 "redeem.title" = "兑换码";

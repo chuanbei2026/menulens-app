@@ -2,7 +2,8 @@ import Charts
 import SwiftUI
 
 /// Settings → Account: the balance, what was used today and in the last 30
-/// days, and a chart of either the balance or the daily use.
+/// days, and a chart of either the balance or the daily use. Members also see
+/// their membership and this month's fair-use meter.
 struct CreditsCard: View {
     @ObservedObject var account: AccountStore
     /// Open the shop / the redeem-code sheet; the card has no sheets of its own.
@@ -37,6 +38,10 @@ struct CreditsCard: View {
                     stat(L("credits.today"), today)
                     stat(L("credits.last30"), last30)
                 }
+            }
+            if let membership = account.membership, membership.active {
+                MembershipBadge(membership: membership)
+                FairUseMeter(membership: membership)
             }
             Picker("", selection: $mode) {
                 ForEach(Mode.allCases) { Text($0.label).tag($0) }
@@ -115,6 +120,33 @@ struct CreditsCard: View {
             .chartYAxis { AxisMarks(position: .trailing) }
             // The day labels follow the app's language, not the phone's.
             .environment(\.locale, Locale(identifier: Localization.shared.language.rawValue))
+        }
+    }
+}
+
+/// This month's covered usage against the fair use. Past it, the card says
+/// that scans are charged from credits again.
+struct FairUseMeter: View {
+    let membership: Membership
+
+    var body: some View {
+        let cap = max(membership.monthFairUseCredits, 1)
+        let over = membership.overFairUse
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(L("member.meter.title"))
+                Spacer()
+                Text(L("member.meter.value", membership.monthUsedCredits, membership.monthFairUseCredits))
+                    .monospacedDigit()
+                    .foregroundStyle(over ? .orange : .secondary)
+            }
+            .font(.caption)
+            ProgressView(value: Double(min(membership.monthUsedCredits, cap)), total: Double(cap))
+                .tint(over ? .orange : .accentColor)
+            Text(over ? L("member.meter.over") : L("member.meter.footer", membership.monthFairUseCredits))
+                .font(.caption2)
+                .foregroundStyle(over ? .orange : .secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

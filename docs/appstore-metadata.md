@@ -302,6 +302,94 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
 
 ---
 
+## 订阅（1.2）— ⚠️ 1.1 审核结束后再部署后端、再建/提交
+
+> 代码在分支 `subscriptions`（后端 + App）。**1.1 (3) 还在审核、审核员用的是线上后端**：
+> 审核结果出来之前不要跑 `deploy.sh`、不要在 App Store Connect 里把订阅提交审核。
+> 后端部署不需要新表、新权限、新环境变量（默认 600 / 50 写在 `config.mjs`，要调就设
+> `SUBSCRIBER_MONTHLY_FAIR_USE` / `SUBSCRIBER_MONTHLY_GRANT`）。
+
+### 规则（店主 2026-10-17 定）
+
+| | 非会员（不变） | 会员 |
+|---|---|---|
+| 注册 | 送 300 点 | 同左 |
+| 识别菜单、生成配图 | 按实际用量扣点 | **不扣点**，每个自然月（温哥华时区）约 **600 点的用量** 以内（合理使用） |
+| 超出合理使用 | — | 照常从点数余额扣 |
+| 每月赠送 | 无 | **+50 点**（当月第一次使用时到账，永不过期） |
+| 点数包 | $0.99 / 4.99 / 19.99 = 100 / 500 / 2000 | 照样可以买 |
+
+### 订阅群组
+
+| 字段 | 值 |
+|---|---|
+| Reference Name | `ForeignMenu Membership` |
+| 群组显示名（App Store 本地化） | zh-Hans `外乡人的菜单会员` · en `ForeignMenu Membership` · zh-Hant `外鄉人的菜單會員` · ja `ForeignMenu メンバーシップ` · ko `ForeignMenu 멤버십` · fr `Abonnement ForeignMenu` · es `Suscripción ForeignMenu` · hi `ForeignMenu सदस्यता` |
+| 等级（Subscription Levels） | 三个都放 **Level 1**（同一服务、不同时长 → 互换在下个续订日生效，没有按比例退款） |
+
+### 三个订阅
+
+| Product ID | Reference Name | 时长 | 价格（美国，其余区按 Apple 自动换算） | Family Sharing |
+|---|---|---|---|---|
+| `ai.xiangyang.MenuLens.sub.monthly` | Membership Monthly | 1 个月 | **US$3.99**（Apple 的价位没有整 $4.00 时选 $3.99；有 $4.00 选 $4.00） | 关 |
+| `ai.xiangyang.MenuLens.sub.quarterly` | Membership Quarterly | 3 个月 | **US$9.99**（同上，有 $10.00 选 $10.00） | 关 |
+| `ai.xiangyang.MenuLens.sub.yearly` | Membership Yearly | 1 年 | **US$29.99**（同上，有 $30.00 选 $30.00） | 关 |
+
+不设免费试用 / 推介优惠（以后要加再说）。`MenuLens/Products.storekit` 里本地测试用的是 4.00 / 10.00 / 30.00。
+
+### 本地化（显示名 ≤ 35 字符，描述 ≤ 55 字符）
+
+| 语言 | 月度 | 季度 | 年度 | 描述（三个通用） |
+|---|---|---|---|---|
+| zh-Hans | 月度会员 | 季度会员 | 年度会员 | 扫菜单、生成配图不扣点数，每月再送 50 点 |
+| en-US | Monthly Membership | Quarterly Membership | Yearly Membership | Scan menus without using credits, plus 50 a month |
+| zh-Hant | 月度會員 | 季度會員 | 年度會員 | 掃描菜單、產生配圖不扣點數，每月再送 50 點 |
+| ja | 月額メンバーシップ | 3か月メンバーシップ | 年額メンバーシップ | メニュー読み取りでクレジット不要、毎月50クレジット進呈 |
+| ko | 월간 멤버십 | 3개월 멤버십 | 연간 멤버십 | 메뉴 인식에 크레딧 차감 없음, 매달 50 크레딧 지급 |
+| fr | Abonnement mensuel | Abonnement trimestriel | Abonnement annuel | Scans sans crédits, plus 50 crédits par mois |
+| es | Suscripción mensual | Suscripción trimestral | Suscripción anual | Escanea sin gastar créditos y recibe 50 al mes |
+| hi | मासिक सदस्यता | त्रैमासिक सदस्यता | वार्षिक सदस्यता | बिना क्रेडिट मेन्यू स्कैन, हर महीने 50 क्रेडिट |
+
+### 审核用截图（Review Information → Screenshot，三个订阅可用同一张）
+
+App 内「商店」页的会员区（`我 → 账号 → 买点数`）。需要 ASC 里三个订阅建好之后在真机 / TestFlight
+上截（StoreKit 那时才拿得到方案）；或者在 Xcode 里 **Run**（scheme 带 `Products.storekit`）在模拟器上截。
+开发阶段的截图：`/private/tmp/claude-501/-Users-xiangyang-Desktop-workplace-date-series/d3337d06-422d-4242-9ccd-2f9c53e29d7b/scratchpad/shots/subs-fm/`
+（命令行下 StoreKit 拿不到方案，方案按钮那块显示「这里暂时还不能开通会员」，见下面风险）。
+
+审核备注（Review Notes）追加一段：
+
+> **Subscriptions (new in 1.2).** ForeignMenu Membership (monthly / quarterly / yearly, one group) makes menu scans
+> and dish pictures free of credits up to a fair use of about 600 credits' worth a month, and adds 50 credits each
+> month. Above the fair use, calls use credits as before. Buy it in Settings → Account → Buy credits (the Shop). The
+> demo account can subscribe with a Sandbox account. Terms of Use: Apple's standard EULA; Privacy Policy linked on
+> the paywall.
+
+### App Store Server Notifications（App 信息 → App Store Server Notifications）
+
+| 环境 | URL | 版本 |
+|---|---|---|
+| Production | `https://api.chuanbei.dev/menu/appstore/notifications` | Version 2 |
+| Sandbox | `https://api.chuanbei.dev/menu/appstore/notifications` | Version 2 |
+
+⚠️ 后端没部署之前 Apple 发过来会 404（Apple 会重试几天，无害）；**最好部署之后再填**，填完在 ASC 里点
+「Request a Test Notification」，日志里应出现 `app store notification … type: TEST, ignored: no_transaction`。
+
+### 商店页文字（1.2 描述里加一句）
+
+- zh-Hans：【会员】按月、按季或按年订阅：扫菜单、生成配图不扣点数（每月约 600 点用量以内），每月再送 50 点。可随时在 App Store 设置里取消。
+- en：【Membership】Subscribe monthly, quarterly or yearly: menu scans and dish pictures don't use credits (fair use about 600 credits a month), plus 50 credits every month. Cancel any time in your App Store settings.
+- 描述末尾加 Terms of Use 链接（订阅 App 必须）：`https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+
+### 1.2 订阅 checklist
+
+- [ ] 1.1 审核结果出来
+- [ ] `subscriptions` 分支合并，`npm test` 通过，`AWS_PROFILE=claude-agent ./deploy.sh`
+- [ ] ASC：订阅群组 + 三个订阅（价格、本地化、审核截图），附加到 1.2 一起提交
+- [ ] ASC：Server Notifications URL（Production + Sandbox，V2），发测试通知看日志
+- [ ] Sandbox 账号真机买一次月度：`GET /credits` 的 `subscription.active` 为 true，扫一页菜单 `charged: 0`
+- [ ] 上线并稳定后：`ALLOW_SANDBOX_PURCHASES=0`（订阅和点数包共用这个开关）
+
 ## 1.0 提审资料（2026-08，已提交；以下为历史记录）
 
 ## 基本信息

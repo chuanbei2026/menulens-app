@@ -21,7 +21,8 @@ export function logEvent(level, msg, fields = {}) {
  * Fields: requestId, route, status, ms, userId?, error?, ddb* (calls, time, capacity, conditional
  * failures, errors, ops per command), and for /chat: model (upstream id), modelId (our id), requestedModel?,
  * routedFrom?/fallbackFrom? + routeReason? (the picked model when another answered), costUsd, ttfbMs, inputTokens, cachedTokens, outputTokens,
- * creditsCharged, creditsReserved, creditsLeft (credits with one decimal), upstreamStatus, grant?, nickname? (the user's display
+ * creditsCharged, creditsReserved, creditsLeft (credits with one decimal), creditsCovered / covered? / overFairUse?
+ * (subscribers), upstreamStatus, grant?, notification? / subtype? / ignored? (App Store notifications), nickname? (the user's display
  * name, for the top-users table), images?/imageChars? (counts only)
  */
 export function logRequest(r) {
@@ -37,8 +38,12 @@ export function logRequest(r) {
     Object.assign(metrics, { InputTokens: r.inputTokens, CachedTokens: r.cachedTokens ?? 0, OutputTokens: r.outputTokens });
   }
   if (typeof r.creditsCharged === "number") metrics.CreditsCharged = r.creditsCharged;
+  // What subscriptions covered instead of charging (fair-use usage), and calls past the fair use.
+  if (typeof r.creditsCovered === "number" && r.creditsCovered > 0) metrics.CreditsCovered = r.creditsCovered;
+  if (r.overFairUse) metrics.OverFairUse = 1;
   if (typeof r.ttfbMs === "number") metrics.TimeToFirstByteMs = r.ttfbMs;
-  if (r.grant) metrics[r.grant === "signup" ? "Signups" : "MonthlyGrants"] = 1;
+  if (r.grant) metrics[{ signup: "Signups", subscriber: "SubscriberGrants" }[r.grant] ?? "MonthlyGrants"] = 1;
+  if (r.notification) metrics.StoreNotifications = 1;
   if (typeof r.ddbCalls === "number") {
     Object.assign(metrics, { DdbCalls: r.ddbCalls, DdbMs: r.ddbMs, DdbCapacityUnits: r.ddbCapacityUnits,
                              DdbConditionalFailures: r.ddbConditionalFailures, DdbErrors: r.ddbErrors });

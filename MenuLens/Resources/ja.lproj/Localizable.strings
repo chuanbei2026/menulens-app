@@ -192,6 +192,24 @@
 "shop.credited" = "%d クレジットを追加しました";
 "shop.notCredited" = "お支払いは済みましたが、クレジットはまだ追加されていません：%@。次にアプリを開いたときに自動で再試行します。";
 
+"member.header" = "メンバーシップ";
+"member.pitch.title" = "ForeignMenu メンバーシップ";
+"member.pitch.unlimited" = "メニューの読み取りも料理の画像もクレジットを使いません";
+"member.pitch.fairUse" = "フェアユース：月あたり約 %d クレジット分まで";
+"member.pitch.grant" = "さらに毎月 %d クレジットを進呈（無期限）";
+"member.footer" = "解約するまで自動更新されます。App Store の設定からいつでも解約できます。月のフェアユースを超えると、読み取りと画像は通常どおりクレジットを使います。";
+"member.badge" = "メンバー · %@ まで";
+"member.autoRenew.on" = "自動更新されます";
+"member.autoRenew.off" = "自動更新はオフです：この日で終了します";
+"member.meter.title" = "今月のフェアユース";
+"member.meter.value" = "%1$d / %2$d クレジット";
+"member.meter.footer" = "月あたり約 %d クレジット分まで、メニューの読み取りと料理の画像にクレジットを使いません。";
+"member.meter.over" = "今月のフェアユースを超えました。来月までは読み取りと画像にクレジットを使います。";
+"member.manage" = "サブスクリプションを管理";
+"member.welcome" = "メンバーになりました。ありがとうございます！";
+"member.notActivated" = "登録は完了しましたが、メンバーシップはまだ有効になっていません：%@。次にアプリを開いたときに自動で再試行します。";
+"member.unavailable" = "メンバーシップはここではまだご利用いただけません。";
+
 /* MARK: - Redeem codes */
 "redeem.button" = "コードを使う";
 "redeem.title" = "引き換えコード";

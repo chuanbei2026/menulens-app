@@ -69,7 +69,107 @@
     "_locale": "en_US",
     "_storefront": "USA"
   },
-  "subscriptionGroups": [],
+  "subscriptionGroups": [
+    {
+      "id": "21580001",
+      "localizations": [
+        {
+          "description": "",
+          "displayName": "ForeignMenu Membership",
+          "locale": "en_US"
+        },
+        {
+          "description": "",
+          "displayName": "外乡人的菜单会员",
+          "locale": "zh_Hans"
+        }
+      ],
+      "name": "ForeignMenu Membership",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "4.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6740000011",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Scan menus without using credits, plus 50 a month",
+              "displayName": "Monthly Membership",
+              "locale": "en_US"
+            },
+            {
+              "description": "扫菜单不扣点数，每月再送 50 点",
+              "displayName": "月度会员",
+              "locale": "zh_Hans"
+            }
+          ],
+          "productID": "ai.xiangyang.MenuLens.sub.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Membership Monthly",
+          "subscriptionGroupID": "21580001",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "10.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6740000012",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Scan menus without using credits, plus 50 a month",
+              "displayName": "Quarterly Membership",
+              "locale": "en_US"
+            },
+            {
+              "description": "扫菜单不扣点数，每月再送 50 点",
+              "displayName": "季度会员",
+              "locale": "zh_Hans"
+            }
+          ],
+          "productID": "ai.xiangyang.MenuLens.sub.quarterly",
+          "recurringSubscriptionPeriod": "P3M",
+          "referenceName": "Membership Quarterly",
+          "subscriptionGroupID": "21580001",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "30.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6740000013",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Scan menus without using credits, plus 50 a month",
+              "displayName": "Yearly Membership",
+              "locale": "en_US"
+            },
+            {
+              "description": "扫菜单不扣点数，每月再送 50 点",
+              "displayName": "年度会员",
+              "locale": "zh_Hans"
+            }
+          ],
+          "productID": "ai.xiangyang.MenuLens.sub.yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Membership Yearly",
+          "subscriptionGroupID": "21580001",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        }
+      ]
+    }
+  ],
   "version": {
     "major": 4,
     "minor": 0

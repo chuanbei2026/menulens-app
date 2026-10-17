@@ -192,6 +192,24 @@
 "shop.credited" = "%d 크레딧이 추가되었습니다";
 "shop.notCredited" = "결제는 되었지만 크레딧이 아직 들어오지 않았습니다: %@. 다음에 앱을 열 때 자동으로 다시 시도합니다.";
 
+"member.header" = "멤버십";
+"member.pitch.title" = "ForeignMenu 멤버십";
+"member.pitch.unlimited" = "메뉴 인식과 요리 그림에 크레딧을 쓰지 않습니다";
+"member.pitch.fairUse" = "공정 사용: 한 달에 약 %d 크레딧 분량까지";
+"member.pitch.grant" = "매달 %d 크레딧 추가 지급(기한 없음)";
+"member.footer" = "해지할 때까지 자동 갱신되며, App Store 설정에서 언제든 해지할 수 있습니다. 월 공정 사용량을 넘으면 인식과 그림은 평소처럼 크레딧을 사용합니다.";
+"member.badge" = "멤버 · %@까지";
+"member.autoRenew.on" = "자동 갱신됩니다";
+"member.autoRenew.off" = "자동 갱신 꺼짐: 이 날짜에 종료됩니다";
+"member.meter.title" = "이번 달 공정 사용량";
+"member.meter.value" = "%1$d / %2$d 크레딧";
+"member.meter.footer" = "한 달에 약 %d 크레딧 분량까지 메뉴 인식과 요리 그림에 크레딧을 쓰지 않습니다.";
+"member.meter.over" = "이번 달 공정 사용량을 넘었습니다. 다음 달까지는 인식과 그림에 크레딧을 사용합니다.";
+"member.manage" = "구독 관리";
+"member.welcome" = "멤버가 되셨습니다. 감사합니다!";
+"member.notActivated" = "구독은 완료되었지만 멤버십이 아직 활성화되지 않았습니다: %@. 다음에 앱을 열 때 자동으로 다시 시도합니다.";
+"member.unavailable" = "이 지역에서는 아직 멤버십을 이용할 수 없습니다.";
+
 /* MARK: - Redeem codes */
 "redeem.button" = "코드 사용";
 "redeem.title" = "교환 코드";

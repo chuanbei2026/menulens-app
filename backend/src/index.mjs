@@ -2,9 +2,12 @@
 // with Apple and spends credits; the OpenAI key never leaves the server.
 //
 //   POST /auth/apple   { identityToken }        → { token, expiresAt, userId }
-//   GET  /credits      (Bearer session token)   → { totalCredits, giftCredits, paidCredits, monthlyGrant, lastGrantPeriod, appAccountToken }
-//   GET  /usage        (Bearer)                 → { balance, days: [{ date, spent, added, calls, balance }] } (last 30 days)
+//   GET  /credits      (Bearer session token)   → { totalCredits, giftCredits, paidCredits, monthlyGrant, lastGrantPeriod, appAccountToken,
+//                                                   subscription: { active, productId, expiresAt, autoRenew, monthUsedCredits, monthFairUseCredits } }
+//   GET  /usage        (Bearer)                 → { balance, subscription, days: [{ date, spent, added, calls, covered, balance }] } (last 30 days)
 //   POST /purchase     { jws } (Bearer)         → credits a StoreKit 2 purchase
+//   POST /subscription { jws, renewalJws? } (Bearer) → records the account's subscription (subscription.mjs)
+//   POST /appstore/notifications { signedPayload } → App Store Server Notifications V2; always 200
 //   POST /promo/redeem { code } (Bearer)        → { code, credits, totalCredits, … }
 //   DELETE /account    (Bearer)                 → { deleted: true }
 //   POST /menu         (Bearer) Chat Completions body (messages, response_format, model?, temperature?,
@@ -17,6 +20,7 @@
 //
 // Credits are charged to 0.1 internally; every amount the API returns is a whole number (balances
 // floored). Out of credits: 402 { error, reason: "credits", totalCredits, needed }.
+// Subscribers' calls are covered (charged 0) up to the monthly fair use, then charged as usual.
 import { randomUUID } from "node:crypto";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
@@ -24,7 +28,7 @@ import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-sec
 import { config } from "./config.mjs";
 import { stripPrefix } from "./prefix.mjs";
 import { AuthError, issueSessionToken, verifyAppleIdentityToken, verifySessionToken } from "./auth.mjs";
-import { CreditStore, InsufficientCredits, PromoError, PurchaseConflict, balanceHistory, publicBalance, publicDay, toCredits } from "./credits.mjs";
+import { CreditStore, InsufficientCredits, PromoError, PurchaseConflict, balanceHistory, billingPeriod, publicBalance, publicDay, toCredits } from "./credits.mjs";
 import { accountToken, creditableTransaction, PurchaseError, verifyAppleJWS } from "./purchase.mjs";
 import { instrument, newScope, requestScope, summarize } from "./ddbstats.mjs";
 import { logEvent, logRequest } from "./log.mjs";
@@ -33,12 +37,14 @@ import { catalogFor, normalizeStorefront, providerAllowed } from "./regions.mjs"
 import { relayBedrockMenu } from "./bedrock.mjs";
 import { exchangeCode, revokeToken } from "./appleRevoke.mjs";
 import { PurchaseRecords, transactionFacts } from "./purchaseRecords.mjs";
+import { handleNotification, publicSubscription, recordEntitlement, SubscriptionConflict, SubscriptionStore } from "./subscription.mjs";
 import { generateImage, imageRequest, menuRequest, relayMenu, RequestError, upstreamMessage } from "./relay.mjs";
 
 const ddb = instrument(DynamoDBDocumentClient.from(new DynamoDBClient({})));
 const secrets = new SecretsManagerClient({});
 const store = new CreditStore(ddb, config);
 const purchases = new PurchaseRecords(ddb, config.purchasesTable);
+const subs = new SubscriptionStore(ddb, config);
 
 // Secrets are read once per container and reused while it stays warm.
 const secretCache = new Map();
@@ -88,7 +94,8 @@ async function grant(userId, ctx) {
   if (kind === "reopen") logEvent("INFO", "account reopened after deletion (no signup bonus)", { requestId: ctx.requestId, userId });
   else if (kind) {
     ctx.grant = kind;
-    logEvent("INFO", kind === "signup" ? "account created" : "monthly grant", { requestId: ctx.requestId, userId, grant: kind });
+    const what = { signup: "account created", monthly: "monthly grant", subscriber: "subscriber grant" }[kind];
+    logEvent("INFO", what, { requestId: ctx.requestId, userId, grant: kind });
   }
   return item;
 }
@@ -158,20 +165,25 @@ function emptyBalance() {
   return { total: 0, gift: 0, paid: 0, monthlyGrant: config.monthlyGrant };
 }
 
+function subscriptionOf(item, now = new Date()) {
+  return publicSubscription(item, { now, period: billingPeriod(now, config.billingTimeZone), fairUseCredits: config.subscriberMonthlyFairUse });
+}
+
 async function getCredits(event, ctx) {
   const userId = await authenticate(event); // viewing the balance is not "use": no grant here
   ctx.userId = userId;
-  const b = await store.balance(userId) ?? emptyBalance();
-  return { ...publicBalance(b), appAccountToken: accountToken(userId) };
+  const item = await store.read(userId);
+  const b = store.toBalance(item) ?? emptyBalance();
+  return { ...publicBalance(b), appAccountToken: accountToken(userId), subscription: subscriptionOf(item) };
 }
 
 async function getUsage(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
-  const [b, rows] = await Promise.all([store.balance(userId), store.dailyRows(userId, config.usageDays)]);
-  const balance = b ?? emptyBalance();
+  const [item, rows] = await Promise.all([store.read(userId), store.dailyRows(userId, config.usageDays)]);
+  const balance = store.toBalance(item) ?? emptyBalance();
   const days = balanceHistory(rows, { balance: balance.total, days: config.usageDays, timeZone: config.billingTimeZone });
-  return { balance: publicBalance(balance), days: days.map(publicDay) };
+  return { balance: publicBalance(balance), subscription: subscriptionOf(item), days: days.map(publicDay) };
 }
 
 async function purchase(event, ctx) {
@@ -201,6 +213,52 @@ async function purchase(event, ctx) {
     if (e instanceof PurchaseConflict) throw new HttpError(409, "purchase belongs to another account", { reason: "conflict" });
     throw e;
   }
+}
+
+/**
+ * The app's current subscription entitlement (after a purchase, and on every launch / foreground):
+ * verified like a purchase, linked to this account, merged into its state. Idempotent. The first
+ * use in a month while subscribed also brings the subscriber grant.
+ */
+async function subscribe(event, ctx) {
+  const userId = await authenticate(event);
+  ctx.userId = userId;
+  try {
+    const r = await recordEntitlement(readBody(event), {
+      userId, verify: (jws) => verifyAppleJWS(jws), subs, records: purchases, grant: (u) => grant(u, ctx),
+      read: (u) => store.read(u), bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases,
+    });
+    ctx.subscription = r.productId;
+    if (r.isNew) {
+      const p = r.payload;
+      logEvent("INFO", "subscription", { requestId: ctx.requestId, userId, productId: r.productId, environment: p.environment,
+        expiresAt: r.after.expiresAt, price: typeof p.price === "number" ? p.price / 1000 : undefined, currency: p.currency, storefront: p.storefront });
+    }
+    return { subscription: subscriptionOf(r.item), ...publicBalance(store.toBalance(r.item) ?? emptyBalance()) };
+  } catch (e) {
+    const reason = e instanceof PurchaseError ? e.reason : e instanceof SubscriptionConflict ? "conflict" : null;
+    if (reason) {
+      // Rejected attempts are kept too, like purchases.
+      await purchases.record(userId, { ...transactionFacts(e.payload), type: "subscription", status: "rejected", reason });
+      logEvent("WARN", "subscription rejected", { requestId: ctx.requestId, userId, reason });
+    }
+    if (e instanceof PurchaseError) throw new HttpError(400, e.reason, { reason: e.reason });
+    if (e instanceof SubscriptionConflict) throw new HttpError(409, "subscription belongs to another account", { reason: "conflict" });
+    throw e;
+  }
+}
+
+/** App Store Server Notifications V2. Always 200: Apple retries anything else for days. */
+async function appStoreNotification(event, ctx) {
+  let body = {};
+  try { body = readBody(event); } catch { /* answered 200 below */ }
+  const summary = await handleNotification(body, {
+    verify: (jws) => verifyAppleJWS(jws), subs, records: purchases,
+    bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases,
+  });
+  Object.assign(ctx, { userId: summary.userId, notification: summary.type, subtype: summary.subtype, ignored: summary.ignored });
+  logEvent("INFO", "app store notification", { requestId: ctx.requestId, ...summary });
+  return { ok: true };
 }
 
 const PROMO_STATUS = { not_found: 404, inactive: 410, expired: 410, used_up: 410, already_redeemed: 409 };
@@ -239,6 +297,28 @@ async function reserve(userId, tenths, ref, account, ctx) {
   }
 }
 
+/**
+ * Reserves a call's worst case: covered by an active subscription while under this month's fair use,
+ * otherwise from the balance (reserve). The split says which (split.covered).
+ */
+async function charge(userId, tenths, ref, account, ctx) {
+  const { split, reason } = await store.reserveCovered(userId, tenths, ref, account);
+  if (split) {
+    Object.assign(ctx, { ref, creditsReserved: 0, covered: true });
+    return split;
+  }
+  if (reason === "fair_use") ctx.overFairUse = true;
+  return reserve(userId, tenths, ref, account, ctx);
+}
+
+/** Tenths a split holds, covered or charged. */
+const reservedTenths = (split) => split.fromGift + split.fromPaid + (split.covered ?? 0);
+
+/** Logged and reported amounts of a settled call: charged credits, and what a subscription covered. */
+function settledAmounts(split, actual) {
+  return split.covered !== undefined ? { charged: 0, covered: actual } : { charged: actual, covered: 0 };
+}
+
 /** OpenAI's status, except problems with our own key or account, which the app can't fix. */
 function upstreamStatus(status) {
   return [401, 403, 404].includes(status) ? 502 : status;
@@ -273,7 +353,7 @@ async function menu(event, stream, ctx) {
   const account = await grant(userId, ctx);
   const ref = randomUUID();
   const worst = tenthsForUsd(chatCostUsd(req.model, { input: req.inputTokens, output: config.expectedOutputTokens }));
-  const split = await reserve(userId, worst, ref, account, ctx);
+  const split = await charge(userId, worst, ref, account, ctx);
 
   let out;
   const write = (data) => {
@@ -307,9 +387,10 @@ async function menu(event, stream, ctx) {
     throw new HttpError(upstreamStatus(result.status), upstreamMessage(result.errorBody));
   }
   // Missing usage on success (shouldn't happen) → keep the reservation.
-  const actual = result.usage ? tenthsForUsd(chatCostUsd(req.model, result.usage)) : split.fromGift + split.fromPaid;
+  const actual = result.usage ? tenthsForUsd(chatCostUsd(req.model, result.usage)) : reservedTenths(split);
+  const amounts = settledAmounts(split, actual);
   Object.assign(ctx, {
-    creditsCharged: toCredits(actual), finishReason: result.finishReason ?? "unknown",
+    creditsCharged: toCredits(amounts.charged), creditsCovered: toCredits(amounts.covered), finishReason: result.finishReason ?? "unknown",
     inputTokens: result.usage?.input ?? 0, cachedTokens: result.usage?.cached ?? 0, outputTokens: result.usage?.output ?? 0,
     costUsd: result.usage ? Number(chatCostUsd(req.model, result.usage).toFixed(6)) : 0,
   });
@@ -320,7 +401,8 @@ async function menu(event, stream, ctx) {
     ctx.creditsLeft = toCredits(b.total);
     const { totalCredits, giftCredits, paidCredits } = publicBalance(b);
     // After OpenAI's [DONE]: clients that stop reading there simply never see it.
-    write(`event: foreignmenu.credits\ndata: ${JSON.stringify({ charged: Math.round(toCredits(actual)), totalCredits, giftCredits, paidCredits })}\n\n`);
+    write(`event: foreignmenu.credits\ndata: ${JSON.stringify({ charged: Math.round(toCredits(amounts.charged)),
+      covered: Math.round(toCredits(amounts.covered)), totalCredits, giftCredits, paidCredits })}\n\n`);
   } catch (e) {
     logEvent("ERROR", "settlement failed", { requestId: ctx.requestId, userId, ref, actualTenths: actual, error: String(e) });
   }
@@ -345,7 +427,7 @@ async function image(event, ctx) {
   const account = await grant(userId, ctx);
   const ref = randomUUID();
   const worst = tenthsForUsd(imageCostUsd({ text: req.promptTokens, output: EXPECTED_IMAGE_OUTPUT_TOKENS }));
-  const split = await reserve(userId, worst, ref, account, ctx);
+  const split = await charge(userId, worst, ref, account, ctx);
   let result;
   try {
     result = await generateImage({ apiKey: await secretKey(config.openAISecretId), body: req.body });
@@ -360,16 +442,17 @@ async function image(event, ctx) {
     ctx.creditsCharged = 0;
     throw new HttpError(upstreamStatus(result.status), upstreamMessage(result.errorBody));
   }
-  const actual = result.usage ? tenthsForUsd(imageCostUsd(result.usage)) : split.fromGift + split.fromPaid;
+  const actual = result.usage ? tenthsForUsd(imageCostUsd(result.usage)) : reservedTenths(split);
+  const amounts = settledAmounts(split, actual);
   Object.assign(ctx, {
-    creditsCharged: toCredits(actual), inputTokens: (result.usage?.text ?? 0) + (result.usage?.image ?? 0),
+    creditsCharged: toCredits(amounts.charged), creditsCovered: toCredits(amounts.covered), inputTokens: (result.usage?.text ?? 0) + (result.usage?.image ?? 0),
     outputTokens: result.usage?.output ?? 0, costUsd: result.usage ? Number(imageCostUsd(result.usage).toFixed(6)) : 0,
   });
   await store.settle(userId, split, actual, ref);
   const b = await store.balance(userId);
   ctx.creditsLeft = toCredits(b.total);
   const { totalCredits } = publicBalance(b);
-  return { ...result.json, credits: { charged: Math.round(toCredits(actual)), totalCredits } };
+  return { ...result.json, credits: { charged: Math.round(toCredits(amounts.charged)), covered: Math.round(toCredits(amounts.covered)), totalCredits } };
 }
 
 // --- Entry point ---------------------------------------------------------------------------
@@ -397,6 +480,8 @@ async function handle(event, stream, context) {
     if (method === "GET" && path === "/credits") return sendJSON(stream, 200, await getCredits(event, ctx), ctx);
     if (method === "GET" && path === "/usage") return sendJSON(stream, 200, await getUsage(event, ctx), ctx);
     if (method === "POST" && path === "/purchase") return sendJSON(stream, 200, await purchase(event, ctx), ctx);
+    if (method === "POST" && path === "/subscription") return sendJSON(stream, 200, await subscribe(event, ctx), ctx);
+    if (method === "POST" && path === "/appstore/notifications") return sendJSON(stream, 200, await appStoreNotification(event, ctx), ctx);
     if (method === "POST" && path === "/promo/redeem") return sendJSON(stream, 200, await redeemPromo(event, ctx), ctx);
     if (method === "DELETE" && path === "/account") return sendJSON(stream, 200, await deleteAccount(event, ctx), ctx);
     if (method === "POST" && path === "/menu") return await menu(event, stream, ctx);

@@ -18,13 +18,20 @@
 //   paidTenths    purchased credits ×10 (App Store IAP); spent after gift credits
 //   monthlyGrant  optional per-user override of the monthly grant (whole credits)
 //   grantPeriod   "2026-10": the last billing month that received the monthly grant
+//   subscription, subSeq   an auto-renewable subscription's state (subscription.mjs)
+//   subGrantPeriod "2026-10": the last billing month that received the subscriber grant
+//   coveredPeriod / coveredTenths   what the subscription covered this billing month (fair-use meter),
+//                 reservations included; reset by the first covered call of a new month
 //   version       optimistic-lock counter, bumped on every balance change
 //
 // ledger (PK userId, SK at): append-only record of every balance change, for support and audits:
-//   { type, giftTenths, paidTenths, ref, chargedTenths? }.
+//   { type, giftTenths, paidTenths, ref, chargedTenths? }. A call a subscription covers is a hold and a
+//   settle that move nothing (chargedTenths 0) and say what the call would have cost: the hold
+//   `coveredHoldTenths` (reserved), the settle `coveredTenths` (actual).
 //
 // usage-daily (PK userId, SK day "2026-10-11" in the billing zone): per-day rollup of the ledger —
-//   spentTenths (used by model calls, net of refunds), addedTenths (grants, promotions), calls.
+//   spentTenths (used by model calls, net of refunds), addedTenths (grants, promotions), calls,
+//   coveredTenths (what subscriber calls would have cost; not part of the balance).
 //   Updated with ADD next to every ledger write, so concurrent requests never overwrite each other.
 //   Daily balances are not stored: they are derived backwards from the current balance
 //   (balance(d-1) = balance(d) − added(d) + spent(d)), which is always consistent. The ledger stays
@@ -41,6 +48,7 @@ import { createHash } from "node:crypto";
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, TransactWriteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { requestScope } from "./ddbstats.mjs";
 import { logEvent } from "./log.mjs";
+import { subscriptionActive } from "./subscription.mjs";
 
 // --- Pure helpers (unit-tested) ------------------------------------------------------------
 
@@ -98,6 +106,7 @@ export function rowTenths(row) {
     spent: (row.spentTenths ?? 0) + toTenths(row.spent),
     added: (row.addedTenths ?? 0) + toTenths(row.added),
     calls: row.calls ?? 0,
+    covered: row.coveredTenths ?? 0,
   };
 }
 
@@ -116,7 +125,7 @@ export function publicBalance(b) {
 export function publicDay(d) {
   return {
     date: d.date, spent: Math.round(toCredits(d.spent)), added: Math.round(toCredits(d.added)), calls: d.calls,
-    balance: Math.floor(toCredits(d.balance)),
+    covered: Math.round(toCredits(d.covered ?? 0)), balance: Math.floor(toCredits(d.balance)),
   };
 }
 
@@ -134,9 +143,9 @@ export function billingDay(date, timeZone) {
 export function rollupDelta(entry) {
   const { gift, paid } = entryTenths(entry);
   const delta = gift + paid;
-  if (entry.type === "hold") return { spent: -delta, added: 0, calls: 1 };
-  if (entry.type === "settle") return { spent: -delta, added: 0, calls: 0 };
-  return { spent: 0, added: delta, calls: 0 };
+  if (entry.type === "hold") return { spent: 0 - delta, added: 0, calls: 1, covered: 0 };
+  if (entry.type === "settle") return { spent: 0 - delta, added: 0, calls: 0, covered: entry.coveredTenths ?? 0 };
+  return { spent: 0, added: delta, calls: 0, covered: 0 };
 }
 
 /**
@@ -152,7 +161,7 @@ export function balanceHistory(rows, { balance, days, timeZone, now = new Date()
     const date = billingDay(new Date(now.getTime() - i * 86400000), timeZone);
     const r = byDay.get(date) ?? {};
     const spent = Math.max(0, r.spent ?? 0), added = r.added ?? 0;
-    out.push({ date, spent, added, calls: r.calls ?? 0, balance: closing });
+    out.push({ date, spent, added, calls: r.calls ?? 0, covered: Math.max(0, r.covered ?? 0), balance: closing });
     closing = closing - added + spent; // the balance at the end of the previous day
   }
   return out.reverse();
@@ -216,8 +225,10 @@ export class PromoError extends Error {
 }
 
 export class CreditStore {
-  constructor(ddb, { accountsTable, ledgerTable, promoTable, dailyTable, monthlyGrant, signupBonus, billingTimeZone }) {
-    Object.assign(this, { ddb, accountsTable, ledgerTable, promoTable, dailyTable, monthlyGrant, signupBonus, billingTimeZone });
+  constructor(ddb, { accountsTable, ledgerTable, promoTable, dailyTable, monthlyGrant, signupBonus, billingTimeZone,
+    subscriberMonthlyGrant = 0, subscriberMonthlyFairUse = 0 }) {
+    Object.assign(this, { ddb, accountsTable, ledgerTable, promoTable, dailyTable, monthlyGrant, signupBonus, billingTimeZone,
+      subscriberMonthlyGrant, subscriberMonthlyFairUse });
   }
 
   /**
@@ -237,8 +248,8 @@ export class CreditStore {
       this.ddb.send(new UpdateCommand({
         TableName: this.dailyTable,
         Key: { userId, day: billingDay(now, this.billingTimeZone) },
-        UpdateExpression: "ADD spentTenths :s, addedTenths :a, calls :c",
-        ExpressionAttributeValues: { ":s": r.spent, ":a": r.added, ":c": r.calls },
+        UpdateExpression: "ADD spentTenths :s, addedTenths :a, calls :c, coveredTenths :v",
+        ExpressionAttributeValues: { ":s": r.spent, ":a": r.added, ":c": r.calls, ":v": r.covered },
       })),
     ]);
     const pending = requestScope.getStore()?.pending;
@@ -302,10 +313,18 @@ export class CreditStore {
    * credits if the account has not received them yet. Call it when the user actually uses the service.
    *
    * Reads first, so the common case (already granted this month) costs one read and no failed writes.
-   * Returns { kind: "signup" | "monthly" | null, item } where `item` is the account as last seen
-   * (null if a concurrent request changed it), letting the caller skip another read.
+   * Returns { kind: "signup" | "monthly" | "subscriber" | null, item } where `item` is the account as
+   * last seen (null if a concurrent request changed it), letting the caller skip another read.
+   * Active subscribers also get the subscriber grant once per billing month (subscriberGrant).
    */
   async grantIfDue(userId, now = new Date()) {
+    const base = await this.baseGrant(userId, now);
+    if (!base.item || !subscriptionActive(base.item.subscription, now)) return base;
+    return (await this.subscriberGrant(userId, base.item, now)) ?? base;
+  }
+
+  /** The signup bonus and the everyone-monthly grant (0 for ForeignMenu). */
+  async baseGrant(userId, now) {
     const period = billingPeriod(now, this.billingTimeZone);
     let item = await this.migrate(await this.read(userId));
     if (item && item.grantPeriod >= period) return { kind: null, item };
@@ -352,6 +371,69 @@ export class CreditStore {
     }
   }
 
+  /**
+   * Gives an active subscriber `subscriberMonthlyGrant` gift credits, once per billing month (its own
+   * marker, so it doesn't depend on when the account was opened). Returns { kind: "subscriber", item }
+   * when granted, null when there is nothing to do, { kind: null, item: null } when a concurrent
+   * request granted first.
+   */
+  async subscriberGrant(userId, item, now = new Date()) {
+    const period = billingPeriod(now, this.billingTimeZone);
+    const grant = toTenths(this.subscriberMonthlyGrant);
+    if (grant <= 0 || item.subGrantPeriod >= period) return null;
+    try {
+      const { Attributes } = await this.ddb.send(new UpdateCommand({
+        TableName: this.accountsTable, Key: { userId },
+        UpdateExpression: "SET giftTenths = giftTenths + :grant, subGrantPeriod = :period, version = if_not_exists(version, :zero) + :one",
+        ConditionExpression: "(attribute_not_exists(subGrantPeriod) OR subGrantPeriod < :period) AND attribute_exists(giftTenths)",
+        ExpressionAttributeValues: { ":grant": grant, ":period": period, ":zero": 0, ":one": 1 },
+        ReturnValues: "ALL_NEW",
+      }));
+      await this.ledger(userId, { type: "subscriber_grant", giftTenths: grant, paidTenths: 0, ref: period });
+      return { kind: "subscriber", item: Attributes };
+    } catch (e) {
+      if (isConditionFailure(e)) return { kind: null, item: null };
+      throw e;
+    }
+  }
+
+  /**
+   * For an active subscriber with room left under this month's fair use: reserves `amount` tenths
+   * against the covered-usage counter instead of the balance. Race-safe like reserve: the counter only
+   * grows through a conditional update, so concurrent calls can't together pass the cap.
+   * Returns { split: { fromGift: 0, fromPaid: 0, covered, period } } or { split: null, reason } with
+   * reason "inactive" (no active subscription; charge normally) or "fair_use" (over the cap).
+   */
+  async reserveCovered(userId, amount, ref, known = null, now = new Date()) {
+    const period = billingPeriod(now, this.billingTimeZone);
+    const cap = toTenths(this.subscriberMonthlyFairUse);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const item = attempt === 0 && known ? known : await this.read(userId);
+      if (!item || !subscriptionActive(item.subscription, now)) return { split: null, reason: "inactive" };
+      const sameMonth = item.coveredPeriod === period;
+      if ((sameMonth ? item.coveredTenths ?? 0 : 0) + amount > cap) return { split: null, reason: "fair_use" };
+      try {
+        await this.ddb.send(new UpdateCommand(sameMonth ? {
+          TableName: this.accountsTable, Key: { userId },
+          UpdateExpression: "SET coveredTenths = coveredTenths + :a",
+          ConditionExpression: "coveredPeriod = :p AND coveredTenths <= :room",
+          ExpressionAttributeValues: { ":a": amount, ":p": period, ":room": cap - amount },
+        } : {
+          TableName: this.accountsTable, Key: { userId },
+          UpdateExpression: "SET coveredPeriod = :p, coveredTenths = :a",
+          ConditionExpression: "attribute_exists(userId) AND (attribute_not_exists(coveredPeriod) OR coveredPeriod < :p)",
+          ExpressionAttributeValues: { ":a": amount, ":p": period },
+        }));
+        await this.ledger(userId, { type: "hold", giftTenths: 0, paidTenths: 0, coveredHoldTenths: amount, ref });
+        return { split: { fromGift: 0, fromPaid: 0, covered: amount, period } };
+      } catch (e) {
+        if (!isConditionFailure(e)) throw e; // another call moved the counter (or the month): look again
+      }
+    }
+    logEvent("ERROR", "covered reserve gave up after retries", { userId, ref });
+    throw new Error("credit store busy, retry later");
+  }
+
   /** Current balance, or null for an account that has never used the service. */
   async balance(userId) {
     return this.toBalance(await this.read(userId));
@@ -393,6 +475,7 @@ export class CreditStore {
    * condition: integer deltas commute; reserve already moved the account to tenths).
    */
   async settle(userId, split, actual, ref) {
+    if (split.covered !== undefined) return this.settleCovered(userId, split, actual, ref);
     const d = settlementDeltas(split, actual);
     if (d.gift !== 0 || d.paid !== 0) {
       await this.ddb.send(new UpdateCommand({
@@ -404,6 +487,29 @@ export class CreditStore {
     }
     await this.ledger(userId, { type: "settle", giftTenths: d.gift, paidTenths: d.paid, ref, chargedTenths: actual });
     return d;
+  }
+
+  /**
+   * Settles a covered reservation: the counter moves by actual − reserved (a failed call gives it all
+   * back), the balance doesn't move, and the ledger records chargedTenths 0 with what was covered.
+   * If the month rolled over meanwhile the old month's counter is gone and there is nothing to adjust.
+   */
+  async settleCovered(userId, split, actual, ref) {
+    const d = actual - split.covered;
+    if (d !== 0) {
+      try {
+        await this.ddb.send(new UpdateCommand({
+          TableName: this.accountsTable, Key: { userId },
+          UpdateExpression: "SET coveredTenths = coveredTenths + :d",
+          ConditionExpression: "coveredPeriod = :p",
+          ExpressionAttributeValues: { ":d": d, ":p": split.period },
+        }));
+      } catch (e) {
+        if (!isConditionFailure(e)) throw e;
+      }
+    }
+    await this.ledger(userId, { type: "settle", giftTenths: 0, paidTenths: 0, ref, chargedTenths: 0, coveredTenths: actual });
+    return { gift: 0, paid: 0 };
   }
 
   /**

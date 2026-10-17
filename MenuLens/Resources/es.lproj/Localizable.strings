@@ -192,6 +192,24 @@
 "shop.credited" = "%d créditos añadidos";
 "shop.notCredited" = "Pagado, pero los créditos aún no han llegado: %@. La app lo volverá a intentar la próxima vez que se abra.";
 
+"member.header" = "Suscripción";
+"member.pitch.title" = "Suscripción ForeignMenu";
+"member.pitch.unlimited" = "Escanea menús y crea imágenes de platos sin gastar créditos";
+"member.pitch.fairUse" = "Uso razonable: unos %d créditos al mes";
+"member.pitch.grant" = "Y %d créditos de regalo cada mes, que nunca caducan";
+"member.footer" = "Se renueva automáticamente hasta que la canceles; cancélala cuando quieras en los ajustes del App Store. Pasado el uso razonable mensual, los escaneos y las imágenes usan tus créditos como siempre.";
+"member.badge" = "Suscriptor · hasta el %@";
+"member.autoRenew.on" = "Se renueva automáticamente";
+"member.autoRenew.off" = "Renovación automática desactivada: termina en esa fecha";
+"member.meter.title" = "Uso razonable este mes";
+"member.meter.value" = "%1$d / %2$d créditos";
+"member.meter.footer" = "Los escaneos y las imágenes de platos no usan tus créditos, hasta unos %d créditos al mes.";
+"member.meter.over" = "Has superado el uso razonable de este mes: los escaneos y las imágenes vuelven a usar tus créditos hasta el mes que viene.";
+"member.manage" = "Gestionar suscripción";
+"member.welcome" = "¡Ya eres suscriptor! Gracias.";
+"member.notActivated" = "Suscrito, pero la suscripción aún no está activa: %@. La app lo volverá a intentar la próxima vez que se abra.";
+"member.unavailable" = "La suscripción aún no está disponible aquí.";
+
 /* MARK: - Redeem codes */
 "redeem.button" = "Canjear código";
 "redeem.title" = "Canjear código";
