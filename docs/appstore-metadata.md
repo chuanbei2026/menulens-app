@@ -8,7 +8,8 @@
 
 > **背景**：1.1 (3) 在 2026-10-19 被拒（审核设备 iPad Air 11-inch (M3)），两条：
 > **3.1.1**（App 内兑换码能解锁付费内容）和 **5.1.1(v)**（扫菜单前必须先注册）。内购本身没有被拒。
-> 1.1 (4) 从 `main` 构建（含繁体中文、覆盖重试、新结果页、订阅代码），版本号仍是 **1.1**，构建号 **4**。
+> 1.1 (4) 从 `main` 构建（含繁体中文、覆盖重试、新结果页、订阅），版本号仍是 **1.1**，构建号 **4**。
+> **店主 2026-10-19 定：三个订阅随 1.1 (4) 一起提交**，下面的文本都是带订阅的版本。
 > 下面的内容**替代**「1.1 提审资料」里同名的字段；没列出的字段（名称、副标题、关键词、URL、
 > 出口合规、年龄分级、上架地区）**不变**。
 
@@ -19,7 +20,7 @@
 | 扫菜单前 | 必须先用 Apple 登录 | ✅ **不用登录**：首次打开自动建一个本机账号，送 300 点 |
 | Apple 登录 | 必需 | 可选（设置 → 账号），只用来把余额带到其他设备 |
 | 兑换码 | 设置 → 账号 → 兑换码 | ❌ **已删除**（App 和后端都下线）；送点数改用 App Store 优惠码（Offer Codes） |
-| 商店 | 三个点数包 | 三个点数包 + 「兑换 App Store 优惠码」（Apple 自己的兑换页） |
+| 商店 | 三个点数包 | 会员订阅（月 / 季 / 年）+ 三个点数包 + 「兑换 App Store 优惠码」（Apple 自己的兑换页） |
 | 删除账号 | 设置 → 账号 → 删除账号 | 不变，本机账号和 Apple 账号都能删 |
 
 ### App Store Connect 要改的字段（逐项）
@@ -36,10 +37,13 @@
 | 8 | 1.1 版本页 → App 预览和截图 | 6.9″ iPhone、13″ iPad（en / zh-Hans） | 换 `04_account`，把 `05_signin` 换成 `05_start`（路径见下面「截图」） |
 | 9 | 解决方案中心（Resolution Center） | 回复 | 下面「给审核的回复」 |
 | — | App 隐私 | 营养标签 | **不变**（见下面「隐私标签」） |
+| 10 | 订阅 | 群组 + 三个订阅 | 按下面「订阅（1.2）」一节建好（价格、本地化、审核截图），**附加到 1.1 (4)** |
+| 11 | App 信息 → App Store Server Notifications | Production / Sandbox | `https://api.chuanbei.dev/menu/appstore/notifications`，Version 2（后端部署之后再填，填完发测试通知） |
 | — | 内购 | 三个点数包 | 不变，继续附加到 1.1 一起提交 |
 
-> 如果 1.1 (4) 同时附加**订阅**（构建里已经有会员页）：描述末尾要加 Terms of Use 链接，审核备注加订阅那段 ——
-> 见下面「如果附加订阅」。不附加订阅的话，商店里会员区会显示「这里暂时还不能开通会员」。
+> **备用（订阅被撤下、不随 1.1 (4) 提交时）**：两段描述删掉【会员】/ Membership 那一段和结尾的使用条款行，
+> 审核备注删掉 "Subscriptions" 那一段，What's New 去掉「和会员订阅」/ "and a membership"；其余文字不变。
+> 那样商店的会员区会显示「这里暂时还不能开通会员」（审核员可能按 2.1 提问）。
 
 ### 宣传文本（Promotional Text）
 
@@ -65,9 +69,13 @@
 
 【点数】不用登录，打开就能用，新账号送 300 点。识别一页菜单约 8–12 点，一张配图（4 道菜）约 0.5 点，按实际用量扣，点数不过期。用完可以在应用内购买。想在其他设备上用同一份余额，可以选择用 Apple 登录。
 
+【会员】按月、按季或按年订阅：扫菜单、生成配图不扣点数（每月约 600 点用量以内），每月再送 50 点。可随时在 App Store 设置里取消。
+
 【隐私】我们不要你的姓名和邮箱。菜单照片和文字只在识别时经过我们的服务器转给 AI，不保存；翻译记录、同行成员和头像只保存在手机上。可以随时在应用内删除账号。
 
 内置两家真实餐厅的完整示例，打开就能体验全部功能。
+
+使用条款：https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 ```
 
 ### Description (en)
@@ -81,18 +89,21 @@ Can't read the menu? Snap it, and ForeignMenu translates the whole thing in plac
 • Group dining: add everyone at the table, mark what each person doesn't eat, see who ordered what, and annotate the order back onto the menu for your server.
 • Eight languages — one switch sets both the interface and the translation language; a fresh install follows your system language.
 • Credits: no sign-in needed — start with 300 free credits. A menu page takes about 8–12, a dish picture (four dishes) about 0.5, charged by actual use; credits never expire and more can be bought in the app. Sign in with Apple is optional, to use your balance on other devices.
+• Membership: subscribe monthly, quarterly or yearly — menu scans and dish pictures don't use credits (fair use about 600 credits a month), plus 50 credits every month. Cancel any time in your App Store settings.
 • Privacy: no name or email asked. Menu photos and text pass through our server to the AI only while they're read and are not stored; your history, people and photos stay on your phone. Delete your account any time in the app.
 
 Two full sample restaurants are included — try every feature right away.
+
+Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 ```
 
 > 和 1.1 (3) 的描述比：【点数】/ Credits 一段不再说「用 Apple 登录」；最后一句不再说「不登录也能」；
-> 语言改成八种（这个构建含繁体中文）；一页点数按 1.2 已核实的 8–12 点。两段都**没有**提兑换码（1.1 (3) 的描述本来就没提）。
+> 新增【会员】段和使用条款链接（有自动续订订阅的 App 必须写明）；语言改成八种（这个构建含繁体中文）；一页点数按 1.2 已核实的 8–12 点。两段都**没有**提兑换码（1.1 (3) 的描述本来就没提）。
 
 ### What's New
 
-- zh-Hans：`不用再自己申请 OpenAI key，也不用登录：打开就能识别菜单，新账号送 300 点。多页菜单翻好一页先看一页；新增繁体中文。`
-- en：`No more OpenAI key, and no sign-in: open the app and scan — new accounts get 300 free credits. Multi-page menus show each page as soon as it's ready, and Traditional Chinese is new.`
+- zh-Hans：`不用再自己申请 OpenAI key，也不用登录：打开就能识别菜单，新账号送 300 点。多页菜单翻好一页先看一页；新增繁体中文和会员订阅。`
+- en：`No more OpenAI key, and no sign-in: open the app and scan — new accounts get 300 free credits. Multi-page menus show each page as soon as it's ready; Traditional Chinese and a membership are new.`
 
 ### 审核备注（Review Notes，粘贴到 App Review Information → Notes）
 
@@ -104,6 +115,8 @@ No sign-in needed: scanning works immediately with 300 free credits on an automa
 To test: on the start screen, take or pick a menu photo and tap "Scan and translate". Before the first photo is sent, a consent sheet names who receives what and offers a working "Not now" (guideline 5.1.2(i)); it can be withdrawn in Settings. Two complete pre-translated sample restaurants are under the clock icon (top left). Our server forwards the photo and its OCR text to an AI model (OpenAI; AWS Bedrock in regions OpenAI doesn't serve) and stores neither.
 
 How to buy: Settings → Account → Buy credits (also offered when credits run out) opens the Shop with three consumable credit packs (100 / 500 / 2000 credits). Sandbox purchases work on the device account; no sign-in is needed to buy.
+
+Subscriptions (new in this version): ForeignMenu Membership (monthly / quarterly / yearly, one group) makes menu scans and dish pictures free of credits up to a fair use of about 600 credits' worth a month, and adds 50 credits each month. Above the fair use, calls use credits as before. Buy it in the same Shop (Settings → Account → Buy credits); it works on the device account with a Sandbox account, no sign-in needed. Terms of Use: Apple's standard EULA; Privacy Policy linked on the paywall.
 
 Changes since the previous submission (1.1 (3)):
 - Guideline 3.1.1: redeem codes have been removed from the app entirely; nothing in the app unlocks credits with a code any more (the server endpoint is disabled too). The only code entry left is Apple's own offer code redemption sheet ("Redeem App Store Offer Code" in the Shop).
@@ -120,15 +133,10 @@ Thank you for the review. In build 1.1 (4):
 - 5.1.1(v): no registration is required any more. The app creates an anonymous device account automatically, so menu scanning works right away with 300 free credits. Sign in with Apple is optional and only used to keep the balance across devices.
 ```
 
-### 如果附加订阅（会员）到 1.1 (4)
+### 订阅随 1.1 (4) 提交：还要做的
 
-构建里已经有会员页（`SubscriptionStoreView`）。附加的话：先按下面「订阅（1.2）」一节在 ASC 建好群组和三个订阅，
-**并先部署后端**（订阅路由和本次的匿名账号路由在同一次 `deploy.sh` 里）；再做三件事：
-
-1. 两个语言的描述末尾各加一段（Apple 要求有自动续订订阅的 App 写明使用条款）：
-   - zh-Hans：`【会员】按月、按季或按年订阅：扫菜单、生成配图不扣点数（每月约 600 点用量以内），每月再送 50 点。可随时在 App Store 设置里取消。使用条款：https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
-   - en：`• Membership: subscribe monthly, quarterly or yearly — menu scans and dish pictures don't use credits (fair use about 600 credits a month), plus 50 credits every month. Cancel any time in your App Store settings. Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
-2. 审核备注末尾加「订阅（1.2）」一节里那段 **Subscriptions** 英文（把 "new in 1.2" 改成 "new in this version"）。
+1. **先部署后端**（订阅路由和本次的匿名账号路由在同一次 `deploy.sh` 里），再在 ASC 填 Server Notifications 地址、发测试通知。
+2. ASC 按下面「订阅（1.2）」一节建群组和三个订阅，附加到 1.1 (4)（那一节的「1.1 审核结束后再部署」已不适用）。
 3. 订阅的审核截图（商店会员区）要在 ASC 建好订阅之后在真机 / TestFlight 上截（命令行跑的模拟器拿不到方案）。
 
 ### 截图（只换这两张，其余 01–03、06 不变）
@@ -171,7 +179,9 @@ ASC 里：删掉旧的 `05_signin`，上传 `05_start` 放在同一个位置；`
 - [ ] 推送 menulens 仓库（隐私政策、支持页随 GitHub Pages 生效）
 - [ ] 真机：全新安装 → 不登录直接扫一页 → 设置里看到「未登录（本机账号）」→ 用 Apple 登录 → 余额并入；再删除账号
 - [ ] 真机 Sandbox：买一个点数包到账（不登录）
-- [ ] 决定订阅是否附加到 1.1 (4)（见上）
+- [ ] 订阅群组 + 三个订阅建好并附加到 1.1 (4)；订阅审核截图已传
+- [ ] Server Notifications（Production + Sandbox，V2）已填，测试通知在日志里看到
+- [ ] 真机 Sandbox：不登录买一次月度会员，`GET /credits` 的 `subscription.active` 为 true
 
 ---
 
@@ -475,7 +485,10 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo al instante.
 
 ---
 
-## 订阅（1.2）— ⚠️ 1.1 审核结束后再部署后端、再建/提交
+## 订阅（1.2）— 2026-10-19 起随 1.1 (4) 提交
+
+> ⚠️ 店主 2026-10-19 定：订阅随 **1.1 (4)** 一起提交，本节的群组、商品、本地化、通知地址照用；
+> 下面「审核结束后再部署」「1.2 订阅 checklist」里关于等待 1.1 审核的条目已不适用（见上面「1.1 (4) resubmission」）。
 
 > 代码在分支 `subscriptions`（后端 + App）。**1.1 (3) 还在审核、审核员用的是线上后端**：
 > 审核结果出来之前不要跑 `deploy.sh`、不要在 App Store Connect 里把订阅提交审核。
