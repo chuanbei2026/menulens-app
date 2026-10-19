@@ -15,8 +15,8 @@ App Store Connect 支持按 locale 上传不同截图；没拍的语言会回落
 | `01_canvas` | **主图** —— 原版式就地翻译，带多人点单标记 |
 | `02_list` | 菜品列表：「值得点」推荐、带 AI 角标的配图、成员筹码 |
 | `03_pages` | 多页菜单翻到一半：第 1 页已可看，第 2 页还在翻译（「1/2 页」横幅） |
-| `04_account` | 设置 → 账号：余额、点数图表、买点数 / 兑换码 |
-| `05_signin` | 未登录的首页：用 Apple 登录卡片 |
+| `04_account` | 设置 → 账号：「未登录（本机账号）」、余额、点数图表（假数据）、买点数、可选的 Apple 登录 |
+| `05_start` | 全新安装后的首页：不用登录，直接可拍（1.1 (4) 起替代 `05_signin`，那张是必须登录的卡片） |
 | `06_server` | 原文菜单 + 点单标记，给服务员看（仅 iPhone） |
 | `../iap-review-shop.png` | 内购审核截图：商店（三档点数包和价格），iPhone · en |
 
@@ -35,8 +35,10 @@ xcodebuild -project MenuLens.xcodeproj -scheme MenuLens -sdk iphonesimulator \
 `-signOut` / `-storefront` / `-target_language`），所以**必须用 Debug 构建**拍，
 Release 里那些钩子被编译掉了。
 
-- **要一个开发用 session token**（`SESSION_TOKEN=…`，签发方法见 `backend/README.md`）：
-  除了 `05_signin` 都是登录状态拍的，`04_account` 显示的就是这个账号的真实余额和用量。
+- **要一个开发用 session token**（`SESSION_TOKEN=…`，签发方法见 `backend/README.md`）：01–03、06 用它。
+  `04_account` 用脚本自己拼的本机账号 session（不发给服务器）+ `-demoUsage` 假数据；`05_start` 是全新安装。
+  只重拍其中几张：`SHOTS="04 05"`（这两张不需要 `SESSION_TOKEN`）。
+- **Debug 构建要签名**（不要 `CODE_SIGNING_ALLOWED=NO`），否则模拟器里 Keychain 存不进去。
 - **不花点数**：全部用内置示例菜单。`03_pages` 用 `-demoReceiving` 把双页示例的第 2 页
   显示成「翻译中」—— 和真实扫描到一半时同一套界面，但不发请求（响应缓存在每种语言
   重装时会被清掉，没法靠缓存重现）。

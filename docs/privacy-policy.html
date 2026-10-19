@@ -15,18 +15,20 @@
 </head>
 <body>
 <h1>ForeignMenu · 外乡人的菜单 — 隐私政策</h1>
-<p class="updated">最后更新 / Last updated: 2026-10-15</p>
+<p class="updated">最后更新 / Last updated: 2026-10-19</p>
 
 <h2>一句话总结</h2>
-<p><strong>外乡人的菜单（ForeignMenu）有一个很小的服务器，只做两件事：管理你的点数，以及把你主动送去翻译的菜单转交给 OpenAI。服务器不保存菜单照片和文字；它只记得一个匿名的 Apple 账号 ID、你的点数余额和用量统计。翻译记录、同行成员和照片都留在你的手机上。我们不出售任何数据，也不做任何追踪。</strong></p>
+<p><strong>外乡人的菜单（ForeignMenu）有一个很小的服务器，只做两件事：管理你的点数，以及把你主动送去翻译的菜单转交给 OpenAI。服务器不保存菜单照片和文字；它只记得一个匿名账号 ID、你的点数余额和用量统计。翻译记录、同行成员和照片都留在你的手机上。我们不出售任何数据，也不做任何追踪。</strong></p>
 
 <h2>我们如何处理你的数据</h2>
 <ul>
-  <li><strong>账号（通过 Apple 登录）</strong>：识别新菜单需要用 Apple 登录。App 不请求你的姓名和邮箱，
-      我们只收到 Apple 给这个 App 的匿名账号 ID，用它记录你的点数余额。
-      你可以随时在 App 的设置页 →「账号」里删除账号，账号和余额会从服务器上删除。</li>
+  <li><strong>账号</strong>：不需要登录。第一次打开时，App 自动在服务器上建一个<strong>本机账号</strong>
+      ——只是一个随机的账号 ID，加上一段只存在这台设备钥匙串里的密钥，用来记录你的点数余额。
+      <strong>用 Apple 登录是可选的</strong>：登录后，本机账号的余额会并入你的 Apple 账号，
+      这样在其他设备上也能用；App 不请求你的姓名和邮箱，我们只收到 Apple 给这个 App 的匿名账号 ID。
+      你可以随时在 App 的设置页 →「账号」里删除账号（本机账号或 Apple 账号都可以），账号和余额会从服务器上删除。</li>
   <li><strong>购买点数</strong>：付款完全由 Apple 处理，我们看不到你的支付信息。App 只把 Apple 签名的交易凭证
-      发给服务器，用来核对并给对应账号加点数。</li>
+      发给服务器，用来核对并给对应账号加点数。App Store 优惠码兑换的点数包也一样处理。</li>
   <li><strong>菜单照片和文字</strong>：为了识别和翻译，你选择的菜单照片、从中识别出的文字
       （以及你要求生成配图时的菜名）会通过加密连接（HTTPS）发送到我们的服务器，
       服务器把它们原样转交 OpenAI 的接口处理，再把结果传回你的手机。
@@ -40,6 +42,8 @@
       Apple 告诉我们的价格、币种和所在的 App Store 地区），以及每次请求的用量统计
       （请求大小、token 数、花费的点数、时间）。仅用于计费、处理售后和维持服务运行。
       删除账号后，余额和用量统计会被删除；购买记录作为交易凭证保留，不再与任何账号资料关联使用。</li>
+  <li><strong>防止滥用</strong>：为了防止有人批量新建账号领取免费点数，新建本机账号时服务器会按网络地址计数
+      ——只存 IP 地址的哈希值和次数，不与任何账号关联，最多 2 天后自动删除。</li>
   <li><strong>翻译结果与历史记录</strong>：全部保存在你设备本地的应用沙盒中。删除记录或卸载应用即彻底清除。</li>
   <li><strong>同行成员姓名与头像</strong>：仅保存在设备本地，用于点菜标记，绝不上传。</li>
   <li><strong>相机与相册权限</strong>：仅在你主动拍摄或选择菜单照片时使用。</li>
@@ -61,17 +65,20 @@
 <h1 class="en">Privacy Policy (English)</h1>
 
 <h2 class="en">In one sentence</h2>
-<p class="en"><strong>ForeignMenu has a small server that does two things: it keeps your credit balance, and it passes the menus you deliberately send for translation on to OpenAI. It does not keep menu photos or text; it remembers only an anonymous Apple account id, your credit balance and usage counts. Your history, party members and photos stay on your phone. We sell nothing and track nothing.</strong></p>
+<p class="en"><strong>ForeignMenu has a small server that does two things: it keeps your credit balance, and it passes the menus you deliberately send for translation on to OpenAI. It does not keep menu photos or text; it remembers only an anonymous account id, your credit balance and usage counts. Your history, party members and photos stay on your phone. We sell nothing and track nothing.</strong></p>
 
 <h2 class="en">How your data is handled</h2>
 <ul class="en">
-  <li><strong>Account (Sign in with Apple)</strong>: scanning a new menu needs Sign in with Apple. The app
-      does not ask for your name or email; we receive only the anonymous account id Apple issues for
-      this app and use it to keep your credit balance. You can delete the account at any time in
-      Settings → Account, which removes the account and its balance from our server.</li>
+  <li><strong>Account</strong>: no sign-in is needed. On first launch the app opens a <strong>device
+      account</strong> on our server — just a random account id, plus a secret kept only in this
+      device's keychain — to keep your credit balance. <strong>Sign in with Apple is optional</strong>:
+      it moves the device account's balance into your Apple account so you can use it on other devices.
+      The app does not ask for your name or email; we receive only the anonymous account id Apple issues
+      for this app. You can delete the account (device or Apple) at any time in Settings → Account, which
+      removes the account and its balance from our server.</li>
   <li><strong>Buying credits</strong>: payment is handled entirely by Apple; we never see your payment
       details. The app sends our server only Apple's signed transaction, which is checked and used to add
-      the credits to your account.</li>
+      the credits to your account. Credit packs redeemed with an App Store offer code are handled the same way.</li>
   <li><strong>Menu photos and text</strong>: the menu photo you choose, the text read from it (and dish
       names, if you ask for generated dish photos) are sent over HTTPS to our server, which passes them
       unchanged to OpenAI's API and returns the result to your phone. <strong>Our server does not store
@@ -86,6 +93,9 @@
       and per-request usage counts (request size, token counts, credits charged, time) — only for
       billing, purchase support and keeping the service running. Deleting your account removes the
       balance and usage counts; purchase records are kept as transaction records.</li>
+  <li><strong>Abuse prevention</strong>: to stop anyone from opening accounts in bulk for the free credits,
+      the server counts new device accounts per network address — only a hash of the IP address and a
+      count, not linked to any account, deleted automatically after at most 2 days.</li>
   <li><strong>Translations and history</strong> live entirely in the app's local sandbox.
       Deleting a record or the app removes them completely.</li>
   <li><strong>Party member names and avatars</strong> stay on the device only.</li>

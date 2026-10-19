@@ -4,7 +4,180 @@
 > 它替代下面 1.0 的描述、隐私标签和审核备注（1.0 那几段保留作历史，内容已经不成立：
 > 「没有服务器、没有账号、需要自己的 OpenAI API Key」）。
 
+## 1.1 (4) resubmission（2026-10-19 被拒后重新提交）
+
+> **背景**：1.1 (3) 在 2026-10-19 被拒（审核设备 iPad Air 11-inch (M3)），两条：
+> **3.1.1**（App 内兑换码能解锁付费内容）和 **5.1.1(v)**（扫菜单前必须先注册）。内购本身没有被拒。
+> 1.1 (4) 从 `main` 构建（含繁体中文、覆盖重试、新结果页、订阅代码），版本号仍是 **1.1**，构建号 **4**。
+> 下面的内容**替代**「1.1 提审资料」里同名的字段；没列出的字段（名称、副标题、关键词、URL、
+> 出口合规、年龄分级、上架地区）**不变**。
+
+### 这一版改了什么（相对 1.1 (3)）
+
+| | 1.1 (3)（被拒） | 1.1 (4) |
+|---|---|---|
+| 扫菜单前 | 必须先用 Apple 登录 | ✅ **不用登录**：首次打开自动建一个本机账号，送 300 点 |
+| Apple 登录 | 必需 | 可选（设置 → 账号），只用来把余额带到其他设备 |
+| 兑换码 | 设置 → 账号 → 兑换码 | ❌ **已删除**（App 和后端都下线）；送点数改用 App Store 优惠码（Offer Codes） |
+| 商店 | 三个点数包 | 三个点数包 + 「兑换 App Store 优惠码」（Apple 自己的兑换页） |
+| 删除账号 | 设置 → 账号 → 删除账号 | 不变，本机账号和 Apple 账号都能删 |
+
+### App Store Connect 要改的字段（逐项）
+
+| # | 位置 | 字段 | 改成 |
+|---|---|---|---|
+| 1 | 1.1 版本页 → 构建版本 | Build | 换成 **1.1 (4)**（把 (3) 移掉） |
+| 2 | 1.1 版本页 → 简体中文 | 描述 | 下面「描述（zh-Hans）」整段 |
+| 3 | 1.1 版本页 → English (U.S.) | Description | 下面「Description (en)」整段 |
+| 4 | 1.1 版本页 → 两个语言 | 宣传文本 Promotional Text | 下面两行（可随时改，不用审核） |
+| 5 | 1.1 版本页 → 两个语言 | 此版本的新增内容 What's New | 下面两行 |
+| 6 | 1.1 版本页 → App 审核信息 | 备注 Notes | 下面「审核备注」整段（英文） |
+| 7 | 1.1 版本页 → App 审核信息 | 登录信息 Sign-in required | **取消勾选**「需要登录」（不需要演示账号） |
+| 8 | 1.1 版本页 → App 预览和截图 | 6.9″ iPhone、13″ iPad（en / zh-Hans） | 换 `04_account`，把 `05_signin` 换成 `05_start`（路径见下面「截图」） |
+| 9 | 解决方案中心（Resolution Center） | 回复 | 下面「给审核的回复」 |
+| — | App 隐私 | 营养标签 | **不变**（见下面「隐私标签」） |
+| — | 内购 | 三个点数包 | 不变，继续附加到 1.1 一起提交 |
+
+> 如果 1.1 (4) 同时附加**订阅**（构建里已经有会员页）：描述末尾要加 Terms of Use 链接，审核备注加订阅那段 ——
+> 见下面「如果附加订阅」。不附加订阅的话，商店里会员区会显示「这里暂时还不能开通会员」。
+
+### 宣传文本（Promotional Text）
+
+- zh-Hans：`拍一张外语菜单，原版式变成母语菜单。不用登录，打开就送 300 点，也不用申请 OpenAI key。`
+- en：`Snap a foreign menu and read it in your language, laid out like the original. No sign-in: start with 300 free credits — no OpenAI key needed.`
+
+### 描述（zh-Hans）
+
+```
+出国吃饭看不懂菜单？拍一张，外乡人的菜单把整份菜单原版式翻译成你的语言。
+
+【原版式翻译】不是干巴巴的文字列表——译文直接写在菜单原来的位置上，版式、字号、行距都保留，像拿到了一份母语版菜单。菜名保留原文对照，点菜时直接指给服务员看。
+
+【翻好一页先看一页】多页菜单不用等全部翻完，第一页好了就能先看。
+
+【自动矫正】手持拍摄的倾斜、透视、模糊照片自动拉正、锐化，一次最多 8 页。
+
+【看图点菜】菜单上没有配图？AI 为每道菜生成参考小图（标注为 AI 生成）。列表模式支持搜索、素食 / 海鲜 / 猪肉 / 牛肉 / 羊肉标识，还会挑出两三道值得点的菜，并说明理由。
+
+【多人点单】给同桌的每个人建档（可传头像），标出各自不吃的东西，谁点的菜一目了然。确认后一键把所点菜品标注回原菜单——服务员对着屏幕就能下单。
+
+【八种语言】中文（简体、繁體）、English、日本語、한국어、Français、Español、हिन्दी。一个开关同时切换界面语言和翻译目标语言，全新安装自动跟随系统语言。菜单原文语言自动识别。
+
+【点数】不用登录，打开就能用，新账号送 300 点。识别一页菜单约 8–12 点，一张配图（4 道菜）约 0.5 点，按实际用量扣，点数不过期。用完可以在应用内购买。想在其他设备上用同一份余额，可以选择用 Apple 登录。
+
+【隐私】我们不要你的姓名和邮箱。菜单照片和文字只在识别时经过我们的服务器转给 AI，不保存；翻译记录、同行成员和头像只保存在手机上。可以随时在应用内删除账号。
+
+内置两家真实餐厅的完整示例，打开就能体验全部功能。
+```
+
+### Description (en)
+
+```
+Can't read the menu? Snap it, and ForeignMenu translates the whole thing in place, keeping the original layout — like being handed a menu in your own language. Dish names stay bilingual, so you can order by pointing.
+
+• Pages as they're ready: multi-page menus show each page as soon as it's translated.
+• Auto-straightens tilted, hand-held photos; up to 8 pages at once.
+• Dish pictures: dishes without a photo get an AI-generated thumbnail (marked as AI). The dish list has search, vegetarian / seafood / pork / beef / lamb tags, and two or three picks worth ordering, with the reason.
+• Group dining: add everyone at the table, mark what each person doesn't eat, see who ordered what, and annotate the order back onto the menu for your server.
+• Eight languages — one switch sets both the interface and the translation language; a fresh install follows your system language.
+• Credits: no sign-in needed — start with 300 free credits. A menu page takes about 8–12, a dish picture (four dishes) about 0.5, charged by actual use; credits never expire and more can be bought in the app. Sign in with Apple is optional, to use your balance on other devices.
+• Privacy: no name or email asked. Menu photos and text pass through our server to the AI only while they're read and are not stored; your history, people and photos stay on your phone. Delete your account any time in the app.
+
+Two full sample restaurants are included — try every feature right away.
+```
+
+> 和 1.1 (3) 的描述比：【点数】/ Credits 一段不再说「用 Apple 登录」；最后一句不再说「不登录也能」；
+> 语言改成八种（这个构建含繁体中文）；一页点数按 1.2 已核实的 8–12 点。两段都**没有**提兑换码（1.1 (3) 的描述本来就没提）。
+
+### What's New
+
+- zh-Hans：`不用再自己申请 OpenAI key，也不用登录：打开就能识别菜单，新账号送 300 点。多页菜单翻好一页先看一页；新增繁体中文。`
+- en：`No more OpenAI key, and no sign-in: open the app and scan — new accounts get 300 free credits. Multi-page menus show each page as soon as it's ready, and Traditional Chinese is new.`
+
+### 审核备注（Review Notes，粘贴到 App Review Information → Notes）
+
+```
+ForeignMenu translates restaurant menus photographed by the user.
+
+No sign-in needed: scanning works immediately with 300 free credits on an automatically created device account (a random account id only — no name, email or other personal data is asked for). Sign in with Apple is optional (Settings → Account) and only lets the user keep the same balance on other devices; signing in moves the device account's balance into the Apple account. Sign-out and account deletion are in the same place.
+
+To test: on the start screen, take or pick a menu photo and tap "Scan and translate". Before the first photo is sent, a consent sheet names who receives what and offers a working "Not now" (guideline 5.1.2(i)); it can be withdrawn in Settings. Two complete pre-translated sample restaurants are under the clock icon (top left). Our server forwards the photo and its OCR text to an AI model (OpenAI; AWS Bedrock in regions OpenAI doesn't serve) and stores neither.
+
+How to buy: Settings → Account → Buy credits (also offered when credits run out) opens the Shop with three consumable credit packs (100 / 500 / 2000 credits). Sandbox purchases work on the device account; no sign-in is needed to buy.
+
+Changes since the previous submission (1.1 (3)):
+- Guideline 3.1.1: redeem codes have been removed from the app entirely; nothing in the app unlocks credits with a code any more (the server endpoint is disabled too). The only code entry left is Apple's own offer code redemption sheet ("Redeem App Store Offer Code" in the Shop).
+- Guideline 5.1.1(v): registration is no longer required. Every feature works without an account the user has to create; Sign in with Apple is optional.
+
+Account deletion: Settings → Account → Delete account (for the device account as well as an Apple account; for an Apple account it also revokes the Sign in with Apple authorization).
+```
+
+### 给审核的回复（Resolution Center，可选，提交 1.1 (4) 时附上）
+
+```
+Thank you for the review. In build 1.1 (4):
+- 3.1.1: we removed the redeem-code feature completely. Credits can only be bought with In-App Purchase; promotional giveaways will use App Store Offer Codes.
+- 5.1.1(v): no registration is required any more. The app creates an anonymous device account automatically, so menu scanning works right away with 300 free credits. Sign in with Apple is optional and only used to keep the balance across devices.
+```
+
+### 如果附加订阅（会员）到 1.1 (4)
+
+构建里已经有会员页（`SubscriptionStoreView`）。附加的话：先按下面「订阅（1.2）」一节在 ASC 建好群组和三个订阅，
+**并先部署后端**（订阅路由和本次的匿名账号路由在同一次 `deploy.sh` 里）；再做三件事：
+
+1. 两个语言的描述末尾各加一段（Apple 要求有自动续订订阅的 App 写明使用条款）：
+   - zh-Hans：`【会员】按月、按季或按年订阅：扫菜单、生成配图不扣点数（每月约 600 点用量以内），每月再送 50 点。可随时在 App Store 设置里取消。使用条款：https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+   - en：`• Membership: subscribe monthly, quarterly or yearly — menu scans and dish pictures don't use credits (fair use about 600 credits a month), plus 50 credits every month. Cancel any time in your App Store settings. Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+2. 审核备注末尾加「订阅（1.2）」一节里那段 **Subscriptions** 英文（把 "new in 1.2" 改成 "new in this version"）。
+3. 订阅的审核截图（商店会员区）要在 ASC 建好订阅之后在真机 / TestFlight 上截（命令行跑的模拟器拿不到方案）。
+
+### 截图（只换这两张，其余 01–03、06 不变）
+
+| 文件 | 内容 | 状态 |
+|---|---|---|
+| `docs/screenshots/iphone-6.9/<lang>/04_account.png` | 设置 → 账号：「未登录（本机账号）」、余额、30 天图表（假数据）、买点数、可选的「通过 Apple 登录」 | ✅ en / zh-Hans / fr / ko 已重拍 |
+| `docs/screenshots/ipad-13/<lang>/04_account.png` | 同上（iPad，主屏在后面） | ✅ en / zh-Hans / fr / ko 已重拍 |
+| `docs/screenshots/iphone-6.9/<lang>/05_start.png` | 全新安装后的首页：没有登录卡片，拍照 / 相册直接可用（**替代 `05_signin.png`，旧文件已删**） | ✅ en / zh-Hans / fr / ko |
+| `docs/screenshots/ipad-13/<lang>/05_start.png` | 同上（iPad） | ✅ en / zh-Hans / fr / ko |
+| 订阅审核截图（商店会员区，方案按钮） | 命令行下 StoreKit 拿不到订阅方案 | ⏳ 以后再拍：ASC 建好订阅后在真机 / TestFlight 上截 |
+
+ASC 里：删掉旧的 `05_signin`，上传 `05_start` 放在同一个位置；`04_account` 直接替换。
+
+### 隐私标签（App Privacy）
+
+**不用改。** 逐项核对过：
+
+| 数据类型 | 1.1 (4) | 说明 |
+|---|---|---|
+| Identifiers → **User ID** | ✅ 收集 · **Linked to You** · App Functionality | 本机账号的随机 ID（`anon:<uuid>`）和 Apple 登录的匿名 ID 一样，都和余额、购买、订阅关联 —— 仍然 "linked" |
+| Purchases → **Purchase History** | ✅ 收集 · Linked · App Functionality | 点数包、订阅、优惠码兑换的交易号，按账号记录（本机账号并入 Apple 账号时一起移过去） |
+| Usage Data → **Product Interaction** | ✅ 收集 · Linked · App Functionality | 不变 |
+| User Content | 不变 | 不变 |
+| Tracking | ❌ | 不变；没有第三方 SDK |
+
+- 本机账号的**设备密钥**只是一个登录凭证（服务器只存它的哈希），不是 Apple 定义里的用户数据类型。
+- **防滥用的 IP 计数**（新建本机账号按 IP 限流）：只存 IP 的哈希和次数，不关联账号，最多 2 天自动删除，
+  只用于防欺诈 / 安全。Apple 的数据类型里没有对得上的一项（不是 Device ID，也不和用户关联），建议不单列；
+  隐私政策里已写明（`docs/privacy-policy.html`「防止滥用」一条）。
+- 隐私政策已改：不再说「识别需要 Apple 登录」，改成「本机账号 + 可选的 Apple 登录」，并加了优惠码和防滥用两句。
+  **推 GitHub Pages 要和提交 1.1 (4) 同一天。**
+
+### 1.1 (4) 提交前 checklist
+
+- [ ] 后端部署（新路由 `/auth/anonymous`、`/auth/apple/link`、`/auth/refresh`，兑换码 410），见 backend/README.md；部署后用 curl 建一个本机账号核对 300 点
+- [ ] Archive 1.1 (4) 并上传（店主做）
+- [ ] ASC 按上表逐项改；取消「需要登录」
+- [ ] 截图替换（04、05）
+- [ ] 推送 menulens 仓库（隐私政策、支持页随 GitHub Pages 生效）
+- [ ] 真机：全新安装 → 不登录直接扫一页 → 设置里看到「未登录（本机账号）」→ 用 Apple 登录 → 余额并入；再删除账号
+- [ ] 真机 Sandbox：买一个点数包到账（不登录）
+- [ ] 决定订阅是否附加到 1.1 (4)（见上）
+
+---
+
 ## 1.1 提审资料（自建后端版）
+
+> ⚠️ 1.1 (3) 的版本，2026-10-19 被拒；字段以上面「1.1 (4) resubmission」为准。
 
 ### 这一版变了什么（给填表的人看）
 
@@ -13,7 +186,7 @@
 | 怎么用 AI | 用户自己填 OpenAI API Key | **Apple 登录**，用我们的服务器，按点数扣费 |
 | 免费额度 | — | 新账号 **300 点**，只送一次 |
 | 内购 | 无 | 3 个消耗型：$0.99 = 100 点、$4.99 = 500 点、$19.99 = 2000 点，**没有赠送** |
-| 兑换码 | 无 | 有（设置 → 账号 → 兑换码） |
+| 兑换码 | 无 | ~~有（设置 → 账号 → 兑换码）~~ 1.1 (4) 已删除（3.1.1） |
 | 多页菜单 | 全部翻完才能看 | 翻好一页先看一页 |
 | 识别模型 | 用户选 OpenAI 模型 | 默认 GPT-4.1，可选；OpenAI 不支持的地区只给 Mistral Large 3（经 AWS Bedrock），且不生成配图 |
 | 上架地区 | 全部 | 去掉中国大陆、香港、澳门、俄罗斯、白俄罗斯、委内瑞拉、科索沃、安圭拉、英属维尔京群岛、蒙特塞拉特、特克斯和凯科斯群岛 |
@@ -153,11 +326,11 @@ Two full sample restaurants are included — try every feature without signing i
 
 【八種語言】繁體中文、简体中文、English、日本語、한국어、Français、Español、हिन्दी。
 
-【點數】用 Apple 帳號登入即可使用，新帳號送 300 點。翻譯一頁約 8–12 點，一張配圖（4 道菜）約 0.5 點，點數不過期，用完可在 App 內購買。
+【點數】不用登入，打開就能用，新帳號送 300 點。翻譯一頁約 8–12 點，一張配圖（4 道菜）約 0.5 點，點數不過期，用完可在 App 內購買。
 
 【隱私】不需要姓名和電子郵件。菜單照片和文字只在辨識時經我們的伺服器轉給 AI，不保存；翻譯紀錄、同行成員只存在手機上。
 
-內建兩家真實餐廳的完整範例，不登入也能體驗全部功能。
+內建兩家真實餐廳的完整範例，打開就能體驗全部功能。
 
 ### 日本語 (ja)
 
@@ -179,10 +352,10 @@ Two full sample restaurants are included — try every feature without signing i
 ・写真のない料理には AI が参考画像を生成（AI 生成と表示）。検索、ベジタリアン／シーフード／豚・牛・羊の表示、おすすめの2〜3品とその理由も。
 ・グループの注文：同席者ごとに苦手なものを登録し、誰が何を頼んだかをメニューに書き戻して店員さんに見せられます。
 ・8言語対応：日本語、English、简体中文、繁體中文、한국어、Français、Español、हिन्दी。
-・クレジット：Apple でサインインすると300クレジット。1ページ約8〜12、料理画像（4品）約0.5。期限なし、アプリ内で購入できます。
+・クレジット：サインイン不要、最初から300クレジット。1ページ約8〜12、料理画像（4品）約0.5。期限なし、アプリ内で購入できます。
 ・プライバシー：名前やメールは不要。メニューの写真と文字は読み取りのときだけ当社サーバー経由で AI に送られ、保存しません。履歴は端末内のみ。
 
-実在のレストラン2軒のサンプル付き。サインインしなくても全機能を試せます。
+実在のレストラン2軒のサンプル付きで、すぐに全機能を試せます。
 
 ### 한국어 (ko)
 
@@ -204,10 +377,10 @@ Two full sample restaurants are included — try every feature without signing i
 • 사진이 없는 요리는 AI가 참고 이미지를 만들어 줍니다(AI 생성 표시). 검색, 채식／해산물／돼지고기／소고기／양고기 표시, 추천 메뉴 2~3개와 그 이유까지.
 • 함께 주문: 일행마다 못 먹는 음식을 등록하고, 누가 무엇을 시켰는지 메뉴에 표시해 직원에게 보여 줄 수 있어요.
 • 8개 언어: 한국어, English, 日本語, 简体中文, 繁體中文, Français, Español, हिन्दी.
-• 크레딧: Apple로 로그인하면 300 크레딧. 한 페이지 약 8–12, 요리 이미지(4개) 약 0.5. 만료 없음, 앱에서 구매 가능.
+• 크레딧: 로그인 없이 바로 300 크레딧. 한 페이지 약 8–12, 요리 이미지(4개) 약 0.5. 만료 없음, 앱에서 구매 가능.
 • 개인정보: 이름과 이메일은 받지 않습니다. 메뉴 사진과 글자는 인식할 때만 저희 서버를 거쳐 AI로 전달되고 저장되지 않으며, 기록은 기기에만 남습니다.
 
-실제 레스토랑 두 곳의 샘플이 들어 있어 로그인하지 않아도 모든 기능을 써 볼 수 있습니다.
+실제 레스토랑 두 곳의 샘플이 들어 있어 바로 모든 기능을 써 볼 수 있습니다.
 
 ### Français (fr)
 
@@ -229,10 +402,10 @@ Impossible de lire la carte ? Prenez-la en photo : ForeignMenu la traduit en ent
 • Les plats sans photo reçoivent une image générée par IA (signalée comme telle). Recherche, mentions végétarien / fruits de mer / porc / bœuf / agneau, et 2 ou 3 plats à essayer, avec la raison.
 • Repas en groupe : notez ce que chacun ne mange pas, voyez qui a commandé quoi et annotez la commande sur la carte pour le serveur.
 • 8 langues : Français, English, Español, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
-• Crédits : connectez-vous avec Apple et recevez 300 crédits. Une page coûte environ 8–12, une image de plats (quatre) environ 0,5. Sans expiration, rechargeables dans l'app.
+• Crédits : sans inscription, 300 crédits offerts dès le départ. Une page coûte environ 8–12, une image de plats (quatre) environ 0,5. Sans expiration, rechargeables dans l'app.
 • Confidentialité : ni nom ni e-mail. Les photos et le texte de la carte passent par notre serveur vers l'IA le temps de la lecture et ne sont pas conservés ; l'historique reste sur votre téléphone.
 
-Deux vrais restaurants sont inclus en exemple : essayez tout sans vous connecter.
+Deux vrais restaurants sont inclus en exemple : essayez tout tout de suite.
 
 ### Español (es)
 
@@ -254,10 +427,10 @@ Deux vrais restaurants sont inclus en exemple : essayez tout sans vous connecter
 • Los platos sin foto reciben una imagen generada por IA (marcada como tal). Búsqueda, etiquetas vegetariano / marisco / cerdo / ternera / cordero, y 2 o 3 platos recomendados con el motivo.
 • Comidas en grupo: apunta lo que no come cada uno, mira quién pidió qué y marca el pedido sobre la carta para el camarero.
 • 8 idiomas: Español, English, Français, 日本語, 한국어, 简体中文, 繁體中文, हिन्दी.
-• Créditos: inicia sesión con Apple y recibe 300. Una página cuesta unos 8–12 y una imagen de platos (cuatro) unos 0,5. No caducan y puedes comprar más en la app.
+• Créditos: sin registrarte, 300 gratis desde el principio. Una página cuesta unos 8–12 y una imagen de platos (cuatro) unos 0,5. No caducan y puedes comprar más en la app.
 • Privacidad: sin nombre ni correo. Las fotos y el texto de la carta pasan por nuestro servidor hacia la IA solo mientras se leen y no se guardan; el historial queda en tu teléfono.
 
-Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
+Incluye dos restaurantes reales de ejemplo: pruébalo todo al instante.
 
 ### हिन्दी (hi)
 
@@ -279,10 +452,10 @@ Incluye dos restaurantes reales de ejemplo: pruébalo todo sin iniciar sesión.
 • जिन व्यंजनों की फ़ोटो नहीं, उनके लिए AI से बनी तस्वीर (AI लिखा रहता है)। खोज, शाकाहारी / सीफ़ूड / पोर्क / बीफ़ / मटन के निशान, और 2-3 सुझाए गए व्यंजन, कारण के साथ।
 • साथ में ऑर्डर: हर व्यक्ति क्या नहीं खाता, लिखें; किसने क्या ऑर्डर किया, देखें; और वेटर के लिए मेन्यू पर ऑर्डर चिह्नित करें।
 • 8 भाषाएँ: हिन्दी, English, 日本語, 한국어, 简体中文, 繁體中文, Français, Español।
-• क्रेडिट: Apple से साइन इन करें और 300 क्रेडिट पाएँ। एक पेज लगभग 8–12, व्यंजनों की एक तस्वीर (चार) लगभग 0.5। क्रेडिट कभी ख़त्म नहीं होते, ऐप में और ख़रीद सकते हैं।
+• क्रेडिट: साइन इन की ज़रूरत नहीं, शुरू से 300 क्रेडिट। एक पेज लगभग 8–12, व्यंजनों की एक तस्वीर (चार) लगभग 0.5। क्रेडिट कभी ख़त्म नहीं होते, ऐप में और ख़रीद सकते हैं।
 • निजता: नाम या ईमेल नहीं चाहिए। मेन्यू की फ़ोटो और टेक्स्ट केवल पढ़ते समय हमारे सर्वर से AI तक जाते हैं, सहेजे नहीं जाते; इतिहास आपके फ़ोन पर ही रहता है।
 
-दो असली रेस्टोरेंट के उदाहरण शामिल हैं — बिना साइन इन किए सब आज़माएँ।
+दो असली रेस्टोरेंट के उदाहरण शामिल हैं — तुरंत सब आज़माएँ।
 
 ---
 

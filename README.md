@@ -105,8 +105,8 @@ Key files:
 | `MenuLens/Sources/Services/OpenAIClient.swift` | Chat Completions + strict JSON Schema（模型输出直接 decode 成 `MenuDocument`） |
 | `MenuLens/Sources/Services/ImageUtilities.swift` | EXIF 方向归一、上传压缩、按归一化 bbox 裁剪配图 |
 | `MenuLens/Sources/Services/BackendClient.swift` | 后端地址、请求构造、401/402 错误映射 |
-| `MenuLens/Sources/Services/AccountStore.swift` | Apple 登录换 session token、点数余额、退出 / 删除账号 |
-| `MenuLens/Sources/Services/KeychainStore.swift` | session token 存 Keychain |
+| `MenuLens/Sources/Services/AccountStore.swift` | 本机账号（首次启动自动建）、可选的 Apple 登录（并入 Apple 账号）、session、点数余额、退出 / 删除账号 |
+| `MenuLens/Sources/Services/KeychainStore.swift` | session token 和本机账号凭证存 Keychain（仅本机、不同步，重装还在） |
 | `MenuLens/Sources/PDF/MenuPDFRenderer.swift` | 版式页 + 附录页的 PDF 渲染 |
 | `MenuLens/Sources/Views/` | SwiftUI：主流程、结果页、逐词对照 FlowLayout、设置页、相机 |
 | `MenuLens/Sources/Localization/Localization.swift` | `L("key")` + `AppLanguage`：按 App 内选择加载 `.lproj`，见上面 Language 一节 |
@@ -124,19 +124,21 @@ xcodegen generate        # 生成 MenuLens.xcodeproj（不进 git）
 open MenuLens.xcodeproj
 ```
 
-Xcode 里选一个模拟器或真机运行。识别新菜单需要先用 Apple 登录（主界面卡片或
-设置页 →「账号」）；不登录也能看内置示例菜单。模拟器里没法真的走 Apple 登录时，
-DEBUG 构建可以用启动参数 `-sessionToken <token>` 直接塞一个 session token
-（`-signOut` 清掉），开发 token 的签发方法见 `backend/README.md`。
+Xcode 里选一个模拟器或真机运行。不需要登录：首次启动自动建一个本机账号（`POST /auth/anonymous`，
+送 300 点），Apple 登录是可选的（设置页 →「账号」）。DEBUG 构建可以用启动参数
+`-sessionToken <token>` 直接塞一个 session token，`-signOut` 清掉 session 和本机账号（等于全新安装），
+`-backendURL http://127.0.0.1:8787/menu` 指向本地后端（还没部署的路由做冒烟测试用）。
+开发 token 的签发方法见 `backend/README.md`。⚠️ 模拟器上测 Keychain 要用**签名**的构建：
+`CODE_SIGNING_ALLOWED=NO` 的包没有钥匙串权限，每次启动都会当成新设备再建一个账号。
 
 ## Backend
 
 App 不再用用户自己的 OpenAI key。所有模型调用都走我们自己的后端（`backend/`，
-一个 AWS Lambda）：Sign in with Apple → 我们的 session token → 按点数计费 → 用我们的
+一个 AWS Lambda）：本机账号（或可选的 Sign in with Apple）→ 我们的 session token → 按点数计费 → 用我们的
 key 转发给 OpenAI。`POST /menu` 接收的就是 App 原来发给 Chat Completions 的请求体并
 原样流回 SSE，`POST /image` 生成配图；余额不足返回 **402**，session 失效返回 **401**。
 新账号送 300 点，之后在 App 内商店买（StoreKit 2 消耗型商品，见 `CreditShop.swift`；
-`POST /purchase` 验证交易后才 finish）。1.2 起另有会员订阅（月 / 季 / 年，`SubscriptionStoreView`，`POST /subscription` + App Store Server Notifications）：会员识别和配图不扣点（每月约 600 点合理使用），每月再送 50 点。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。
+`POST /purchase` 验证交易后才 finish）。1.2 起另有会员订阅（月 / 季 / 年，`SubscriptionStoreView`，`POST /subscription` + App Store Server Notifications）：会员识别和配图不扣点（每月约 600 点合理使用），每月再送 50 点。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。1.1 (4) 起没有兑换码（App Review 3.1.1），送点数用 App Store 优惠码。
 接口、计价和部署见 [`backend/README.md`](backend/README.md)。
 
 ## Notes

@@ -26,17 +26,19 @@
 把手机递给服务员。支持中文（简体）、English、日本語、한국어、Français、Español、हिन्दी 七种语言。</p>
 
 <h2>账号与点数</h2>
-<p>识别新菜单需要用 <strong>Apple 登录</strong>（不要姓名、不要邮箱）。新账号送
+<p><strong>不需要登录</strong>：第一次打开时 App 自动给这台设备建一个本机账号，新账号送
 <strong>300 点</strong>，用完可以在 App 里的商店（设置页 →「账号」→「买点数」）通过 Apple 购买：
-100 点 $0.99、500 点 $4.99、2000 点 $19.99（美区价格）。点数永不过期。不需要你自己的 OpenAI API Key。</p>
+100 点 $0.99、500 点 $4.99、2000 点 $19.99（美区价格）。点数永不过期。不需要你自己的 OpenAI API Key。
+想在其他设备上用同一份余额，可以在 设置 →「账号」里用 Apple 登录（可选，不要姓名、不要邮箱），
+本机的余额会并入你的 Apple 账号。有 App Store 优惠码的话，在商店页点「兑换 App Store 优惠码」。</p>
 
 <h2>一份菜单要花多少点</h2>
 <p>一页菜单约 <strong>6–12 点</strong>，取决于菜单的密度和你选的模型。为没有照片的菜生成配图另计：
 拼图模式一张四宫格（四道菜）约 2–3 点。设置页的「账号」里能看到余额。</p>
 
 <h2>不登录能用吗</h2>
-<p>可以。App 内置两家真实餐厅的完整示例，点主界面左上角的时钟图标即可查看，
-所有功能（缩放画布、菜品列表、多人点单、标注给服务员看、导出 PDF）都能体验。</p>
+<p>可以，所有功能都不需要登录：识别菜单、商店、购买和会员都直接用本机账号。
+App 还内置两家真实餐厅的完整示例，点主界面左上角的时钟图标即可查看。</p>
 
 <h2>照片会被发到哪里</h2>
 <p>发到我们的服务器，再由服务器转交 OpenAI 翻译，且只在你点「识别并翻译」时。
@@ -44,11 +46,11 @@
 你可以拒绝，也可以随时在设置页关闭。详见 <a href="privacy-policy.html">隐私政策</a>。</p>
 
 <h2>怎么删除账号</h2>
-<p>设置页 →「账号」→「删除账号」。账号和余额会从服务器上删除；手机上的翻译记录不受影响。</p>
+<p>设置页 →「账号」→「删除账号」（本机账号和 Apple 账号都可以删）。账号和余额会从服务器上删除；手机上的翻译记录不受影响。</p>
 
 <h2>常见问题</h2>
 <ul>
-  <li><strong>识别失败 / 报错</strong>：先看设置页的余额是否够用；提示登录过期就重新用 Apple 登录。报错原文会显示在 App 里，把它连同截图发给我们。</li>
+  <li><strong>识别失败 / 报错</strong>：先看设置页的余额是否够用；提示 Apple 登录过期就在设置页重新登录。报错原文会显示在 App 里，把它连同截图发给我们。</li>
   <li><strong>翻译得不准</strong>：设置页可以换模型；gpt-5 最准但最慢。菜单照片拍正、拍清楚也能明显提升效果。</li>
   <li><strong>想换界面语言</strong>：设置页里的「语言」开关同时切换界面语言和翻译目标语言。</li>
   <li><strong>历史记录存在哪</strong>：全部在你手机本地。删除记录或卸载 App 即彻底清除。</li>
@@ -72,11 +74,13 @@ spacing preserved. Dish names stay bilingual, so you can hand the phone to your 
 Seven languages: 中文（简体）, English, 日本語, 한국어, Français, Español, हिन्दी.</p>
 
 <h2 class="en">Account and credits</h2>
-<p class="en">Scanning a new menu needs <strong>Sign in with Apple</strong> (no name, no email). New
-accounts get <strong>300 free credits</strong>; after that, buy more through Apple in the in-app shop
+<p class="en"><strong>No sign-in needed</strong>: on first launch the app opens an account for this
+device. New accounts get <strong>300 free credits</strong>; after that, buy more through Apple in the in-app shop
 (Settings → Account → Buy credits): 100 credits for $0.99, 500 for $4.99, 2000 for $19.99 (US prices).
 Credits never expire. You do not
-need your own OpenAI API key.</p>
+need your own OpenAI API key. To use the same balance on other devices, sign in with Apple in
+Settings → Account (optional; no name, no email) and the device's balance moves into your Apple account.
+Have an App Store offer code? Tap "Redeem App Store Offer Code" in the shop.</p>
 
 <h2 class="en">What does a menu cost?</h2>
 <p class="en">About <strong>6–12 credits</strong> a page, depending on how dense the menu is and which
@@ -84,9 +88,9 @@ model you pick. Generated dish photos are extra: in collage mode one 2×2 pictur
 2–3 credits. Your balance is under Settings → Account.</p>
 
 <h2 class="en">Can I use it without signing in?</h2>
-<p class="en">Yes. Two complete real restaurant menus are bundled — tap the clock icon at the
-top left of the home screen. Every feature works on them: the zoomable in-place canvas, the
-dish list, group ordering, annotating the menu for your server, and PDF export.</p>
+<p class="en">Yes — nothing needs signing in: scanning, the shop, purchases and the membership all
+use the device account. Two complete real restaurant menus are bundled too — tap the clock icon at the
+top left of the home screen.</p>
 
 <h2 class="en">Where do my photos go?</h2>
 <p class="en">To our server, which passes them to OpenAI for the translation — and only when you tap
@@ -95,13 +99,13 @@ and states exactly what will be sent; you can decline, and you can withdraw the 
 in Settings. See the <a href="privacy-policy.html">privacy policy</a>.</p>
 
 <h2 class="en">How do I delete my account?</h2>
-<p class="en">Settings → Account → Delete account. The account and its balance are removed from our
+<p class="en">Settings → Account → Delete account (device or Apple account). The account and its balance are removed from our
 server; the translations on your phone stay.</p>
 
 <h2 class="en">Troubleshooting</h2>
 <ul class="en">
   <li><strong>Scan fails or errors</strong>: check your balance in Settings; if the app says your
-      sign-in expired, sign in with Apple again. The error text is shown in the app — send it to us
+      Apple sign-in expired, sign in again in Settings. The error text is shown in the app — send it to us
       with a screenshot.</li>
   <li><strong>Translation is off</strong>: try another model in Settings; gpt-5 is the most
       accurate and the slowest. A straight, sharp photo also helps a lot.</li>

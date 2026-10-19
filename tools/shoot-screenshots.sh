@@ -3,11 +3,14 @@
 #
 #   SESSION_TOKEN=<dev token> IPAD=0 tools/shoot-screenshots.sh <device-udid> <out-root> <path-to-.app> en zh-Hans fr ko
 #   SESSION_TOKEN=<dev token> IPAD=1 ...   (iPad: no 06_server shot)
+#   SHOTS="04 05" IPAD=1 ...               only these shots (04 and 05 need no SESSION_TOKEN)
+#   BACKEND_URL=http://127.0.0.1:8787/menu ...   where 05's fresh install opens its device account
 #
 # Needs a DEBUG build — the launch-argument hooks it drives are #if DEBUG.
-# SESSION_TOKEN is a short-lived dev session (backend/README.md): every shot
-# but the sign-in card is taken signed in (04_account's balance and history
-# are made up, -demoUsage). Nothing here sends a menu anywhere —
+# SESSION_TOKEN is a short-lived dev session (backend/README.md) for 01–03
+# and 06. 04_account shows a device account ("not signed in") with made-up
+# history (-demoUsage, and a session built here that is never sent anywhere);
+# 05_start is a fresh install's home screen — no sign-in step since 1.1 (4). Nothing here sends a menu anywhere —
 # the shots use the bundled samples, so they cost no credits.
 #
 # Per language: uninstall (wipes the sandbox so the samples re-seed in that
@@ -15,7 +18,13 @@
 set -u
 DEV="$1"; OUTROOT="$2"; APP="$3"; shift 3
 VIEWS_IPAD="${IPAD:-0}"
-TOKEN="${SESSION_TOKEN:?set SESSION_TOKEN to a dev session token}"
+SHOTS="${SHOTS:-01 02 03 04 05 06}"
+want() { [[ " ${SHOTS} " == *" $1 "* ]]; }
+if want 01 || want 02 || want 03 || want 06; then TOKEN="${SESSION_TOKEN:?set SESSION_TOKEN to a dev session token}"; fi
+# A device-account session for 04: unsigned, only its claims are read (anon:…).
+b64url() { base64 | tr '+/' '-_' | tr -d '=\n'; }
+DEMO_TOKEN="$(printf '{"alg":"HS256","typ":"JWT"}' | b64url).$(printf '{"iss":"foreignmenu","sub":"anon:00000000-demo","exp":%d}' $(( $(date +%s) + 30*86400 )) | b64url).demo"
+BACKEND=(); [ -n "${BACKEND_URL:-}" ] && BACKEND=(-backendURL "${BACKEND_URL}")
 BID=ai.xiangyang.MenuLens
 
 # Set the status bar explicitly rather than trusting whatever the device
@@ -78,41 +87,53 @@ run()  {
 
 for LANG in "$@"; do
   OUT="$OUTROOT/$LANG"; mkdir -p "$OUT"
-  rm -f "$OUT"/*.png
+  for s in $SHOTS; do rm -f "$OUT/${s}_"*.png; done
   device_language "$LANG"
   xcrun simctl terminate "$DEV" $BID >/dev/null 2>&1
   xcrun simctl uninstall "$DEV" $BID >/dev/null 2>&1
   xcrun simctl install "$DEV" "$APP" >/dev/null 2>&1
 
   # Seed the samples (and their AI marking) once before the timed shots.
-  run -sessionToken "$TOKEN"
+  run -sessionToken "${TOKEN:-$DEMO_TOKEN}" -demoUsage
   sleep 8
 
+  if want 01; then
   # 01 canvas — hero: the in-place translated menu, order marked for two diners
   run -sessionToken "$TOKEN" -openLatest -demoCart
   sleep 20; shot "$OUT/01_canvas.png"
+  fi
+  if want 02; then
 
   # 02 list — "Worth ordering", AI-badged dish pictures, member chips
   run -sessionToken "$TOKEN" -openLatest -listMode -demoCart
   sleep 16; shot "$OUT/02_list.png"
+  fi
+  if want 03; then
 
   # 03 pages — a two-page menu half in: page 1 readable, page 2 still translating
   run -sessionToken "$TOKEN" -demoReceiving
   sleep 16; shot "$OUT/03_pages.png"
+  fi
 
-  # 04 account — Settings: balance, credit history, Buy credits / Redeem code.
-  # -demoUsage: a plausible month of history instead of the dev account's own.
+  if want 04; then
+  # 04 account — Settings: "not signed in (this device's account)", balance,
+  # credit history, Buy credits, the optional Sign in with Apple.
+  # -demoUsage: a plausible month of history, nothing sent to the server.
   # (the home screen shows behind the sheet on iPad: toggle at its default)
-  IMAGES="-generate_dish_images YES" run -sessionToken "$TOKEN" -grantConsent -demoUsage -showSettings
+  IMAGES="-generate_dish_images YES" run -sessionToken "$DEMO_TOKEN" -grantConsent -demoUsage -showSettings
   sleep 10; shot "$OUT/04_account.png"
+  fi
 
-  # 05 sign-in — the start screen as a new user sees it. -noImages is stored
-  # as the toggle's value, so show the default (on) instead; nothing is
-  # opened here, so nothing gets generated.
-  IMAGES="-generate_dish_images YES" run -signOut
-  sleep 8; shot "$OUT/05_signin.png"
+  if want 05; then
+  # 05 start — a fresh install's home screen: no sign-in, ready to scan.
+  # -noImages is stored as the toggle's value, so show the default (on)
+  # instead; nothing is opened here, so nothing gets generated.
+  rm -f "$OUT/05_signin.png"  # before 1.1 (4): the mandatory sign-in card
+  IMAGES="-generate_dish_images YES" run -signOut "${BACKEND[@]}"
+  sleep 8; shot "$OUT/05_start.png"
+  fi
 
-  if [ "$VIEWS_IPAD" = "0" ]; then
+  if [ "$VIEWS_IPAD" = "0" ] && want 06; then
     # 06 server — the untouched original menu with the order marked on it
     run -sessionToken "$TOKEN" -openLatest -showOriginal -demoCart
     sleep 20; shot "$OUT/06_server.png"
