@@ -6,9 +6,8 @@ import SwiftUI
 /// their membership and this month's fair-use meter.
 struct CreditsCard: View {
     @ObservedObject var account: AccountStore
-    /// Open the shop / the redeem-code sheet; the card has no sheets of its own.
+    /// Open the shop; the card has no sheets of its own.
     var onBuy: (() -> Void)?
-    var onRedeem: (() -> Void)?
     @State private var mode = Mode.balance
 
     enum Mode: CaseIterable, Identifiable {
@@ -49,25 +48,11 @@ struct CreditsCard: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             chart.frame(height: 120)
-            // Side by side when both labels fit; stacked otherwise ("Acheter
-            // des crédits" / "Utiliser un code" don't, on a phone).
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) { actionButtons }
-                VStack(spacing: 8) { actionButtons }
+            if let onBuy {
+                Button(action: onBuy) { buttonLabel(L("shop.buy"), icon: "cart.badge.plus") }
+                    // Bordered buttons keep their own hit areas inside the Form row.
+                    .buttonStyle(.bordered)
             }
-            // Bordered buttons keep their own hit areas inside the Form row.
-            .buttonStyle(.bordered)
-        }
-    }
-
-    /// Icon + text spelled out rather than a Label: inside ViewThatFits a
-    /// Label measured at its ideal size dropped to icon-only.
-    @ViewBuilder private var actionButtons: some View {
-        if let onBuy {
-            Button(action: onBuy) { buttonLabel(L("shop.buy"), icon: "cart.badge.plus") }
-        }
-        if let onRedeem {
-            Button(action: onRedeem) { buttonLabel(L("redeem.button"), icon: "ticket") }
         }
     }
 

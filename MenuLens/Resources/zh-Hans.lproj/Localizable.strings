@@ -9,11 +9,6 @@
 "list.separator" = "、";
 "page.number" = "第 %d 页";
 
-/* MARK: - First run */
-"onboarding.title" = "用 Apple 登录后即可识别新菜单";
-"onboarding.body" = "新账号送 300 点（一页菜单约 8–12 点），用完可以在商店里买。现在也可以直接翻看内置的两份真实餐厅菜单。";
-"onboarding.viewSamples" = "看内置菜单";
-
 /* MARK: - Home */
 "home.headline" = "拍下菜单，得到同版式的对照 PDF";
 "home.subheadline" = "支持多页 · 自动配图 · 任意语言 · 本地保存";
@@ -130,7 +125,7 @@
 "consent.sent.names" = "菜名 —— 仅当你要求 AI 生成配图时";
 "consent.kept.header" = "永远不离开这台手机";
 "consent.kept.body" = "所有翻译记录，以及同行成员的姓名和头像。";
-"consent.retention" = "我们的服务器不保存菜单照片和文字，只记录匿名的 Apple 账号 ID、点数余额和用量统计。OpenAI 会短期保留 API 数据用于滥用监控。";
+"consent.retention" = "我们的服务器不保存菜单照片和文字，只记录匿名账号 ID、点数余额和用量统计。OpenAI 会短期保留 API 数据用于滥用监控。";
 "consent.policy" = "查看隐私政策";
 "consent.agree" = "同意并继续";
 "consent.decline" = "暂不";
@@ -157,9 +152,16 @@
 "settings.account.delete.message" = "账号和余额会从我们的服务器上删除，无法恢复。这台手机上的历史记录不受影响。";
 "settings.account.delete.confirm" = "删除账号";
 "settings.account.footer" = "新账号送 300 点，之后可以在商店里买，点数永不过期。一页菜单约 8–12 点，一张配图或一张四宫格约 0.5 点。";
-"settings.account.signedOut.footer" = "识别新菜单需要一个账号。只使用匿名的 Apple 账号 ID，不要姓名、不要邮箱。新账号送 300 点。";
-"error.signInRequired" = "请先用 Apple 登录（设置 → 账号）再识别新菜单。";
-"error.sessionExpired" = "登录已过期，请重新用 Apple 登录。";
+"account.merged" = "这台设备的余额已移到你的 Apple 账号，在 设置 → 账号 里用 Apple 登录即可继续使用。";
+"settings.account.linked" = "已用 Apple 登录，这台设备的 %d 点已并入你的账号。";
+"settings.account.signOut.message" = "余额留在你的 Apple 账号里，重新登录就能继续使用。退出后，这台设备改用一个新的本机账号（0 点）。";
+"settings.account.signOut.title" = "要退出登录吗？";
+"settings.account.anonymous.footer" = "不用登录：这台设备自动有一个本机账号，新账号送 300 点，余额、购买和会员都记在这个账号上，重装 App 也还在。用 Apple 登录是可选的，登录后余额跟着 Apple 账号走。我们不要姓名和邮箱。";
+"settings.account.appleHint" = "登录后可在其他设备上使用余额";
+"settings.account.apple" = "已用 Apple 登录";
+"settings.account.anonymous" = "未登录（本机账号）";
+"error.signInRequired" = "还没连上我们的服务器，请检查网络后再试。";
+"error.sessionExpired" = "Apple 登录已过期，请在 设置 → 账号 里重新登录以使用你的余额。";
 "error.outOfCredits" = "点数不够：这次大约需要 %1$d 点，余额 %2$d 点。可以在商店里买点数。";
 "error.signInFailed" = "登录失败：%@";
 "notice.imagesStopped" = "配图已停止：%@";
@@ -181,10 +183,10 @@
 "shop.buy" = "买点数";
 "shop.header" = "点数包";
 "shop.footer" = "通过 Apple 付款。点数用来识别菜单和生成配图，买的点数永不过期。打开已保存的菜单和示例菜单不花点数。";
+"shop.offerCode" = "兑换 App Store 优惠码";
 "shop.loading" = "正在读取商品…";
 "shop.unavailable" = "商品还没上架。";
 "shop.loadFailed" = "读不到商品：%@";
-"shop.signInFirst" = "请先用 Apple 登录。";
 "shop.noServer" = "连不上服务器，请稍后再试。";
 "shop.pending" = "等待确认（比如家长同意），确认后点数会自动到账。";
 "shop.purchaseFailed" = "购买没有完成：%@";
@@ -209,19 +211,6 @@
 "member.welcome" = "会员已开通，谢谢支持！";
 "member.notActivated" = "已订阅，但会员还没开通：%@。下次打开 App 时会自动补上。";
 "member.unavailable" = "这里暂时还不能开通会员。";
-
-/* MARK: - Redeem codes */
-"redeem.button" = "兑换码";
-"redeem.title" = "兑换码";
-"redeem.placeholder" = "输入兑换码";
-"redeem.footer" = "每个兑换码每个账号只能用一次。大小写和空格不影响。";
-"redeem.action" = "兑换";
-"redeem.success" = "已兑换「%1$@」：+%2$d 点";
-"redeem.error.not_found" = "没有这个兑换码，请检查拼写。";
-"redeem.error.inactive" = "这个兑换码目前不可用。";
-"redeem.error.expired" = "这个兑换码已过期。";
-"redeem.error.used_up" = "这个兑换码已被领完。";
-"redeem.error.already_redeemed" = "你已经兑换过这个兑换码了。";
 
 /* MARK: - Models by App Store region */
 "settings.model.footer.regional" = "你所在的地区由 Mistral Large 3 翻译菜单：一页密排菜单约 40 秒、约 3 点。";

@@ -86,10 +86,9 @@ struct ContentView: View {
             // Automation hooks for headless simulator verification:
             //   -loadSample       load the demo menu on launch
             //   -autoPDF          also dump the rendered PDF into Documents
-            //   -sessionToken <t> store a backend session token (signed in)
-            //   -signOut          forget the session (first-run onboarding)
+            //   -sessionToken <t> store a backend session token (device or Apple account)
+            //   -signOut          forget the session and the device account (a fresh install)
             //   -delayPage <i> <s> hold page i back s seconds (half-arrived result)
-            //   -redeem <code>    with -showSettings: open Redeem code and submit it
             //   -demoReceiving    newest multi-page scan, shown with its last page pending
             //   -demoUsage        a made-up month of credit history (Settings → Account)
             //   -demoMembership   with -demoUsage: a member (87 of 600 used this month);
@@ -146,11 +145,8 @@ struct ContentView: View {
                 if args.contains("-grantConsent") {
                     aiConsentGranted = true
                 }
-                // Keychain items outlive an app uninstall, so first-run
-                // onboarding needs an explicit way to reproduce.
-                if args.contains("-signOut") {
-                    account.signOut()
-                }
+                // -signOut is applied in AccountStore.init, before the first
+                // session is opened.
                 func analyzeAndDump(_ photos: [UIImage]) {
                     Task { @MainActor in
                         await viewModel.appendPhotos(photos)
@@ -359,7 +355,11 @@ struct ContentView: View {
                 viewModel.history.seedBundledSamplesIfNeeded()
                 viewModel.history.labelGeneratedImagesIfNeeded()
             }
-            .task { await account.refreshCredits() }
+            .task {
+                // First launch: open the device account (no sign-in step).
+                await account.ensureSession()
+                await account.refreshCredits()
+            }
             .onChange(of: photosItems) {
                 let items = photosItems
                 guard !items.isEmpty else { return }
@@ -382,37 +382,14 @@ struct ContentView: View {
 
     private var startScreen: some View {
         VStack(spacing: 16) {
-            if !account.isSignedIn {
-                // First run (or a lapsed session): say what is needed before
-                // anything can be scanned, and offer the sample menus as the
-                // way to look around in the meantime.
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L("onboarding.title"))
-                        .font(.subheadline.weight(.semibold))
-                    Text(L("onboarding.body"))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    if let message = account.message {
-                        Text(message)
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                    }
-                    AppleSignInButton()
-                        .padding(.top, 2)
-                    Button {
-                        showHistory = true
-                    } label: {
-                        Label(L("onboarding.viewSamples"), systemImage: "clock.arrow.circlepath")
-                    }
+            // A lapsed Apple session or a move to the Apple account: say so
+            // (Settings → Account has the Apple button). Nothing here blocks.
+            if let message = account.message {
+                Label(message, systemImage: "info.circle")
                     .font(.footnote)
-                    .controlSize(.small)
-                    .frame(maxWidth: .infinity)
-                }
-                .padding(14)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal)
-                .padding(.top, 8)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
             }
 
             Spacer()
@@ -460,14 +437,12 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!account.isSignedIn)
 
                 PhotosPicker(selection: $photosItems, maxSelectionCount: 8, matching: .images) {
                     Label(L("home.library"), systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!account.isSignedIn)
             }
             .padding(.horizontal)
 
@@ -507,7 +482,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(viewModel.pickedImages.isEmpty || !account.isSignedIn)
+                .disabled(viewModel.pickedImages.isEmpty)
                 .padding(.horizontal)
             } else {
                 // No model may run for this App Store region: say so where
@@ -520,13 +495,11 @@ struct ContentView: View {
                     .padding(.horizontal)
             }
 
-            if account.isSignedIn {
-                Button(L("home.samples")) {
-                    showHistory = true
-                }
-                .font(.footnote)
-                .padding(.top, 4)
+            Button(L("home.samples")) {
+                showHistory = true
             }
+            .font(.footnote)
+            .padding(.top, 4)
 
             Spacer().frame(height: 24)
         }

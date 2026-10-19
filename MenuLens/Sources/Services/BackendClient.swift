@@ -4,12 +4,25 @@ import Foundation
 /// their credit balance and relays menu and image requests to OpenAI with
 /// our key — so the app never needs the user's own OpenAI key.
 enum Backend {
-    static let baseURL = URL(string: "https://uwondrk7ngmf3jgkimsifwa62q0fwgzo.lambda-url.us-west-2.on.aws")!
+    /// CloudFront sends `/menu/*` to the ForeignMenu Lambda, which strips the
+    /// prefix (so `…/menu/credits` is GET /credits and `…/menu/menu` the scan
+    /// route). Builds before 1.1 (4) called the Lambda's Function URL directly.
+    static let baseURL: URL = {
+        #if DEBUG
+        // `-backendURL <url>`: a local server (smoke tests of routes that
+        // aren't deployed yet).
+        let args = ProcessInfo.processInfo.arguments
+        if let index = args.firstIndex(of: "-backendURL"), index + 1 < args.count, let url = URL(string: args[index + 1]) {
+            return url
+        }
+        #endif
+        return URL(string: "https://api.chuanbei.dev/menu")!
+    }()
 
     enum BackendError: LocalizedError {
-        /// No session token on this phone yet.
+        /// No session yet: the device account couldn't be opened (offline).
         case signInRequired
-        /// The server rejected the session token (401): sign in again.
+        /// The server rejected the session token (401); the app renews it.
         case sessionExpired
         /// 402: the request costs more than the balance.
         case outOfCredits(balance: Int, needed: Int)
@@ -53,8 +66,8 @@ enum Backend {
 
     /// Turns a non-2xx answer into an error. Errors look like
     /// `{error: {message, …}}`; a 402 also carries the balance and what the
-    /// request needed. A 401 on a signed-in request means the session is
-    /// gone, so the app drops to the signed-out state right away.
+    /// request needed. A 401 on a request with a session means the session
+    /// is gone, so the app renews it right away (AccountStore.sessionDidExpire).
     static func failure(status: Int, body: Data, signsOutOn401: Bool = true) -> BackendError {
         let object = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any]
         let detail = object?["error"] as? [String: Any]
@@ -64,7 +77,8 @@ enum Backend {
         }
         switch status {
         case 401 where signsOutOn401:
-            Task { @MainActor in AccountStore.shared.sessionDidExpire() }
+            let reason = (object?["reason"] ?? detail?["reason"]) as? String
+            Task { @MainActor in AccountStore.shared.sessionDidExpire(reason: reason) }
             return .sessionExpired
         case 402:
             return .outOfCredits(balance: whole("totalCredits"), needed: whole("needed"))

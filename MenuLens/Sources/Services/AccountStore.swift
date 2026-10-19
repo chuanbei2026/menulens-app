@@ -1,8 +1,17 @@
 import Foundation
 
-/// The signed-in account: the session token (Keychain) and the credit
-/// balance the server last reported. Scanning needs a session; the bundled
-/// samples and saved history work without one.
+/// The account: the session token (Keychain) and the credit balance the
+/// server last reported.
+///
+/// Nobody has to sign in (App Review 5.1.1(v)). On first launch the app opens
+/// an anonymous **device account** (POST /auth/anonymous: 300 free credits)
+/// and keeps its credentials in the Keychain, so scanning, the shop, purchases
+/// and the membership all work at once, and reinstalling finds the same
+/// account. Sign in with Apple is optional: it moves the device account into
+/// the Apple account (POST /auth/apple/link), whose balance then follows the
+/// Apple ID to other devices. Signing out of Apple returns to the device's own
+/// account — a new, empty one, since its balance went to the Apple account
+/// (the server never gives a device the signup credits twice).
 @MainActor
 final class AccountStore: ObservableObject {
     static let shared = AccountStore()
@@ -19,47 +28,146 @@ final class AccountStore: ObservableObject {
     @Published var message: String?
     @Published private(set) var isBusy = false
 
-    var isSignedIn: Bool { !sessionToken.isEmpty }
+    /// What happened that the user should know (the balance moved over).
+    @Published var notice: String?
+
+    /// Whether there is a session at all (device or Apple account).
+    var hasSession: Bool { !sessionToken.isEmpty }
+    /// Signed in with Apple, rather than on the device account. Read from the
+    /// session's own claims ("apple:<sub>" / "anon:<uuid>").
+    var isAppleAccount: Bool { Self.claims(of: sessionToken)?.sub.hasPrefix("apple:") == true }
 
     private init() {
         KeychainStore.removeLegacyAPIKey()
+        #if DEBUG
+        // Keychain items outlive an app uninstall, so a first launch needs an
+        // explicit way to reproduce — before anything opens a session.
+        if ProcessInfo.processInfo.arguments.contains("-signOut") { forgetEverything() }
+        #endif
     }
 
-    /// Exchanges a Sign in with Apple identity token for our session token.
-    /// The first sign-in creates the account with its starting credits. The
-    /// authorization code, when Apple gives one, lets the server revoke the
-    /// authorization when the account is deleted.
+    /// Sign in with Apple. From the device account the server moves it into
+    /// the Apple account (a new Apple ID gets it as is, no second 300; an
+    /// existing one has the balance added) and answers with the Apple
+    /// account's session. The authorization code, when Apple gives one, lets
+    /// the server revoke the authorization when the account is deleted.
     func signIn(identityToken: String, authorizationCode: String? = nil) async {
         isBusy = true
         defer { isBusy = false }
+        let body = ["identityToken": identityToken, "authorizationCode": authorizationCode].compactMapValues { $0 }
         do {
-            let request = Backend.request(
-                "auth/apple", method: "POST", token: "",
-                json: ["identityToken": identityToken, "authorizationCode": authorizationCode]
-                    .compactMapValues { $0 }
-            )
-            // A 401 here is Apple's token being rejected, not an expired
-            // session — report it as a failed sign-in.
-            let reply = try await Backend.send(request, signsOutOn401: false)
+            var reply: [String: Any]
+            if hasSession, !isAppleAccount {
+                do {
+                    reply = try await Backend.send(Backend.request("auth/apple/link", method: "POST", token: sessionToken, json: body),
+                                                   signsOutOn401: false)
+                } catch Backend.BackendError.http(401, _) where !isDemo {
+                    // The device session lapsed: renew it and link once more.
+                    await openDeviceSession()
+                    reply = try await Backend.send(Backend.request("auth/apple/link", method: "POST", token: sessionToken, json: body),
+                                                   signsOutOn401: false)
+                }
+            } else {
+                // A 401 here is Apple's token being rejected, not an expired
+                // session — report it as a failed sign-in.
+                reply = try await Backend.send(Backend.request("auth/apple", method: "POST", token: "", json: body), signsOutOn401: false)
+            }
             guard let token = reply["token"] as? String, !token.isEmpty else {
                 throw Backend.BackendError.http(200, "no token")
             }
             setSession(token)
+            if let moved = (reply["movedCredits"] as? NSNumber)?.intValue, moved > 0 {
+                notice = L("settings.account.linked", moved)
+            }
             await refreshCredits()
         } catch {
             message = L("error.signInFailed", error.localizedDescription)
         }
     }
 
-    func setSession(_ token: String) {
+    /// Makes sure there is a session: the stored one (renewed when it is a
+    /// week old), else the device account's. Launch, every scan and every
+    /// rejected session go through here; concurrent callers share one run.
+    func ensureSession() async {
+        if let renewal { return await renewal.value }
+        let run = Task { await establishSession() }
+        renewal = run
+        await run.value
+        renewal = nil
+    }
+
+    private var renewal: Task<Void, Never>?
+
+    private func establishSession() async {
+        if isDemo { return }
+        if let claims = Self.claims(of: sessionToken) {
+            let now = Date().timeIntervalSince1970
+            if claims.exp > now + 23 * 86400 { return } // under a week old
+            if claims.exp > now + 60, let reply = try? await Backend.send(Backend.request("auth/refresh", method: "POST", token: sessionToken),
+                                                                       signsOutOn401: false),
+               let token = reply["token"] as? String, !token.isEmpty {
+                KeychainStore.saveSessionToken(token)
+                sessionToken = token
+                return
+            }
+            if claims.exp > now { return } // offline: keep it, the server decides
+            if isAppleAccount { message = L("error.sessionExpired") }
+        }
+        await openDeviceSession()
+    }
+
+    /// POST /auth/anonymous with the device account's credentials (none on
+    /// first launch): the session for this device's own account. The server
+    /// answers with new credentials when it opened a new account.
+    private func openDeviceSession() async {
+        let device = KeychainStore.loadDeviceAccount()
+        let body = device.map { ["deviceId": $0.id, "deviceSecret": $0.secret] } ?? [:]
+        do {
+            var reply: [String: Any]
+            do {
+                reply = try await Backend.send(Backend.request("auth/anonymous", method: "POST", token: "", json: body), signsOutOn401: false)
+            } catch Backend.BackendError.http(401, _) where device != nil {
+                // Credentials the server doesn't know (a Keychain restored
+                // from another app install): start afresh.
+                reply = try await Backend.send(Backend.request("auth/anonymous", method: "POST", token: "", json: [String: String]()),
+                                               signsOutOn401: false)
+            }
+            guard let token = reply["token"] as? String, !token.isEmpty else {
+                throw Backend.BackendError.http(200, "no token")
+            }
+            if let id = reply["deviceId"] as? String, let secret = reply["deviceSecret"] as? String {
+                KeychainStore.saveDeviceAccount(id: id, secret: secret)
+            }
+            setSession(token, keepMessage: true)
+        } catch {
+            // Quiet: the next scan (or launch) tries again and says why if
+            // it still can't (error.signInRequired).
+        }
+    }
+
+    /// The claims of one of our session tokens (an HS256 JWT): who and until when.
+    static func claims(of token: String) -> (sub: String, exp: TimeInterval)? {
+        let parts = token.split(separator: ".")
+        guard parts.count == 3 else { return nil }
+        var base64 = parts[1].replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        base64 += String(repeating: "=", count: (4 - base64.count % 4) % 4)
+        guard let data = Data(base64Encoded: base64),
+              let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let sub = json["sub"] as? String
+        else { return nil }
+        return (sub, (json["exp"] as? NSNumber)?.doubleValue ?? 0)
+    }
+
+    func setSession(_ token: String, keepMessage: Bool = false) {
         KeychainStore.saveSessionToken(token)
         sessionToken = token
         credits = nil
-        message = nil
+        if !keepMessage { message = nil }
+        notice = nil
         membership = nil
         cachedPurchaseToken = nil
-        // Purchases paid for while signed out (or before a crash) can be
-        // credited now, and a subscription bought on this Apple ID linked.
+        // Purchases paid for before there was a session (or before a crash)
+        // can be credited now, and a subscription bought on this Apple ID linked.
         CreditShop.shared.retryUnfinished()
         Task { await CreditShop.shared.syncSubscription() }
     }
@@ -92,7 +200,7 @@ final class AccountStore: ObservableObject {
 
     /// The balance and the 30-day history in one call (`GET /usage`).
     func refreshCredits() async {
-        guard isSignedIn else { return }
+        guard hasSession else { return }
         #if DEBUG
         // `-demoUsage`: a plausible month instead of the dev account's own
         // (App Store screenshots of Settings → Account).
@@ -124,7 +232,7 @@ final class AccountStore: ObservableObject {
         #if DEBUG
         if isDemo { return UUID(uuidString: "00000000-0000-4000-A000-000000000000") }
         #endif
-        guard isSignedIn,
+        guard hasSession,
               let reply = try? await Backend.send(Backend.request("credits", token: sessionToken)),
               let text = reply["appAccountToken"] as? String,
               let token = UUID(uuidString: text)
@@ -143,29 +251,6 @@ final class AccountStore: ObservableObject {
     /// The `subscription` object of GET /usage, /credits or POST /subscription.
     func applyMembership(_ json: Any?) {
         if let membership = Membership(json: json) { self.membership = membership }
-    }
-
-    /// Redeems a promotion code (POST /promo/redeem). The server ignores
-    /// case and spaces. Returns what to tell the user; on success the
-    /// balance and chart are refreshed.
-    func redeem(_ code: String) async -> (ok: Bool, message: String) {
-        let request = Backend.request(
-            "promo/redeem", method: "POST", token: sessionToken,
-            json: ["code": code.trimmingCharacters(in: .whitespacesAndNewlines)]
-        )
-        do {
-            let reply = try await Backend.send(request)
-            let credits = (reply["credits"] as? NSNumber)?.intValue ?? 0
-            if let total = reply["totalCredits"] as? NSNumber { applyBalance(total.intValue) }
-            await refreshCredits()
-            return (true, L("redeem.success", reply["code"] as? String ?? code, credits))
-        } catch let Backend.BackendError.http(_, reason)
-            where ["not_found", "inactive", "expired", "used_up", "already_redeemed"].contains(reason) {
-            // The promo errors carry their reason as the message.
-            return (false, L("redeem.error.\(reason)"))
-        } catch {
-            return (false, error.localizedDescription)
-        }
     }
 
     #if DEBUG
@@ -206,7 +291,8 @@ final class AccountStore: ObservableObject {
         return f
     }()
 
-    func signOut() {
+    /// Forgets the session on this device.
+    private func dropSession() {
         KeychainStore.saveSessionToken("")
         sessionToken = ""
         credits = nil
@@ -215,21 +301,50 @@ final class AccountStore: ObservableObject {
         cachedPurchaseToken = nil
     }
 
-    /// The server no longer accepts the session (it expires after 30 days).
-    func sessionDidExpire() {
-        guard isSignedIn else { return }
-        signOut()
-        message = L("error.sessionExpired")
+    /// Signs out of Apple: the balance stays with the Apple account, and this
+    /// device goes back to its own account (a new, empty one — see the type).
+    func signOut() async {
+        dropSession()
+        notice = nil
+        message = nil
+        await ensureSession()
+        await refreshCredits()
+    }
+
+    #if DEBUG
+    /// `-freshInstall`: as a brand-new install, before the first session.
+    func forgetEverything() {
+        dropSession()
+        KeychainStore.forgetDeviceAccount()
+    }
+    #endif
+
+    /// The server no longer accepts the session (401). A device session is
+    /// renewed silently with the device secret; an Apple session that lapsed
+    /// (30 days unused) falls back to the device's account and says to sign
+    /// in again; "merged" means this device account moved into an Apple
+    /// account (a link whose answer never arrived).
+    func sessionDidExpire(reason: String? = nil) {
+        guard hasSession, renewal == nil, !isDemo else { return }
+        let wasApple = isAppleAccount
+        dropSession()
+        message = reason == "merged" ? L("account.merged") : wasApple ? L("error.sessionExpired") : nil
+        Task {
+            await ensureSession()
+            await refreshCredits()
+        }
     }
 
     /// Deletes the account and its credits on the server (App Store
-    /// guideline 5.1.1(v)), then signs out. History stays on the phone.
+    /// guideline 5.1.1(v)) — the device account or the Apple account,
+    /// whichever this is. The device then continues on a new, empty device
+    /// account. History stays on the phone.
     func deleteAccount() async {
         isBusy = true
         defer { isBusy = false }
         do {
             _ = try await Backend.send(Backend.request("account", method: "DELETE", token: sessionToken))
-            signOut()
+            await signOut()
         } catch {
             message = error.localizedDescription
         }

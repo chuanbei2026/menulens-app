@@ -9,11 +9,6 @@
 "list.separator" = ", ";
 "page.number" = "%d페이지";
 
-/* MARK: - First run */
-"onboarding.title" = "Apple로 로그인하면 새 메뉴를 인식할 수 있습니다";
-"onboarding.body" = "새 계정에는 300 크레딧(메뉴 한 페이지에 약 8–12)이 무료로 주어지고, 더 필요하면 상점에서 살 수 있습니다. 지금 바로 내장된 실제 식당 메뉴 2개를 살펴볼 수도 있습니다.";
-"onboarding.viewSamples" = "샘플 보기";
-
 /* MARK: - Home */
 "home.headline" = "메뉴를 찍으면 원래 레이아웃 그대로 번역됩니다";
 "home.subheadline" = "여러 페이지 · 음식 사진 · 다국어 · 기기 내 저장";
@@ -130,7 +125,7 @@
 "consent.sent.names" = "요리 이름 — AI 요리 이미지 생성을 요청한 경우에만";
 "consent.kept.header" = "이 기기를 벗어나지 않는 것";
 "consent.kept.body" = "번역 기록, 그리고 같이 먹는 사람의 이름과 사진.";
-"consent.retention" = "저희 서버는 메뉴 사진이나 글자를 저장하지 않습니다. 익명 Apple 계정 ID, 크레딧 잔액, 사용량 기록만 보관합니다. OpenAI는 오용 감시를 위해 API 데이터를 짧게 보관합니다.";
+"consent.retention" = "저희 서버는 메뉴 사진이나 글자를 저장하지 않습니다. 익명 계정 ID, 크레딧 잔액, 사용량 기록만 보관합니다. OpenAI는 오용 감시를 위해 API 데이터를 짧게 보관합니다.";
 "consent.policy" = "개인정보 처리방침 보기";
 "consent.agree" = "동의하고 계속";
 "consent.decline" = "나중에";
@@ -157,9 +152,16 @@
 "settings.account.delete.message" = "계정과 크레딧이 서버에서 삭제되며 복구할 수 없습니다. 이 기기의 기록은 그대로 남습니다.";
 "settings.account.delete.confirm" = "계정 삭제";
 "settings.account.footer" = "처음에 300 크레딧이 무료로 주어지고, 그 뒤에는 상점에서 살 수 있습니다. 크레딧은 만료되지 않습니다. 메뉴 한 페이지는 약 8–12, 요리 이미지 한 장이나 4개짜리 콜라주는 약 0.5 크레딧입니다.";
-"settings.account.signedOut.footer" = "새 메뉴를 인식하려면 계정이 필요합니다. 익명 Apple 계정 ID만 사용하며 이름이나 이메일은 받지 않습니다. 새 계정에는 300 크레딧이 무료로 주어집니다.";
-"error.signInRequired" = "새 메뉴를 인식하려면 먼저 Apple로 로그인하세요(설정 → 계정).";
-"error.sessionExpired" = "로그인이 만료되었습니다. Apple로 다시 로그인해 주세요.";
+"account.merged" = "이 기기의 잔액이 Apple 계정으로 옮겨졌습니다. 설정 → 계정에서 Apple로 로그인하면 계속 쓸 수 있습니다.";
+"settings.account.linked" = "Apple로 로그인했습니다. 이 기기의 %d 크레딧을 계정으로 옮겼습니다.";
+"settings.account.signOut.message" = "잔액은 Apple 계정에 남아 있으며 다시 로그인하면 쓸 수 있습니다. 로그아웃하면 이 기기는 새 기기 계정(0 크레딧)을 사용합니다.";
+"settings.account.signOut.title" = "로그아웃할까요?";
+"settings.account.anonymous.footer" = "로그인할 필요가 없습니다. 이 기기에는 자동으로 계정이 만들어지고 처음에 300 크레딧이 주어집니다. 잔액, 구매, 멤버십이 이 계정에 기록되며 앱을 다시 설치해도 남아 있습니다. Apple 로그인은 선택 사항이며, 로그인하면 잔액이 Apple ID를 따라갑니다. 이름이나 이메일은 묻지 않습니다.";
+"settings.account.appleHint" = "로그인하면 다른 기기에서도 잔액을 쓸 수 있습니다";
+"settings.account.apple" = "Apple로 로그인됨";
+"settings.account.anonymous" = "로그인 안 함 (이 기기 계정)";
+"error.signInRequired" = "아직 서버에 연결되지 않았습니다. 네트워크를 확인하고 다시 시도해 주세요.";
+"error.sessionExpired" = "Apple 로그인이 만료되었습니다. 잔액을 쓰려면 설정 → 계정에서 다시 로그인하세요.";
 "error.outOfCredits" = "크레딧이 부족합니다: 이번에 약 %1$d이 필요하고 잔액은 %2$d입니다. 상점에서 더 살 수 있습니다.";
 "error.signInFailed" = "로그인 실패: %@";
 "notice.imagesStopped" = "요리 이미지 생성이 중단되었습니다: %@";
@@ -181,10 +183,10 @@
 "shop.buy" = "크레딧 구매";
 "shop.header" = "크레딧 팩";
 "shop.footer" = "결제는 Apple을 통해 이루어집니다. 크레딧은 메뉴 인식과 요리 이미지 생성에 쓰이며, 구매한 크레딧은 만료되지 않습니다. 저장된 메뉴와 샘플은 무료로 열 수 있습니다.";
+"shop.offerCode" = "App Store 오퍼 코드 사용";
 "shop.loading" = "팩을 불러오는 중…";
 "shop.unavailable" = "아직 판매 중인 팩이 없습니다.";
 "shop.loadFailed" = "팩을 불러오지 못했습니다: %@";
-"shop.signInFirst" = "먼저 Apple로 로그인하세요.";
 "shop.noServer" = "서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.";
 "shop.pending" = "승인을 기다리는 중입니다(예: 구매 요청). 승인되면 크레딧이 자동으로 들어옵니다.";
 "shop.purchaseFailed" = "구매가 완료되지 않았습니다: %@";
@@ -209,19 +211,6 @@
 "member.welcome" = "멤버가 되셨습니다. 감사합니다!";
 "member.notActivated" = "구독은 완료되었지만 멤버십이 아직 활성화되지 않았습니다: %@. 다음에 앱을 열 때 자동으로 다시 시도합니다.";
 "member.unavailable" = "이 지역에서는 아직 멤버십을 이용할 수 없습니다.";
-
-/* MARK: - Redeem codes */
-"redeem.button" = "코드 사용";
-"redeem.title" = "교환 코드";
-"redeem.placeholder" = "코드 입력";
-"redeem.footer" = "코드는 계정당 한 번만 사용할 수 있습니다. 대소문자와 공백은 상관없습니다.";
-"redeem.action" = "교환";
-"redeem.success" = "「%1$@」 교환 완료: +%2$d 크레딧";
-"redeem.error.not_found" = "없는 코드입니다. 철자를 확인해 주세요.";
-"redeem.error.inactive" = "현재 사용할 수 없는 코드입니다.";
-"redeem.error.expired" = "만료된 코드입니다.";
-"redeem.error.used_up" = "이 코드는 모두 소진되었습니다.";
-"redeem.error.already_redeemed" = "이미 교환한 코드입니다.";
 
 /* MARK: - Models by App Store region */
 "settings.model.footer.regional" = "현재 지역에서는 Mistral Large 3가 메뉴를 번역합니다: 빽빽한 메뉴 한 페이지에 약 40초, 약 3 크레딧.";

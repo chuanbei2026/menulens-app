@@ -9,11 +9,6 @@
 "list.separator" = ", ";
 "page.number" = "Página %d";
 
-/* MARK: - First run */
-"onboarding.title" = "Inicia sesión con Apple para escanear una carta";
-"onboarding.body" = "Las cuentas nuevas reciben 300 créditos gratis (una página de carta cuesta unos 8–12); puedes comprar más en la tienda. Mientras tanto puedes ver las dos cartas de restaurantes reales ya incluidas.";
-"onboarding.viewSamples" = "Ver ejemplos";
-
 /* MARK: - Home */
 "home.headline" = "Fotografía una carta y recíbela traducida en su sitio";
 "home.subheadline" = "Varias páginas · Fotos de platos · Cualquier idioma · Guardado en el dispositivo";
@@ -130,7 +125,7 @@
 "consent.sent.names" = "Los nombres de los platos, solo si pides imágenes de platos generadas por IA";
 "consent.kept.header" = "Nunca sale de este teléfono";
 "consent.kept.body" = "Tu historial de traducciones y los nombres y fotos de las personas de tu mesa.";
-"consent.retention" = "Nuestro servidor no guarda fotos ni texto de las cartas. Solo conserva un identificador anónimo de Apple, tu saldo de créditos y recuentos de uso. OpenAI conserva brevemente los datos de la API para vigilar abusos.";
+"consent.retention" = "Nuestro servidor no guarda fotos ni texto de las cartas. Solo conserva un identificador de cuenta anónimo, tu saldo de créditos y recuentos de uso. OpenAI conserva brevemente los datos de la API para vigilar abusos.";
 "consent.policy" = "Leer la política de privacidad";
 "consent.agree" = "Aceptar y continuar";
 "consent.decline" = "Ahora no";
@@ -157,9 +152,16 @@
 "settings.account.delete.message" = "Tu cuenta y sus créditos se borran de nuestro servidor y no se pueden recuperar. El historial de este teléfono se queda.";
 "settings.account.delete.confirm" = "Eliminar cuenta";
 "settings.account.footer" = "Empiezas con 300 créditos gratis; después puedes comprar más en la tienda. Los créditos no caducan. Una página de carta cuesta unos 8–12 créditos; una imagen de plato o un collage de cuatro, unos 0,5.";
-"settings.account.signedOut.footer" = "Para escanear una carta nueva hace falta una cuenta. Solo se usa un identificador anónimo de Apple: ni nombre ni correo. Las cuentas nuevas reciben 300 créditos gratis.";
-"error.signInRequired" = "Inicia sesión con Apple primero (Ajustes → Cuenta) para escanear una carta nueva.";
-"error.sessionExpired" = "Tu sesión ha caducado. Vuelve a iniciar sesión con Apple.";
+"account.merged" = "El saldo de este dispositivo pasó a tu cuenta de Apple. Inicia sesión con Apple en Ajustes → Cuenta para seguir usándolo.";
+"settings.account.linked" = "Sesión iniciada con Apple. Créditos traspasados desde este dispositivo: %d.";
+"settings.account.signOut.message" = "Tu saldo se queda en tu cuenta de Apple; vuelve a iniciar sesión para usarlo. Este dispositivo pasará a una nueva cuenta de dispositivo con 0 créditos.";
+"settings.account.signOut.title" = "¿Cerrar sesión?";
+"settings.account.anonymous.footer" = "No hace falta iniciar sesión: este dispositivo tiene su propia cuenta, que empieza con 300 créditos gratis y guarda tu saldo, tus compras y tu suscripción, incluso si reinstalas la app. Iniciar sesión con Apple es opcional y hace que el saldo siga a tu Apple ID. Nunca pedimos tu nombre ni tu correo.";
+"settings.account.appleHint" = "Inicia sesión para usar tu saldo en tus otros dispositivos";
+"settings.account.apple" = "Sesión iniciada con Apple";
+"settings.account.anonymous" = "Sin iniciar sesión (cuenta de este dispositivo)";
+"error.signInRequired" = "Aún no se pudo conectar con nuestro servidor. Revisa tu conexión e inténtalo de nuevo.";
+"error.sessionExpired" = "Tu inicio de sesión con Apple caducó. Vuelve a iniciar sesión en Ajustes → Cuenta para usar tu saldo.";
 "error.outOfCredits" = "No hay créditos suficientes: hacen falta unos %1$d y tu saldo es %2$d. Puedes comprar más en la tienda.";
 "error.signInFailed" = "No se pudo iniciar sesión: %@";
 "notice.imagesStopped" = "Se detuvieron las imágenes de platos: %@";
@@ -181,10 +183,10 @@
 "shop.buy" = "Comprar créditos";
 "shop.header" = "Packs de créditos";
 "shop.footer" = "Se paga a través de Apple. Los créditos sirven para escanear cartas y dibujar imágenes de platos, y los créditos comprados no caducan. Abrir cartas guardadas y los ejemplos no cuesta nada.";
+"shop.offerCode" = "Canjear código de oferta del App Store";
 "shop.loading" = "Cargando packs…";
 "shop.unavailable" = "Los packs aún no están disponibles.";
 "shop.loadFailed" = "No se pudieron cargar los packs: %@";
-"shop.signInFirst" = "Inicia sesión con Apple primero.";
 "shop.noServer" = "No se pudo conectar con el servidor. Inténtalo más tarde.";
 "shop.pending" = "Pendiente de aprobación (por ejemplo, «Solicitar la compra»); los créditos llegarán solos cuando se apruebe.";
 "shop.purchaseFailed" = "La compra no se completó: %@";
@@ -209,19 +211,6 @@
 "member.welcome" = "¡Ya eres suscriptor! Gracias.";
 "member.notActivated" = "Suscrito, pero la suscripción aún no está activa: %@. La app lo volverá a intentar la próxima vez que se abra.";
 "member.unavailable" = "La suscripción aún no está disponible aquí.";
-
-/* MARK: - Redeem codes */
-"redeem.button" = "Canjear código";
-"redeem.title" = "Canjear código";
-"redeem.placeholder" = "Escribe el código";
-"redeem.footer" = "Cada código se puede usar una vez por cuenta. Las mayúsculas, minúsculas y los espacios dan igual.";
-"redeem.action" = "Canjear";
-"redeem.success" = "Código «%1$@» canjeado: +%2$d créditos";
-"redeem.error.not_found" = "Ese código no existe. Revisa cómo está escrito.";
-"redeem.error.inactive" = "Este código no está activo.";
-"redeem.error.expired" = "Este código ha caducado.";
-"redeem.error.used_up" = "Este código ya se ha agotado.";
-"redeem.error.already_redeemed" = "Ya has canjeado este código.";
 
 /* MARK: - Models by App Store region */
 "settings.model.footer.regional" = "En tu región las cartas las traduce Mistral Large 3: unos 40 s y ~3 créditos por una página muy densa.";

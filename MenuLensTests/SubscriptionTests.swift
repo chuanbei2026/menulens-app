@@ -99,7 +99,7 @@ final class SubscriptionTests: XCTestCase {
             .compactMap { ($0 as? UIWindowScene)?.keyWindow }.first)
         let root: AnyView = env["FM_SCREEN"] == "card"
             ? AnyView(NavigationStack {
-                Form { Section(L("settings.account.header")) { CreditsCard(account: account, onBuy: {}, onRedeem: {}) } }
+                Form { Section(L("settings.account.header")) { CreditsCard(account: account, onBuy: {}) } }
                     .navigationTitle(L("settings.title"))
                     .navigationBarTitleDisplayMode(.inline)
             })
@@ -116,7 +116,7 @@ final class SubscriptionTests: XCTestCase {
         // Screenshot scripts wait for this file, then `simctl io … screenshot`.
         if let ready = env["FM_READY"] { FileManager.default.createFile(atPath: ready, contents: Data()) }
         try await Task.sleep(for: .seconds(Double(env["FM_HOLD"] ?? "1") ?? 1))
-        account.signOut()
+        await account.signOut()
         host.dismiss(animated: false)
     }
 }

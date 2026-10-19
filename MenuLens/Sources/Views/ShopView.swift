@@ -11,6 +11,7 @@ struct ShopView: View {
     @ObservedObject private var loc = Localization.shared
     @State private var purchaseToken: UUID?
     @State private var showManage = false
+    @State private var showOfferCode = false
 
     /// Apple's standard license agreement (the app has no EULA of its own).
     static let termsOfUse = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
@@ -43,6 +44,16 @@ struct ShopView: View {
                 } footer: {
                     Text(L("shop.footer"))
                 }
+                // Apple's own redemption sheet for App Store Offer Codes. The
+                // redeemed pack comes in through Transaction.updates
+                // (CreditShop), like any purchase.
+                Section {
+                    Button {
+                        showOfferCode = true
+                    } label: {
+                        Label(L("shop.offerCode"), systemImage: "giftcard")
+                    }
+                }
                 if let message = shop.message {
                     Label(message, systemImage: "checkmark.circle.fill").foregroundStyle(.green)
                 }
@@ -60,25 +71,30 @@ struct ShopView: View {
             .task {
                 shop.message = nil
                 shop.problem = nil
+                await account.ensureSession()
                 await shop.loadProducts()
                 await account.refreshCredits()
                 purchaseToken = await account.purchaseToken()
             }
             .manageSubscriptionsSheet(isPresented: $showManage)
+            .offerCodeRedemption(isPresented: $showOfferCode) { _ in
+                Task { await account.refreshCredits() }
+            }
         }
     }
 
     /// What the membership gives, the plans (StoreKit draws them, with
     /// prices and periods from the App Store), terms and privacy links.
-    /// Buying needs the account's purchase token, so signed out shows the
-    /// pitch only; so do regions (or builds) where StoreKit has no plans.
+    /// Buying needs the account's purchase token, so without a session (not
+    /// reached the server yet) the pitch shows alone; so do regions (or
+    /// builds) where StoreKit has no plans.
     private var membershipSection: some View {
         Section {
             if let membership = account.membership, membership.active {
                 MembershipStatus(membership: membership)
                 Button(L("member.manage")) { showManage = true }
             }
-            if account.isSignedIn, !shop.plans.isEmpty {
+            if account.hasSession, !shop.plans.isEmpty {
                 SubscriptionStoreView(productIDs: CreditShop.subscriptions) {
                     MembershipPitch()
                 }
@@ -102,8 +118,8 @@ struct ShopView: View {
                 .listRowInsets(EdgeInsets())
             } else {
                 MembershipPitch()
-                if !account.isSignedIn {
-                    Text(L("shop.signInFirst")).foregroundStyle(.secondary)
+                if !account.hasSession {
+                    Text(L("shop.noServer")).foregroundStyle(.secondary)
                 } else if !shop.loading {
                     Text(L("member.unavailable")).foregroundStyle(.secondary)
                 }

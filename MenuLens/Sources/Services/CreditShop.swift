@@ -3,7 +3,12 @@ import StoreKit
 /// Credits sold as StoreKit 2 consumables. Apple charges; our server verifies
 /// the signed transaction and adds the credits (POST /purchase, idempotent per
 /// transaction); only then is the transaction finished. Unfinished ones (app
-/// killed, offline, signed out) are retried on the next launch and sign-in.
+/// killed, offline, no session yet) are retried on the next launch and sign-in.
+///
+/// App Store Offer Codes for the packs (our giveaways since 1.1 (4); the app
+/// has no codes of its own) arrive the same way, through `Transaction.updates`
+/// — redeemed in ShopView's sheet or in the App Store app — usually at price 0
+/// and without our appAccountToken; the server credits them like a purchase.
 ///
 /// The membership (an auto-renewable subscription, bought in ShopView's
 /// SubscriptionStoreView) works the same way: its transactions go to POST
@@ -82,7 +87,8 @@ final class CreditShop: ObservableObject {
     func buy(_ product: Product) async {
         problem = nil
         message = nil
-        guard account.isSignedIn else { problem = L("shop.signInFirst"); return }
+        if !account.hasSession { await account.ensureSession() }
+        guard account.hasSession else { problem = L("shop.noServer"); return }
         guard let token = await account.purchaseToken() else { problem = L("shop.noServer"); return }
         buying = product.id
         defer { buying = nil }
@@ -110,8 +116,9 @@ final class CreditShop: ObservableObject {
             return
         }
         guard Self.credits(of: transaction.productID) != nil else { return }
-        guard account.isSignedIn else {
-            problem = L("shop.notCredited", L("shop.signInFirst"))
+        if !account.hasSession { await account.ensureSession() }
+        guard account.hasSession else {
+            problem = L("shop.notCredited", L("shop.noServer"))
             return
         }
         do {
@@ -144,7 +151,7 @@ final class CreditShop: ObservableObject {
     /// to the server: on launch, on every return to the foreground and after
     /// signing in. Quiet: a failure just waits for the next time.
     func syncSubscription() async {
-        guard account.isSignedIn, !account.isDemo, !syncing else { return }
+        guard account.hasSession, !account.isDemo, !syncing else { return }
         syncing = true
         defer { syncing = false }
         for await result in Transaction.currentEntitlements {
@@ -159,8 +166,9 @@ final class CreditShop: ObservableObject {
     /// A subscription transaction (new purchase, renewal, upgrade): the
     /// server records it, then it is finished. Left unfinished on failure.
     private func activate(_ transaction: Transaction, jws: String) async {
-        guard account.isSignedIn else {
-            problem = L("member.notActivated", L("shop.signInFirst"))
+        if !account.hasSession { await account.ensureSession() }
+        guard account.hasSession else {
+            problem = L("member.notActivated", L("shop.noServer"))
             return
         }
         do {

@@ -13,8 +13,11 @@ struct SettingsView: View {
     @ObservedObject private var party = PartyStore.shared
     @ObservedObject private var account = AccountStore.shared
     @State private var confirmDelete = false
+    @State private var confirmSignOut = false
     @State private var showShop = false
-    @State private var showRedeem = ProcessInfo.processInfo.arguments.contains("-redeem")
+    /// The optional "sign in to use your balance on other devices" hint,
+    /// once closed, stays closed (the Apple button itself stays).
+    @AppStorage("hint.appleSignIn.dismissed") private var appleHintDismissed = false
     @State private var newMemberName = ""
     @State private var avatarTargetID: UUID?
     @State private var avatarPickerItem: PhotosPickerItem?
@@ -181,27 +184,58 @@ struct SettingsView: View {
                     Button(L("common.done")) { dismiss() }
                 }
             }
-            .task { await account.refreshCredits() }
+            .task {
+                await account.ensureSession()
+                await account.refreshCredits()
+            }
             .sheet(isPresented: $showShop) { ShopView() }
-            .sheet(isPresented: $showRedeem) { RedeemSheet() }
         }
     }
 
     // MARK: - Account
 
-    /// Signed out: the Apple button and what an account gives you. Signed
-    /// in: the balance, what things cost, sign out and delete.
+    /// No sign-in needed: a device account (「未登录（本机账号）」) or an
+    /// Apple account. Both show the balance and can delete the account; Sign
+    /// in with Apple is an optional extra on the device account, sign-out
+    /// exists only for the Apple account (a device account has nothing to
+    /// sign out of — it is this device).
     private var accountSection: some View {
         Section {
-            if account.isSignedIn {
-                CreditsCard(account: account, onBuy: { showShop = true }, onRedeem: { showRedeem = true })
-                    .padding(.vertical, 4)
-                Button(L("settings.account.signOut")) { account.signOut() }
-                Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }
-                    .disabled(account.isBusy)
-            } else {
+            Label {
+                Text(L(account.isAppleAccount ? "settings.account.apple" : "settings.account.anonymous"))
+            } icon: {
+                Image(systemName: account.isAppleAccount ? "apple.logo" : "iphone")
+            }
+            CreditsCard(account: account, onBuy: { showShop = true })
+                .padding(.vertical, 4)
+            if !account.isAppleAccount {
+                if !appleHintDismissed {
+                    HStack(alignment: .top) {
+                        Text(L("settings.account.appleHint"))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button {
+                            appleHintDismissed = true
+                        } label: {
+                            Image(systemName: "xmark.circle.fill").foregroundStyle(.tertiary)
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityLabel(L("common.close"))
+                    }
+                }
                 AppleSignInButton()
                     .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            } else {
+                Button(L("settings.account.signOut")) { confirmSignOut = true }
+                    .disabled(account.isBusy)
+            }
+            Button(L("settings.account.delete"), role: .destructive) { confirmDelete = true }
+                .disabled(account.isBusy || !account.hasSession)
+            if let notice = account.notice {
+                Label(notice, systemImage: "checkmark.circle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.green)
             }
             if let message = account.message {
                 Text(message)
@@ -211,7 +245,19 @@ struct SettingsView: View {
         } header: {
             Text(L("settings.account.header"))
         } footer: {
-            Text(L(account.isSignedIn ? "settings.account.footer" : "settings.account.signedOut.footer"))
+            Text(L(account.isAppleAccount ? "settings.account.footer" : "settings.account.anonymous.footer"))
+        }
+        .confirmationDialog(
+            L("settings.account.signOut.title"),
+            isPresented: $confirmSignOut,
+            titleVisibility: .visible
+        ) {
+            Button(L("settings.account.signOut"), role: .destructive) {
+                Task { await account.signOut() }
+            }
+            Button(L("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(L("settings.account.signOut.message"))
         }
         .confirmationDialog(
             L("settings.account.delete.title"),

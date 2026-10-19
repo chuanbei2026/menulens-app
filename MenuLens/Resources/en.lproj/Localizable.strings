@@ -13,11 +13,6 @@
 "list.separator" = ", ";
 "page.number" = "Page %d";
 
-/* MARK: - First run */
-"onboarding.title" = "Sign in with Apple to scan a new menu";
-"onboarding.body" = "New accounts get 300 free credits (a menu page takes about 8–12); more can be bought in the shop. In the meantime you can browse the two real restaurant menus already inside.";
-"onboarding.viewSamples" = "Browse samples";
-
 /* MARK: - Home */
 "home.headline" = "Photograph a menu, get it back translated in place";
 "home.subheadline" = "Multi-page · Dish photos · Any language · Stored on device";
@@ -138,7 +133,7 @@
 "consent.sent.names" = "Dish names, only if you ask for AI-generated dish pictures";
 "consent.kept.header" = "Never leaves this phone";
 "consent.kept.body" = "Your translation history, and the names and photos of the people at your table.";
-"consent.retention" = "Our server does not keep menu photos or text. It stores only an anonymous Apple account id, your credit balance and usage counts. OpenAI keeps API data briefly for abuse monitoring.";
+"consent.retention" = "Our server does not keep menu photos or text. It stores only an anonymous account id, your credit balance and usage counts. OpenAI keeps API data briefly for abuse monitoring.";
 "consent.policy" = "Read the privacy policy";
 "consent.agree" = "Agree and continue";
 "consent.decline" = "Not now";
@@ -165,9 +160,16 @@
 "settings.account.delete.message" = "Your account and its credits are removed from our server and can't be restored. History on this phone stays.";
 "settings.account.delete.confirm" = "Delete account";
 "settings.account.footer" = "You start with 300 free credits; buy more in the shop. Credits never expire. A menu page costs about 8–12 credits, a dish picture or a 4-dish collage about 0.5.";
-"settings.account.signedOut.footer" = "Scanning a new menu needs an account. Only an anonymous Apple account id is used — no name, no email. New accounts get 300 free credits.";
-"error.signInRequired" = "Sign in with Apple first (Settings → Account) to scan a new menu.";
-"error.sessionExpired" = "Your sign-in has expired. Please sign in with Apple again.";
+"account.merged" = "This device's balance moved to your Apple account. Sign in with Apple in Settings → Account to keep using it.";
+"settings.account.linked" = "Signed in with Apple. Credits moved from this device: %d.";
+"settings.account.signOut.message" = "Your balance stays with your Apple account; sign in again to use it. This device then continues on a new device account with 0 credits.";
+"settings.account.signOut.title" = "Sign out?";
+"settings.account.anonymous.footer" = "No sign-in needed: this device has its own account, which starts with 300 free credits and keeps your balance, purchases and membership — even if you reinstall the app. Signing in with Apple is optional and makes the balance follow your Apple ID. We never ask for your name or email.";
+"settings.account.appleHint" = "Sign in to use your balance on your other devices";
+"settings.account.apple" = "Signed in with Apple";
+"settings.account.anonymous" = "Not signed in (this device's account)";
+"error.signInRequired" = "Couldn't reach our server yet. Check your connection and try again.";
+"error.sessionExpired" = "Your Apple sign-in has expired. Sign in again in Settings → Account to use your balance.";
 "error.outOfCredits" = "Not enough credits: this needs about %1$d and your balance is %2$d. You can buy more in the shop.";
 "error.signInFailed" = "Sign in failed: %@";
 "notice.imagesStopped" = "Dish photos stopped: %@";
@@ -189,10 +191,10 @@
 "shop.buy" = "Buy credits";
 "shop.header" = "Credit packs";
 "shop.footer" = "Paid through Apple. Credits pay for scanning menus and drawing dish pictures, and bought credits never expire. Saved menus and the samples cost nothing to open.";
+"shop.offerCode" = "Redeem App Store Offer Code";
 "shop.loading" = "Loading packs…";
 "shop.unavailable" = "The packs aren't available yet.";
 "shop.loadFailed" = "Couldn't load the packs: %@";
-"shop.signInFirst" = "Sign in with Apple first.";
 "shop.noServer" = "Couldn't reach the server. Please try again later.";
 "shop.pending" = "Waiting for approval (for example Ask to Buy); the credits arrive on their own once it's approved.";
 "shop.purchaseFailed" = "The purchase didn't complete: %@";
@@ -217,19 +219,6 @@
 "member.welcome" = "You're a member now. Thank you!";
 "member.notActivated" = "Subscribed, but the membership isn't active yet: %@. The app tries again the next time it opens.";
 "member.unavailable" = "The membership isn't available here yet.";
-
-/* MARK: - Redeem codes */
-"redeem.button" = "Redeem code";
-"redeem.title" = "Redeem code";
-"redeem.placeholder" = "Enter code";
-"redeem.footer" = "Each code can be used once per account. Upper or lower case and spaces don't matter.";
-"redeem.action" = "Redeem";
-"redeem.success" = "Redeemed “%1$@”: +%2$d credits";
-"redeem.error.not_found" = "There is no such code. Check the spelling.";
-"redeem.error.inactive" = "This code is not active.";
-"redeem.error.expired" = "This code has expired.";
-"redeem.error.used_up" = "This code has been fully used.";
-"redeem.error.already_redeemed" = "You have already redeemed this code.";
 
 /* MARK: - Models by App Store region */
 "settings.model.footer.regional" = "In your region menus are translated by Mistral Large 3: about 40s and ~3 credits for a densely printed page.";

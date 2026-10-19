@@ -9,11 +9,6 @@
 "list.separator" = ", ";
 "page.number" = "Page %d";
 
-/* MARK: - First run */
-"onboarding.title" = "Connectez-vous avec Apple pour scanner une carte";
-"onboarding.body" = "Les nouveaux comptes reçoivent 300 crédits offerts (une page de carte en coûte environ 8 à 12) ; vous pouvez en acheter d'autres dans la boutique. En attendant, vous pouvez parcourir les deux cartes de restaurants déjà incluses.";
-"onboarding.viewSamples" = "Voir les exemples";
-
 /* MARK: - Home */
 "home.headline" = "Photographiez une carte, recevez-la traduite sur place";
 "home.subheadline" = "Multipage · Photos des plats · Toutes langues · Stocké sur l'appareil";
@@ -130,7 +125,7 @@
 "consent.sent.names" = "Les noms des plats, uniquement si vous demandez des images de plats générées par IA";
 "consent.kept.header" = "Ne quitte jamais ce téléphone";
 "consent.kept.body" = "Votre historique de traductions, ainsi que les noms et photos des personnes à votre table.";
-"consent.retention" = "Notre serveur ne conserve ni les photos ni le texte des cartes. Il ne garde qu'un identifiant Apple anonyme, votre solde de crédits et des compteurs d'utilisation. OpenAI conserve brièvement les données d'API pour surveiller les abus.";
+"consent.retention" = "Notre serveur ne conserve ni les photos ni le texte des cartes. Il ne garde qu'un identifiant de compte anonyme, votre solde de crédits et des compteurs d'utilisation. OpenAI conserve brièvement les données d'API pour surveiller les abus.";
 "consent.policy" = "Lire la politique de confidentialité";
 "consent.agree" = "Accepter et continuer";
 "consent.decline" = "Pas maintenant";
@@ -157,9 +152,16 @@
 "settings.account.delete.message" = "Votre compte et ses crédits sont effacés de notre serveur, sans retour possible. L'historique sur ce téléphone est conservé.";
 "settings.account.delete.confirm" = "Supprimer le compte";
 "settings.account.footer" = "Vous démarrez avec 300 crédits offerts ; ensuite, ils s'achètent dans la boutique. Les crédits n'expirent jamais. Une page de carte coûte environ 8 à 12 crédits, une image de plat ou une mosaïque de quatre environ 0,5.";
-"settings.account.signedOut.footer" = "Scanner une nouvelle carte nécessite un compte. Seul un identifiant Apple anonyme est utilisé — ni nom, ni e-mail. Les nouveaux comptes reçoivent 300 crédits offerts.";
-"error.signInRequired" = "Connectez-vous d'abord avec Apple (Réglages → Compte) pour scanner une nouvelle carte.";
-"error.sessionExpired" = "Votre connexion a expiré. Reconnectez-vous avec Apple.";
+"account.merged" = "Le solde de cet appareil est passé sur votre compte Apple. Connectez-vous avec Apple dans Réglages → Compte pour continuer à l'utiliser.";
+"settings.account.linked" = "Connecté avec Apple. Crédits transférés depuis cet appareil : %d.";
+"settings.account.signOut.message" = "Votre solde reste sur votre compte Apple ; reconnectez-vous pour l'utiliser. Cet appareil passe ensuite à un nouveau compte d'appareil, à 0 crédit.";
+"settings.account.signOut.title" = "Se déconnecter ?";
+"settings.account.anonymous.footer" = "Pas besoin de vous connecter : cet appareil a son propre compte, qui démarre avec 300 crédits offerts et garde votre solde, vos achats et votre abonnement, même si vous réinstallez l'app. La connexion avec Apple est facultative : votre solde suit alors votre identifiant Apple. Nous ne demandons ni nom ni e-mail.";
+"settings.account.appleHint" = "Connectez-vous pour utiliser votre solde sur vos autres appareils";
+"settings.account.apple" = "Connecté avec Apple";
+"settings.account.anonymous" = "Non connecté (compte de cet appareil)";
+"error.signInRequired" = "Notre serveur n'est pas encore joignable. Vérifiez votre connexion et réessayez.";
+"error.sessionExpired" = "Votre connexion Apple a expiré. Reconnectez-vous dans Réglages → Compte pour utiliser votre solde.";
 "error.outOfCredits" = "Crédits insuffisants : il en faut environ %1$d et votre solde est de %2$d. Vous pouvez en acheter dans la boutique.";
 "error.signInFailed" = "Échec de la connexion : %@";
 "notice.imagesStopped" = "Images de plats interrompues : %@";
@@ -181,10 +183,10 @@
 "shop.buy" = "Acheter des crédits";
 "shop.header" = "Packs de crédits";
 "shop.footer" = "Paiement via Apple. Les crédits servent à scanner des cartes et à dessiner des images de plats ; les crédits achetés n'expirent jamais. Ouvrir une carte enregistrée ou un exemple ne coûte rien.";
+"shop.offerCode" = "Utiliser un code d'offre App Store";
 "shop.loading" = "Chargement des packs…";
 "shop.unavailable" = "Les packs ne sont pas encore disponibles.";
 "shop.loadFailed" = "Impossible de charger les packs : %@";
-"shop.signInFirst" = "Connectez-vous d'abord avec Apple.";
 "shop.noServer" = "Impossible de joindre le serveur. Réessayez plus tard.";
 "shop.pending" = "En attente d'approbation (par exemple « Autorisation d'achat ») ; les crédits arriveront d'eux-mêmes une fois l'achat approuvé.";
 "shop.purchaseFailed" = "L'achat n'a pas abouti : %@";
@@ -209,19 +211,6 @@
 "member.welcome" = "Vous êtes abonné. Merci !";
 "member.notActivated" = "Abonnement souscrit, mais pas encore activé : %@. L'app réessaiera à sa prochaine ouverture.";
 "member.unavailable" = "L'abonnement n'est pas encore disponible ici.";
-
-/* MARK: - Redeem codes */
-"redeem.button" = "Utiliser un code";
-"redeem.title" = "Code promo";
-"redeem.placeholder" = "Saisissez le code";
-"redeem.footer" = "Chaque code ne peut être utilisé qu'une fois par compte. Majuscules, minuscules et espaces n'ont pas d'importance.";
-"redeem.action" = "Valider";
-"redeem.success" = "Code « %1$@ » validé : +%2$d crédits";
-"redeem.error.not_found" = "Ce code n'existe pas. Vérifiez l'orthographe.";
-"redeem.error.inactive" = "Ce code n'est pas actif.";
-"redeem.error.expired" = "Ce code a expiré.";
-"redeem.error.used_up" = "Ce code a atteint sa limite d'utilisations.";
-"redeem.error.already_redeemed" = "Vous avez déjà utilisé ce code.";
 
 /* MARK: - Models by App Store region */
 "settings.model.footer.regional" = "Dans votre région, les cartes sont traduites par Mistral Large 3 : environ 40 s et ~3 crédits pour une page dense.";

@@ -178,6 +178,9 @@ final class AnalysisViewModel: ObservableObject {
         pipeline?.translateStartedAt = Date()
         let target = AppLanguage.from(code: targetLanguageCode)
         let account = AccountStore.shared
+        // No sign-in step: the device account opens on first launch; if that
+        // hasn't reached the server yet, it is tried again now.
+        await account.ensureSession()
         // The saved model may not be offered in this App Store region (any
         // more); the region's default stands in, as the picker would show.
         let region = RegionStore.shared
@@ -639,7 +642,7 @@ final class AnalysisViewModel: ObservableObject {
     /// The PDF is re-rendered once, when the queue drains.
     private func makeImageQueue(scanID: UUID, run: UUID, keys: PageKeyMap) -> DishImageQueue? {
         guard generateDishImages, RegionStore.shared.catalog.images,
-              aiConsentGranted, AccountStore.shared.isSignedIn
+              aiConsentGranted, AccountStore.shared.hasSession
         else { return nil }
         let queue = DishImageQueue(
             client: ImageGenClient(sessionToken: AccountStore.shared.sessionToken),
