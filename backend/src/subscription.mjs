@@ -320,6 +320,11 @@ export async function handleNotification(body, deps, now = new Date()) {
     if ((NEW_TRANSACTION.has(n.notificationType) && isNew) || REVOKING.has(n.notificationType)) {
       await records?.record(userId, subscriptionRecord(tx, REVOKING.has(n.notificationType) ? "refunded" : "active", out.type), now);
     }
+    if (NEW_TRANSACTION.has(n.notificationType) && isNew) {
+      // A transaction this account hasn't seen (the app's POST /subscription may bring it first): its price
+      // for the revenue metric, so a purchase counts once.
+      Object.assign(out, { newTransaction: true, price: typeof tx.price === "number" ? tx.price / 1000 : undefined, currency: tx.currency });
+    }
     out.active = subscriptionActive(applied.after, now);
     out.expiresAt = applied.after.expiresAt;
     return out;

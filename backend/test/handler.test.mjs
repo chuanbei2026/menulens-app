@@ -15,6 +15,7 @@ const SESSION_KEY = "handler-test-session-key";
 const fake = new FakeDDB();
 let handler;
 const openAICalls = [];
+const requestLines = []; // the handler's "request" log lines, newest last
 
 // Sign in with Apple: identity tokens signed with our own RSA key, served as Apple's JWKS.
 const apple = generateKeyPairSync("rsa", { modulusLength: 2048 });
@@ -27,9 +28,15 @@ function appleToken(sub) {
 }
 
 before(async () => {
-  // Drop the handler's own JSON log lines; everything else (the test runner's reports) passes.
+  // Keep the handler's own JSON log lines out of the output (request lines are kept for the metrics
+  // checks); everything else (the test runner's reports) passes.
   const write = process.stdout.write.bind(process.stdout);
-  process.stdout.write = (chunk, ...rest) => (String(chunk).startsWith('{"time"') ? true : write(chunk, ...rest));
+  process.stdout.write = (chunk, ...rest) => {
+    if (!String(chunk).startsWith('{"time"')) return write(chunk, ...rest);
+    const line = JSON.parse(String(chunk));
+    if (line.msg === "request") requestLines.push(line);
+    return true;
+  };
   Object.assign(process.env, { SESSION_SECRET_ARN: "test-session", AWS_REGION: "us-west-2" });
   DynamoDBDocumentClient.prototype.send = (cmd) => fake.send(cmd);
   SecretsManagerClient.prototype.send = async () => ({ SecretString: SESSION_KEY });
@@ -155,6 +162,8 @@ test("POST /auth/anonymous is rate-limited per IP (429)", async () => {
   let last;
   for (let i = 0; i < 11; i++) last = await call("POST", "/auth/anonymous", { body: {}, headers: ip(2) });
   assert.deepEqual([last.status, last.json.reason], [429, "rate_limited"]);
+  const line = requestLines.at(-1);
+  assert.deepEqual([line.route, line.status, line.AnonRateLimited, line.accountKind, line.requestId], ["POST /auth/anonymous", 429, 1, "none", "test"]);
   assert.equal((await call("POST", "/auth/anonymous", { body: {}, headers: ip(3) })).status, 200);
 });
 
@@ -163,6 +172,9 @@ test("linking a new Apple ID attaches the device account: same balance, no new 3
   const link = await call("POST", "/menu/auth/apple/link", { token: d.token, body: { identityToken: appleToken("new.1") } });
   assert.equal(link.status, 200);
   assert.deepEqual([link.json.userId, link.json.linked, link.json.movedCredits], ["apple:new.1", "attach", 300]);
+  const line = requestLines.at(-1);
+  assert.deepEqual([line.linked, line.AccountLinks, line.CreditsMoved, line.accountKind], ["attach", 1, 300, "apple"]);
+  assert.equal(JSON.stringify(line).includes(d.token), false); // never the session token
   const credits = await call("GET", "/credits", { token: link.json.token });
   assert.equal(credits.json.totalCredits, 300);
   // The old device session is refused with "merged", so the app knows to sign in again.

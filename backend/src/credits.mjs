@@ -56,7 +56,7 @@
 import { randomUUID } from "node:crypto";
 import { createHash } from "node:crypto";
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, TransactWriteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { requestScope } from "./ddbstats.mjs";
+import { noteRetries, requestScope } from "./ddbstats.mjs";
 import { logEvent } from "./log.mjs";
 import { subscriptionActive } from "./subscription.mjs";
 
@@ -310,7 +310,7 @@ export class CreditStore {
    * credits if the account has not received them yet. Call it when the user actually uses the service.
    *
    * Reads first, so the common case (already granted this month) costs one read and no failed writes.
-   * Returns { kind: "signup" | "monthly" | "subscriber" | null, item } where `item` is the account as
+   * Returns { kind: "signup" | "monthly" | "subscriber" | null, item, tenths? (granted) } where `item` is the account as
    * last seen (null if a concurrent request changed it), letting the caller skip another read.
    * Active subscribers also get the subscriber grant once per billing month (subscriberGrant).
    */
@@ -336,7 +336,7 @@ export class CreditStore {
         if (reopened) return { kind: "reopen", item };
         await this.ledger(userId, { type: "signup", giftTenths: toTenths(this.signupBonus), paidTenths: 0, ref: period });
         if (this.monthlyGrant > 0) await this.ledger(userId, { type: "monthly_grant", giftTenths: toTenths(this.monthlyGrant), paidTenths: 0, ref: period });
-        return { kind: "signup", item };
+        return { kind: "signup", item, tenths: toTenths(this.signupBonus + this.monthlyGrant) };
       } catch (e) {
         if (!isConditionFailure(e)) throw e;
         return { kind: null, item: null }; // a concurrent request opened it first
@@ -361,7 +361,7 @@ export class CreditStore {
         ReturnValues: "ALL_NEW",
       }));
       await this.ledger(userId, { type: "monthly_grant", giftTenths: grant, paidTenths: 0, ref: period });
-      return { kind: "monthly", item: a };
+      return { kind: "monthly", item: a, tenths: grant };
     } catch (e) {
       if (isConditionFailure(e)) return { kind: null, item: null }; // granted concurrently
       throw e;
@@ -387,7 +387,7 @@ export class CreditStore {
         ReturnValues: "ALL_NEW",
       }));
       await this.ledger(userId, { type: "subscriber_grant", giftTenths: grant, paidTenths: 0, ref: period });
-      return { kind: "subscriber", item: Attributes };
+      return { kind: "subscriber", item: Attributes, tenths: grant };
     } catch (e) {
       if (isConditionFailure(e)) return { kind: null, item: null };
       throw e;
@@ -422,11 +422,13 @@ export class CreditStore {
           ExpressionAttributeValues: { ":a": amount, ":p": period },
         }));
         await this.ledger(userId, { type: "hold", giftTenths: 0, paidTenths: 0, coveredHoldTenths: amount, ref });
+        noteRetries(attempt);
         return { split: { fromGift: 0, fromPaid: 0, covered: amount, period } };
       } catch (e) {
         if (!isConditionFailure(e)) throw e; // another call moved the counter (or the month): look again
       }
     }
+    noteRetries(4);
     logEvent("ERROR", "covered reserve gave up after retries", { userId, ref });
     throw new Error("credit store busy, retry later");
   }
@@ -457,12 +459,16 @@ export class CreditStore {
           ExpressionAttributeValues: { ":g": split.fromGift, ":p": split.fromPaid, ":v": b.version, ":one": 1 },
         }));
         await this.ledger(userId, { type: "hold", giftTenths: -split.fromGift, paidTenths: -split.fromPaid, ref });
-        if (attempt > 0) logEvent("WARN", "credit reserve contention", { userId, ref, retries: attempt });
+        if (attempt > 0) {
+          noteRetries(attempt);
+          logEvent("WARN", "credit reserve contention", { userId, ref, retries: attempt });
+        }
         return split;
       } catch (e) {
         if (!isConditionFailure(e)) throw e; // someone else changed the balance → re-read and retry
       }
     }
+    noteRetries(4);
     logEvent("ERROR", "credit reserve gave up after retries", { userId, ref });
     throw new Error("credit store busy, retry later");
   }

@@ -105,7 +105,7 @@ EOF
 echo "== Logs"
 LOG_GROUP="/aws/lambda/${NAME}"
 aws logs create-log-group --log-group-name "${LOG_GROUP}" >/dev/null 2>&1 || true
-aws logs put-retention-policy --log-group-name "${LOG_GROUP}" --retention-in-days 90
+aws logs put-retention-policy --log-group-name "${LOG_GROUP}" --retention-in-days 30  # see observability.sh
 
 echo "== Lambda code"
 BUILD="$(mktemp -d)"

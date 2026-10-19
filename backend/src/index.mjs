@@ -104,11 +104,12 @@ function refuseMerged(item) {
 }
 
 async function grant(userId, ctx) {
-  const { kind, item } = await store.grantIfDue(userId);
+  const { kind, item, tenths } = await store.grantIfDue(userId);
   refuseMerged(item);
   if (kind === "reopen") logEvent("INFO", "account reopened after deletion (no signup bonus)", { requestId: ctx.requestId, userId });
   else if (kind) {
     ctx.grant = kind;
+    if (tenths) ctx.creditsGranted = (ctx.creditsGranted ?? 0) + toCredits(tenths);
     const what = { signup: "account created", monthly: "monthly grant", subscriber: "subscriber grant" }[kind];
     logEvent("INFO", what, { requestId: ctx.requestId, userId, grant: kind });
   }
@@ -145,12 +146,16 @@ async function appleUser(identityToken) {
 async function keepAppleRefreshToken(userId, authorizationCode, ctx) {
   if (typeof authorizationCode !== "string" || !authorizationCode) return;
   const key = await siwaKey();
-  if (!key) return;
+  if (!key) {
+    ctx.appleToken = "no_key";
+    return;
+  }
   try {
     const refresh = await exchangeCode(authorizationCode, key, config.appleAudience[0]);
     if (refresh) await store.setAppleRefreshToken(userId, refresh);
     ctx.appleToken = refresh ? "stored" : "none";
   } catch (e) {
+    ctx.appleToken = "failed";
     logEvent("WARN", "apple code exchange failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
   }
 }
@@ -180,7 +185,8 @@ async function linkApple(event, ctx) {
   if (!isAnonymous(current)) {
     await grant(appleId, ctx);
     await keepAppleRefreshToken(appleId, authorizationCode, ctx);
-    return { ...(await session(appleId)), linked: current === appleId ? "already" : "switch", movedCredits: 0 };
+    ctx.linked = current === appleId ? "already" : "switch";
+    return { ...(await session(appleId)), linked: ctx.linked, movedCredits: 0 };
   }
   ctx.from = current;
   let result;
@@ -209,12 +215,16 @@ async function signInAnonymously(event, ctx) {
     r = await anonymous.open(body, { ip: clientIp(event), bonusAllowed: await signupBonusAllowed({ event, body }) });
   } catch (e) {
     if (e instanceof DeviceAuthError) throw new HttpError(401, e.message, { reason: "device" });
-    if (e instanceof RateLimited) throw new HttpError(429, e.message, { reason: "rate_limited" });
+    if (e instanceof RateLimited) {
+      ctx.rateLimited = true;
+      throw new HttpError(429, e.message, { reason: "rate_limited" });
+    }
     throw e;
   }
   ctx.userId = r.userId;
   if (r.created) {
     ctx.grant = r.signupCredits > 0 ? "signup" : "none";
+    if (r.signupCredits > 0) ctx.creditsGranted = r.signupCredits;
     logEvent("INFO", "device account created", { requestId: ctx.requestId, userId: r.userId, signupCredits: r.signupCredits,
       ...(r.predecessor ? { predecessor: r.predecessor } : {}) });
   }
@@ -241,11 +251,13 @@ async function deleteAccount(event, ctx) {
   // accounts have no Apple identity and nothing to revoke.
   const token = isAnonymous(userId) ? null : await store.appleRefreshToken(userId);
   const key = token ? await siwaKey() : null;
+  if (token && !key) ctx.appleRevoke = "no_key";
   if (token && key) {
     try {
       await revokeToken(token, key, config.appleAudience[0]);
-      ctx.appleRevoked = true;
+      Object.assign(ctx, { appleRevoked: true, appleRevoke: "revoked" });
     } catch (e) {
+      ctx.appleRevoke = "failed";
       logEvent("WARN", "apple token revoke failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
     }
   }
@@ -295,6 +307,9 @@ async function purchase(event, ctx) {
     const facts = transactionFacts(payload);
     await purchases.record(userId, { ...facts, credits: result.credits, bonus: result.bonus ?? 0,
       status: result.credited ? "credited" : "duplicate" });
+    ctx.productId = tx.productId;
+    if (result.credited) Object.assign(ctx, { creditsPurchased: result.credits, offer: facts.offerType !== undefined,
+      price: facts.price, currency: facts.currency });
     logEvent("INFO", "purchase", { requestId: ctx.requestId, userId, productId: tx.productId, environment: tx.environment,
       credits: result.credits, credited: result.credited, price: facts.price, currency: facts.currency, storefront: facts.storefront,
       ...(facts.offerType !== undefined ? { offerType: facts.offerType, offerIdentifier: facts.offerIdentifier } : {}) });
@@ -304,6 +319,7 @@ async function purchase(event, ctx) {
     if (reason) {
       // Rejected attempts are kept too: they explain "I paid but got nothing" tickets.
       await purchases.record(userId, { ...transactionFacts(payload), status: "rejected", reason });
+      ctx.rejectReason = reason;
       logEvent("WARN", "purchase rejected", { requestId: ctx.requestId, userId, reason });
     }
     if (e instanceof PurchaseError) throw new HttpError(400, e.reason, { reason: e.reason });
@@ -327,9 +343,10 @@ async function subscribe(event, ctx) {
       userId, aliases: account?.mergedFrom, verify: (jws) => verifyAppleJWS(jws), subs, records: purchases, grant: (u) => grant(u, ctx),
       read: (u) => store.read(u), bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases,
     });
-    ctx.subscription = r.productId;
+    Object.assign(ctx, { subscription: r.productId, productId: r.productId, subActive: subscriptionOf(r.item).active });
     if (r.isNew) {
       const p = r.payload;
+      Object.assign(ctx, { newSubscription: true, price: typeof p.price === "number" ? p.price / 1000 : undefined, currency: p.currency });
       logEvent("INFO", "subscription", { requestId: ctx.requestId, userId, productId: r.productId, environment: p.environment,
         expiresAt: r.after.expiresAt, price: typeof p.price === "number" ? p.price / 1000 : undefined, currency: p.currency, storefront: p.storefront });
     }
@@ -339,6 +356,7 @@ async function subscribe(event, ctx) {
     if (reason) {
       // Rejected attempts are kept too, like purchases.
       await purchases.record(userId, { ...transactionFacts(e.payload), type: "subscription", status: "rejected", reason });
+      ctx.rejectReason = reason;
       logEvent("WARN", "subscription rejected", { requestId: ctx.requestId, userId, reason });
     }
     if (e instanceof PurchaseError) throw new HttpError(400, e.reason, { reason: e.reason });
@@ -356,6 +374,8 @@ async function appStoreNotification(event, ctx) {
     bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases,
   });
   Object.assign(ctx, { userId: summary.userId, notification: summary.type, subtype: summary.subtype, ignored: summary.ignored });
+  if (typeof summary.active === "boolean") ctx.subActive = summary.active;
+  if (summary.newTransaction) Object.assign(ctx, { productId: summary.productId, newSubscription: true, price: summary.price, currency: summary.currency });
   logEvent("INFO", "app store notification", { requestId: ctx.requestId, ...summary });
   return { ok: true };
 }
@@ -426,7 +446,10 @@ async function menu(event, stream, ctx) {
   if ((event.body?.length ?? 0) > config.maxRequestBytes) throw new HttpError(413, "request too large");
   const storefront = storefrontOf(event);
   const catalog = catalogFor(storefront);
-  if (!catalog.default) throw new HttpError(403, "not available in this region", { reason: "region", models: [] });
+  if (!catalog.default) {
+    ctx.region = true;
+    throw new HttpError(403, "not available in this region", { reason: "region", models: [] });
+  }
   let req;
   try {
     req = menuRequest(readBody(event), { maxOutputTokens: config.maxOutputTokens, maxImages: config.maxImagesPerRequest,
@@ -437,6 +460,7 @@ async function menu(event, stream, ctx) {
   }
   Object.assign(ctx, { model: req.model.id, images: req.images, inputChars: req.textChars, storefront }); // sizes only
   if (!providerAllowed(req.model.provider, storefront)) {
+    ctx.region = true;
     throw new HttpError(403, "model not available in this region", { reason: "region", models: catalog.models.map((m) => m.id) });
   }
   const account = await grant(userId, ctx);
@@ -456,6 +480,7 @@ async function menu(event, stream, ctx) {
       statusCode: 200, headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
     });
   };
+  ctx.provider = req.model.provider;
   let result;
   try {
     result = req.model.provider === "bedrock"
@@ -463,7 +488,7 @@ async function menu(event, stream, ctx) {
       : await relayMenu({ apiKey: await secretKey(config.openAISecretId), body: req.body, write, onStart });
   } catch (e) {
     await store.settle(userId, split, 0, ref);
-    ctx.creditsCharged = 0;
+    Object.assign(ctx, { creditsCharged: 0, upstreamError: "network" });
     if (!ctx.status) throw e;
     ctx.error = `upstream stream failed: ${e?.message ?? e}`;
     write(`data: ${JSON.stringify({ error: { message: "upstream connection failed; credits refunded" } })}\n\n`);
@@ -472,7 +497,7 @@ async function menu(event, stream, ctx) {
   }
   if (!result.ok) {
     await store.settle(userId, split, 0, ref);
-    Object.assign(ctx, { creditsCharged: 0, upstreamStatus: result.status });
+    Object.assign(ctx, { creditsCharged: 0, upstreamStatus: result.status, upstreamError: "status" });
     throw new HttpError(upstreamStatus(result.status), upstreamMessage(result.errorBody));
   }
   // Missing usage on success (shouldn't happen) → keep the reservation.
@@ -510,25 +535,29 @@ async function image(event, ctx) {
   }
   const storefront = storefrontOf(event);
   ctx.storefront = storefront;
-  if (!providerAllowed("openai", storefront)) throw new HttpError(403, "dish pictures are not available in this region", { reason: "region" });
+  if (!providerAllowed("openai", storefront)) {
+    ctx.region = true;
+    throw new HttpError(403, "dish pictures are not available in this region", { reason: "region" });
+  }
   ctx.model = req.body.model;
   ctx.inputChars = req.body.prompt.length;
   const account = await grant(userId, ctx);
   const ref = randomUUID();
   const worst = tenthsForUsd(imageCostUsd({ text: req.promptTokens, output: EXPECTED_IMAGE_OUTPUT_TOKENS }));
   const split = await charge(userId, worst, ref, account, ctx);
+  ctx.provider = "openai";
   let result;
   try {
     result = await generateImage({ apiKey: await secretKey(config.openAISecretId), body: req.body });
   } catch (e) {
     await store.settle(userId, split, 0, ref);
-    ctx.creditsCharged = 0;
+    Object.assign(ctx, { creditsCharged: 0, upstreamError: "network" });
     throw e;
   }
   ctx.upstreamStatus = result.status;
   if (!result.ok) {
     await store.settle(userId, split, 0, ref);
-    ctx.creditsCharged = 0;
+    Object.assign(ctx, { creditsCharged: 0, upstreamError: "status" });
     throw new HttpError(upstreamStatus(result.status), upstreamMessage(result.errorBody));
   }
   const actual = result.usage ? tenthsForUsd(imageCostUsd(result.usage)) : reservedTenths(split);
@@ -554,7 +583,7 @@ function sendJSON(stream, status, body, ctx) {
 }
 
 export const handler = awslambda.streamifyResponse((event, stream, context) =>
-  requestScope.run(newScope(), () => handle(event, stream, context)));
+  requestScope.run(newScope(context?.awsRequestId), () => handle(event, stream, context)));
 
 async function handle(event, stream, context) {
   const method = event.requestContext?.http?.method ?? "GET";
@@ -583,11 +612,11 @@ async function handle(event, stream, context) {
     return sendJSON(stream, 404, { error: "not found" }, ctx);
   } catch (e) {
     if (e instanceof HttpError) {
-      ctx.error = e.message;
+      ctx.error = String(e.message).slice(0, 300);
       // OpenAI's error shape, so the app's existing error handling reads it.
       return sendJSON(stream, e.status, { error: { message: e.message, ...e.extra }, ...e.extra }, ctx);
     }
-    ctx.error = String(e?.message ?? e);
+    ctx.error = String(e?.message ?? e).slice(0, 300);
     logEvent("ERROR", "unhandled error", { requestId: ctx.requestId, route: ctx.route, error: ctx.error, stack: e?.stack });
     if (ctx.status) return;
     return sendJSON(stream, 500, { error: { message: "internal error" } }, ctx);

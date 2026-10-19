@@ -132,7 +132,73 @@ Live: `https://uwondrk7ngmf3jgkimsifwa62q0fwgzo.lambda-url.us-west-2.on.aws/`; f
 `/menu`; a bare `/menu` is the scan route itself).
 
 - OpenAI key: secret `AwsLambdaKey/foreign-menu` (`{"key": …}`). Session key: `foreignmenu/session-key`.
-- Logs: `/aws/lambda/foreignmenu-api` (90 days), one JSON line per request with sizes, tokens, `costUsd` and
-  credits; metrics in the `ForeignMenu` namespace; saved queries under **ForeignMenu/**.
-  **Never logged:** menu photos, text, prompts, model output, tokens or secrets.
-- Lambda concurrency is shared with DateSeries (the account limit is 10); a big scan uses several at once.
+- Logs: `/aws/lambda/foreignmenu-api` (**30 days**), one JSON line per request; metrics in the `ForeignMenu`
+  namespace; saved queries under **ForeignMenu/**. See **Logs, metrics, alarms** below.
+  **Never logged:** menu photos, text, prompts, model output, Apple / session tokens, device secrets or IP addresses
+  (the per-IP limit stores only a hash, in DynamoDB).
+- Lambda concurrency is shared with DateSeries (the account pool is 1000); a big scan uses several at once.
+
+## Logs, metrics, alarms
+
+Every request writes **one JSON line**: `requestId, route, status, ms, accountKind (anon | apple | dev | none), userId`
+and the DynamoDB work (`ddbCalls, ddbMs, ddbCapacityUnits, ddbConditionalFailures, ddbErrors, ddbRetries`); model calls
+add `model, provider, storefront, inputTokens, cachedTokens, outputTokens, costUsd, ttfbMs, creditsCharged,
+creditsCovered, creditsLeft, upstreamStatus, upstreamError?`; accounts add `grant, creditsGranted, linked, from,
+creditsMoved, rateLimited, region`; purchases and subscriptions `productId, price, currency, offer, creditsPurchased,
+subActive, rejectReason`; notifications `notification, subtype, ignored, outcome`. Event lines (`device account
+created`, `device account linked`, `purchase`, `app store notification`, settlement failures…) carry the same `requestId`.
+Upstream error messages are OpenAI's own words (never the request), cut to 300 characters.
+
+The request lines carry CloudWatch Embedded Metric Format (`src/log.mjs`, tested in `test/log.test.mjs` and
+`test/handler.test.mjs`). Dimensions are a small fixed vocabulary, never user ids:
+
+| Dimensions | Metrics |
+|---|---|
+| `route`, and all routes | `Requests, ServerErrors, ClientErrors, LatencyMs, TimeToFirstByteMs, InputTokens, CachedTokens, OutputTokens, CostUsd, ModelCalls, ModelErrors, CreditsCharged, CreditsCovered, OverFairUse, CreditsGranted, CreditsMoved, Signups, SignupsWithoutBonus, SubscriberGrants, MonthlyGrants, StoreNotifications, AnonRateLimited (429), RegionRefusals (403), RedeemGone (410), AppleRevokeSkipped/Failed, AppleTokenSkipped/Failed, Ddb*` (incl. `DdbRetries`) |
+| `accountKind` | `Requests, Signups, SignupsWithoutBonus` |
+| `model`; `provider` (openai, bedrock) | `ModelCalls, ModelErrors, CostUsd, InputTokens, OutputTokens, TimeToFirstByteMs, LatencyMs` |
+| `linked` (attach, merge, already, switch) | `AccountLinks` |
+| `productId`, and all products | `Purchases, OfferRedemptions, CreditsPurchased` (credited packs; new subscription transactions) |
+| `currency` | `Revenue` (price in the customer's currency, before Apple's commission) |
+| `notificationType`; `outcome` (applied, a reason like unknown_subscription, or error) | `StoreNotifications` |
+| `subStatus` (active, inactive) | `SubscriptionUpdates` |
+| `rejectReason` | `PurchaseRejections` |
+
+Plus a log metric filter `ErrorEvents` (ERROR event lines that aren't request lines). Not measurable here: the app's
+coverage retry of a menu scan (`OpenAIClient.Coverage`) is a second, ordinary `POST /menu`; the server can't tell it apart.
+
+```bash
+AWS_PROFILE=claude-agent ./observability.sh   # retention, metric filter, saved queries, alarms.sh, dashboard (deploy.sh runs it)
+AWS_PROFILE=claude-agent ./alarms.sh          # alarms + SNS topic only
+```
+
+- **Dashboard** CloudWatch → Dashboards → **ForeignMenu**: a runbook text widget (links to every saved query with its
+  time range), money (Logs Insights), traffic / errors / latency p50-p95-p99, AI cost per day and per model, calls and
+  upstream errors per provider, signups (Apple vs device), links and merges, purchases / revenue / membership, the
+  credits economy, Lambda, DynamoDB, CloudFront (us-east-1) and an alarm status strip.
+- **Saved queries** (folder **ForeignMenu/**): recent requests, errors (last hour), slow requests, one account / one
+  request (edit the id), AI upstream failures, cost and credits, cost by model per day, menu latency percentiles,
+  purchases, subscription notifications, notifications by type and outcome, merges, rate-limit hits, device accounts
+  created, region refusals, out of credits (402), contention and retries.
+- **Alarms** (`alarms.sh`, thresholds are env vars) → SNS topic **`chuanbei-ops-alerts`** (us-west-2, shared with
+  DateSeries). The CloudFront 5xx alarm and the cost budget are in the DateSeries repo (`infra/backend/alarms.sh`).
+
+  | Alarm | Fires when |
+  |---|---|
+  | `ForeignMenu-5xx-rate` | 5xx > 10% of requests (and ≥ 3) in 15 min |
+  | `ForeignMenu-lambda-errors` | ≥ 2 Lambda errors (crash / timeout) in 15 min |
+  | `ForeignMenu-lambda-throttles` | any throttle in 5 min |
+  | `ForeignMenu-menu-p95-latency` | `/menu` p95 ≥ 120 s for 2 × 15 min (normal ≈ 40 s) |
+  | `ForeignMenu-image-p95-latency` | `/image` p95 ≥ 45 s for 2 × 15 min (normal ≈ 11 s) |
+  | `ForeignMenu-ai-upstream-errors` | ≥ 3 failed model calls in 15 min |
+  | `ForeignMenu-ai-cost-daily` | AI cost ≥ US$10 in 24 h (`DAILY_AI_COST_USD`) |
+  | `ForeignMenu-dynamodb-throttles` | accounts / ledger throttle events or any DynamoDB error a request saw, in 5 min |
+  | `ForeignMenu-store-notification-failures` | a notification failed on our side (answered 200, so Apple won't retry) |
+  | `ForeignMenu-error-events` | an ERROR event line (settlement, ledger, purchase record…) |
+  | `ForeignMenu-anon-signup-limit` | ≥ 20 device-account signups refused by the per-IP limit in an hour |
+
+  Nobody is subscribed by the script. To receive them (confirm the email AWS sends):
+
+  ```bash
+  AWS_PROFILE=claude-agent aws sns subscribe --region us-west-2 --topic-arn arn:aws:sns:us-west-2:253490784328:chuanbei-ops-alerts --protocol email --notification-endpoint <your email>
+  ```

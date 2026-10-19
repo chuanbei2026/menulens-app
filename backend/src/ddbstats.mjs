@@ -31,13 +31,20 @@ export function instrument(client) {
   return client;
 }
 
-/** Per-request scope: DynamoDB stats plus background writes to await before the request ends. */
-export function newScope() {
-  return { ddb: newStats(), pending: [] };
+/** Per-request scope: DynamoDB stats plus background writes to await before the request ends, and the
+ * request id (logEvent adds it to lines that don't name one). */
+export function newScope(requestId) {
+  return { ddb: newStats(), pending: [], requestId };
 }
 
 export function newStats() {
-  return { calls: 0, ms: 0, capacityUnits: 0, conditionalFailures: 0, errors: 0, ops: {} };
+  return { calls: 0, ms: 0, capacityUnits: 0, conditionalFailures: 0, errors: 0, retries: 0, ops: {} };
+}
+
+/** Optimistic-locking retries (a conditional write lost to a concurrent one and was tried again). */
+export function noteRetries(n) {
+  const stats = requestScope.getStore()?.ddb;
+  if (stats && n > 0) stats.retries += n;
 }
 
 function record(stats, command, ms, consumed) {
@@ -56,6 +63,7 @@ export function summarize(stats) {
     ddbCapacityUnits: Math.round(stats.capacityUnits * 10) / 10,
     ddbConditionalFailures: stats.conditionalFailures,
     ddbErrors: stats.errors,
+    ddbRetries: stats.retries ?? 0,
     ddbOps: stats.ops,
   };
 }
