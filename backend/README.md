@@ -202,3 +202,8 @@ AWS_PROFILE=claude-agent ./alarms.sh          # alarms + SNS topic only
   ```bash
   AWS_PROFILE=claude-agent aws sns subscribe --region us-west-2 --topic-arn arn:aws:sns:us-west-2:253490784328:chuanbei-ops-alerts --protocol email --notification-endpoint <your email>
   ```
+- **Bedrock model invocation logging must stay OFF** (account-wide, `aws bedrock get-model-invocation-logging-configuration` must
+  return nothing in every region). With it on, Bedrock writes full prompts, answers and images to CloudWatch, and the
+  privacy pages promise that no content is stored. It was on from 2026-10-09 (`/aws/bedrock/model-invocations`, role
+  `claude-bedrock-invocation-logging`) and was turned off on 2026-10-19; that log group was set to 1-day retention so
+  AWS purges what it holds (expiry runs within a few days). For a model benchmark, use metadata-only logging or a separate account, never this one.
