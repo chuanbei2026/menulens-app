@@ -23,6 +23,11 @@
 //   coveredPeriod / coveredTenths   what the subscription covered this billing month (fair-use meter),
 //                 reservations included; reset by the first covered call of a new month
 //   version       optimistic-lock counter, bumped on every balance change
+//   kind          "anonymous" for device accounts (anon:<uuid>); Apple accounts (apple:<sub>) have none
+//   deviceSecretHash   anonymous only: SHA-256 of the device secret that renews its session
+//   predecessor   anonymous only: the device account this one replaced (merged or deleted; no bonus)
+//   mergedInto    a device account moved into an Apple account (merge.mjs): closed, balance 0
+//   mergedFrom    an Apple account: the device accounts moved into it (their purchase tokens stay valid)
 //
 // ledger (PK userId, SK at): append-only record of every balance change, for support and audits:
 //   { type, giftTenths, paidTenths, ref, chargedTenths? }. A call a subscription covers is a hold and a
@@ -37,12 +42,17 @@
 //   (balance(d-1) = balance(d) − added(d) + spent(d)), which is always consistent. The ledger stays
 //   the source of truth; scripts/rebuild-daily.mjs regenerates this table from it.
 //
-// promo (PK code, SK sk): one table for promotion codes and who redeemed them.
-//   sk "#meta"          the code: credits (whole), expiresAt (ISO), active, displayName, redemptions,
-//                       maxRedemptions (optional global cap)
-//   sk "user#<userId>"  one item per redemption: a user can redeem a code at most once
-// Redeeming is one DynamoDB transaction over the code, the redemption and the account, so it
-// either fully happens or not at all, even with concurrent taps.
+// promo (PK code, SK sk): small keyed records that need no table of their own. Promotion codes
+//   ("#meta" / "user#<userId>") were retired in 1.1 (4): App Review counts an in-app code that adds
+//   credits as unlocking paid content (3.1.1), so giveaways now use App Store Offer Codes. Old items
+//   stay as history; POST /promo/redeem answers 410. Still in use here:
+//   iap#<transactionId> / "#purchase"   a credited purchase (creditPurchase)
+//   sub#<originalTransactionId> / "#subscription"   who owns a subscription (subscription.mjs)
+//   rate#anon#<ip hash> / "h#…" | "d#…"   anonymous signups per IP (anonymous.mjs)
+//
+// Anonymous device accounts (anonymous.mjs) are ordinary accounts keyed "anon:<uuid>", with
+// deviceSecretHash; after Sign in with Apple moves one into "apple:<sub>" it keeps only
+// mergedInto (and the Apple account lists it in mergedFrom, see merge.mjs).
 import { randomUUID } from "node:crypto";
 import { createHash } from "node:crypto";
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, TransactWriteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
@@ -129,11 +139,6 @@ export function publicDay(d) {
   };
 }
 
-/** Promotion codes are matched case-insensitively and without spaces ("Love Gulu" = "LOVEGULU"). */
-export function normalizePromoCode(code) {
-  return String(code ?? "").replace(/\s+/g, "").toUpperCase();
-}
-
 /** Calendar day ("2026-10-11") of `date` in `timeZone`. */
 export function billingDay(date, timeZone) {
   return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
@@ -213,14 +218,6 @@ export class PurchaseConflict extends Error {
   constructor() {
     super("purchase belongs to another account");
     this.name = "PurchaseConflict";
-  }
-}
-
-export class PromoError extends Error {
-  /** reason: "not_found" | "expired" | "inactive" | "used_up" | "already_redeemed" */
-  constructor(reason) {
-    super(reason);
-    this.reason = reason;
   }
 }
 
@@ -513,54 +510,6 @@ export class CreditStore {
   }
 
   /**
-   * Redeems a promotion code for `userId` (whose account must exist and be in tenths: call
-   * grantIfDue first). The code's credits (whole) go to gift credits.
-   * Returns { code, credits }. Throws PromoError with a reason the app can show.
-   */
-  async redeemPromo(userId, rawCode, now = new Date()) {
-    const code = normalizePromoCode(rawCode);
-    if (!code) throw new PromoError("not_found");
-    const { Item: promo } = await this.ddb.send(new GetCommand({ TableName: this.promoTable, Key: { code, sk: "#meta" } }));
-    // Read first only to give a precise reason; the transaction below re-checks everything.
-    if (!promo) throw new PromoError("not_found");
-    if (promo.active === false) throw new PromoError("inactive");
-    if (promo.expiresAt && promo.expiresAt <= now.toISOString()) throw new PromoError("expired");
-    if (promo.maxRedemptions != null && (promo.redemptions ?? 0) >= promo.maxRedemptions) throw new PromoError("used_up");
-    const credits = promo.credits;
-    try {
-      await this.ddb.send(new TransactWriteCommand({ TransactItems: [
-        { Update: {
-          TableName: this.promoTable, Key: { code, sk: "#meta" },
-          UpdateExpression: "SET redemptions = if_not_exists(redemptions, :zero) + :one",
-          ConditionExpression: "attribute_exists(code) AND (attribute_not_exists(active) OR active = :true) "
-            + "AND (attribute_not_exists(expiresAt) OR expiresAt > :now) "
-            + "AND (attribute_not_exists(maxRedemptions) OR redemptions < maxRedemptions OR attribute_not_exists(redemptions))",
-          ExpressionAttributeValues: { ":zero": 0, ":one": 1, ":true": true, ":now": now.toISOString() },
-        } },
-        { Put: {
-          TableName: this.promoTable,
-          Item: { code, sk: `user#${userId}`, userId, credits, redeemedAt: now.toISOString() },
-          ConditionExpression: "attribute_not_exists(sk)",
-        } },
-        { Update: {
-          TableName: this.accountsTable, Key: { userId },
-          UpdateExpression: "SET giftTenths = giftTenths + :c, version = version + :one",
-          ConditionExpression: "attribute_exists(userId) AND attribute_exists(giftTenths)",
-          ExpressionAttributeValues: { ":c": toTenths(credits), ":one": 1 },
-        } },
-      ] }));
-    } catch (e) {
-      if (e?.name !== "TransactionCanceledException") throw e;
-      const [meta, redemption] = (e.CancellationReasons ?? []).map((r) => r?.Code);
-      if (redemption === "ConditionalCheckFailed") throw new PromoError("already_redeemed");
-      if (meta === "ConditionalCheckFailed") throw new PromoError("used_up");
-      throw e;
-    }
-    await this.ledger(userId, { type: "promo", giftTenths: toTenths(credits), paidTenths: 0, ref: code });
-    return { code: promo.displayName ?? code, credits };
-  }
-
-  /**
    * Credits a verified in-app purchase once per transaction: a marker item in the promo table
    * (`code = iap#<transactionId>`, so no new table or permission is needed) and the paid credits
    * are written in one transaction (the account must be in tenths: call grantIfDue first). Returns { credited, credits } — credited is false when the
@@ -587,13 +536,32 @@ export class CreditStore {
       if (marker === "ConditionalCheckFailed") {
         // Already applied — only to this user; a different user would be someone replaying a receipt.
         const { Item } = await this.ddb.send(new GetCommand({ TableName: this.promoTable, Key: { code: `iap#${transactionId}`, sk: "#purchase" } }));
-        if (Item?.userId !== userId) throw new PurchaseConflict();
+        // Credited to a device account that has since moved into this one (merge.mjs) is ours too.
+        if (Item?.userId !== userId && (await this.read(Item?.userId ?? "-"))?.mergedInto !== userId) throw new PurchaseConflict();
         return { credited: false, credits: Item.credits };
       }
       throw e;
     }
     await this.ledger(userId, { type: "purchase", giftTenths: 0, paidTenths: toTenths(credits), ref: `${productId}#${transactionId}` });
     return { credited: true, credits };
+  }
+
+  /**
+   * Opens a new account with `bonus` whole credits as gifts and `fields` (anonymous.mjs: kind,
+   * deviceSecretHash, predecessor). Fails with ConditionalCheckFailedException if the id is taken.
+   * The ledger gets a signup entry only when there is a bonus.
+   */
+  async openAccount(userId, { bonus, fields = {} }, now = new Date()) {
+    const period = billingPeriod(now, this.billingTimeZone);
+    const item = { userId, giftTenths: toTenths(bonus), paidTenths: 0, grantPeriod: period, createdAt: now.toISOString(), version: 1, ...fields };
+    await this.ddb.send(new PutCommand({ TableName: this.accountsTable, Item: item, ConditionExpression: "attribute_not_exists(userId)" }));
+    if (bonus > 0) await this.ledger(userId, { type: "signup", giftTenths: toTenths(bonus), paidTenths: 0, ref: period });
+    return item;
+  }
+
+  /** Whether `userId` deleted an account before (the hashed tombstone deleteAccount leaves). */
+  async wasDeleted(userId) {
+    return Boolean(await this.read(CreditStore.tombstoneKey(userId)));
   }
 
   /** Keeps the Sign in with Apple refresh token on the account (for revocation on deletion). */

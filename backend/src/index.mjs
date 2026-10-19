@@ -1,14 +1,20 @@
 // ForeignMenu backend: one Lambda behind a Function URL in RESPONSE_STREAM mode. The app signs in
 // with Apple and spends credits; the OpenAI key never leaves the server.
 //
-//   POST /auth/apple   { identityToken }        → { token, expiresAt, userId }
+//   POST /auth/anonymous { deviceId?, deviceSecret? } → { token, expiresAt, userId, created, signupCredits, deviceId?, deviceSecret? }
+//                      a device account, no sign-in (anonymous.mjs); rate-limited per IP (429)
+//   POST /auth/apple   { identityToken, authorizationCode? } → { token, expiresAt, userId }
+//   POST /auth/apple/link { identityToken, authorizationCode? } (Bearer device session)
+//                      → { token, expiresAt, userId, linked: "attach" | "merge" | "already", movedCredits }
+//                      moves the device account into the Apple account (merge.mjs)
+//   POST /auth/refresh (Bearer)                 → { token, expiresAt, userId } a new 30-day session
 //   GET  /credits      (Bearer session token)   → { totalCredits, giftCredits, paidCredits, monthlyGrant, lastGrantPeriod, appAccountToken,
 //                                                   subscription: { active, productId, expiresAt, autoRenew, monthUsedCredits, monthFairUseCredits } }
 //   GET  /usage        (Bearer)                 → { balance, subscription, days: [{ date, spent, added, calls, covered, balance }] } (last 30 days)
 //   POST /purchase     { jws } (Bearer)         → credits a StoreKit 2 purchase
 //   POST /subscription { jws, renewalJws? } (Bearer) → records the account's subscription (subscription.mjs)
 //   POST /appstore/notifications { signedPayload } → App Store Server Notifications V2; always 200
-//   POST /promo/redeem { code } (Bearer)        → { code, credits, totalCredits, … }
+//   POST /promo/redeem                          → 410 { reason: "retired" } (redeem codes were removed in 1.1 (4))
 //   DELETE /account    (Bearer)                 → { deleted: true }
 //   POST /menu         (Bearer) Chat Completions body (messages, response_format, model?, temperature?,
 //                      reasoning_effort?) → the OpenAI SSE stream, unchanged
@@ -28,7 +34,9 @@ import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-sec
 import { config } from "./config.mjs";
 import { stripPrefix } from "./prefix.mjs";
 import { AuthError, issueSessionToken, verifyAppleIdentityToken, verifySessionToken } from "./auth.mjs";
-import { CreditStore, InsufficientCredits, PromoError, PurchaseConflict, balanceHistory, billingPeriod, publicBalance, publicDay, toCredits } from "./credits.mjs";
+import { CreditStore, InsufficientCredits, PurchaseConflict, balanceHistory, billingPeriod, publicBalance, publicDay, toCredits } from "./credits.mjs";
+import { AnonymousAccounts, clientIp, DeviceAuthError, isAnonymous, RateLimited, signupBonusAllowed } from "./anonymous.mjs";
+import { MergeError, mergeIntoApple } from "./merge.mjs";
 import { accountToken, creditableTransaction, PurchaseError, verifyAppleJWS } from "./purchase.mjs";
 import { instrument, newScope, requestScope, summarize } from "./ddbstats.mjs";
 import { logEvent, logRequest } from "./log.mjs";
@@ -45,6 +53,7 @@ const secrets = new SecretsManagerClient({});
 const store = new CreditStore(ddb, config);
 const purchases = new PurchaseRecords(ddb, config.purchasesTable);
 const subs = new SubscriptionStore(ddb, config);
+const anonymous = new AnonymousAccounts(ddb, store, config);
 
 // Secrets are read once per container and reused while it stays warm.
 const secretCache = new Map();
@@ -89,8 +98,14 @@ async function authenticate(event) {
 
 // --- Accounts and credits ------------------------------------------------------------------
 
+/** A device account that moved into an Apple account answers 401 "merged": the app signs in again. */
+function refuseMerged(item) {
+  if (item?.mergedInto) throw new HttpError(401, "this device account moved into an Apple account", { reason: "merged" });
+}
+
 async function grant(userId, ctx) {
   const { kind, item } = await store.grantIfDue(userId);
+  refuseMerged(item);
   if (kind === "reopen") logEvent("INFO", "account reopened after deletion (no signup bonus)", { requestId: ctx.requestId, userId });
   else if (kind) {
     ctx.grant = kind;
@@ -112,41 +127,119 @@ async function siwaKey() {
   return key;
 }
 
-async function signInWithApple(event, ctx) {
-  const { identityToken, authorizationCode } = readBody(event);
-  let claims;
+/** The Apple user id ("apple:<sub>") of a verified identity token. */
+async function appleUser(identityToken) {
   try {
-    claims = await verifyAppleIdentityToken(identityToken, { audience: config.appleAudience });
+    const claims = await verifyAppleIdentityToken(identityToken, { audience: config.appleAudience });
+    return `apple:${claims.sub}`;
   } catch (e) {
     if (e instanceof AuthError) throw new HttpError(401, `apple: ${e.message}`);
     throw e;
   }
-  const userId = `apple:${claims.sub}`;
+}
+
+/**
+ * Keeps a refresh token so deleting the account can revoke the Apple authorization. Best effort: a
+ * failure here never blocks signing in.
+ */
+async function keepAppleRefreshToken(userId, authorizationCode, ctx) {
+  if (typeof authorizationCode !== "string" || !authorizationCode) return;
+  const key = await siwaKey();
+  if (!key) return;
+  try {
+    const refresh = await exchangeCode(authorizationCode, key, config.appleAudience[0]);
+    if (refresh) await store.setAppleRefreshToken(userId, refresh);
+    ctx.appleToken = refresh ? "stored" : "none";
+  } catch (e) {
+    logEvent("WARN", "apple code exchange failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
+  }
+}
+
+async function session(userId) {
+  return { ...issueSessionToken(userId, await secretKey(config.sessionSecretArn), { days: config.sessionDays }), userId };
+}
+
+async function signInWithApple(event, ctx) {
+  const { identityToken, authorizationCode } = readBody(event);
+  const userId = await appleUser(identityToken);
   ctx.userId = userId;
   await grant(userId, ctx); // signing in counts as using the service: opens the account / this month's grant
-  // Keep a refresh token so deleting the account can revoke the Apple authorization. Best effort: a
-  // failure here never blocks signing in.
-  if (typeof authorizationCode === "string" && authorizationCode) {
-    const key = await siwaKey();
-    if (key) {
-      try {
-        const refresh = await exchangeCode(authorizationCode, key, config.appleAudience[0]);
-        if (refresh) await store.setAppleRefreshToken(userId, refresh);
-        ctx.appleToken = refresh ? "stored" : "none";
-      } catch (e) {
-        logEvent("WARN", "apple code exchange failed", { requestId: ctx.requestId, userId, error: String(e.message).slice(0, 200) });
-      }
-    }
+  await keepAppleRefreshToken(userId, authorizationCode, ctx);
+  return session(userId);
+}
+
+/**
+ * Sign in with Apple from a device account: moves it into the Apple account (merge.mjs) and answers
+ * with the Apple account's session. Safe to repeat. From an Apple session it is a plain sign-in.
+ */
+async function linkApple(event, ctx) {
+  const current = await authenticate(event);
+  const { identityToken, authorizationCode } = readBody(event);
+  const appleId = await appleUser(identityToken);
+  ctx.userId = appleId;
+  if (!isAnonymous(current)) {
+    await grant(appleId, ctx);
+    await keepAppleRefreshToken(appleId, authorizationCode, ctx);
+    return { ...(await session(appleId)), linked: current === appleId ? "already" : "switch", movedCredits: 0 };
   }
-  const session = issueSessionToken(userId, await secretKey(config.sessionSecretArn), { days: config.sessionDays });
-  return { ...session, userId };
+  ctx.from = current;
+  let result;
+  try {
+    result = await mergeIntoApple(current, appleId, { ddb, store, subs, purchases, config });
+  } catch (e) {
+    if (e instanceof MergeError) {
+      throw new HttpError(e.reason === "no_account" ? 401 : 409, e.reason === "no_account"
+        ? "device account not found" : "device account already moved into another Apple account", { reason: e.reason });
+    }
+    throw e;
+  }
+  Object.assign(ctx, { linked: result.kind, creditsMoved: toCredits(result.movedTenths) });
+  logEvent("INFO", "device account linked", { requestId: ctx.requestId, userId: appleId, from: current, linked: result.kind,
+    creditsMoved: toCredits(result.movedTenths) });
+  await grant(appleId, ctx); // the subscriber grant, if the move brought an active subscription
+  await keepAppleRefreshToken(appleId, authorizationCode, ctx);
+  return { ...(await session(appleId)), linked: result.kind, movedCredits: Math.floor(toCredits(result.movedTenths)) };
+}
+
+/** POST /auth/anonymous: a device account and its session (anonymous.mjs). */
+async function signInAnonymously(event, ctx) {
+  const body = readBody(event);
+  let r;
+  try {
+    r = await anonymous.open(body, { ip: clientIp(event), bonusAllowed: await signupBonusAllowed({ event, body }) });
+  } catch (e) {
+    if (e instanceof DeviceAuthError) throw new HttpError(401, e.message, { reason: "device" });
+    if (e instanceof RateLimited) throw new HttpError(429, e.message, { reason: "rate_limited" });
+    throw e;
+  }
+  ctx.userId = r.userId;
+  if (r.created) {
+    ctx.grant = r.signupCredits > 0 ? "signup" : "none";
+    logEvent("INFO", "device account created", { requestId: ctx.requestId, userId: r.userId, signupCredits: r.signupCredits,
+      ...(r.predecessor ? { predecessor: r.predecessor } : {}) });
+  }
+  return {
+    ...(await session(r.userId)), created: r.created, signupCredits: r.signupCredits,
+    ...(r.created ? { deviceId: r.userId, deviceSecret: r.deviceSecret } : {}),
+  };
+}
+
+/** POST /auth/refresh: a new 30-day session for a still-valid one (Apple accounts have no device secret). */
+async function refreshSession(event, ctx) {
+  const userId = await authenticate(event);
+  ctx.userId = userId;
+  const item = await store.read(userId);
+  if (!item) throw new HttpError(401, "account not found", { reason: "deleted" });
+  refuseMerged(item);
+  return session(userId);
 }
 
 async function deleteAccount(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
-  // Revoke the Apple authorization first (guideline 5.1.1(v)); the account goes either way.
-  const token = await store.appleRefreshToken(userId);
+  // Revoke the Apple authorization first (guideline 5.1.1(v)); the account goes either way. Device
+  // accounts have no Apple identity and nothing to revoke.
+  const token = isAnonymous(userId) ? null : await store.appleRefreshToken(userId);
   const key = token ? await siwaKey() : null;
   if (token && key) {
     try {
@@ -157,7 +250,7 @@ async function deleteAccount(event, ctx) {
     }
   }
   await store.deleteAccount(userId);
-  logEvent("INFO", "account deleted", { requestId: ctx.requestId, userId });
+  logEvent("INFO", "account deleted", { requestId: ctx.requestId, userId, anonymous: isAnonymous(userId) });
   return { deleted: true };
 }
 
@@ -173,6 +266,7 @@ async function getCredits(event, ctx) {
   const userId = await authenticate(event); // viewing the balance is not "use": no grant here
   ctx.userId = userId;
   const item = await store.read(userId);
+  refuseMerged(item);
   const b = store.toBalance(item) ?? emptyBalance();
   return { ...publicBalance(b), appAccountToken: accountToken(userId), subscription: subscriptionOf(item) };
 }
@@ -181,6 +275,7 @@ async function getUsage(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
   const [item, rows] = await Promise.all([store.read(userId), store.dailyRows(userId, config.usageDays)]);
+  refuseMerged(item);
   const balance = store.toBalance(item) ?? emptyBalance();
   const days = balanceHistory(rows, { balance: balance.total, days: config.usageDays, timeZone: config.billingTimeZone });
   return { balance: publicBalance(balance), subscription: subscriptionOf(item), days: days.map(publicDay) };
@@ -193,14 +288,16 @@ async function purchase(event, ctx) {
   let payload = null;
   try {
     payload = verifyAppleJWS(jws);
-    const tx = creditableTransaction(payload, { userId, bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases });
-    await grant(userId, ctx);
+    const account = (await grant(userId, ctx)) ?? await store.read(userId);
+    const tx = creditableTransaction(payload, { userId, aliases: account?.mergedFrom, bundleId: config.appBundleId,
+      allowSandbox: config.allowSandboxPurchases });
     const result = await store.creditPurchase(userId, tx);
     const facts = transactionFacts(payload);
     await purchases.record(userId, { ...facts, credits: result.credits, bonus: result.bonus ?? 0,
       status: result.credited ? "credited" : "duplicate" });
     logEvent("INFO", "purchase", { requestId: ctx.requestId, userId, productId: tx.productId, environment: tx.environment,
-      credits: result.credits, credited: result.credited, price: facts.price, currency: facts.currency, storefront: facts.storefront });
+      credits: result.credits, credited: result.credited, price: facts.price, currency: facts.currency, storefront: facts.storefront,
+      ...(facts.offerType !== undefined ? { offerType: facts.offerType, offerIdentifier: facts.offerIdentifier } : {}) });
     return { ...result, productId: tx.productId, ...publicBalance(await store.balance(userId)) };
   } catch (e) {
     const reason = e instanceof PurchaseError ? e.reason : e instanceof PurchaseConflict ? "conflict" : null;
@@ -224,8 +321,10 @@ async function subscribe(event, ctx) {
   const userId = await authenticate(event);
   ctx.userId = userId;
   try {
+    const account = await store.read(userId);
+    refuseMerged(account);
     const r = await recordEntitlement(readBody(event), {
-      userId, verify: (jws) => verifyAppleJWS(jws), subs, records: purchases, grant: (u) => grant(u, ctx),
+      userId, aliases: account?.mergedFrom, verify: (jws) => verifyAppleJWS(jws), subs, records: purchases, grant: (u) => grant(u, ctx),
       read: (u) => store.read(u), bundleId: config.appBundleId, allowSandbox: config.allowSandboxPurchases,
     });
     ctx.subscription = r.productId;
@@ -261,23 +360,13 @@ async function appStoreNotification(event, ctx) {
   return { ok: true };
 }
 
-const PROMO_STATUS = { not_found: 404, inactive: 410, expired: 410, used_up: 410, already_redeemed: 409 };
-
-async function redeemPromo(event, ctx) {
-  const userId = await authenticate(event);
-  ctx.userId = userId;
-  const { code } = readBody(event);
-  if (typeof code !== "string" || code.length > 64) throw new HttpError(400, "code must be a string");
-  await grant(userId, ctx);
-  try {
-    const result = await store.redeemPromo(userId, code);
-    ctx.promo = result.code;
-    logEvent("INFO", "promo redeemed", { requestId: ctx.requestId, userId, promo: result.code, credits: result.credits });
-    return { ...result, ...publicBalance(await store.balance(userId)) };
-  } catch (e) {
-    if (e instanceof PromoError) throw new HttpError(PROMO_STATUS[e.reason] ?? 400, e.reason, { reason: e.reason });
-    throw e;
-  }
+/**
+ * Redeem codes were removed in 1.1 (4) (App Review 3.1.1: an in-app code that adds credits unlocks
+ * paid content). Credits already redeemed stay; giveaways use App Store Offer Codes, which arrive as
+ * ordinary purchases (POST /purchase).
+ */
+function redeemRetired() {
+  throw new HttpError(410, "redeem codes are no longer available", { reason: "retired" });
 }
 
 /** Reserves `tenths` for a model call, or answers 402 with the balance. */
@@ -476,13 +565,16 @@ async function handle(event, stream, context) {
   const path = event.rawPath;
   const ctx = { requestId: context?.awsRequestId, route: `${method} ${path}`, startedAt: Date.now() };
   try {
+    if (method === "POST" && path === "/auth/anonymous") return sendJSON(stream, 200, await signInAnonymously(event, ctx), ctx);
     if (method === "POST" && path === "/auth/apple") return sendJSON(stream, 200, await signInWithApple(event, ctx), ctx);
+    if (method === "POST" && path === "/auth/apple/link") return sendJSON(stream, 200, await linkApple(event, ctx), ctx);
+    if (method === "POST" && path === "/auth/refresh") return sendJSON(stream, 200, await refreshSession(event, ctx), ctx);
     if (method === "GET" && path === "/credits") return sendJSON(stream, 200, await getCredits(event, ctx), ctx);
     if (method === "GET" && path === "/usage") return sendJSON(stream, 200, await getUsage(event, ctx), ctx);
     if (method === "POST" && path === "/purchase") return sendJSON(stream, 200, await purchase(event, ctx), ctx);
     if (method === "POST" && path === "/subscription") return sendJSON(stream, 200, await subscribe(event, ctx), ctx);
     if (method === "POST" && path === "/appstore/notifications") return sendJSON(stream, 200, await appStoreNotification(event, ctx), ctx);
-    if (method === "POST" && path === "/promo/redeem") return sendJSON(stream, 200, await redeemPromo(event, ctx), ctx);
+    if (method === "POST" && path === "/promo/redeem") return redeemRetired();
     if (method === "DELETE" && path === "/account") return sendJSON(stream, 200, await deleteAccount(event, ctx), ctx);
     if (method === "POST" && path === "/menu") return await menu(event, stream, ctx);
     if (method === "POST" && path === "/image") return sendJSON(stream, 200, await image(event, ctx), ctx);

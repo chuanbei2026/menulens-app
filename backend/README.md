@@ -1,11 +1,13 @@
 # ForeignMenu backend
 
 One Lambda (Node.js, Function URL in `RESPONSE_STREAM` mode) so the app no longer needs the user's own
-OpenAI key: Sign in with Apple → our session token → per-user credits → relay to OpenAI with our key.
-Same design as the DateSeries backend, with its own tables, secrets and credits.
+OpenAI key: a device account (or Sign in with Apple) → our session token → per-user credits → relay to
+OpenAI with our key. Same design as the DateSeries backend, with its own tables, secrets and credits.
 
 ```
+App ──POST /auth/anonymous {deviceId?, deviceSecret?}─► device account ──► 30-day session token (HS256)
 App ──POST /auth/apple {identityToken}──► verify Apple JWT ──► 30-day session token (HS256)
+App ──POST /auth/apple/link (Bearer device session) ──► move the device account into the Apple account
 App ──GET  /credits ─────────────────────► balance (lazy monthly grant happens on use)
 App ──POST /menu  (Chat Completions body)─► reserve estimate ──► OpenAI stream, bytes unchanged ──► settle usage
 App ──POST /image {prompt} ──────────────► reserve estimate ──► gpt-image-1-mini (1024², low, jpeg) ──► settle usage
@@ -20,7 +22,55 @@ Apple ─POST /appstore/notifications ─────► verify signedPayload �
 | Request shaping, SSE usage sniffing, image call | `src/relay.mjs` |
 | Routes | `src/index.mjs` |
 | Subscriptions: state, covered calls, Server Notifications | `src/subscription.mjs` (+ `reserveCovered` / `subscriberGrant` in `src/credits.mjs`) |
+| Device accounts, per-IP signup limit | `src/anonymous.mjs` |
+| Moving a device account into an Apple account | `src/merge.mjs` |
 | Apple / session tokens, credits, purchases, logging | `src/auth.mjs`, `src/credits.mjs`, `src/purchase.mjs`, `src/log.mjs` (shared with DateSeries) |
+
+## Accounts (1.1 (4): no sign-in needed)
+
+App Review (guideline 5.1.1(v)) wants scanning without registering, so every install gets an
+**anonymous device account** on first launch; Sign in with Apple is optional.
+
+| Route | What it does |
+|---|---|
+| `POST /auth/anonymous {}` | New account `anon:<uuid>` with the normal **300** signup credits. Returns the session plus `deviceId` / `deviceSecret`, which the app keeps in the Keychain (this device only, survives a reinstall). **Rate-limited per IP**: `ANON_SIGNUPS_PER_IP_HOUR` = 10, `ANON_SIGNUPS_PER_IP_DAY` = 30 (counters in the promo table, `rate#anon#<ip hash>`, TTL `expiresEpoch`; the IP itself isn't stored). 429 `{reason: "rate_limited"}` beyond that. |
+| `POST /auth/anonymous {deviceId, deviceSecret}` | A fresh 30-day session for that account (not rate-limited). Wrong secret → 401 `{reason: "device"}`. If the account was moved into an Apple account or deleted, a **new device account with 0 credits** (`predecessor` recorded). |
+| `POST /auth/refresh` (Bearer) | A new 30-day session for a still-valid one (Apple accounts have no device secret). |
+| `POST /auth/apple` | Unchanged: Sign in with Apple without a device account (builds before 1.1 (4)). |
+| `POST /auth/apple/link {identityToken, authorizationCode?}` (Bearer device session) | Moves the device account into `apple:<sub>` and returns the Apple account's session: `linked: "attach"` (the Apple ID was new: its account is opened with the device balance, **no new 300**), `"merge"` (added to the existing account), `"already"` (a retry). From an Apple session it's a plain sign-in (`"switch"`). 409 `conflict` if the device account already went into a different Apple account. |
+
+**Repeated free credits** are held back only by the Keychain (the app reuses its device secret, and a
+device whose account was moved or deleted gets 0 next time) and by the per-IP limit. Calling the API
+directly or wiping the device gets another 300. TODO(DeviceCheck): `signupBonusAllowed` in
+`src/anonymous.mjs` is the one hook to check a DeviceCheck token before the bonus.
+
+**The move (`src/merge.mjs`)**, the same for attach and merge:
+
+1. One DynamoDB transaction: the device account is closed (balance 0, `mergedInto`), the Apple account
+   gains the whole balance (gift and paid as they are) and lists the device account in `mergedFrom`,
+   ledger `merge_out` / `merge_in` entries on both sides and the Apple account's daily rollup. Conditional
+   on both accounts' `version`, so a charge in between makes it re-read. The device's subscription state is
+   copied when it runs longer than the Apple account's.
+2. Idempotent clean-up: subscription links `sub#<originalTransactionId>`, credited-purchase markers
+   `iap#<transactionId>` and the purchases-table rows (`movedFrom`) are re-pointed to the Apple account;
+   the device account's daily rows are dropped. Not carried: its 30-day chart and this month's fair-use meter.
+
+A retry finds `mergedInto` set and only redoes step 2 (and sweeps a refund that settled into the closed
+account meanwhile). A stale device session gets 401 `{reason: "merged"}` everywhere. StoreKit keeps the
+device account's `appAccountToken` on its transactions forever, so `/purchase`, `/subscription` and the
+notifications accept the tokens of every `mergedFrom` account; a subscription link still held by a merged
+device account is taken over.
+
+**Deleting** works the same for device accounts (no Apple authorization to revoke) and leaves the hashed
+tombstone. User ids stay pseudonymous (`anon:<uuid>` / `apple:<sub>`), linked to the account's balance and
+purchases — the App Store privacy label keeps **User ID: linked**.
+
+**Redeem codes are retired** (guideline 3.1.1): `POST /promo/redeem` answers **410** `{reason: "retired"}`;
+credits already redeemed stay. Giveaways use App Store Connect **Offer Codes** for the credit packs: a
+redemption arrives in the app as an ordinary transaction (`Transaction.updates`, `offerType` 3, often
+price 0, usually without `appAccountToken`) and `POST /purchase` credits it once per transaction like any
+purchase; `offerType` / `offerIdentifier` are kept in the purchases table. `scripts/promo.mjs` stays only to
+look at or disable the old codes.
 
 ## Credits
 
@@ -77,7 +127,9 @@ AWS_PROFILE=claude-agent ./deploy.sh                                   # idempot
 AWS_PROFILE=claude-agent node scripts/live-test.mjs <function-url>     # end to end, ~US$0.015
 ```
 
-Live: `https://uwondrk7ngmf3jgkimsifwa62q0fwgzo.lambda-url.us-west-2.on.aws/`
+Live: `https://uwondrk7ngmf3jgkimsifwa62q0fwgzo.lambda-url.us-west-2.on.aws/`; from 1.1 (4) the app calls
+`https://api.chuanbei.dev/menu/…` (CloudFront's `/menu/*` behavior → this Lambda, `src/prefix.mjs` strips
+`/menu`; a bare `/menu` is the scan route itself).
 
 - OpenAI key: secret `AwsLambdaKey/foreign-menu` (`{"key": …}`). Session key: `foreignmenu/session-key`.
 - Logs: `/aws/lambda/foreignmenu-api` (90 days), one JSON line per request with sizes, tokens, `costUsd` and

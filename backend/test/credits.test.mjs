@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  accountTenths, balanceHistory, billingPeriod, entryTenths, estimateInputTokens, nextPeriod, normalizePromoCode, publicBalance,
+  accountTenths, balanceHistory, billingPeriod, entryTenths, estimateInputTokens, nextPeriod, publicBalance,
   publicDay, rollupDelta, rowTenths, settlementDeltas, splitCharge, tenthsFor, toCredits, toTenths,
 } from "../src/credits.mjs";
 
@@ -79,12 +79,6 @@ test("settlement refunds paid first, overruns hit gift", () => {
   assert.deepEqual(settlementDeltas({ fromGift: 9, fromPaid: 0 }, 9), { gift: 0, paid: 0 });
   assert.deepEqual(settlementDeltas({ fromGift: 5, fromPaid: 0 }, 7), { gift: -2, paid: 0 });
   assert.deepEqual(settlementDeltas({ fromGift: 3, fromPaid: 2 }, 0), { gift: 3, paid: 2 }); // full refund
-});
-
-test("promo codes match regardless of case and spaces", () => {
-  assert.equal(normalizePromoCode(" Love Gulu "), "LOVEGULU");
-  assert.equal(normalizePromoCode("lovegulu"), "LOVEGULU");
-  assert.equal(normalizePromoCode(undefined), "");
 });
 
 test("rollup: holds and settlements are spending, grants and promotions are additions (tenths)", () => {

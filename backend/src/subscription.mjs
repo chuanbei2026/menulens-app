@@ -19,7 +19,7 @@
 //   can't be claimed by a second account.
 
 import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { accountToken, PurchaseError } from "./purchase.mjs";
+import { PurchaseError, tokenMatches } from "./purchase.mjs";
 import { logEvent } from "./log.mjs";
 
 /** The subscription products (one group). Prices live in App Store Connect: US$4 / 10 / 30. */
@@ -43,15 +43,13 @@ export function subscriptionActive(sub, now = new Date()) {
  * Checks a verified transaction payload (JWSTransactionDecodedPayload) for one of our subscriptions and
  * returns the facts we keep. `userId` (when known) must match the appAccountToken the purchase carries.
  */
-export function subscriptionTransaction(payload, { userId, bundleId, allowSandbox }) {
+export function subscriptionTransaction(payload, { userId, aliases = [], bundleId, allowSandbox }) {
   if (payload.bundleId !== bundleId) throw new PurchaseError("wrong_app");
   if (!SUBSCRIPTIONS[payload.productId]) throw new PurchaseError("unknown_product");
   if (payload.type && payload.type !== "Auto-Renewable Subscription") throw new PurchaseError("unknown_product");
   const env = payload.environment;
   if (env !== "Production" && !(allowSandbox && env === "Sandbox")) throw new PurchaseError("wrong_environment");
-  if (userId && payload.appAccountToken && payload.appAccountToken.toLowerCase() !== accountToken(userId)) {
-    throw new PurchaseError("wrong_account");
-  }
+  if (userId && !tokenMatches(payload.appAccountToken, userId, aliases)) throw new PurchaseError("wrong_account");
   for (const k of ["transactionId", "originalTransactionId"]) {
     if (typeof payload[k] !== "string" || !payload[k]) throw new PurchaseError("bad_jws");
   }
@@ -151,19 +149,58 @@ export class SubscriptionStore {
     return { code: `sub#${originalTransactionId}`, sk: "#subscription" };
   }
 
-  /** Links an Apple subscription to `userId` (idempotent); throws SubscriptionConflict if it is someone else's. */
+  /**
+   * Links an Apple subscription to `userId` (idempotent); throws SubscriptionConflict if it is someone
+   * else's. A link still held by a device account that moved into `userId` (merge.mjs, interrupted
+   * before it re-pointed the link) is taken over.
+   */
   async link(userId, originalTransactionId, now = new Date()) {
+    const put = (condition, values) => this.ddb.send(new PutCommand({
+      TableName: this.promoTable,
+      Item: { ...SubscriptionStore.linkKey(originalTransactionId), userId, at: now.toISOString() },
+      ConditionExpression: condition, ExpressionAttributeValues: values,
+    }));
     try {
-      await this.ddb.send(new PutCommand({
-        TableName: this.promoTable,
-        Item: { ...SubscriptionStore.linkKey(originalTransactionId), userId, at: now.toISOString() },
-        ConditionExpression: "attribute_not_exists(code) OR userId = :u",
-        ExpressionAttributeValues: { ":u": userId },
-      }));
+      await put("attribute_not_exists(code) OR userId = :u", { ":u": userId });
     } catch (e) {
-      if (isConditionFailure(e)) throw new SubscriptionConflict();
+      if (!isConditionFailure(e)) throw e;
+      const owner = await this.ownerOf(originalTransactionId);
+      if (!owner || (await this.account(owner))?.mergedInto !== userId) throw new SubscriptionConflict();
+      try {
+        await put("userId = :old", { ":old": owner });
+      } catch (e2) {
+        if (isConditionFailure(e2)) throw new SubscriptionConflict();
+        throw e2;
+      }
+    }
+  }
+
+  /**
+   * Re-points a link from `fromId` to `toId` (merge.mjs). Returns false when the link is missing or
+   * belongs to someone else (nothing changes then).
+   */
+  async relink(originalTransactionId, fromId, toId) {
+    try {
+      await this.ddb.send(new UpdateCommand({
+        TableName: this.promoTable, Key: SubscriptionStore.linkKey(originalTransactionId),
+        UpdateExpression: "SET userId = :to", ConditionExpression: "userId = :from",
+        ExpressionAttributeValues: { ":to": toId, ":from": fromId },
+      }));
+      return true;
+    } catch (e) {
+      if (isConditionFailure(e)) return false;
       throw e;
     }
+  }
+
+  async account(userId) {
+    const { Item } = await this.ddb.send(new GetCommand({ TableName: this.accountsTable, Key: { userId }, ConsistentRead: true }));
+    return Item;
+  }
+
+  /** The device accounts moved into `userId`, whose purchase tokens its transactions may carry. */
+  async aliasesOf(userId) {
+    return (await this.account(userId))?.mergedFrom ?? [];
   }
 
   /** The account a subscription belongs to, or null. */
@@ -211,11 +248,11 @@ export class SubscriptionStore {
  * Returns { item, after, isNew, productId, payload }.
  */
 export async function recordEntitlement({ jws, renewalJws } = {}, deps, now = new Date()) {
-  const { userId, verify, subs, records, grant, read, bundleId, allowSandbox } = deps;
+  const { userId, aliases = [], verify, subs, records, grant, read, bundleId, allowSandbox } = deps;
   let payload = null;
   try {
     payload = verify(jws);
-    const tx = subscriptionTransaction(payload, { userId, bundleId, allowSandbox });
+    const tx = subscriptionTransaction(payload, { userId, aliases, bundleId, allowSandbox });
     if (tx.revokedAt) throw new PurchaseError("revoked");
     const incoming = { ...tx, status: "app" };
     if (typeof renewalJws === "string" && renewalJws) {
@@ -273,7 +310,7 @@ export async function handleNotification(body, deps, now = new Date()) {
       return { ...out, ignored: "unknown_subscription" };
     }
     out.userId = userId;
-    const incoming = subscriptionTransaction(tx, { userId, bundleId, allowSandbox });
+    const incoming = subscriptionTransaction(tx, { userId, aliases: await subs.aliasesOf(userId), bundleId, allowSandbox });
     if (REVOKING.has(n.notificationType) && !incoming.revokedAt) incoming.revokedAt = iso(n.signedDate) ?? now.toISOString();
     if (renewalPayload?.originalTransactionId === tx.originalTransactionId) incoming.renewal = renewalFacts(renewalPayload);
     incoming.status = [n.notificationType, n.subtype].filter(Boolean).join(":");

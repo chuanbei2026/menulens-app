@@ -141,20 +141,17 @@ test("a concurrent change during the move makes it re-read instead of overwritin
   assert.equal(account(ddb, "m").legacyCredits.giftCredits, 9);
 });
 
-test("promotions and purchases add whole credits as tenths", async () => {
+test("purchases add whole credits as tenths", async () => {
   const { ddb, store } = setup();
   ddb.put("accounts", { userId: "x", giftCredits: 1, paidCredits: 0, grantPeriod: thisMonth, version: 1 }, ["userId"]);
-  ddb.put("promo", { code: "LOVEGULU", sk: "#meta", credits: 2000, active: true, redemptions: 0, displayName: "LoveGulu" }, ["code", "sk"]);
+  const tx = { transactionId: "t9", productId: "ai.xiangyang.MenuLens.credits.500", credits: 500, environment: "Sandbox" };
   // Unmoved accounts are refused rather than mixing units (every route calls grantIfDue first).
-  await assert.rejects(store.redeemPromo("x", "love gulu", now), (e) => e.name === "TransactionCanceledException");
+  await assert.rejects(store.creditPurchase("x", tx, now), (e) => e.name === "TransactionCanceledException");
   await store.grantIfDue("x", now);
-  assert.deepEqual(await store.redeemPromo("x", "love gulu", now), { code: "LoveGulu", credits: 2000 });
-  assert.equal(account(ddb, "x").giftTenths, 20010);
-  const tx = { transactionId: "t9", productId: "ai.xiangyang.MenuLens.credits.500", credits: 550, environment: "Sandbox" };
-  assert.deepEqual(await store.creditPurchase("x", tx, now), { credited: true, credits: 550 });
-  assert.equal(account(ddb, "x").paidTenths, 5500);
-  assert.equal(toCredits((await store.balance("x")).total), 2551);
-  assert.deepEqual(ledger(ddb, "x").slice(-2).map((e) => [e.type, e.giftTenths, e.paidTenths]), [["promo", 20000, 0], ["purchase", 0, 5500]]);
+  assert.deepEqual(await store.creditPurchase("x", tx, now), { credited: true, credits: 500 });
+  assert.equal(account(ddb, "x").paidTenths, 5000);
+  assert.equal(toCredits((await store.balance("x")).total), 501);
+  assert.deepEqual(ledger(ddb, "x").slice(-1).map((e) => [e.type, e.giftTenths, e.paidTenths]), [["purchase", 0, 5000]]);
 });
 
 test("hundreds of tool-round charges: balance, ledger and daily rollup agree to the tenth", async () => {

@@ -1,3 +1,8 @@
+// RETIRED (1.1 (4), 2026-10-19): the app no longer redeems codes — App Review counted an in-app code
+// that adds credits as unlocking paid content (guideline 3.1.1) — and POST /promo/redeem answers 410.
+// Giveaways use App Store Connect Offer Codes for the credit packs instead. Kept only to look at or
+// disable the old codes (`show`, `disable`); `create` no longer gives anyone anything.
+//
 // Admin tool for promotion codes (run locally with the claude-agent profile; not part of the Lambda).
 //
 //   AWS_PROFILE=claude-agent AWS_REGION=us-west-2 node scripts/promo.mjs create LoveGulu --credits 2000 --expires 2030-12-31
@@ -9,9 +14,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { config } from "../src/config.mjs";
-import { normalizePromoCode } from "../src/credits.mjs";
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+/** Codes were matched case-insensitively and without spaces ("Love Gulu" = "LOVEGULU"). */
+const normalizePromoCode = (code) => String(code ?? "").replace(/\s+/g, "").toUpperCase();
 const [cmd, name, ...rest] = process.argv.slice(2);
 const flag = (f) => { const i = rest.indexOf(f); return i >= 0 ? rest[i + 1] : undefined; };
 if (!cmd || !name) { console.error("usage: promo.mjs create|show|expires|disable <code> [--credits N] [--expires YYYY-MM-DD] [--max N]"); process.exit(2); }

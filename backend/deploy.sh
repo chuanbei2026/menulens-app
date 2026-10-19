@@ -64,6 +64,12 @@ for t in "${ACCOUNTS_TABLE}" "${LEDGER_TABLE}" "${PROMO_TABLE}" "${DAILY_TABLE}"
   TABLE_ARNS+=("\"$(aws dynamodb describe-table --table-name "${t}" --query Table.TableArn --output text)\"")
 done
 
+# Per-IP counters of new anonymous accounts (src/anonymous.mjs) expire on their own.
+if [[ "$(aws dynamodb describe-time-to-live --table-name "${PROMO_TABLE}" --query TimeToLiveDescription.TimeToLiveStatus --output text)" == "DISABLED" ]]; then
+  aws dynamodb update-time-to-live --table-name "${PROMO_TABLE}" \
+    --time-to-live-specification "Enabled=true,AttributeName=expiresEpoch" >/dev/null
+fi
+
 echo "== session signing secret"
 if ! SESSION_SECRET_ARN="$(aws secretsmanager describe-secret --secret-id "${SESSION_SECRET_NAME}" --query ARN --output text 2>/dev/null)"; then
   # Generated here and sent straight to Secrets Manager; never printed or written to disk.
@@ -128,7 +134,8 @@ echo "== Function URL (streaming)"
 if ! URL="$(aws lambda get-function-url-config --function-name "${NAME}" --query FunctionUrl --output text 2>/dev/null)"; then
   URL="$(aws lambda create-function-url-config --function-name "${NAME}" --auth-type NONE \
     --invoke-mode RESPONSE_STREAM --query FunctionUrl --output text)"
-  # Public URL; every route except /auth/apple checks our own session token.
+  # Public URL; every route except /auth/apple, /auth/anonymous, /models and the App Store
+  # notifications checks our own session token.
   aws lambda add-permission --function-name "${NAME}" --statement-id public-url \
     --action lambda:InvokeFunctionUrl --principal "*" --function-url-auth-type NONE >/dev/null
   aws lambda add-permission --function-name "${NAME}" --statement-id public-url-invoke \

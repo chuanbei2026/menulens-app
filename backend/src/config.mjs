@@ -19,6 +19,10 @@ export const config = {
   appBundleId: process.env.APP_BUNDLE_ID ?? "ai.xiangyang.MenuLens",
   allowSandboxPurchases: (process.env.ALLOW_SANDBOX_PURCHASES ?? "1") === "1",
   sessionDays: 30,
+  // Anonymous device accounts (anonymous.mjs): new ones per IP per hour / per day (0 = no limit).
+  // Generous on purpose: a hotel, a carrier NAT or App Review can put many devices behind one IP.
+  anonPerIpHour: Number(process.env.ANON_SIGNUPS_PER_IP_HOUR ?? 10),
+  anonPerIpDay: Number(process.env.ANON_SIGNUPS_PER_IP_DAY ?? 30),
 
   // Credits. 300 free at signup and no monthly grant (unlike DateSeries); after that users buy credits
   // in the app (purchase.mjs). Credits never expire.

@@ -97,10 +97,24 @@ export function oidBytes(oid) {
 }
 
 /**
+ * Whether a transaction's appAccountToken belongs to `userId`: its own token, or that of a device
+ * account moved into it (`aliases`, the account's mergedFrom — merge.mjs). Purchases made outside
+ * the app carry no token (an App Store Offer Code redeemed in the App Store app): those are
+ * anyone's who holds the Apple-signed transaction, and crediting stays once per transaction.
+ */
+export function tokenMatches(appAccountToken, userId, aliases = []) {
+  if (!appAccountToken) return true;
+  const t = appAccountToken.toLowerCase();
+  return [userId, ...aliases].some((id) => accountToken(id) === t);
+}
+
+/**
  * Checks a verified transaction payload against our app and the signed-in user and returns what
  * to credit. `allowSandbox` admits TestFlight / sandbox purchases (they cost the tester nothing).
+ * Offer code redemptions are ordinary transactions here (offerType 3, often price 0): credited
+ * like a purchase.
  */
-export function creditableTransaction(payload, { userId, bundleId, allowSandbox }) {
+export function creditableTransaction(payload, { userId, aliases = [], bundleId, allowSandbox }) {
   if (payload.bundleId !== bundleId) throw new PurchaseError("wrong_app");
   const product = PRODUCTS[payload.productId];
   if (!product) throw new PurchaseError("unknown_product");
@@ -108,9 +122,7 @@ export function creditableTransaction(payload, { userId, bundleId, allowSandbox 
   if (payload.revocationDate) throw new PurchaseError("revoked");
   const env = payload.environment;
   if (env !== "Production" && !(allowSandbox && env === "Sandbox")) throw new PurchaseError("wrong_environment");
-  if (payload.appAccountToken && payload.appAccountToken.toLowerCase() !== accountToken(userId)) {
-    throw new PurchaseError("wrong_account");
-  }
+  if (!tokenMatches(payload.appAccountToken, userId, aliases)) throw new PurchaseError("wrong_account");
   const quantity = Math.max(1, Math.min(10, Number(payload.quantity) || 1));
   if (typeof payload.transactionId !== "string" || !payload.transactionId) throw new PurchaseError("bad_jws");
   return {
