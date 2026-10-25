@@ -24,6 +24,28 @@ enum ResultTab: Hashable, CaseIterable {
     }
 }
 
+/// How the result screen uses the space it has.
+enum ResultArrangement: Equatable {
+    /// Status · canvas pages · list, one swipe apart (phones, the folded
+    /// iPhone Duo, portrait iPad).
+    case pager
+    /// Canvas and list side by side, status in the canvas column while pages
+    /// come in: the unfolded iPhone Duo (~880 pt beside its system column),
+    /// narrower iPad windows. Three columns would leave the list too narrow
+    /// to read a dish name on one line.
+    case twoColumns
+    /// Status, canvas and list at once (landscape iPad).
+    case threeColumns
+
+    /// Wide enough for three columns: a landscape iPad (1133 pt and up).
+    static let threeColumnWidth: CGFloat = 1000
+
+    static func choose(regularWidth: Bool, size: CGSize) -> ResultArrangement {
+        guard regularWidth, size.width > size.height else { return .pager }
+        return size.width >= threeColumnWidth ? .threeColumns : .twoColumns
+    }
+}
+
 /// Photo order (what the result screen shows, failed pages included) vs. the
 /// saved scan (only the pages that came back): history, the PDF and the dish
 /// pictures on disk use the saved positions.

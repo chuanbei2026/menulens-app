@@ -25,6 +25,20 @@ final class ResultLayoutTests: XCTestCase {
         XCTAssertNil(ResultTab.afterAllPagesFinished(current: .status, userChoseView: false, anyPageDone: false))
     }
 
+    func testArrangement() {
+        // iPhone, folded iPhone Duo (cover screen), portrait iPad: the pager.
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: false, size: CGSize(width: 402, height: 874)), .pager)
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: false, size: CGSize(width: 396, height: 678)), .pager)
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: true, size: CGSize(width: 820, height: 1180)), .pager)
+        // Unfolded iPhone Duo (beside its system column): canvas and list.
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: true, size: CGSize(width: 880, height: 669)), .twoColumns)
+        // Landscape iPads keep their three columns.
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: true, size: CGSize(width: 1133, height: 744)), .threeColumns)
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: true, size: CGSize(width: 1376, height: 1032)), .threeColumns)
+        // A landscape phone (compact width) stays a pager.
+        XCTAssertEqual(ResultArrangement.choose(regularWidth: false, size: CGSize(width: 874, height: 402)), .pager)
+    }
+
     func testCompactionMap() {
         XCTAssertEqual(PageCompaction.map(present: [true, true, true]), [0: 0, 1: 1, 2: 2])
         XCTAssertEqual(PageCompaction.map(present: [true, false, true]), [0: 0, 2: 1])

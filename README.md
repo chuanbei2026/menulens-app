@@ -141,6 +141,26 @@ key 转发给 OpenAI。`POST /menu` 接收的就是 App 原来发给 Chat Comple
 `POST /purchase` 验证交易后才 finish）。1.2 起另有会员订阅（月 / 季 / 年，`SubscriptionStoreView`，`POST /subscription` + App Store Server Notifications）：会员识别和配图不扣点（每月约 600 点合理使用），每月再送 50 点。服务器不存菜单照片和文字，只存匿名账号 ID、余额和用量。1.1 (4) 起没有兑换码（App Review 3.1.1），送点数用 App Store 优惠码。
 接口、计价和部署见 [`backend/README.md`](backend/README.md)。
 
+## iPhone Duo
+
+折叠屏（iOS 27，Xcode 27 的 "iPhone Duo" 模拟器）。外屏 5.4" 和普通 iPhone 一样：结果页是
+状态 · 画布 · 列表的翻页器。内屏展开约 951×669 pt（右边一列是系统的状态栏和工具栏按钮），
+App 在那里是横向的：结果页变成**画布 + 列表并排**（`ResultArrangement.twoColumns`，列表保持
+iPhone 宽度；识别进行中画布那一栏显示逐页状态）；主页按钮收在 520 pt 宽的一栏里，不横贯全屏。
+宽于 1000 pt 的横屏 iPad 仍是三栏。
+
+折叠 / 展开会重建结果页的布局，所以「读者手上的东西」都放在 `ResultView` 里而不是被换掉的视图里：
+当前视图（展开时最后用的是列表，折叠后就停在列表）、画布页码、搜索词、列表滚动位置（顶上那道菜）、
+每页画布的缩放和已经画好的图（`CanvasMemory`，换布局不用重画）。
+
+- `tools/duo-fold.sh <模拟器> fold|unfold [--wait] [--instant]` 从命令行折叠 / 展开模拟器
+  （没有 simctl 子命令；`tools/duo/fold.m` 来自 date-series）。
+- `tools/duo-fold-test.sh <模拟器>` 跑 `DuoFoldUITests`，在测试打印 `DUO-FOLD-NOW` /
+  `DUO-UNFOLD-NOW` 时替它折叠 / 展开：结果页的搜索、点单和当前视图，以及拍照弹出的选图器，
+  折叠两次都还在。
+- 截内屏用 `xcrun simctl io <模拟器> screenshot`；折叠时要截外屏加 `--display=1`。
+  UI 测试里 `XCUIScreen.main` 是外屏，展开时是黑的。
+
 ## Notes
 
 - `*.xcodeproj` 是生成物，已在 `.gitignore` 里；改工程配置请改 `project.yml`
