@@ -6,15 +6,22 @@ import UIKit
 /// coordinates (0...1, top-left origin).
 struct ZoomableImageView: UIViewRepresentable {
     let image: UIImage
+    /// Where a previous view of this image was (zoom and center), to open at.
+    var place: ZoomScrollView.Place?
+    /// Reports the zoom and center as the reader moves.
+    var onPlaceChange: ((ZoomScrollView.Place) -> Void)?
     var onTap: ((CGPoint) -> Void)?
 
     func makeUIView(context: Context) -> ZoomScrollView {
         let view = ZoomScrollView(image: image)
+        view.restorePlace = place
+        view.onPlaceChange = onPlaceChange
         view.onTapNormalized = onTap
         return view
     }
 
     func updateUIView(_ view: ZoomScrollView, context: Context) {
+        view.onPlaceChange = onPlaceChange
         view.onTapNormalized = onTap
         if view.imageView.image !== image {
             view.setImage(image)
@@ -23,8 +30,20 @@ struct ZoomableImageView: UIViewRepresentable {
 }
 
 final class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
+    /// The reader's place, independent of the view's size: zoom relative to
+    /// fitting the whole image, and the visible center in normalized image
+    /// coordinates. Survives the canvas being rebuilt at another size (the
+    /// iPhone Duo folding or unfolding).
+    struct Place: Equatable {
+        var zoomOverFit: CGFloat
+        var center: CGPoint
+    }
+
     let imageView = UIImageView()
     var onTapNormalized: ((CGPoint) -> Void)?
+    var onPlaceChange: ((Place) -> Void)?
+    /// Applied once, on the first layout.
+    var restorePlace: Place?
     /// Set on init / image-size change only — the user's zoom must survive
     /// re-layouts (bottom bars appearing, highlight re-renders, rotations).
     private var needsInitialLayout = true
@@ -73,14 +92,69 @@ final class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
             minimumZoomScale = fit
             maximumZoomScale = max(fit * 6, 2)
             zoomScale = fit
-        } else {
-            // Keep the current zoom; just track the new fit as the floor.
+            if let place = restorePlace, place.zoomOverFit > 1.01 {
+                zoomScale = min(fit * place.zoomOverFit, maximumZoomScale)
+                centerContent()
+                show(center: place.center)
+            }
+            restorePlace = nil
+        } else if abs(minimumZoomScale - fit) > 0.0001 {
+            // The view changed size (rotation, the Duo folding). Seen whole,
+            // it stays whole; zoomed in, it keeps its zoom over the new fit
+            // and its center.
+            let place = currentPlace
+            let wasFit = zoomScale <= minimumZoomScale * 1.01
             minimumZoomScale = fit
             maximumZoomScale = max(fit * 6, 2)
-            if zoomScale < fit { zoomScale = fit }
+            if wasFit {
+                zoomScale = fit
+            } else {
+                zoomScale = min(max(fit * place.zoomOverFit, fit), maximumZoomScale)
+                centerContent()
+                show(center: place.center)
+            }
         }
         centerContent()
     }
+
+    private var currentPlace: Place {
+        let size = imageView.image?.size ?? .zero
+        let visible = CGPoint(
+            x: (contentOffset.x + bounds.width / 2) / max(zoomScale, 0.0001),
+            y: (contentOffset.y + bounds.height / 2) / max(zoomScale, 0.0001)
+        )
+        return Place(
+            zoomOverFit: zoomScale / max(minimumZoomScale, 0.0001),
+            center: CGPoint(x: visible.x / max(size.width, 1), y: visible.y / max(size.height, 1))
+        )
+    }
+
+    /// Scrolls so the normalized image point is in the middle (clamped).
+    private func show(center: CGPoint) {
+        let x = center.x * contentSize.width - bounds.width / 2
+        let y = center.y * contentSize.height - bounds.height / 2
+        contentOffset = CGPoint(
+            x: min(max(x, -contentInset.left), max(contentSize.width + contentInset.right - bounds.width, -contentInset.left)),
+            y: min(max(y, -contentInset.top), max(contentSize.height + contentInset.bottom - bounds.height, -contentInset.top))
+        )
+    }
+
+    private func reportPlace() {
+        guard !needsInitialLayout, bounds.width > 0 else { return }
+        onPlaceChange?(currentPlace)
+    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        reportPlace()
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) { reportPlace() }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate { reportPlace() }
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) { reportPlace() }
 
     private func centerContent() {
         let dx = max((bounds.width - contentSize.width) / 2, 0)

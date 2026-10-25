@@ -15,7 +15,10 @@ import SwiftUI
 /// canvas page, list — so swiping past the last menu page reaches the list
 /// (a pager of pages nested in a pager of views would swallow the swipe);
 /// the bottom bar jumps between them. On a landscape iPad they stand side
-/// by side as columns.
+/// by side as columns; on the unfolded iPhone Duo the canvas and the list do
+/// (`ResultArrangement`). Folding or unfolding swaps the layout, so what the
+/// reader has — the view, the page, the search, the list's place, the zoom —
+/// lives here, not in the views that are swapped.
 struct ResultView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     let onRestart: () -> Void
@@ -52,6 +55,17 @@ struct ResultView: View {
     /// handing the phone to a server.
     @State private var showOriginal =
         ProcessInfo.processInfo.arguments.contains("-showOriginal")
+    @State private var searchText = ""
+    /// In the column layouts: the reader last used the list (searched,
+    /// ordered, jumped to a dish), not the canvas. Folding opens the pager
+    /// on the list then.
+    @State private var listInUse = false
+    /// The list's search field has the keyboard.
+    @State private var searching = false
+    /// The list's topmost dish and each canvas page's zoom and drawing, kept
+    /// across layout swaps (reference types: updating them redraws nothing).
+    @State private var listPlace = ListPlace()
+    @State private var canvasMemory = CanvasMemory()
 
     init(viewModel: AnalysisViewModel, onRestart: @escaping () -> Void) {
         self.viewModel = viewModel
@@ -75,16 +89,26 @@ struct ResultView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let columns = sizeClass == .regular && geometry.size.width > geometry.size.height
+            let arrangement = ResultArrangement.choose(regularWidth: sizeClass == .regular, size: geometry.size)
             Group {
-                if columns {
-                    columnsLayout(width: geometry.size.width)
-                } else {
+                switch arrangement {
+                case .pager:
                     pager
+                case .twoColumns:
+                    twoColumnsLayout(width: geometry.size.width)
+                case .threeColumns:
+                    columnsLayout(width: geometry.size.width)
                 }
             }
             .safeAreaInset(edge: .top) { noticeBanner }
-            .safeAreaInset(edge: .bottom) { bottomBars(columns: columns) }
+            .safeAreaInset(edge: .bottom) { bottomBars(arrangement) }
+            .onChange(of: arrangement) { old, new in
+                if new == .pager {
+                    if listInUse { pane = .list }
+                } else if old == .pager {
+                    listInUse = pane == .list
+                }
+            }
         }
         .sheet(isPresented: $showShop) { ShopView() }
         .sheet(isPresented: $showOrderSummary) {
@@ -149,7 +173,7 @@ struct ResultView: View {
             .tag(Pane.status)
             ForEach(0 ..< pageCount, id: \.self) { index in
                 CanvasSlot(viewModel: viewModel, index: index, showOriginal: showOriginal,
-                           onSelectDish: openInList)
+                           memory: canvasMemory, onSelectDish: openInList)
                     .padding(.bottom, pageCount > 1 ? 30 : 0)
                     .background(Color(.systemGray5))
                     .overlay(alignment: .topTrailing) { originalToggle }
@@ -158,7 +182,7 @@ struct ResultView: View {
                     }
                     .tag(Pane.canvas(index))
             }
-            DishListView(viewModel: viewModel, scrollTarget: $listTarget)
+            dishList()
                 .tag(Pane.list)
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
@@ -169,24 +193,72 @@ struct ResultView: View {
     /// list medium.
     private func columnsLayout(width: CGFloat) -> some View {
         HStack(spacing: 0) {
-            PageStatusView(viewModel: viewModel) { page in
+            PageStatusView(viewModel: viewModel, innerEdges: .trailing) { page in
                 canvasPage = page
             }
             .frame(width: min(320, width * 0.24))
             Divider()
-            MenuCanvasView(viewModel: viewModel, page: $canvasPage, showOriginal: $showOriginal) { dishKey in
+            MenuCanvasView(viewModel: viewModel, page: $canvasPage, showOriginal: $showOriginal,
+                           memory: canvasMemory) { dishKey in
                 listTarget = dishKey
             }
             .frame(maxWidth: .infinity)
             Divider()
-            VStack(spacing: 0) {
-                DishListView(viewModel: viewModel, scrollTarget: $listTarget)
+            listColumn
+                .frame(width: min(420, width * 0.32))
+        }
+    }
+
+    /// Unfolded iPhone Duo: the canvas, and the list at an iPhone's width
+    /// beside it. The canvas column shows the per-page status while a scan
+    /// comes in (the progress bar underneath leads back to it). Which of the
+    /// two the reader last used is `pane`, so folding shows that one.
+    private func twoColumnsLayout(width: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            Group {
+                if pane == .status {
+                    PageStatusView(viewModel: viewModel, innerEdges: .trailing) { page in
+                        show(.canvas(page), byUser: true)
+                    }
+                } else {
+                    MenuCanvasView(
+                        viewModel: viewModel,
+                        page: Binding(get: { canvasPage }, set: {
+                            listInUse = false
+                            show(.canvas($0), byUser: true)
+                        }),
+                        showOriginal: $showOriginal,
+                        memory: canvasMemory,
+                        onSelectDish: openInList
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity)
+            Divider()
+            listColumn
+                .frame(width: min(400, width * 0.45))
+        }
+    }
+
+    private func dishList(innerEdges: Edge.Set = []) -> some View {
+        DishListView(viewModel: viewModel, scrollTarget: $listTarget, searchText: $searchText,
+                     searching: $searching, place: listPlace, innerEdges: innerEdges) {
+            // Using the list beside the canvas makes it the view to keep
+            // when the Duo folds.
+            listInUse = true
+        }
+    }
+
+    /// The list with the "for whom" chips under it (the column layouts).
+    private var listColumn: some View {
+        VStack(spacing: 0) {
+            dishList(innerEdges: .leading)
+            if !searching {
                 MemberChips(viewModel: viewModel)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(.thinMaterial)
             }
-            .frame(width: min(420, width * 0.32))
         }
     }
 
@@ -198,6 +270,7 @@ struct ResultView: View {
 
     private func openInList(_ dishKey: String) {
         listTarget = dishKey
+        listInUse = true
         show(.list, byUser: true)
     }
 
@@ -238,10 +311,17 @@ struct ResultView: View {
         }
     }
 
-    private func bottomBars(columns: Bool) -> some View {
+    @ViewBuilder
+    private func bottomBars(_ arrangement: ResultArrangement) -> some View {
+        // Side by side on the short unfolded Duo screen, the bars over the
+        // keyboard would leave the list one dish tall: off while searching.
+        if arrangement == .pager || !searching { bars(arrangement) }
+    }
+
+    private func bars(_ arrangement: ResultArrangement) -> some View {
         VStack(spacing: 0) {
             // The status view says all of this itself, page by page.
-            if !columns, pane != .status {
+            if arrangement != .threeColumns, pane != .status {
                 if viewModel.isReceivingPages, let scan = viewModel.scan {
                     // Pages arrive one at a time; say how many are still out.
                     let total = scan.pages.count
@@ -286,7 +366,7 @@ struct ResultView: View {
                 }
             }
 
-            if !columns, pane == .list {
+            if arrangement == .pager, pane == .list {
                 MemberChips(viewModel: viewModel)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -314,7 +394,7 @@ struct ResultView: View {
             }
 
             // Three big view-switch buttons across the very tail of the screen.
-            if !columns {
+            if arrangement == .pager {
                 HStack(spacing: 0) {
                     viewTab(.status, icon: "square.stack", selectedIcon: "square.stack.fill",
                             title: L("result.tab.status"), busy: viewModel.isReceivingPages)
@@ -411,6 +491,9 @@ struct ResultView: View {
 
 private struct PageStatusView: View {
     @ObservedObject var viewModel: AnalysisViewModel
+    /// Edges next to another column: an inset list there gets no margin of
+    /// its own, its cards would touch the divider.
+    var innerEdges: Edge.Set = []
     let onOpenPage: (Int) -> Void
     @ObservedObject private var loc = Localization.shared
 
@@ -432,6 +515,7 @@ private struct PageStatusView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .contentMargins(innerEdges, 16, for: .scrollContent)
     }
 
     @ViewBuilder
@@ -579,6 +663,7 @@ private struct CanvasSlot: View {
     @ObservedObject var viewModel: AnalysisViewModel
     let index: Int
     let showOriginal: Bool
+    let memory: CanvasMemory
     let onSelectDish: (String) -> Void
 
     var body: some View {
@@ -597,6 +682,7 @@ private struct CanvasSlot: View {
                     highlights: viewModel.highlightTotals,
                     orderLabels: viewModel.orderLabels,
                     showOriginal: showOriginal,
+                    memory: memory,
                     onSelectDish: onSelectDish
                 )
             }
@@ -604,11 +690,13 @@ private struct CanvasSlot: View {
     }
 }
 
-/// The canvas column on a landscape iPad: its own pager of menu pages.
+/// The canvas column on a landscape iPad or the unfolded iPhone Duo: its own
+/// pager of menu pages.
 private struct MenuCanvasView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @Binding var page: Int
     @Binding var showOriginal: Bool
+    let memory: CanvasMemory
     let onSelectDish: (String) -> Void
     @ObservedObject private var loc = Localization.shared
 
@@ -618,7 +706,7 @@ private struct MenuCanvasView: View {
             TabView(selection: $page) {
                 ForEach(0 ..< scan.pages.count, id: \.self) { index in
                     CanvasSlot(viewModel: viewModel, index: index, showOriginal: showOriginal,
-                               onSelectDish: onSelectDish)
+                               memory: memory, onSelectDish: onSelectDish)
                         // Keep the page dots clear (multi-page only).
                         .padding(.bottom, multiPage ? 34 : 0)
                         .tag(index)
@@ -695,12 +783,34 @@ private struct CanvasPage: View {
     let highlights: [String: Int]
     let orderLabels: [String: String]
     let showOriginal: Bool
+    let memory: CanvasMemory
     let onSelectDish: (String) -> Void
 
     @State private var rendered: UIImage?
 
+    init(document: MenuDocument, pageIndex: Int, image: UIImage, highlights: [String: Int],
+         orderLabels: [String: String], showOriginal: Bool, memory: CanvasMemory,
+         onSelectDish: @escaping (String) -> Void) {
+        self.document = document
+        self.pageIndex = pageIndex
+        self.image = image
+        self.highlights = highlights
+        self.orderLabels = orderLabels
+        self.showOriginal = showOriginal
+        self.memory = memory
+        self.onSelectDish = onSelectDish
+        // Drawn before (this page in the other layout): show it at once.
+        let signature = Self.signature(highlights: highlights, orderLabels: orderLabels, showOriginal: showOriginal)
+        _rendered = State(initialValue: memory.drawing(page: pageIndex, of: image, signature: signature))
+    }
+
     /// Stable signature so the canvas re-renders when the order changes.
     private var highlightSignature: String {
+        Self.signature(highlights: highlights, orderLabels: orderLabels, showOriginal: showOriginal)
+    }
+
+    private static func signature(highlights: [String: Int], orderLabels: [String: String],
+                                  showOriginal: Bool) -> String {
         highlights.sorted { $0.key < $1.key }
             .map { "\($0.key):\($0.value):\(orderLabels[$0.key] ?? "")" }
             .joined(separator: ",") + (showOriginal ? "|orig" : "")
@@ -709,7 +819,9 @@ private struct CanvasPage: View {
     var body: some View {
         Group {
             if let rendered {
-                ZoomableImageView(image: rendered) { normalizedPoint in
+                ZoomableImageView(image: rendered, place: memory.zoom[pageIndex]) { place in
+                    memory.zoom[pageIndex] = place
+                } onTap: { normalizedPoint in
                     let renderer = MenuLayoutRenderer(
                         document: document, image: image, pageWidth: 1600, pageIndex: pageIndex
                     )
@@ -722,6 +834,12 @@ private struct CanvasPage: View {
             }
         }
         .task(id: highlightSignature) {
+            let signature = highlightSignature
+            if let drawn = memory.drawing(page: pageIndex, of: image, signature: signature) {
+                rendered = drawn
+                return
+            }
+            let source = image
             let page = image.normalizedOrientation()
             let showOriginal = showOriginal
             let document = document
@@ -745,6 +863,9 @@ private struct CanvasPage: View {
                 )
                 return renderer.renderImage()
             }.value
+            if let rendered {
+                memory.drawn[pageIndex] = .init(source: source, signature: signature, image: rendered)
+            }
         }
     }
 }
@@ -941,6 +1062,7 @@ struct QuantityStepper: View {
                 Image(systemName: "plus.circle.fill")
                     .foregroundStyle(.orange)
             }
+            .accessibilityIdentifier("dish.add")
         }
         .font(.title3)
         .buttonStyle(.borderless)
@@ -952,11 +1074,36 @@ struct QuantityStepper: View {
 private struct DishListView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     @Binding var scrollTarget: String?
+    @Binding var searchText: String
+    @Binding var searching: Bool
+    /// Where the list was, for the list that replaces this one on a layout swap.
+    let place: ListPlace
+    /// Edges next to another column (see `PageStatusView.innerEdges`).
+    var innerEdges: Edge.Set = []
+    /// The reader searched or ordered here.
+    let onActivity: () -> Void
     @ObservedObject private var loc = Localization.shared
     /// Observed so recommendations re-filter the moment someone's
     /// restrictions change in Settings.
     @ObservedObject private var party = PartyStore.shared
-    @State private var searchText = ""
+    @FocusState private var searchFocused: Bool
+    /// Dishes on screen, and the dish to bring back to the top once built
+    /// (taken from `place` before the rows start reporting).
+    @State private var visibleRows: Set<String> = []
+    @State private var restoreRow: String?
+
+    init(viewModel: AnalysisViewModel, scrollTarget: Binding<String?>, searchText: Binding<String>,
+         searching: Binding<Bool>, place: ListPlace, innerEdges: Edge.Set = [],
+         onActivity: @escaping () -> Void) {
+        self.viewModel = viewModel
+        _scrollTarget = scrollTarget
+        _searchText = searchText
+        _searching = searching
+        self.place = place
+        self.innerEdges = innerEdges
+        self.onActivity = onActivity
+        _restoreRow = State(initialValue: place.topRow)
+    }
 
     private struct Row: Identifiable {
         let id: String // dish key
@@ -1054,10 +1201,12 @@ private struct DishListView: View {
                                 quantity: viewModel.quantity(of: row.id),
                                 memberBreakdown: viewModel.orderLabels[row.id],
                                 showGlutenFree: AppLanguage.from(code: viewModel.scan?.targetLanguage).showsGlutenFree,
-                                onPlus: { viewModel.addToCart(row.id) },
-                                onMinus: { viewModel.removeFromCart(row.id) }
+                                onPlus: { onActivity(); viewModel.addToCart(row.id) },
+                                onMinus: { onActivity(); viewModel.removeFromCart(row.id) }
                             )
                             .id(row.id)
+                            .onAppear { rowVisible(row.id, true) }
+                            .onDisappear { rowVisible(row.id, false) }
                         }
                     } header: {
                         if !group.title.isEmpty { Text(group.title) }
@@ -1065,13 +1214,27 @@ private struct DishListView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .contentMargins(innerEdges, 16, for: .scrollContent)
             .overlay {
                 if groups.isEmpty {
                     ContentUnavailableView.search(text: searchText)
                 }
             }
-            .onAppear { jumpIfNeeded(proxy) }
+            .onAppear {
+                if scrollTarget != nil {
+                    restoreRow = nil
+                    jumpIfNeeded(proxy)
+                } else if let row = restoreRow {
+                    // Back where the list was before the layout changed.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        proxy.scrollTo(row, anchor: .top)
+                        restoreRow = nil
+                    }
+                }
+            }
             .onChange(of: scrollTarget) { jumpIfNeeded(proxy) }
+            // Swapped out (the Duo folding) with the keyboard up.
+            .onDisappear { searching = false }
         }
         // Custom search field pinned to the TOP — the system .searchable
         // drawer moves between top and bottom on its own, which looked buggy.
@@ -1082,6 +1245,11 @@ private struct DishListView: View {
                 TextField(L("list.searchPlaceholder"), text: $searchText)
                     .textFieldStyle(.plain)
                     .autocorrectionDisabled()
+                    .focused($searchFocused)
+                    .onChange(of: searchFocused) {
+                        searching = searchFocused
+                        if searchFocused { onActivity() }
+                    }
                 if !searchText.isEmpty {
                     Button {
                         searchText = ""
@@ -1099,6 +1267,14 @@ private struct DishListView: View {
             .padding(.vertical, 6)
             .background(.thinMaterial)
         }
+    }
+
+    /// Keeps `place.topRow` on the first dish on screen.
+    private func rowVisible(_ id: String, _ visible: Bool) {
+        if visible { visibleRows.insert(id) } else { visibleRows.remove(id) }
+        guard restoreRow == nil, !visibleRows.isEmpty else { return }
+        let order = groups.flatMap(\.rows).map(\.id)
+        place.topRow = order.first { visibleRows.contains($0) }
     }
 
     private func jumpIfNeeded(_ proxy: ScrollViewProxy) {
@@ -1354,5 +1530,30 @@ private struct MemberChips: View {
         } message: {
             Text(L("chips.addMemberNote"))
         }
+    }
+}
+
+/// The dish at the top of the list, kept by the result screen so the list
+/// built after a layout swap (the iPhone Duo folding) opens at the same place.
+final class ListPlace {
+    var topRow: String?
+}
+
+/// Per canvas page, what outlives its view on a layout swap: the drawing (so
+/// it is not drawn again) and the zoom (so the reader keeps their place).
+final class CanvasMemory {
+    struct Drawn {
+        let source: UIImage
+        let signature: String
+        let image: UIImage
+    }
+
+    var drawn: [Int: Drawn] = [:]
+    var zoom: [Int: ZoomScrollView.Place] = [:]
+
+    /// The page drawn earlier from this very photo with these highlights.
+    func drawing(page: Int, of source: UIImage, signature: String) -> UIImage? {
+        guard let drawn = drawn[page], drawn.source === source, drawn.signature == signature else { return nil }
+        return drawn.image
     }
 }

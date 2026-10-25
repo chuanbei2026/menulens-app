@@ -33,9 +33,16 @@ struct ContentView: View {
             Group {
                 switch viewModel.phase {
                 case .idle, .failed:
+                    // An iPhone's width, centered, on the wider screens (the
+                    // unfolded iPhone Duo, iPad): buttons spanning the whole
+                    // screen read as stretched, not as roomier.
                     startScreen
+                        .frame(maxWidth: 520)
+                        .frame(maxWidth: .infinity)
                 case .analyzing:
                     AnalysisProgressView(viewModel: viewModel)
+                        .frame(maxWidth: 520)
+                        .frame(maxWidth: .infinity)
                 case .done:
                     ResultView(viewModel: viewModel) {
                         viewModel.reset()
