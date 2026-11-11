@@ -175,27 +175,24 @@ AWS_PROFILE=claude-agent ./alarms.sh          # alarms + SNS topic only
 - **Dashboard** CloudWatch → Dashboards → **ForeignMenu**: a runbook text widget (links to every saved query with its
   time range), money (Logs Insights), traffic / errors / latency p50-p95-p99, AI cost per day and per model, calls and
   upstream errors per provider, signups (Apple vs device), links and merges, purchases / revenue / membership, the
-  credits economy, Lambda, DynamoDB, CloudFront (us-east-1) and an alarm status strip.
+  credits economy, Lambda invocations / errors / throttles and an alarm status strip. It stays under 50 metrics so it
+  is free (2026-11-11: Lambda concurrency / duration, DynamoDB and CloudFront graphs went; the AWS console has them).
 - **Saved queries** (folder **ForeignMenu/**): recent requests, errors (last hour), slow requests, one account / one
   request (edit the id), AI upstream failures, cost and credits, cost by model per day, menu latency percentiles,
   purchases, subscription notifications, notifications by type and outcome, merges, rate-limit hits, device accounts
   created, region refusals, out of credits (402), contention and retries.
 - **Alarms** (`alarms.sh`, thresholds are env vars) → SNS topic **`chuanbei-ops-alerts`** (us-west-2, shared with
-  DateSeries). The CloudFront 5xx alarm and the cost budget are in the DateSeries repo (`infra/backend/alarms.sh`).
+  DateSeries). Email on ALARM only, not again when it clears. Money alarms only (2026-11-11), so with DateSeries' the
+  account stays inside the free 10 alarm metrics. The cost budget is in the DateSeries repo (`infra/backend/alarms.sh`).
 
   | Alarm | Fires when |
   |---|---|
   | `ForeignMenu-5xx-rate` | 5xx > 10% of requests (and ≥ 3) in 15 min |
-  | `ForeignMenu-lambda-errors` | ≥ 2 Lambda errors (crash / timeout) in 15 min |
-  | `ForeignMenu-lambda-throttles` | any throttle in 5 min |
-  | `ForeignMenu-menu-p95-latency` | `/menu` p95 ≥ 120 s for 2 × 15 min (normal ≈ 40 s) |
-  | `ForeignMenu-image-p95-latency` | `/image` p95 ≥ 45 s for 2 × 15 min (normal ≈ 11 s) |
-  | `ForeignMenu-ai-upstream-errors` | ≥ 3 failed model calls in 15 min |
   | `ForeignMenu-ai-cost-daily` | AI cost ≥ US$10 in 24 h (`DAILY_AI_COST_USD`) |
-  | `ForeignMenu-dynamodb-throttles` | accounts / ledger throttle events or any DynamoDB error a request saw, in 5 min |
   | `ForeignMenu-store-notification-failures` | a notification failed on our side (answered 200, so Apple won't retry) |
-  | `ForeignMenu-error-events` | an ERROR event line (settlement, ledger, purchase record…) |
-  | `ForeignMenu-anon-signup-limit` | ≥ 20 device-account signups refused by the per-IP limit in an hour |
+
+  Retired 2026-11-11 (`alarms.sh` deletes them): `-lambda-errors`, `-lambda-throttles`, `-menu-p95-latency`,
+  `-image-p95-latency`, `-ai-upstream-errors`, `-dynamodb-throttles`, `-error-events`, `-anon-signup-limit`.
 
   Nobody is subscribed by the script. To receive them (confirm the email AWS sends):
 

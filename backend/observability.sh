@@ -6,8 +6,7 @@
 #   AWS_PROFILE=claude-agent ./observability.sh
 #
 # Sources: the one JSON line per request in /aws/lambda/foreignmenu-api (Logs Insights: money, users),
-# the ForeignMenu metric namespace those lines carry (EMF, see src/log.mjs), AWS/Lambda, AWS/DynamoDB and
-# AWS/CloudFront (us-east-1; the distribution in front of both backends).
+# the ForeignMenu metric namespace those lines carry (EMF, see src/log.mjs) and AWS/Lambda.
 set -euo pipefail
 
 REGION="${AWS_REGION:-us-west-2}"
@@ -116,8 +115,7 @@ console = f"https://{region}.console.aws.amazon.com/cloudwatch/home?region={regi
 md = ("### 外乡人的菜单 / ForeignMenu backend · runbook\n"
       "**Saved queries** (Logs Insights → Saved queries → ForeignMenu/; each link opens it with its time range): "
       + " · ".join(f"[{name}]({insights(q, secs)}) ({span(secs)})" for name, secs, _id, q in rows)
-      + f"\n\n**Alarms** → [all alarms]({console}#alarmsV2:?search=ForeignMenu) (SNS topic `chuanbei-ops-alerts`; the CloudFront alarm is "
-      "`chuanbei-cloudfront-5xx-rate` in us-east-1, set up by the DateSeries repo) · never logged: menu photos or text, prompts, answers, tokens, secrets.")
+      + f"\n\n**Alarms** → [all alarms]({console}#alarmsV2:?search=ForeignMenu) (SNS topic `chuanbei-ops-alerts`, money alarms only) · never logged: menu photos or text, prompts, answers, tokens, secrets.")
 
 y = 0
 W = [text(md, 0, y, h=3)]; y += 3
@@ -211,33 +209,12 @@ y += 6
 # The Lambda itself. No reserved concurrency: the account pool (1000) is shared with DateSeries.
 def lam(name, stat="Sum", label=None):
     return ["AWS/Lambda", name, "FunctionName", fn, {"stat": stat, "label": label or name}]
-W += [text("## Lambda, DynamoDB, CloudFront", 0, y)]; y += 1
+W += [text("## Lambda", 0, y)]; y += 1
+# Concurrency, duration, DynamoDB and CloudFront graphs went 2026-11-11: a dashboard with more than 50 metrics
+# is billed (US$3 a month), and at this traffic they were flat lines. The AWS console has them.
 W += [
     widget("Lambda: invocations, errors, throttles", [lam("Invocations"), lam("Errors"), lam("Throttles"),
-           metric("ErrorEvents", label="ERROR log events (settlement, ledger…)")], 0, y, w=8),
-    widget("Lambda: concurrency (account pool 1000, shared with DateSeries; a big scan uses several)",
-           [lam("ConcurrentExecutions", "Maximum", "foreignmenu-api (max)"),
-            ["AWS/Lambda", "ConcurrentExecutions", {"stat": "Maximum", "label": "whole account (max)"}]], 8, y, w=8),
-    widget("Lambda duration (ms)", [lam("Duration", "p50", "p50"), lam("Duration", "p95", "p95"), lam("Duration", "Maximum", "max")], 16, y, w=8),
-]
-y += 6
-tables = ["foreignmenu-accounts", "foreignmenu-ledger", "foreignmenu-promo", "foreignmenu-usage-daily", "foreignmenu-purchases"]
-def ddb(name, table, stat="Sum"):
-    return ["AWS/DynamoDB", name, "TableName", table, {"stat": stat, "label": f"{table.replace('foreignmenu-', '')} {name}"}]
-W += [
-    widget("DynamoDB consumed capacity", [ddb(n, t) for t in tables for n in ["ConsumedReadCapacityUnits", "ConsumedWriteCapacityUnits"]], 0, y, w=8),
-    widget("DynamoDB throttles & errors", [ddb(n, t) for t in tables for n in ["ReadThrottleEvents", "WriteThrottleEvents"]]
-           + [ddb("SystemErrors", t) for t in tables], 8, y, w=8),
-    widget("DynamoDB work per request (from our logs)",
-           [metric("DdbCalls", "Average", "POST /menu", "/menu calls per request"), metric("DdbMs", "Average", "POST /menu", "/menu DynamoDB ms"),
-            metric("DdbConditionalFailures", label="conditional failures"), metric("DdbRetries", label="optimistic-locking retries"),
-            metric("DdbErrors", label="DynamoDB errors")], 16, y, w=8),
-]
-y += 6
-cf = lambda name, stat, label: ["AWS/CloudFront", name, "DistributionId", distribution, "Region", "Global", {"stat": stat, "label": label, "region": "us-east-1"}]
-W += [
-    widget(f"CloudFront api.chuanbei.dev ({distribution}, both apps): requests", [cf("Requests", "Sum", "requests")], 0, y, region_="us-east-1"),
-    widget("CloudFront error rate (%)", [cf("4xxErrorRate", "Average", "4xx %"), cf("5xxErrorRate", "Average", "5xx %")], 12, y, region_="us-east-1"),
+           metric("ErrorEvents", label="ERROR log events (settlement, ledger…)"), metric("DdbErrors", label="DynamoDB errors")], 0, y, w=24),
 ]
 y += 6
 
@@ -258,8 +235,7 @@ W += [
 y += 6
 W += [{"type": "alarm", "x": 0, "y": y, "width": 24, "height": 3,
        "properties": {"title": "Alarms", "alarms": [f"arn:aws:cloudwatch:{region}:{account}:alarm:ForeignMenu-{a}" for a in
-                      ["5xx-rate", "lambda-errors", "lambda-throttles", "menu-p95-latency", "image-p95-latency", "ai-upstream-errors",
-                       "ai-cost-daily", "dynamodb-throttles", "store-notification-failures", "error-events", "anon-signup-limit"]]}}]
+                      ["5xx-rate", "ai-cost-daily", "store-notification-failures"]]}}]
 print(json.dumps({"start": "-P7D", "widgets": W}))
 PY
 DASH="$(python3 "${DASH_PY}" "${REGION}" "${LOG_GROUP}" "${NAME}" "${DISTRIBUTION_ID}" "${LINKS}" "${ACCOUNT_ID}")"
